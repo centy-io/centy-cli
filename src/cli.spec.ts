@@ -12,12 +12,12 @@ describe('cli', () => {
     cwd?: string
   ): Promise<{ stdout: string; stderr: string; code: number | null }> => {
     return new Promise(resolve => {
-      const cliPath = join(PROJECT_ROOT, 'src/cli.ts')
+      const devScript = join(PROJECT_ROOT, 'bin/dev.js')
       const env = { ...process.env }
       if (cwd !== undefined) {
         env['CENTY_CWD'] = cwd
       }
-      const proc = spawn('node', ['--import', 'tsx', cliPath, ...args], {
+      const proc = spawn('node', [devScript, ...args], {
         cwd: PROJECT_ROOT,
         env,
       })
@@ -41,13 +41,8 @@ describe('cli', () => {
   describe('--version', () => {
     it('should print version when called with --version', async () => {
       const result = await runCli(['--version'])
-      expect(result.stdout).toContain('centy v')
-      expect(result.code).toBe(0)
-    })
-
-    it('should print version when called with -v', async () => {
-      const result = await runCli(['-v'])
-      expect(result.stdout).toContain('centy v')
+      // oclif outputs version as package name/version
+      expect(result.stdout).toMatch(/centy/)
       expect(result.code).toBe(0)
     })
   })
@@ -55,20 +50,15 @@ describe('cli', () => {
   describe('--help', () => {
     it('should print help when called with --help', async () => {
       const result = await runCli(['--help'])
-      expect(result.stdout).toContain('centy - Project management via code')
-      expect(result.stdout).toContain('Usage:')
-      expect(result.code).toBe(0)
-    })
-
-    it('should print help when called with -h', async () => {
-      const result = await runCli(['-h'])
-      expect(result.stdout).toContain('centy - Project management via code')
+      // oclif has different help format
+      expect(result.stdout).toContain('COMMANDS')
       expect(result.code).toBe(0)
     })
 
     it('should print help when called with no arguments', async () => {
       const result = await runCli([])
-      expect(result.stdout).toContain('centy - Project management via code')
+      // oclif shows help by default when no command
+      expect(result.stdout).toContain('COMMANDS')
       expect(result.code).toBe(0)
     })
   })
@@ -76,8 +66,9 @@ describe('cli', () => {
   describe('unknown command', () => {
     it('should print error for unknown command', async () => {
       const result = await runCli(['unknown'])
-      expect(result.stdout).toContain('Unknown command: unknown')
-      expect(result.code).toBe(1)
+      // oclif outputs error to stderr
+      expect(result.stderr).toContain('command unknown not found')
+      expect(result.code).toBe(2)
     })
   })
 

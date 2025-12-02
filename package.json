@@ -6,7 +6,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "centy": "./dist/cli.js"
+    "centy": "./bin/run.js"
   },
   "exports": {
     ".": {
@@ -15,11 +15,14 @@
     }
   },
   "files": [
-    "dist"
+    "bin",
+    "dist",
+    "oclif.manifest.json"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && pnpm run manifest",
     "dev": "tsc --watch",
+    "manifest": "oclif manifest",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
@@ -31,14 +34,17 @@
     "spell:check": "cspell lint '**/*.{ts,js,md,json}' --gitignore",
     "knip": "knip",
     "prepare": "husky",
-    "release": "release-it"
+    "release": "release-it",
+    "postpack": "rm -f oclif.manifest.json",
+    "prepack": "pnpm run build"
   },
   "keywords": [
     "cli",
     "project-management",
     "issues",
     "docs",
-    "centy"
+    "centy",
+    "oclif"
   ],
   "author": "",
   "license": "MIT",
@@ -48,6 +54,18 @@
   "packageManager": "pnpm@10.24.0",
   "publishConfig": {
     "access": "public"
+  },
+  "oclif": {
+    "bin": "centy",
+    "dirname": "centy",
+    "commands": {
+      "strategy": "pattern",
+      "target": "./dist/commands"
+    },
+    "plugins": [
+      "@oclif/plugin-help"
+    ],
+    "topicSeparator": " "
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
@@ -62,10 +80,15 @@
     "husky": "^9.1.7",
     "knip": "^5.71.0",
     "lint-staged": "^16.2.7",
+    "oclif": "^4.22.52",
     "prettier": "^3.7.3",
     "release-it": "^19.0.6",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15"
+  },
+  "dependencies": {
+    "@oclif/core": "^4.8.0",
+    "@oclif/plugin-help": "^6.2.36"
   }
 }

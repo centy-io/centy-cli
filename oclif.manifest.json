@@ -1,0 +1,33 @@
+{
+  "commands": {
+    "init": {
+      "aliases": [],
+      "args": {},
+      "description": "Initialize a .centy folder in the current project",
+      "examples": [
+        "<%= config.bin %> <%= command.id %>",
+        "<%= config.bin %> <%= command.id %> --force"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Skip interactive prompts and use defaults",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "init",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "init.js"]
+    }
+  },
+  "version": "0.0.0"
+}

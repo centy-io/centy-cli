@@ -26,8 +26,19 @@ export default [
     },
   },
   {
-    // CLI tools require dynamic file operations and small utility modules
-    files: ['src/commands/**/*.ts', 'src/utils/**/*.ts'],
+    // oclif commands require default exports and static class properties
+    files: ['src/commands/**/*.ts'],
+    rules: {
+      'custom/no-default-class-export': 'off',
+      'class-export/class-export': 'off',
+      'import/order': 'off',
+      'ddd/require-spec-file': 'off',
+      'no-restricted-syntax': 'off',
+    },
+  },
+  {
+    // CLI lib modules require dynamic file operations and small utility modules
+    files: ['src/lib/**/*.ts', 'src/utils/**/*.ts'],
     rules: {
       'security/detect-non-literal-fs-filename': 'off',
       'security/detect-object-injection': 'off',
