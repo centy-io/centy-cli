@@ -1,0 +1,71 @@
+{
+  "name": "centy",
+  "version": "0.0.0",
+  "description": "CLI for managing project issues and docs via code in the .centy folder",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "centy": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "spell": "cspell lint '**/*.{ts,js,md,json}' --gitignore",
+    "spell:check": "cspell lint '**/*.{ts,js,md,json}' --gitignore",
+    "knip": "knip",
+    "prepare": "husky",
+    "release": "release-it"
+  },
+  "keywords": [
+    "cli",
+    "project-management",
+    "issues",
+    "docs",
+    "centy"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "pnpm@10.24.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@types/node": "^24.10.1",
+    "@vitest/coverage-v8": "^4.0.15",
+    "cspell": "^9.4.0",
+    "eslint": "^9.39.1",
+    "eslint-config-agent": "^1.8.9",
+    "eslint-config-publishable-package-json": "^1.0.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "husky": "^9.1.7",
+    "knip": "^5.71.0",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.3",
+    "release-it": "^19.0.6",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  }
+}
