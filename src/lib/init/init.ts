@@ -1,4 +1,3 @@
-import { mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { daemonExecuteReconciliation } from '../../daemon/daemon-execute-reconciliation.js'
 import { daemonGetReconciliationPlan } from '../../daemon/daemon-get-reconciliation-plan.js'
@@ -8,16 +7,8 @@ import type {
 } from '../../daemon/types.js'
 import type { InitOptions } from '../../types/init-options.js'
 import type { InitResult } from '../../types/init-result.js'
-import type { ReconciliationDecisions } from '../../types/reconciliation-decisions.js'
 import { closePromptInterface } from '../../utils/close-prompt-interface.js'
-import { createEmptyManifest } from '../../utils/create-empty-manifest.js'
 import { createPromptInterface } from '../../utils/create-prompt-interface.js'
-import { readManifest } from '../../utils/read-manifest.js'
-import { writeManifest } from '../../utils/write-manifest.js'
-import { VERSION } from '../../version.js'
-import { buildReconciliationPlan } from './build-reconciliation-plan.js'
-import { checkFolderExists } from './check-folder-exists.js'
-import { executeReconciliation } from './execute-reconciliation.js'
 import { outputSummary } from './output-summary.js'
 import { promptForReset } from './prompt-for-reset.js'
 import { promptForRestore } from './prompt-for-restore.js'
@@ -26,7 +17,7 @@ const CENTY_FOLDER = '.centy'
 
 /**
  * Initialize a .centy folder
- * Tries daemon first, falls back to local implementation if daemon unavailable
+ * Requires daemon to be running
  */
 export async function init(options?: InitOptions): Promise<InitResult> {
   const opts = options ?? {}
@@ -34,26 +25,6 @@ export async function init(options?: InitOptions): Promise<InitResult> {
   const centyPath = join(cwd, CENTY_FOLDER)
   const output = opts.output ?? process.stdout
 
-  // Try daemon first, fallback to local if unavailable
-  const daemonResult = await tryDaemonInit(cwd, centyPath, opts, output)
-  if (daemonResult !== null) {
-    return daemonResult
-  }
-
-  // Fallback to local implementation
-  return localInit(cwd, centyPath, opts, output)
-}
-
-/**
- * Try to initialize using the daemon
- * Returns null if daemon is unavailable
- */
-async function tryDaemonInit(
-  cwd: string,
-  centyPath: string,
-  opts: InitOptions,
-  output: NodeJS.WritableStream
-): Promise<InitResult | null> {
   const result: InitResult = {
     success: false,
     centyPath,
@@ -111,78 +82,17 @@ async function tryDaemonInit(
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error)
 
-    // If daemon is unavailable, return null to trigger fallback
+    // If daemon is unavailable, show error
     if (msg.includes('UNAVAILABLE') || msg.includes('ECONNREFUSED')) {
-      return null
+      output.write(
+        'Error: Centy daemon is not running. Please start the daemon first.\n'
+      )
+      return result
     }
 
     // Other errors should be reported
     output.write(`Error: ${msg}\n`)
     return result
-  }
-}
-
-/**
- * Local implementation (fallback when daemon unavailable)
- */
-async function localInit(
-  cwd: string,
-  centyPath: string,
-  opts: InitOptions,
-  output: NodeJS.WritableStream
-): Promise<InitResult> {
-  const result: InitResult = {
-    success: false,
-    centyPath,
-    created: [],
-    restored: [],
-    reset: [],
-    skipped: [],
-    userFiles: [],
-  }
-
-  try {
-    await ensureCentyFolder(centyPath, output)
-    const manifest = await readManifest(centyPath)
-    const plan = await buildReconciliationPlan(centyPath, manifest)
-    const decisions = await gatherLocalDecisions(plan, opts, output)
-    const baseManifest =
-      manifest !== null ? manifest : createEmptyManifest(VERSION)
-    const updatedManifest = await executeReconciliation(
-      centyPath,
-      plan,
-      decisions,
-      baseManifest
-    )
-
-    await writeManifest(centyPath, updatedManifest)
-
-    result.success = true
-    result.created = plan.toCreate
-    result.restored = decisions.restore
-    result.reset = decisions.reset
-    result.skipped = decisions.skip
-    result.userFiles = plan.userFiles
-
-    outputSummary(output, result)
-    return result
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error)
-    output.write(`Error: ${msg}\n`)
-    return result
-  }
-}
-
-async function ensureCentyFolder(
-  centyPath: string,
-  output: NodeJS.WritableStream
-): Promise<void> {
-  const folderExists = await checkFolderExists(centyPath)
-  if (!folderExists) {
-    output.write('Creating .centy folder...\n')
-    await mkdir(centyPath, { recursive: true })
-  } else {
-    output.write('Found existing .centy folder. Checking for changes...\n')
   }
 }
 
@@ -217,7 +127,7 @@ interface Plan {
   toReset: FileToReset[]
 }
 
-interface LocalDecisions {
+interface Decisions {
   restore: string[]
   reset: string[]
   skip: string[]
@@ -227,51 +137,8 @@ async function gatherDecisions(
   plan: Plan,
   opts: InitOptions,
   output: NodeJS.WritableStream
-): Promise<LocalDecisions> {
-  const decisions: LocalDecisions = {
-    restore: [],
-    reset: [],
-    skip: [],
-  }
-
-  if (plan.toRestore.length > 0) {
-    if (opts.force === true) {
-      decisions.restore = plan.toRestore.map(f => f.path)
-    } else {
-      const rl = createPromptInterface(opts.input, opts.output)
-      const restoreResult = await promptForRestore(rl, output, plan.toRestore)
-      decisions.restore = restoreResult.restore
-      decisions.skip.push(...restoreResult.skip)
-      closePromptInterface(rl)
-    }
-  }
-
-  if (plan.toReset.length > 0) {
-    if (opts.force === true) {
-      decisions.skip.push(...plan.toReset.map(f => f.path))
-    } else {
-      const rl = createPromptInterface(opts.input, opts.output)
-      const resetResult = await promptForReset(rl, output, plan.toReset)
-      decisions.reset = resetResult.reset
-      decisions.skip.push(...resetResult.skip)
-      closePromptInterface(rl)
-    }
-  }
-
-  return decisions
-}
-
-interface LocalPlan {
-  toRestore: Array<{ path: string; wasInManifest: boolean }>
-  toReset: Array<{ path: string; currentHash: string; originalHash: string }>
-}
-
-async function gatherLocalDecisions(
-  plan: LocalPlan,
-  opts: InitOptions,
-  output: NodeJS.WritableStream
-): Promise<ReconciliationDecisions> {
-  const decisions: ReconciliationDecisions = {
+): Promise<Decisions> {
+  const decisions: Decisions = {
     restore: [],
     reset: [],
     skip: [],

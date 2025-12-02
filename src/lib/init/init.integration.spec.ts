@@ -1,25 +1,19 @@
 import { Writable } from 'node:stream'
-import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { CentyManifest } from '../../types/centy-manifest.js'
+import type { ReconciliationPlan, InitResponse } from '../../daemon/types.js'
 
-// Mock node:fs/promises with memfs
-vi.mock('node:fs/promises', async () => {
-  const memfs = await import('memfs')
-  return memfs.fs.promises
-})
+// Mock daemon client
+const mockGetReconciliationPlan = vi.fn()
+const mockExecuteReconciliation = vi.fn()
 
-// Mock daemon client to force local fallback
 vi.mock('../../daemon/daemon-get-reconciliation-plan.js', () => ({
-  daemonGetReconciliationPlan: vi
-    .fn()
-    .mockRejectedValue(new Error('ECONNREFUSED')),
+  daemonGetReconciliationPlan: (...args: unknown[]) =>
+    mockGetReconciliationPlan(...args),
 }))
 
 vi.mock('../../daemon/daemon-execute-reconciliation.js', () => ({
-  daemonExecuteReconciliation: vi
-    .fn()
-    .mockRejectedValue(new Error('ECONNREFUSED')),
+  daemonExecuteReconciliation: (...args: unknown[]) =>
+    mockExecuteReconciliation(...args),
 }))
 
 // Import after mocking
@@ -43,14 +37,44 @@ function createOutputCollector(): {
   }
 }
 
+// Helper to create mock reconciliation plan
+function createMockPlan(
+  overrides: Partial<ReconciliationPlan> = {}
+): ReconciliationPlan {
+  return {
+    toCreate: ['issues/', 'docs/', 'README.md'],
+    toRestore: [],
+    toReset: [],
+    upToDate: [],
+    userFiles: [],
+    ...overrides,
+  }
+}
+
+// Helper to create mock init response
+function createMockResponse(
+  overrides: Partial<InitResponse> = {}
+): InitResponse {
+  return {
+    success: true,
+    error: '',
+    created: ['issues/', 'docs/', 'README.md'],
+    restored: [],
+    reset: [],
+    skipped: [],
+    ...overrides,
+  }
+}
+
 describe('init integration tests', () => {
   beforeEach(() => {
-    vol.reset()
+    vi.clearAllMocks()
   })
 
   describe('fresh initialization', () => {
-    it('should create .centy folder structure in empty directory', async () => {
-      vol.mkdirSync('/project', { recursive: true })
+    it('should create .centy folder structure via daemon', async () => {
+      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
+      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
 
       const collector = createOutputCollector()
       const result = await init({
@@ -61,107 +85,14 @@ describe('init integration tests', () => {
 
       expect(result.success).toBe(true)
       expect(result.centyPath).toBe('/project/.centy')
-      expect(vol.existsSync('/project/.centy')).toBe(true)
-    })
-
-    it('should create issues directory', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
+      expect(mockGetReconciliationPlan).toHaveBeenCalledWith({
+        projectPath: '/project',
       })
-
-      expect(vol.existsSync('/project/.centy/issues')).toBe(true)
-      const stat = vol.statSync('/project/.centy/issues')
-      expect(stat.isDirectory()).toBe(true)
-    })
-
-    it('should create docs directory', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      expect(vol.existsSync('/project/.centy/docs')).toBe(true)
-      const stat = vol.statSync('/project/.centy/docs')
-      expect(stat.isDirectory()).toBe(true)
-    })
-
-    it('should create README.md with correct content', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      expect(vol.existsSync('/project/.centy/README.md')).toBe(true)
-      const content = vol.readFileSync('/project/.centy/README.md', 'utf8')
-
-      expect(content).toContain('# .centy')
-      expect(content).toContain('For AI Assistants')
-      expect(content).toContain('issues/')
-      expect(content).toContain('docs/')
-      expect(content).toContain('.centy-manifest.json')
-    })
-
-    it('should create .centy-manifest.json with correct structure', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      expect(vol.existsSync('/project/.centy/.centy-manifest.json')).toBe(true)
-      const content = vol.readFileSync(
-        '/project/.centy/.centy-manifest.json',
-        'utf8'
-      )
-      const manifest: CentyManifest = JSON.parse(content as string)
-
-      expect(manifest.schemaVersion).toBe(1)
-      expect(manifest.centyVersion).toBeDefined()
-      expect(manifest.createdAt).toBeDefined()
-      expect(manifest.updatedAt).toBeDefined()
-      expect(manifest.managedFiles).toBeInstanceOf(Array)
-    })
-
-    it('should track all managed files in manifest', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      const content = vol.readFileSync(
-        '/project/.centy/.centy-manifest.json',
-        'utf8'
-      )
-      const manifest: CentyManifest = JSON.parse(content as string)
-
-      const managedPaths = manifest.managedFiles.map(f => f.path)
-      expect(managedPaths).toContain('issues/')
-      expect(managedPaths).toContain('docs/')
-      expect(managedPaths).toContain('README.md')
     })
 
     it('should return created files in result', async () => {
-      vol.mkdirSync('/project', { recursive: true })
+      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
+      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
 
       const collector = createOutputCollector()
       const result = await init({
@@ -175,8 +106,9 @@ describe('init integration tests', () => {
       expect(result.created).toContain('README.md')
     })
 
-    it('should output creation message', async () => {
-      vol.mkdirSync('/project', { recursive: true })
+    it('should output connection message', async () => {
+      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
+      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
 
       const collector = createOutputCollector()
       await init({
@@ -186,28 +118,39 @@ describe('init integration tests', () => {
       })
 
       const output = collector.getOutput()
-      expect(output).toContain('Creating .centy folder')
+      expect(output).toContain('Connected to centy daemon')
+    })
+
+    it('should output initialization message', async () => {
+      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
+      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+
+      const collector = createOutputCollector()
+      await init({
+        cwd: '/project',
+        force: true,
+        output: collector.stream,
+      })
+
+      const output = collector.getOutput()
+      expect(output).toContain('Initializing .centy folder')
     })
   })
 
   describe('existing folder reconciliation', () => {
-    it('should detect existing .centy folder', async () => {
-      vol.mkdirSync('/project/.centy', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      const output = collector.getOutput()
-      expect(output).toContain('Found existing .centy folder')
-    })
-
     it('should preserve user-created files', async () => {
-      vol.mkdirSync('/project/.centy/issues', { recursive: true })
-      vol.writeFileSync('/project/.centy/issues/0001-my-issue.md', '# My Issue')
+      mockGetReconciliationPlan.mockResolvedValue(
+        createMockPlan({
+          toCreate: [],
+          upToDate: ['issues/', 'docs/', 'README.md'],
+          userFiles: [{ path: 'issues/0001-my-issue.md', hash: 'abc123' }],
+        })
+      )
+      mockExecuteReconciliation.mockResolvedValue(
+        createMockResponse({
+          created: [],
+        })
+      )
 
       const collector = createOutputCollector()
       const result = await init({
@@ -216,19 +159,22 @@ describe('init integration tests', () => {
         output: collector.stream,
       })
 
-      expect(vol.existsSync('/project/.centy/issues/0001-my-issue.md')).toBe(
-        true
-      )
-      const content = vol.readFileSync(
-        '/project/.centy/issues/0001-my-issue.md',
-        'utf8'
-      )
-      expect(content).toBe('# My Issue')
       expect(result.userFiles).toContain('issues/0001-my-issue.md')
     })
 
-    it('should create missing managed files', async () => {
-      vol.mkdirSync('/project/.centy/issues', { recursive: true })
+    it('should report restored files', async () => {
+      mockGetReconciliationPlan.mockResolvedValue(
+        createMockPlan({
+          toCreate: [],
+          toRestore: [{ path: 'README.md', hash: 'abc123' }],
+        })
+      )
+      mockExecuteReconciliation.mockResolvedValue(
+        createMockResponse({
+          created: [],
+          restored: ['README.md'],
+        })
+      )
 
       const collector = createOutputCollector()
       const result = await init({
@@ -237,214 +183,110 @@ describe('init integration tests', () => {
         output: collector.stream,
       })
 
-      expect(vol.existsSync('/project/.centy/docs')).toBe(true)
-      expect(vol.existsSync('/project/.centy/README.md')).toBe(true)
-      expect(result.created).toContain('docs/')
-      expect(result.created).toContain('README.md')
+      expect(result.restored).toContain('README.md')
     })
 
-    it('should report up-to-date files correctly', async () => {
-      vol.mkdirSync('/project', { recursive: true })
+    it('should report reset files when force is true', async () => {
+      mockGetReconciliationPlan.mockResolvedValue(
+        createMockPlan({
+          toCreate: [],
+          toReset: [{ path: 'README.md', hash: 'modified123' }],
+        })
+      )
+      mockExecuteReconciliation.mockResolvedValue(
+        createMockResponse({
+          created: [],
+          reset: [],
+          skipped: [],
+        })
+      )
 
-      const collector1 = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector1.stream,
-      })
-
-      const collector2 = createOutputCollector()
+      const collector = createOutputCollector()
       const result = await init({
         cwd: '/project',
         force: true,
-        output: collector2.stream,
+        output: collector.stream,
       })
 
-      expect(result.created).toHaveLength(0)
-      expect(result.success).toBe(true)
+      // When forced with toReset files, they should be skipped (force skips reset)
+      expect(result.skipped).toContain('README.md')
     })
   })
 
-  describe('manifest handling', () => {
-    it('should create manifest with correct schema version', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      const content = vol.readFileSync(
-        '/project/.centy/.centy-manifest.json',
-        'utf8'
-      )
-      const manifest: CentyManifest = JSON.parse(content as string)
-
-      expect(manifest.schemaVersion).toBe(1)
-    })
-
-    it('should include file hashes in manifest', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      const content = vol.readFileSync(
-        '/project/.centy/.centy-manifest.json',
-        'utf8'
-      )
-      const manifest: CentyManifest = JSON.parse(content as string)
-
-      const readmeEntry = manifest.managedFiles.find(
-        f => f.path === 'README.md'
-      )
-      expect(readmeEntry).toBeDefined()
-      expect(readmeEntry!.hash).toBeDefined()
-      expect(readmeEntry!.hash.length).toBeGreaterThan(0)
-    })
-
-    it('should include timestamps in manifest', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      const content = vol.readFileSync(
-        '/project/.centy/.centy-manifest.json',
-        'utf8'
-      )
-      const manifest: CentyManifest = JSON.parse(content as string)
-
-      expect(manifest.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T/)
-      expect(manifest.updatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/)
-    })
-
-    it('should include version in managed file entries', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      const content = vol.readFileSync(
-        '/project/.centy/.centy-manifest.json',
-        'utf8'
-      )
-      const manifest: CentyManifest = JSON.parse(content as string)
-
-      for (const file of manifest.managedFiles) {
-        expect(file.version).toBeDefined()
-      }
-    })
-  })
-
-  describe('file content verification', () => {
-    it('should create README.md with instructions for AI assistants', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      const content = vol.readFileSync(
-        '/project/.centy/README.md',
-        'utf8'
-      ) as string
-
-      expect(content).toContain('For AI Assistants')
-      expect(content).toContain('Create issues in `issues/`')
-      expect(content).toContain('NNNN-slug.md')
-    })
-
-    it('should create README.md with structure documentation', async () => {
-      vol.mkdirSync('/project', { recursive: true })
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      const content = vol.readFileSync(
-        '/project/.centy/README.md',
-        'utf8'
-      ) as string
-
-      expect(content).toContain('## Structure')
-      expect(content).toContain('`issues/`')
-      expect(content).toContain('`docs/`')
-    })
-  })
-
-  describe('edge cases', () => {
-    it('should handle nested project directories', async () => {
-      vol.mkdirSync('/home/user/projects/my-app', { recursive: true })
+  describe('daemon unavailable', () => {
+    it('should show error when daemon is not running (ECONNREFUSED)', async () => {
+      mockGetReconciliationPlan.mockRejectedValue(new Error('ECONNREFUSED'))
 
       const collector = createOutputCollector()
       const result = await init({
-        cwd: '/home/user/projects/my-app',
-        force: true,
-        output: collector.stream,
-      })
-
-      expect(result.success).toBe(true)
-      expect(vol.existsSync('/home/user/projects/my-app/.centy')).toBe(true)
-      expect(vol.existsSync('/home/user/projects/my-app/.centy/issues')).toBe(
-        true
-      )
-    })
-
-    it('should work with paths containing spaces', async () => {
-      vol.mkdirSync('/project with spaces', { recursive: true })
-
-      const collector = createOutputCollector()
-      const result = await init({
-        cwd: '/project with spaces',
-        force: true,
-        output: collector.stream,
-      })
-
-      expect(result.success).toBe(true)
-      expect(vol.existsSync('/project with spaces/.centy')).toBe(true)
-    })
-
-    it('should preserve existing subdirectories in managed directories', async () => {
-      vol.mkdirSync('/project/.centy/issues/archived', { recursive: true })
-      vol.writeFileSync('/project/.centy/issues/archived/old-issue.md', 'old')
-
-      const collector = createOutputCollector()
-      await init({
         cwd: '/project',
         force: true,
         output: collector.stream,
       })
 
-      expect(
-        vol.existsSync('/project/.centy/issues/archived/old-issue.md')
-      ).toBe(true)
+      expect(result.success).toBe(false)
+      const output = collector.getOutput()
+      expect(output).toContain('Centy daemon is not running')
+    })
+
+    it('should show error when daemon is unavailable', async () => {
+      mockGetReconciliationPlan.mockRejectedValue(new Error('UNAVAILABLE'))
+
+      const collector = createOutputCollector()
+      const result = await init({
+        cwd: '/project',
+        force: true,
+        output: collector.stream,
+      })
+
+      expect(result.success).toBe(false)
+      const output = collector.getOutput()
+      expect(output).toContain('Centy daemon is not running')
+    })
+
+    it('should report other errors normally', async () => {
+      mockGetReconciliationPlan.mockRejectedValue(new Error('Some other error'))
+
+      const collector = createOutputCollector()
+      const result = await init({
+        cwd: '/project',
+        force: true,
+        output: collector.stream,
+      })
+
+      expect(result.success).toBe(false)
+      const output = collector.getOutput()
+      expect(output).toContain('Error: Some other error')
+    })
+  })
+
+  describe('daemon execution errors', () => {
+    it('should handle daemon execution failure', async () => {
+      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
+      mockExecuteReconciliation.mockResolvedValue(
+        createMockResponse({
+          success: false,
+          error: 'Failed to write files',
+        })
+      )
+
+      const collector = createOutputCollector()
+      const result = await init({
+        cwd: '/project',
+        force: true,
+        output: collector.stream,
+      })
+
+      expect(result.success).toBe(false)
+      const output = collector.getOutput()
+      expect(output).toContain('Error: Failed to write files')
     })
   })
 
   describe('output messages', () => {
     it('should output success message on completion', async () => {
-      vol.mkdirSync('/project', { recursive: true })
+      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
+      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
 
       const collector = createOutputCollector()
       await init({
@@ -458,7 +300,8 @@ describe('init integration tests', () => {
     })
 
     it('should list created files in output', async () => {
-      vol.mkdirSync('/project', { recursive: true })
+      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
+      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
 
       const collector = createOutputCollector()
       await init({

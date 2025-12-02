@@ -2,6 +2,7 @@ import { Writable } from 'node:stream'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { CentyManifest } from '../../types/centy-manifest.js'
+import { VERSION } from '../../version.js'
 
 // Mock node:fs/promises with memfs
 vi.mock('node:fs/promises', async () => {
@@ -9,21 +10,7 @@ vi.mock('node:fs/promises', async () => {
   return memfs.fs.promises
 })
 
-// Mock daemon client to force local fallback
-vi.mock('../../daemon/daemon-get-reconciliation-plan.js', () => ({
-  daemonGetReconciliationPlan: vi
-    .fn()
-    .mockRejectedValue(new Error('ECONNREFUSED')),
-}))
-
-vi.mock('../../daemon/daemon-execute-reconciliation.js', () => ({
-  daemonExecuteReconciliation: vi
-    .fn()
-    .mockRejectedValue(new Error('ECONNREFUSED')),
-}))
-
 // Import after mocking
-const { init } = await import('../init/init.js')
 const { createIssue } = await import('./create-issue.js')
 
 // Helper to create a writable stream that collects output
@@ -44,6 +31,48 @@ function createOutputCollector(): {
   }
 }
 
+// Helper to set up initialized .centy folder in memfs
+function setupCentyFolder(projectPath: string): void {
+  vol.mkdirSync(`${projectPath}/.centy/issues`, { recursive: true })
+  vol.mkdirSync(`${projectPath}/.centy/docs`, { recursive: true })
+
+  const manifest: CentyManifest = {
+    schemaVersion: 1,
+    centyVersion: VERSION,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    managedFiles: [
+      {
+        path: 'issues/',
+        hash: '',
+        version: VERSION,
+        createdAt: new Date().toISOString(),
+        type: 'directory',
+      },
+      {
+        path: 'docs/',
+        hash: '',
+        version: VERSION,
+        createdAt: new Date().toISOString(),
+        type: 'directory',
+      },
+      {
+        path: 'README.md',
+        hash: 'abc123',
+        version: VERSION,
+        createdAt: new Date().toISOString(),
+        type: 'file',
+      },
+    ],
+  }
+
+  vol.writeFileSync(
+    `${projectPath}/.centy/.centy-manifest.json`,
+    JSON.stringify(manifest, null, 2)
+  )
+  vol.writeFileSync(`${projectPath}/.centy/README.md`, '# .centy\n')
+}
+
 describe('createIssue integration tests', () => {
   beforeEach(() => {
     vol.reset()
@@ -52,8 +81,8 @@ describe('createIssue integration tests', () => {
   describe('basic issue creation', () => {
     it('should create issue with title and description', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       const result = await createIssue({
         cwd: '/project',
@@ -76,8 +105,8 @@ describe('createIssue integration tests', () => {
 
     it('should create metadata.json with correct values', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       const result = await createIssue({
         cwd: '/project',
@@ -104,8 +133,8 @@ describe('createIssue integration tests', () => {
 
     it('should create assets folder for the issue', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       await createIssue({
         cwd: '/project',
@@ -121,8 +150,8 @@ describe('createIssue integration tests', () => {
 
     it('should use default priority and status', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       await createIssue({
         cwd: '/project',
@@ -145,8 +174,8 @@ describe('createIssue integration tests', () => {
   describe('issue numbering', () => {
     it('should increment issue numbers', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       await createIssue({
         cwd: '/project',
@@ -193,8 +222,8 @@ describe('createIssue integration tests', () => {
 
     it('should fail without title', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       const result = await createIssue({
         cwd: '/project',
@@ -211,8 +240,8 @@ describe('createIssue integration tests', () => {
   describe('manifest handling', () => {
     it('should update manifest with new files', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       await createIssue({
         cwd: '/project',
@@ -235,8 +264,8 @@ describe('createIssue integration tests', () => {
 
     it('should include hashes for files in manifest', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       await createIssue({
         cwd: '/project',
@@ -274,8 +303,8 @@ describe('createIssue integration tests', () => {
   describe('config handling', () => {
     it('should use defaults from config.json', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       // Create config with custom defaults
       const config = {
@@ -308,8 +337,8 @@ describe('createIssue integration tests', () => {
 
     it('should apply custom field defaults from config', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       // Create config with custom fields
       const config = {
@@ -346,8 +375,8 @@ describe('createIssue integration tests', () => {
   describe('output messages', () => {
     it('should output success message with paths', async () => {
       vol.mkdirSync('/project', { recursive: true })
+      setupCentyFolder('/project')
       const collector = createOutputCollector()
-      await init({ force: true, cwd: '/project', output: collector.stream })
 
       await createIssue({
         cwd: '/project',
