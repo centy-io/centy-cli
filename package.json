@@ -1,6 +1,6 @@
 {
   "name": "centy",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CLI for managing project issues and docs via code in the .centy folder",
   "type": "module",
   "main": "./dist/index.js",
@@ -17,6 +17,7 @@
   "files": [
     "bin",
     "dist",
+    "proto",
     "oclif.manifest.json"
   ],
   "scripts": {
