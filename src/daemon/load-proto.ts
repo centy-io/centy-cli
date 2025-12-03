@@ -60,6 +60,12 @@ import type {
   ProjectVersionInfo,
   UpdateVersionRequest,
   UpdateVersionResponse,
+  GetNextIssueNumberRequest,
+  GetNextIssueNumberResponse,
+  ShutdownRequest,
+  ShutdownResponse,
+  RestartRequest,
+  RestartResponse,
 } from './types.js'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
@@ -226,6 +232,25 @@ interface CentyDaemonClient {
       error: ServiceError | null,
       response: UpdateVersionResponse
     ) => void
+  ): void
+
+  // Issue number
+  getNextIssueNumber(
+    request: GetNextIssueNumberRequest,
+    callback: (
+      error: ServiceError | null,
+      response: GetNextIssueNumberResponse
+    ) => void
+  ): void
+
+  // Daemon control operations
+  shutdown(
+    request: ShutdownRequest,
+    callback: (error: ServiceError | null, response: ShutdownResponse) => void
+  ): void
+  restart(
+    request: RestartRequest,
+    callback: (error: ServiceError | null, response: RestartResponse) => void
   ): void
 }
 

@@ -426,3 +426,23 @@ export interface UpdateVersionResponse {
   toVersion: string
   migrationsApplied: string[]
 }
+
+// ============ Daemon Control Types ============
+
+export interface ShutdownRequest {
+  delaySeconds?: number
+}
+
+export interface ShutdownResponse {
+  success: boolean
+  message: string
+}
+
+export interface RestartRequest {
+  delaySeconds?: number
+}
+
+export interface RestartResponse {
+  success: boolean
+  message: string
+}
