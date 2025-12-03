@@ -83,11 +83,14 @@ export interface CreateIssueRequest {
   priority: number // 1 = highest priority, 0 = use default
   status: string
   customFields: Record<string, string>
+  template?: string
 }
 
 export interface CreateIssueResponse {
   success: boolean
   error: string
+  id: string
+  displayNumber: number
   issueNumber: string
   createdFiles: string[]
   manifest?: Manifest
@@ -116,6 +119,10 @@ export interface GetConfigRequest {
 export interface Config {
   customFields: CustomFieldDefinition[]
   defaults: Record<string, string>
+  priorityLevels: number
+  allowedStates: string[]
+  defaultState: string
+  version: string
 }
 
 export interface CustomFieldDefinition {
