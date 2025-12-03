@@ -2,34 +2,62 @@
   "schemaVersion": 1,
   "centyVersion": "0.1.0",
   "createdAt": "2025-12-02T20:37:03.616886+00:00",
-  "updatedAt": "2025-12-02T20:37:03.617384+00:00",
+  "updatedAt": "2025-12-03T19:21:41.923859+00:00",
   "managedFiles": [
     {
-      "path": "issues/",
-      "hash": "",
+      "path": "README.md",
+      "hash": "a22e0076a371033aea1f56c094212f5875f061f9f01bae16957cd12e7e82f135",
       "version": "0.1.0",
-      "createdAt": "2025-12-02T20:37:03.617054+00:00",
-      "type": "directory"
+      "createdAt": "2025-12-03T19:21:41.923856+00:00",
+      "type": "file"
     },
     {
       "path": "assets/",
       "hash": "",
       "version": "0.1.0",
-      "createdAt": "2025-12-02T20:37:03.617120+00:00",
+      "createdAt": "2025-12-03T19:21:41.923857+00:00",
       "type": "directory"
-    },
-    {
-      "path": "README.md",
-      "hash": "fcfc3bb411e55b14ce7a84fb1348d2b566b69f78de701f30312615a55367c8ac",
-      "version": "0.1.0",
-      "createdAt": "2025-12-02T20:37:03.617326+00:00",
-      "type": "file"
     },
     {
       "path": "docs/",
       "hash": "",
       "version": "0.1.0",
-      "createdAt": "2025-12-02T20:37:03.617383+00:00",
+      "createdAt": "2025-12-03T19:21:41.923858+00:00",
+      "type": "directory"
+    },
+    {
+      "path": "issues/",
+      "hash": "",
+      "version": "0.1.0",
+      "createdAt": "2025-12-03T19:21:41.923859+00:00",
+      "type": "directory"
+    },
+    {
+      "path": "templates/",
+      "hash": "",
+      "version": "0.1.0",
+      "createdAt": "2025-12-03T19:21:41.923220+00:00",
+      "type": "directory"
+    },
+    {
+      "path": "templates/README.md",
+      "hash": "e0861ad1114a084045a435342d197ebcb4ebd8da9f8efcbcb67c1cc32e3b8a54",
+      "version": "0.1.0",
+      "createdAt": "2025-12-03T19:21:41.923378+00:00",
+      "type": "file"
+    },
+    {
+      "path": "templates/docs/",
+      "hash": "",
+      "version": "0.1.0",
+      "createdAt": "2025-12-03T19:21:41.923270+00:00",
+      "type": "directory"
+    },
+    {
+      "path": "templates/issues/",
+      "hash": "",
+      "version": "0.1.0",
+      "createdAt": "2025-12-03T19:21:41.923201+00:00",
       "type": "directory"
     }
   ]
