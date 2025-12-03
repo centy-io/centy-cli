@@ -40,6 +40,9 @@ pnpm-debug.log*
 .claude-revert-backup-*/
 eslint-report.json
 
+# Playwright MCP
+.playwright-mcp/
+
 # Temporary files
 *.tmp
 .cache/
