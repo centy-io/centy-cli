@@ -1,7 +1,7 @@
 import { Hook } from '@oclif/core'
 import { checkDaemonConnection } from '../daemon/check-daemon-connection.js'
 
-const EXCLUDED_COMMANDS = ['info', 'shutdown', 'restart', 'start']
+const EXCLUDED_COMMANDS = ['info', 'shutdown', 'restart', 'start', 'install']
 
 const hook: Hook<'prerun'> = async function (options) {
   if (EXCLUDED_COMMANDS.includes(options.Command.id)) {

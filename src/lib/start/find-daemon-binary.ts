@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { homedir } from 'node:os'
 
 const DAEMON_BINARY_NAME = 'centy-daemon'
 
@@ -11,14 +12,20 @@ export function findDaemonBinary(): string {
     return envPath
   }
 
-  // 2. Check same directory as CLI binary
+  // 2. Check ~/.centy/bin/ (installed via centy install daemon)
+  const userInstallPath = join(homedir(), '.centy', 'bin', DAEMON_BINARY_NAME)
+  if (existsSync(userInstallPath)) {
+    return userInstallPath
+  }
+
+  // 3. Check same directory as CLI binary
   const __dirname = dirname(fileURLToPath(import.meta.url))
   const sameDirPath = join(__dirname, '..', '..', '..', DAEMON_BINARY_NAME)
   if (existsSync(sameDirPath)) {
     return sameDirPath
   }
 
-  // 3. Check development path (sibling repo)
+  // 4. Check development path (sibling repo)
   const devPath = join(
     __dirname,
     '..',
@@ -34,6 +41,6 @@ export function findDaemonBinary(): string {
     return devPath
   }
 
-  // 4. Fallback to PATH lookup (will be resolved by spawn)
+  // 5. Fallback to PATH lookup (will be resolved by spawn)
   return DAEMON_BINARY_NAME
 }

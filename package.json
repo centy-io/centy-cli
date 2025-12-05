@@ -1,6 +1,6 @@
 {
   "name": "centy",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "CLI for managing project issues and docs via code in the .centy folder",
   "type": "module",
   "main": "./dist/index.js",
@@ -102,6 +102,7 @@
     "@oclif/plugin-help": "^6.2.36",
     "@opentui/core": "^0.1.56",
     "@opentui/react": "^0.1.56",
-    "react": "^19.2.1"
+    "react": "^19.2.1",
+    "tar": "^7.5.2"
   }
 }

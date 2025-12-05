@@ -25,13 +25,20 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "config.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "config.js"
+      ]
     },
     "info": {
       "aliases": [],
       "args": {},
       "description": "Get centy daemon info",
-      "examples": ["<%= config.bin %> info", "<%= config.bin %> info --json"],
+      "examples": [
+        "<%= config.bin %> info",
+        "<%= config.bin %> info --json"
+      ],
       "flags": {
         "json": {
           "description": "Output as JSON",
@@ -49,7 +56,11 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "info.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "info.js"
+      ]
     },
     "init": {
       "aliases": [],
@@ -77,7 +88,11 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "init.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "init.js"
+      ]
     },
     "manifest": {
       "aliases": [],
@@ -104,7 +119,11 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "manifest.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "manifest.js"
+      ]
     },
     "restart": {
       "aliases": [],
@@ -134,7 +153,11 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "restart.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "restart.js"
+      ]
     },
     "shutdown": {
       "aliases": [],
@@ -164,7 +187,11 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "shutdown.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "shutdown.js"
+      ]
     },
     "start": {
       "aliases": [],
@@ -193,7 +220,11 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "start.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "start.js"
+      ]
     },
     "update": {
       "aliases": [],
@@ -230,7 +261,11 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "update.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "update.js"
+      ]
     },
     "version": {
       "aliases": [],
@@ -257,7 +292,11 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "version.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "version.js"
+      ]
     },
     "add:asset": {
       "aliases": [],
@@ -308,7 +347,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "add", "asset.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "add",
+        "asset.js"
+      ]
     },
     "create:doc": {
       "aliases": [],
@@ -362,7 +406,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "create", "doc.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "create",
+        "doc.js"
+      ]
     },
     "create:issue": {
       "aliases": [],
@@ -396,7 +445,11 @@
           "name": "priority",
           "hasDynamicHelp": false,
           "multiple": false,
-          "options": ["low", "medium", "high"],
+          "options": [
+            "low",
+            "medium",
+            "high"
+          ],
           "type": "option"
         },
         "status": {
@@ -418,312 +471,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "create", "issue.js"]
-    },
-    "list:assets": {
-      "aliases": [],
-      "args": {},
-      "description": "List assets for an issue or shared assets",
-      "examples": [
-        "<%= config.bin %> list assets --issue 1",
-        "<%= config.bin %> list assets --shared",
-        "<%= config.bin %> list assets --issue 1 --include-shared"
-      ],
-      "flags": {
-        "issue": {
-          "char": "i",
-          "description": "Issue ID or display number",
-          "name": "issue",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "shared": {
-          "char": "s",
-          "description": "List only shared assets",
-          "name": "shared",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "include-shared": {
-          "description": "Include shared assets when listing issue assets",
-          "name": "include-shared",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:assets",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "assets.js"]
-    },
-    "list:docs": {
-      "aliases": [],
-      "args": {},
-      "description": "List all documentation files",
-      "examples": [
-        "<%= config.bin %> list docs",
-        "<%= config.bin %> list docs --json"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:docs",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "docs.js"]
-    },
-    "list:issues": {
-      "aliases": [],
-      "args": {},
-      "description": "List all issues",
-      "examples": [
-        "<%= config.bin %> list issues",
-        "<%= config.bin %> list issues --status open",
-        "<%= config.bin %> list issues --priority 1"
-      ],
-      "flags": {
-        "status": {
-          "char": "s",
-          "description": "Filter by status (e.g., open, in-progress, closed)",
-          "name": "status",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "priority": {
-          "char": "p",
-          "description": "Filter by priority level (1 = highest)",
-          "name": "priority",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:issues",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "issues.js"]
-    },
-    "list:projects": {
-      "aliases": [],
-      "args": {},
-      "description": "List all tracked centy projects",
-      "examples": [
-        "<%= config.bin %> list projects",
-        "<%= config.bin %> list projects --include-stale",
-        "<%= config.bin %> list projects --json"
-      ],
-      "flags": {
-        "include-stale": {
-          "description": "Include projects where path no longer exists",
-          "name": "include-stale",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:projects",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "projects.js"]
-    },
-    "get:asset": {
-      "aliases": [],
-      "args": {
-        "filename": {
-          "description": "Asset filename",
-          "name": "filename",
-          "required": true
-        }
-      },
-      "description": "Get an asset and save it to a file",
-      "examples": [
-        "<%= config.bin %> get asset screenshot.png --issue 1 --output ./screenshot.png",
-        "<%= config.bin %> get asset logo.svg --shared --output ./logo.svg"
-      ],
-      "flags": {
-        "issue": {
-          "char": "i",
-          "description": "Issue ID or display number",
-          "name": "issue",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "shared": {
-          "char": "s",
-          "description": "Get a shared asset",
-          "name": "shared",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "output": {
-          "char": "o",
-          "description": "Output file path (defaults to asset filename)",
-          "name": "output",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "get:asset",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "get", "asset.js"]
-    },
-    "get:doc": {
-      "aliases": [],
-      "args": {
-        "slug": {
-          "description": "Doc slug",
-          "name": "slug",
-          "required": true
-        }
-      },
-      "description": "Get a documentation file by slug",
-      "examples": [
-        "<%= config.bin %> get doc getting-started",
-        "<%= config.bin %> get doc api-reference --json"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "get:doc",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "get", "doc.js"]
-    },
-    "get:issue": {
-      "aliases": [],
-      "args": {
-        "id": {
-          "description": "Issue ID (UUID) or display number",
-          "name": "id",
-          "required": true
-        }
-      },
-      "description": "Get a single issue by ID or display number",
-      "examples": [
-        "<%= config.bin %> get issue 1",
-        "<%= config.bin %> get issue abc123-uuid",
-        "<%= config.bin %> get issue 1 --json"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "get:issue",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "get", "issue.js"]
-    },
-    "get:project": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Get info about a specific project",
-      "examples": [
-        "<%= config.bin %> get project",
-        "<%= config.bin %> get project /path/to/project",
-        "<%= config.bin %> get project --json"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "get:project",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "get", "project.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "create",
+        "issue.js"
+      ]
     },
     "delete:asset": {
       "aliases": [],
@@ -773,7 +526,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "delete", "asset.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "delete",
+        "asset.js"
+      ]
     },
     "delete:doc": {
       "aliases": [],
@@ -807,7 +565,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "delete", "doc.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "delete",
+        "doc.js"
+      ]
     },
     "delete:issue": {
       "aliases": [],
@@ -842,7 +605,186 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "delete", "issue.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "delete",
+        "issue.js"
+      ]
+    },
+    "list:assets": {
+      "aliases": [],
+      "args": {},
+      "description": "List assets for an issue or shared assets",
+      "examples": [
+        "<%= config.bin %> list assets --issue 1",
+        "<%= config.bin %> list assets --shared",
+        "<%= config.bin %> list assets --issue 1 --include-shared"
+      ],
+      "flags": {
+        "issue": {
+          "char": "i",
+          "description": "Issue ID or display number",
+          "name": "issue",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "shared": {
+          "char": "s",
+          "description": "List only shared assets",
+          "name": "shared",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "include-shared": {
+          "description": "Include shared assets when listing issue assets",
+          "name": "include-shared",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:assets",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "list",
+        "assets.js"
+      ]
+    },
+    "list:docs": {
+      "aliases": [],
+      "args": {},
+      "description": "List all documentation files",
+      "examples": [
+        "<%= config.bin %> list docs",
+        "<%= config.bin %> list docs --json"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:docs",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "list",
+        "docs.js"
+      ]
+    },
+    "list:issues": {
+      "aliases": [],
+      "args": {},
+      "description": "List all issues",
+      "examples": [
+        "<%= config.bin %> list issues",
+        "<%= config.bin %> list issues --status open",
+        "<%= config.bin %> list issues --priority 1"
+      ],
+      "flags": {
+        "status": {
+          "char": "s",
+          "description": "Filter by status (e.g., open, in-progress, closed)",
+          "name": "status",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "priority": {
+          "char": "p",
+          "description": "Filter by priority level (1 = highest)",
+          "name": "priority",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:issues",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "list",
+        "issues.js"
+      ]
+    },
+    "list:projects": {
+      "aliases": [],
+      "args": {},
+      "description": "List all tracked centy projects",
+      "examples": [
+        "<%= config.bin %> list projects",
+        "<%= config.bin %> list projects --include-stale",
+        "<%= config.bin %> list projects --json"
+      ],
+      "flags": {
+        "include-stale": {
+          "description": "Include projects where path no longer exists",
+          "name": "include-stale",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:projects",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "list",
+        "projects.js"
+      ]
     },
     "register:project": {
       "aliases": [],
@@ -868,7 +810,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "register", "project.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "register",
+        "project.js"
+      ]
     },
     "untrack:project": {
       "aliases": [],
@@ -903,7 +850,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "untrack", "project.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "untrack",
+        "project.js"
+      ]
     },
     "update:doc": {
       "aliases": [],
@@ -954,7 +906,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "update", "doc.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "update",
+        "doc.js"
+      ]
     },
     "update:issue": {
       "aliases": [],
@@ -1014,8 +971,184 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "update", "issue.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "update",
+        "issue.js"
+      ]
+    },
+    "get:asset": {
+      "aliases": [],
+      "args": {
+        "filename": {
+          "description": "Asset filename",
+          "name": "filename",
+          "required": true
+        }
+      },
+      "description": "Get an asset and save it to a file",
+      "examples": [
+        "<%= config.bin %> get asset screenshot.png --issue 1 --output ./screenshot.png",
+        "<%= config.bin %> get asset logo.svg --shared --output ./logo.svg"
+      ],
+      "flags": {
+        "issue": {
+          "char": "i",
+          "description": "Issue ID or display number",
+          "name": "issue",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "shared": {
+          "char": "s",
+          "description": "Get a shared asset",
+          "name": "shared",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "output": {
+          "char": "o",
+          "description": "Output file path (defaults to asset filename)",
+          "name": "output",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "get:asset",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "get",
+        "asset.js"
+      ]
+    },
+    "get:doc": {
+      "aliases": [],
+      "args": {
+        "slug": {
+          "description": "Doc slug",
+          "name": "slug",
+          "required": true
+        }
+      },
+      "description": "Get a documentation file by slug",
+      "examples": [
+        "<%= config.bin %> get doc getting-started",
+        "<%= config.bin %> get doc api-reference --json"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "get:doc",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "get",
+        "doc.js"
+      ]
+    },
+    "get:issue": {
+      "aliases": [],
+      "args": {
+        "id": {
+          "description": "Issue ID (UUID) or display number",
+          "name": "id",
+          "required": true
+        }
+      },
+      "description": "Get a single issue by ID or display number",
+      "examples": [
+        "<%= config.bin %> get issue 1",
+        "<%= config.bin %> get issue abc123-uuid",
+        "<%= config.bin %> get issue 1 --json"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "get:issue",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "get",
+        "issue.js"
+      ]
+    },
+    "get:project": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Get info about a specific project",
+      "examples": [
+        "<%= config.bin %> get project",
+        "<%= config.bin %> get project /path/to/project",
+        "<%= config.bin %> get project --json"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "get:project",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "get",
+        "project.js"
+      ]
     }
   },
-  "version": "0.0.5"
+  "version": "0.0.6"
 }
