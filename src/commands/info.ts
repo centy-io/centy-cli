@@ -33,6 +33,9 @@ export default class Info extends Command {
 
       this.log(`Centy Daemon`)
       this.log(`  Version: ${response.version}`)
+      if (response.binaryPath) {
+        this.log(`  Binary: ${response.binaryPath}`)
+      }
       if (response.availableVersions.length > 0) {
         this.log(
           `  Available versions: ${response.availableVersions.join(', ')}`
