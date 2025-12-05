@@ -36,6 +36,11 @@ export default class Shutdown extends Command {
       this.log(response.message || 'Daemon shutdown initiated')
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error)
+      // CANCELLED error means daemon shut down before responding - this is success
+      if (msg.includes('CANCELLED')) {
+        this.log('Daemon shutdown initiated')
+        return
+      }
       if (msg.includes('UNAVAILABLE') || msg.includes('ECONNREFUSED')) {
         this.error(
           'Centy daemon is not running. Please start the daemon first.'
