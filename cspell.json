@@ -9,6 +9,8 @@
     "commitlint",
     "creds",
     "CRDT",
+    "EACCES",
+    "ENOENT",
     "esbenp",
     "eslint",
     "husky",
