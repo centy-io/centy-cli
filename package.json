@@ -21,7 +21,7 @@
     "oclif.manifest.json"
   ],
   "scripts": {
-    "build": "bun run build:tsc && bun run manifest",
+    "build": "pnpm run build:tsc && pnpm run manifest",
     "build:tsc": "tsc",
     "dev": "tsc --watch",
     "manifest": "oclif manifest",
@@ -38,7 +38,7 @@
     "prepare": "husky",
     "release": "release-it",
     "postpack": "rm -f oclif.manifest.json",
-    "prepack": "bun run build"
+    "prepack": "pnpm run build"
   },
   "keywords": [
     "cli",
