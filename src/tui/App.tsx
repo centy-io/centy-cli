@@ -5,6 +5,11 @@ import { Sidebar } from './components/layout/Sidebar.js'
 import { StatusBar } from './components/layout/StatusBar.js'
 import { ProjectList } from './components/domain/ProjectList.js'
 import { IssueList } from './components/domain/IssueList.js'
+import { IssueDetail } from './components/domain/IssueDetail.js'
+import { DocList } from './components/domain/DocList.js'
+import { DocDetail } from './components/domain/DocDetail.js'
+import { AssetList } from './components/domain/AssetList.js'
+import { ConfigPanel } from './components/domain/ConfigPanel.js'
 import { DaemonPanel } from './components/domain/DaemonPanel.js'
 import { MainPanel } from './components/layout/MainPanel.js'
 import { useNavigation } from './hooks/useNavigation.js'
@@ -57,14 +62,24 @@ export function App({ onExit }: AppProps) {
   const viewShortcuts: Record<ViewId, Array<{ key: string; label: string }>> = {
     projects: [{ key: 'f', label: 'favorite' }],
     issues: [],
-    'issue-detail': [],
+    'issue-detail': [
+      { key: 'Esc', label: 'back' },
+      { key: 'd/u', label: 'scroll' },
+    ],
     'issue-create': [],
     docs: [],
-    'doc-detail': [],
+    'doc-detail': [
+      { key: 'Esc', label: 'back' },
+      { key: 'd/u', label: 'scroll' },
+    ],
     'doc-create': [],
     assets: [],
     config: [],
-    daemon: [],
+    daemon: [
+      { key: 's', label: 'shutdown' },
+      { key: 'r', label: 'restart' },
+      { key: 'c', label: 'check' },
+    ],
     help: [],
   }
 
@@ -100,26 +115,42 @@ function renderView(view: ViewId) {
       return <ProjectList />
     case 'issues':
       return <IssueList />
+    case 'issue-detail':
+      return <IssueDetail />
     case 'docs':
-      return (
-        <MainPanel title="Docs">
-          <text fg="gray">Docs view coming soon...</text>
-        </MainPanel>
-      )
+      return <DocList />
+    case 'doc-detail':
+      return <DocDetail />
     case 'assets':
-      return (
-        <MainPanel title="Assets">
-          <text fg="gray">Assets view coming soon...</text>
-        </MainPanel>
-      )
+      return <AssetList />
     case 'config':
-      return (
-        <MainPanel title="Config">
-          <text fg="gray">Config view coming soon...</text>
-        </MainPanel>
-      )
+      return <ConfigPanel />
     case 'daemon':
       return <DaemonPanel />
+    case 'help':
+      return (
+        <MainPanel title="Help">
+          <box flexDirection="column">
+            <text>
+              <b>Centy TUI Help</b>
+            </text>
+            <text> </text>
+            <text fg="cyan">Navigation</text>
+            <text> j/k or Up/Down - Move selection</text>
+            <text> Enter - Select/open item</text>
+            <text> Tab - Cycle through views</text>
+            <text> 1-6 - Quick jump to view</text>
+            <text> Esc/Backspace - Go back</text>
+            <text> </text>
+            <text fg="cyan">Global</text>
+            <text> q - Quit</text>
+            <text> </text>
+            <text fg="cyan">Scrolling</text>
+            <text> j/k - Scroll line by line</text>
+            <text> d/u - Scroll page down/up</text>
+          </box>
+        </MainPanel>
+      )
     default:
       return <ProjectList />
   }

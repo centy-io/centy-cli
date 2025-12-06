@@ -6,11 +6,14 @@
 import { daemonListProjects } from '../../daemon/daemon-list-projects.js'
 import { daemonListIssues } from '../../daemon/daemon-list-issues.js'
 import { daemonListDocs } from '../../daemon/daemon-list-docs.js'
+import { daemonListAssets } from '../../daemon/daemon-list-assets.js'
 import { daemonGetConfig } from '../../daemon/daemon-get-config.js'
 import { daemonGetDaemonInfo } from '../../daemon/daemon-get-daemon-info.js'
 import { daemonControlService } from '../../daemon/daemon-control-service.js'
 import { checkDaemonConnection } from '../../daemon/check-daemon-connection.js'
 import { daemonSetProjectFavorite } from '../../daemon/daemon-set-project-favorite.js'
+import { daemonGetDoc } from '../../daemon/daemon-get-doc.js'
+import { daemonGetIssue } from '../../daemon/daemon-get-issue.js'
 import type {
   ProjectInfo,
   Issue,
@@ -19,6 +22,7 @@ import type {
   DaemonInfo,
   ShutdownResponse,
   RestartResponse,
+  Asset,
 } from '../../daemon/types.js'
 
 export interface DaemonServiceResult<T> {
@@ -135,6 +139,55 @@ export class DaemonService {
           error instanceof Error
             ? error.message
             : 'Failed to set project favorite',
+      }
+    }
+  }
+
+  async listAssets(
+    projectPath: string,
+    options?: { issueId?: string; includeShared?: boolean }
+  ): Promise<DaemonServiceResult<Asset[]>> {
+    try {
+      const response = await daemonListAssets({
+        projectPath,
+        issueId: options?.issueId,
+        includeShared: options?.includeShared ?? true,
+      })
+      return { success: true, data: response.assets }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to list assets',
+      }
+    }
+  }
+
+  async getDoc(
+    projectPath: string,
+    slug: string
+  ): Promise<DaemonServiceResult<Doc>> {
+    try {
+      const response = await daemonGetDoc({ projectPath, slug })
+      return { success: true, data: response }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get doc',
+      }
+    }
+  }
+
+  async getIssue(
+    projectPath: string,
+    issueId: string
+  ): Promise<DaemonServiceResult<Issue>> {
+    try {
+      const response = await daemonGetIssue({ projectPath, issueId })
+      return { success: true, data: response }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get issue',
       }
     }
   }
