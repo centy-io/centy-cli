@@ -10,6 +10,7 @@ import { daemonGetConfig } from '../../daemon/daemon-get-config.js'
 import { daemonGetDaemonInfo } from '../../daemon/daemon-get-daemon-info.js'
 import { daemonControlService } from '../../daemon/daemon-control-service.js'
 import { checkDaemonConnection } from '../../daemon/check-daemon-connection.js'
+import { daemonSetProjectFavorite } from '../../daemon/daemon-set-project-favorite.js'
 import type {
   ProjectInfo,
   Issue,
@@ -112,6 +113,30 @@ export class DaemonService {
     delaySeconds?: number
   ): Promise<DaemonServiceResult<RestartResponse>> {
     return daemonControlService.restart({ delaySeconds })
+  }
+
+  async setProjectFavorite(
+    projectPath: string,
+    isFavorite: boolean
+  ): Promise<DaemonServiceResult<ProjectInfo>> {
+    try {
+      const response = await daemonSetProjectFavorite({
+        projectPath,
+        isFavorite,
+      })
+      if (!response.success) {
+        return { success: false, error: response.error }
+      }
+      return { success: true, data: response.project }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to set project favorite',
+      }
+    }
   }
 }
 

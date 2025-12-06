@@ -42,10 +42,18 @@ export default class ListProjects extends Command {
       return
     }
 
+    // Sort favorites first
+    const sortedProjects = [...response.projects].sort((a, b) => {
+      if (a.isFavorite && !b.isFavorite) return -1
+      if (!a.isFavorite && b.isFavorite) return 1
+      return 0
+    })
+
     this.log(`Found ${response.totalCount} project(s):\n`)
-    for (const project of response.projects) {
+    for (const project of sortedProjects) {
       const status = project.initialized ? '✓' : '✗'
-      this.log(`${status} ${project.name}`)
+      const favorite = project.isFavorite ? '★' : ' '
+      this.log(`${favorite} ${status} ${project.name}`)
       this.log(`    Path: ${project.path}`)
       this.log(`    Issues: ${project.issueCount}, Docs: ${project.docCount}`)
       this.log(`    Last accessed: ${project.lastAccessed}`)

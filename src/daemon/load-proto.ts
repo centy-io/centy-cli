@@ -54,6 +54,8 @@ import type {
   UntrackProjectResponse,
   GetProjectInfoRequest,
   GetProjectInfoResponse,
+  SetProjectFavoriteRequest,
+  SetProjectFavoriteResponse,
   GetDaemonInfoRequest,
   DaemonInfo,
   GetProjectVersionRequest,
@@ -214,6 +216,13 @@ interface CentyDaemonClient {
     callback: (
       error: ServiceError | null,
       response: GetProjectInfoResponse
+    ) => void
+  ): void
+  setProjectFavorite(
+    request: SetProjectFavoriteRequest,
+    callback: (
+      error: ServiceError | null,
+      response: SetProjectFavoriteResponse
     ) => void
   ): void
 

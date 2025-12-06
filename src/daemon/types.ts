@@ -345,6 +345,7 @@ export interface ProjectInfo {
   docCount: number
   initialized: boolean
   name: string
+  isFavorite: boolean
 }
 
 export interface ListProjectsRequest {
@@ -381,6 +382,17 @@ export interface GetProjectInfoRequest {
 
 export interface GetProjectInfoResponse {
   found: boolean
+  project: ProjectInfo
+}
+
+export interface SetProjectFavoriteRequest {
+  projectPath: string
+  isFavorite: boolean
+}
+
+export interface SetProjectFavoriteResponse {
+  success: boolean
+  error: string
   project: ProjectInfo
 }
 

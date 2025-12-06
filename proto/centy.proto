@@ -40,6 +40,9 @@ service CentyDaemon {
   // Read configuration
   rpc GetConfig(GetConfigRequest) returns (Config);
 
+  // Update configuration
+  rpc UpdateConfig(UpdateConfigRequest) returns (UpdateConfigResponse);
+
   // Check if centy is initialized in a directory
   rpc IsInitialized(IsInitializedRequest) returns (IsInitializedResponse);
 
@@ -90,6 +93,9 @@ service CentyDaemon {
 
   // Get info about a specific project
   rpc GetProjectInfo(GetProjectInfoRequest) returns (GetProjectInfoResponse);
+
+  // Set project favorite status
+  rpc SetProjectFavorite(SetProjectFavoriteRequest) returns (SetProjectFavoriteResponse);
 
   // ============ Version RPCs ============
 
@@ -306,15 +312,6 @@ message Manifest {
   string centy_version = 2;
   string created_at = 3;
   string updated_at = 4;
-  repeated ManagedFile managed_files = 5;
-}
-
-message ManagedFile {
-  string path = 1;
-  string hash = 2;
-  string version = 3;
-  string created_at = 4;
-  FileType file_type = 5;
 }
 
 enum FileType {
@@ -343,6 +340,9 @@ message Config {
   repeated string allowed_states = 4;  // Allowed status values (default: ["open", "in-progress", "closed"])
   string default_state = 5;            // Default state for new issues (default: "open")
   string version = 6;                  // Project version (semver, empty = daemon default)
+  map<string, string> state_colors = 7;     // State name → hex color (e.g., "open" → "#10b981")
+  map<string, string> priority_colors = 8;  // Priority level → hex color (e.g., "1" → "#ef4444")
+  LlmConfig llm = 9;                        // LLM-related settings
 }
 
 message CustomFieldDefinition {
@@ -351,6 +351,23 @@ message CustomFieldDefinition {
   bool required = 3;
   string default_value = 4;
   repeated string enum_values = 5;  // For enum type
+}
+
+message LlmConfig {
+  bool auto_close_on_complete = 1;    // Auto-close issues when marked complete by LLM
+  bool update_status_on_start = 2;    // Update status to in-progress when LLM starts work
+  bool allow_direct_edits = 3;        // Allow LLM to directly edit issue files
+}
+
+message UpdateConfigRequest {
+  string project_path = 1;
+  Config config = 2;
+}
+
+message UpdateConfigResponse {
+  bool success = 1;
+  string error = 2;
+  Config config = 3;  // The saved config (with any normalization applied)
 }
 
 // ============ Utility Messages ============
@@ -520,6 +537,7 @@ message ProjectInfo {
   uint32 doc_count = 5;           // Fetched live from .centy/docs/
   bool initialized = 6;           // Fetched live (manifest exists)
   string name = 7;                // Fetched live (directory name)
+  bool is_favorite = 8;           // User-marked favorite status
 }
 
 message ListProjectsRequest {
@@ -557,6 +575,17 @@ message GetProjectInfoRequest {
 message GetProjectInfoResponse {
   bool found = 1;
   ProjectInfo project = 2;
+}
+
+message SetProjectFavoriteRequest {
+  string project_path = 1;
+  bool is_favorite = 2;
+}
+
+message SetProjectFavoriteResponse {
+  bool success = 1;
+  string error = 2;
+  ProjectInfo project = 3;        // The updated project info
 }
 
 // ============ Version Messages ============

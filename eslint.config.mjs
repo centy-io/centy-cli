@@ -66,6 +66,7 @@ export default [
       'single-export/single-export': 'off',
       'import/order': 'off',
       'max-lines': 'off',
+      'max-lines-per-function': 'off',
       'security/detect-object-injection': 'off',
       'no-optional-chaining/no-optional-chaining': 'off',
       'default/no-default-params': 'off',

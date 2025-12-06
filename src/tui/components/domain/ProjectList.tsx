@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useKeyboard } from '@opentui/react'
 import type { KeyEvent, ScrollBoxRenderable } from '@opentui/core'
 import { MainPanel } from '../layout/MainPanel.js'
@@ -15,10 +15,14 @@ interface ProjectItemProps {
 
 function ProjectItem({ project, isSelected }: ProjectItemProps) {
   const name = project.name || project.path.split('/').pop() || project.path
+  const favoriteIndicator = project.isFavorite ? '★ ' : '  '
 
   return (
     <box key={project.path} height={ITEM_HEIGHT} flexDirection="column">
       <box flexDirection="row">
+        <text fg={project.isFavorite ? 'yellow' : undefined}>
+          {favoriteIndicator}
+        </text>
         <text bg={isSelected ? 'gray' : undefined}>
           {isSelected ? (
             <b>
@@ -29,7 +33,7 @@ function ProjectItem({ project, isSelected }: ProjectItemProps) {
           )}
         </text>
       </box>
-      <box flexDirection="row" paddingLeft={3}>
+      <box flexDirection="row" paddingLeft={5}>
         <text fg="gray">
           {project.issueCount} issues, {project.docCount} docs
         </text>
@@ -40,10 +44,30 @@ function ProjectItem({ project, isSelected }: ProjectItemProps) {
 }
 
 export function ProjectList() {
-  const { projects, isLoading, selectProject } = useProjects()
+  const { projects, isLoading, selectProject, toggleFavorite } = useProjects()
   const { navigate } = useNavigation()
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [selectedPath, setSelectedPath] = useState<string | null>(null)
   const scrollBoxRef = useRef<ScrollBoxRenderable>(null)
+
+  // Sort projects: favorites first, then by last accessed
+  const sortedProjects = useMemo(() => {
+    return [...projects].sort((a, b) => {
+      if (a.isFavorite && !b.isFavorite) return -1
+      if (!a.isFavorite && b.isFavorite) return 1
+      return 0 // Keep original order (already sorted by last accessed from daemon)
+    })
+  }, [projects])
+
+  // Keep selection on the same project after re-sorting
+  useEffect(() => {
+    if (selectedPath) {
+      const newIndex = sortedProjects.findIndex(p => p.path === selectedPath)
+      if (newIndex !== -1 && newIndex !== selectedIndex) {
+        setSelectedIndex(newIndex)
+      }
+    }
+  }, [sortedProjects, selectedPath, selectedIndex])
 
   useEffect(() => {
     if (scrollBoxRef.current) {
@@ -66,16 +90,28 @@ export function ProjectList() {
 
   useKeyboard((event: KeyEvent) => {
     if (event.name === 'j' || event.name === 'down') {
-      setSelectedIndex((prev: number) =>
-        Math.min(prev + 1, projects.length - 1)
-      )
+      setSelectedIndex((prev: number) => {
+        const newIndex = Math.min(prev + 1, sortedProjects.length - 1)
+        setSelectedPath(sortedProjects[newIndex]?.path ?? null)
+        return newIndex
+      })
     } else if (event.name === 'k' || event.name === 'up') {
-      setSelectedIndex((prev: number) => Math.max(prev - 1, 0))
+      setSelectedIndex((prev: number) => {
+        const newIndex = Math.max(prev - 1, 0)
+        setSelectedPath(sortedProjects[newIndex]?.path ?? null)
+        return newIndex
+      })
     } else if (event.name === 'return') {
-      const project = projects[selectedIndex]
+      const project = sortedProjects[selectedIndex]
       if (project) {
         selectProject(project.path)
         navigate('issues')
+      }
+    } else if (event.name === 'f') {
+      const project = sortedProjects[selectedIndex]
+      if (project) {
+        setSelectedPath(project.path)
+        toggleFavorite(project.path, !project.isFavorite)
       }
     }
   })
@@ -88,7 +124,7 @@ export function ProjectList() {
     )
   }
 
-  if (projects.length === 0) {
+  if (sortedProjects.length === 0) {
     return (
       <MainPanel title="Projects">
         <text fg="gray">No projects found.</text>
@@ -100,7 +136,7 @@ export function ProjectList() {
   return (
     <MainPanel title="Projects">
       <scrollbox ref={scrollBoxRef} flexGrow={1} scrollY={true}>
-        {projects.map((project: ProjectInfo, index: number) => (
+        {sortedProjects.map((project: ProjectInfo, index: number) => (
           <ProjectItem
             key={project.path}
             project={project}

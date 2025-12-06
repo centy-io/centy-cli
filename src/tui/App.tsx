@@ -46,12 +46,29 @@ export function App({ onExit }: AppProps) {
     }
   })
 
-  const shortcuts = [
+  const baseShortcuts = [
     { key: 'j/k', label: 'navigate' },
     { key: 'Enter', label: 'select' },
     { key: 'Tab', label: 'switch view' },
     { key: 'q', label: 'quit' },
   ]
+
+  // View-specific shortcuts
+  const viewShortcuts: Record<ViewId, Array<{ key: string; label: string }>> = {
+    projects: [{ key: 'f', label: 'favorite' }],
+    issues: [],
+    'issue-detail': [],
+    'issue-create': [],
+    docs: [],
+    'doc-detail': [],
+    'doc-create': [],
+    assets: [],
+    config: [],
+    daemon: [],
+    help: [],
+  }
+
+  const shortcuts = [...baseShortcuts, ...viewShortcuts[currentView]]
 
   return (
     <box flexDirection="column" width="100%" height="100%">

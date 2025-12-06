@@ -26,6 +26,17 @@ export function useProjects() {
     [dispatch]
   )
 
+  const toggleFavorite = useCallback(
+    async (path: string, isFavorite: boolean) => {
+      const result = await daemonService.setProjectFavorite(path, isFavorite)
+      if (result.success && result.data) {
+        // Update the project in the list
+        dispatch({ type: 'UPDATE_PROJECT', project: result.data })
+      }
+    },
+    [dispatch]
+  )
+
   // Load projects when daemon connects
   useEffect(() => {
     if (state.daemonConnected && state.projects.length === 0) {
@@ -39,5 +50,6 @@ export function useProjects() {
     isLoading: state.isLoading,
     loadProjects,
     selectProject,
+    toggleFavorite,
   }
 }

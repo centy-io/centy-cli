@@ -47,6 +47,7 @@ export type AppAction =
   | { type: 'NAVIGATE'; view: ViewId; params?: ViewParams }
   | { type: 'GO_BACK' }
   | { type: 'SET_PROJECTS'; projects: ProjectInfo[] }
+  | { type: 'UPDATE_PROJECT'; project: ProjectInfo }
   | { type: 'SELECT_PROJECT'; path: string }
   | { type: 'SET_ISSUES'; issues: Issue[] }
   | { type: 'SET_DOCS'; docs: Doc[] }
@@ -103,6 +104,14 @@ function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'SET_PROJECTS':
       return { ...state, projects: action.projects }
+
+    case 'UPDATE_PROJECT':
+      return {
+        ...state,
+        projects: state.projects.map(p =>
+          p.path === action.project.path ? action.project : p
+        ),
+      }
 
     case 'SELECT_PROJECT':
       return {
