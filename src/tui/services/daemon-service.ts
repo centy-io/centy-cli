@@ -39,12 +39,17 @@ export class DaemonService {
   }
 
   async listProjects(
-    options: { includeStale?: boolean; includeUninitialized?: boolean } = {}
+    options: {
+      includeStale?: boolean
+      includeUninitialized?: boolean
+      includeArchived?: boolean
+    } = {}
   ): Promise<DaemonServiceResult<ProjectInfo[]>> {
     try {
       const response = await daemonListProjects({
         includeStale: options.includeStale ?? false,
         includeUninitialized: options.includeUninitialized ?? false,
+        includeArchived: options.includeArchived ?? false,
       })
       return { success: true, data: response.projects }
     } catch (error) {

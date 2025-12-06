@@ -56,6 +56,8 @@ import type {
   GetProjectInfoResponse,
   SetProjectFavoriteRequest,
   SetProjectFavoriteResponse,
+  SetProjectArchivedRequest,
+  SetProjectArchivedResponse,
   GetDaemonInfoRequest,
   DaemonInfo,
   GetProjectVersionRequest,
@@ -237,6 +239,13 @@ interface CentyDaemonClient {
     callback: (
       error: ServiceError | null,
       response: SetProjectFavoriteResponse
+    ) => void
+  ): void
+  setProjectArchived(
+    request: SetProjectArchivedRequest,
+    callback: (
+      error: ServiceError | null,
+      response: SetProjectArchivedResponse
     ) => void
   ): void
 

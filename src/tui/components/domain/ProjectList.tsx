@@ -172,7 +172,8 @@ export function ProjectList() {
       {confirmUntrack && projectToUntrack && (
         <box
           flexDirection="column"
-          paddingY={1}
+          paddingTop={1}
+          paddingBottom={1}
           borderStyle="single"
           borderColor="yellow"
         >
