@@ -56,20 +56,7 @@ centy
 
 Running `centy` without any arguments opens a full-screen interactive terminal UI:
 
-```
-┌─────────────────────────────────────────────────────┐
-│ Centy                              ● Daemon: Connected │
-├──────────────┬──────────────────────────────────────┤
-│ Projects     │                                      │
-│ > Issues     │  Issue List                          │
-│   Docs       │  ─────────────────────────           │
-│   Assets     │  #1 [high] Fix login bug             │
-│   Config     │  #2 [med]  Add dark mode             │
-│   Daemon     │  #3 [low]  Update docs               │
-├──────────────┴──────────────────────────────────────┤
-│ j/k: navigate  Enter: select  Tab: switch view  q: quit │
-└─────────────────────────────────────────────────────┘
-```
+![Centy TUI](assets/tui.png)
 
 ### TUI Keyboard Shortcuts
 
@@ -270,6 +257,7 @@ All files are human-readable markdown and JSON, making them easy to review in PR
 ### Supported Platforms
 
 The daemon supports:
+
 - macOS (Intel & Apple Silicon)
 - Linux (x86_64 & ARM64)
 - Windows (x86_64)
