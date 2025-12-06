@@ -1,5 +1,57 @@
 {
   "commands": {
+    "compact": {
+      "aliases": [],
+      "args": {},
+      "description": "Compact uncompacted issues into feature summaries",
+      "examples": [
+        "<%= config.bin %> <%= command.id %>",
+        "<%= config.bin %> <%= command.id %> --dry-run",
+        "<%= config.bin %> <%= command.id %> --output context.md",
+        "<%= config.bin %> <%= command.id %> --input response.md"
+      ],
+      "flags": {
+        "dry-run": {
+          "char": "d",
+          "description": "List uncompacted issues without modifying",
+          "name": "dry-run",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "output": {
+          "char": "o",
+          "description": "Write LLM context to file (for external LLM processing)",
+          "name": "output",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "input": {
+          "char": "i",
+          "description": "Read LLM response from file and apply changes",
+          "name": "input",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output as JSON (for --dry-run)",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "compact",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "compact.js"]
+    },
     "config": {
       "aliases": [],
       "args": {},
@@ -310,6 +362,42 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "add", "asset.js"]
     },
+    "daemon:autostart": {
+      "aliases": [],
+      "args": {},
+      "description": "Configure daemon to start automatically on boot",
+      "examples": [
+        "<%= config.bin %> daemon autostart",
+        "<%= config.bin %> daemon autostart --enable",
+        "<%= config.bin %> daemon autostart --disable"
+      ],
+      "flags": {
+        "enable": {
+          "description": "Enable autostart on boot",
+          "exclusive": ["disable"],
+          "name": "enable",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "disable": {
+          "description": "Disable autostart on boot",
+          "exclusive": ["enable"],
+          "name": "disable",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "daemon:autostart",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "daemon", "autostart.js"]
+    },
     "create:doc": {
       "aliases": [],
       "args": {},
@@ -508,42 +596,6 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "create", "pr.js"]
-    },
-    "daemon:autostart": {
-      "aliases": [],
-      "args": {},
-      "description": "Configure daemon to start automatically on boot",
-      "examples": [
-        "<%= config.bin %> daemon autostart",
-        "<%= config.bin %> daemon autostart --enable",
-        "<%= config.bin %> daemon autostart --disable"
-      ],
-      "flags": {
-        "enable": {
-          "description": "Enable autostart on boot",
-          "exclusive": ["disable"],
-          "name": "enable",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "disable": {
-          "description": "Disable autostart on boot",
-          "exclusive": ["enable"],
-          "name": "disable",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "daemon:autostart",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "daemon", "autostart.js"]
     },
     "install:daemon": {
       "aliases": [],
@@ -903,41 +955,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "project", "favorite.js"]
     },
-    "untrack:project": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Remove a project from tracking",
-      "examples": [
-        "<%= config.bin %> untrack project",
-        "<%= config.bin %> untrack project /path/to/project",
-        "<%= config.bin %> untrack project --force"
-      ],
-      "flags": {
-        "force": {
-          "char": "f",
-          "description": "Skip confirmation prompt",
-          "name": "force",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "untrack:project",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "untrack", "project.js"]
-    },
     "get:asset": {
       "aliases": [],
       "args": {
@@ -1122,6 +1139,41 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "get", "project.js"]
+    },
+    "untrack:project": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Remove a project from tracking",
+      "examples": [
+        "<%= config.bin %> untrack project",
+        "<%= config.bin %> untrack project /path/to/project",
+        "<%= config.bin %> untrack project --force"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Skip confirmation prompt",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "untrack:project",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "untrack", "project.js"]
     },
     "update:doc": {
       "aliases": [],

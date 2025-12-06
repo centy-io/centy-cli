@@ -34,6 +34,8 @@ export default [
       'import/order': 'off',
       'ddd/require-spec-file': 'off',
       'no-restricted-syntax': 'off',
+      'max-lines': 'off',
+      'security/detect-non-literal-fs-filename': 'off',
     },
   },
   {

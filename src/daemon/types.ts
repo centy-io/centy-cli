@@ -143,6 +143,8 @@ export interface IssueMetadata {
   updatedAt: string
   customFields: Record<string, string>
   priorityLabel: string
+  compacted: boolean
+  compactedAt: string
 }
 
 export interface GetIssueRequest {
@@ -576,4 +578,77 @@ export interface DeletePrResponse {
   success: boolean
   error: string
   manifest?: Manifest
+}
+
+// ============ Features Types ============
+
+export interface GetFeatureStatusRequest {
+  projectPath: string
+}
+
+export interface GetFeatureStatusResponse {
+  initialized: boolean
+  hasCompact: boolean
+  hasInstruction: boolean
+  migrationCount: number
+  uncompactedCount: number
+}
+
+export interface ListUncompactedIssuesRequest {
+  projectPath: string
+}
+
+export interface ListUncompactedIssuesResponse {
+  issues: Issue[]
+  totalCount: number
+}
+
+export interface GetInstructionRequest {
+  projectPath: string
+}
+
+export interface GetInstructionResponse {
+  content: string
+}
+
+export interface GetCompactRequest {
+  projectPath: string
+}
+
+export interface GetCompactResponse {
+  exists: boolean
+  content: string
+}
+
+export interface UpdateCompactRequest {
+  projectPath: string
+  content: string
+}
+
+export interface UpdateCompactResponse {
+  success: boolean
+  error: string
+}
+
+export interface SaveMigrationRequest {
+  projectPath: string
+  content: string
+}
+
+export interface SaveMigrationResponse {
+  success: boolean
+  error: string
+  filename: string
+  path: string
+}
+
+export interface MarkIssuesCompactedRequest {
+  projectPath: string
+  issueIds: string[]
+}
+
+export interface MarkIssuesCompactedResponse {
+  success: boolean
+  error: string
+  markedCount: number
 }

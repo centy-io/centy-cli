@@ -84,6 +84,21 @@ import type {
   DeletePrResponse,
   GetNextPrNumberRequest,
   GetNextPrNumberResponse,
+  // Features types
+  GetFeatureStatusRequest,
+  GetFeatureStatusResponse,
+  ListUncompactedIssuesRequest,
+  ListUncompactedIssuesResponse,
+  GetInstructionRequest,
+  GetInstructionResponse,
+  GetCompactRequest,
+  GetCompactResponse,
+  UpdateCompactRequest,
+  UpdateCompactResponse,
+  SaveMigrationRequest,
+  SaveMigrationResponse,
+  MarkIssuesCompactedRequest,
+  MarkIssuesCompactedResponse,
 } from './types.js'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
@@ -315,6 +330,54 @@ interface CentyDaemonClient {
     callback: (
       error: ServiceError | null,
       response: GetNextPrNumberResponse
+    ) => void
+  ): void
+
+  // Features operations
+  getFeatureStatus(
+    request: GetFeatureStatusRequest,
+    callback: (
+      error: ServiceError | null,
+      response: GetFeatureStatusResponse
+    ) => void
+  ): void
+  listUncompactedIssues(
+    request: ListUncompactedIssuesRequest,
+    callback: (
+      error: ServiceError | null,
+      response: ListUncompactedIssuesResponse
+    ) => void
+  ): void
+  getInstruction(
+    request: GetInstructionRequest,
+    callback: (
+      error: ServiceError | null,
+      response: GetInstructionResponse
+    ) => void
+  ): void
+  getCompact(
+    request: GetCompactRequest,
+    callback: (error: ServiceError | null, response: GetCompactResponse) => void
+  ): void
+  updateCompact(
+    request: UpdateCompactRequest,
+    callback: (
+      error: ServiceError | null,
+      response: UpdateCompactResponse
+    ) => void
+  ): void
+  saveMigration(
+    request: SaveMigrationRequest,
+    callback: (
+      error: ServiceError | null,
+      response: SaveMigrationResponse
+    ) => void
+  ): void
+  markIssuesCompacted(
+    request: MarkIssuesCompactedRequest,
+    callback: (
+      error: ServiceError | null,
+      response: MarkIssuesCompactedResponse
     ) => void
   ): void
 }
