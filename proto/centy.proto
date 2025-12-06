@@ -97,6 +97,9 @@ service CentyDaemon {
   // Set project favorite status
   rpc SetProjectFavorite(SetProjectFavoriteRequest) returns (SetProjectFavoriteResponse);
 
+  // Set project archived status
+  rpc SetProjectArchived(SetProjectArchivedRequest) returns (SetProjectArchivedResponse);
+
   // ============ Version RPCs ============
 
   // Get daemon version info
@@ -561,10 +564,13 @@ message ProjectInfo {
   bool initialized = 6;           // Fetched live (manifest exists)
   string name = 7;                // Fetched live (directory name)
   bool is_favorite = 8;           // User-marked favorite status
+  bool is_archived = 9;           // User-marked archived status
 }
 
 message ListProjectsRequest {
   bool include_stale = 1;         // Include projects where path no longer exists
+  bool include_uninitialized = 2; // Include projects without .centy manifest
+  bool include_archived = 3;      // Include archived projects (default: false)
 }
 
 message ListProjectsResponse {
@@ -606,6 +612,17 @@ message SetProjectFavoriteRequest {
 }
 
 message SetProjectFavoriteResponse {
+  bool success = 1;
+  string error = 2;
+  ProjectInfo project = 3;        // The updated project info
+}
+
+message SetProjectArchivedRequest {
+  string project_path = 1;
+  bool is_archived = 2;
+}
+
+message SetProjectArchivedResponse {
   bool success = 1;
   string error = 2;
   ProjectInfo project = 3;        // The updated project info

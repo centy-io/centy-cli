@@ -19,15 +19,16 @@
     "msvc",
     "oclif",
     "oneofs",
+    "opentui",
     "pnpm",
     "prerun",
     "tsconfig",
     "tupe",
+    "Unarchived",
     "unittests",
     "vitest",
     "עולם",
-    "שלום",
-    "opentui"
+    "שלום"
   ],
   "languageSettings": [
     {

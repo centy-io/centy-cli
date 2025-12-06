@@ -67,7 +67,11 @@ export function App({ onExit }: AppProps) {
 
   // View-specific shortcuts
   const viewShortcuts: Record<ViewId, Array<{ key: string; label: string }>> = {
-    projects: [{ key: 'f', label: 'favorite' }],
+    projects: [
+      { key: 'f', label: 'favorite' },
+      { key: 'a', label: 'archive' },
+      { key: 'x', label: 'remove' },
+    ],
     issues: [],
     'issue-detail': [
       { key: 'Esc', label: 'back' },

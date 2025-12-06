@@ -12,6 +12,7 @@ export function useProjects() {
     const result = await daemonService.listProjects({
       includeStale: true,
       includeUninitialized: false,
+      includeArchived: false,
     })
     dispatch({ type: 'SET_LOADING', loading: false })
 
@@ -40,6 +41,33 @@ export function useProjects() {
     [dispatch]
   )
 
+  const toggleArchive = useCallback(
+    async (path: string, isArchived: boolean) => {
+      const result = await daemonService.setProjectArchived(path, isArchived)
+      if (result.success && result.data) {
+        // Remove the project from the list when archived (since we filter archived projects)
+        if (isArchived) {
+          dispatch({ type: 'REMOVE_PROJECT', path })
+        } else {
+          dispatch({ type: 'UPDATE_PROJECT', project: result.data })
+        }
+      }
+    },
+    [dispatch]
+  )
+
+  const untrackProject = useCallback(
+    async (path: string) => {
+      const result = await daemonService.untrackProject(path)
+      if (result.success) {
+        // Remove the project from the list
+        dispatch({ type: 'REMOVE_PROJECT', path })
+      }
+      return result
+    },
+    [dispatch]
+  )
+
   // Load projects when daemon connects
   useEffect(() => {
     if (state.daemonConnected && state.projects.length === 0) {
@@ -54,5 +82,7 @@ export function useProjects() {
     loadProjects,
     selectProject,
     toggleFavorite,
+    toggleArchive,
+    untrackProject,
   }
 }

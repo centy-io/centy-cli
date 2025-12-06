@@ -48,6 +48,7 @@ export type AppAction =
   | { type: 'GO_BACK' }
   | { type: 'SET_PROJECTS'; projects: ProjectInfo[] }
   | { type: 'UPDATE_PROJECT'; project: ProjectInfo }
+  | { type: 'REMOVE_PROJECT'; path: string }
   | { type: 'SELECT_PROJECT'; path: string }
   | { type: 'SET_ISSUES'; issues: Issue[] }
   | { type: 'SET_DOCS'; docs: Doc[] }
@@ -111,6 +112,12 @@ function appReducer(state: AppState, action: AppAction): AppState {
         projects: state.projects.map(p =>
           p.path === action.project.path ? action.project : p
         ),
+      }
+
+    case 'REMOVE_PROJECT':
+      return {
+        ...state,
+        projects: state.projects.filter(p => p.path !== action.path),
       }
 
     case 'SELECT_PROJECT':

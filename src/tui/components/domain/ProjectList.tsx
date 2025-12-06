@@ -44,10 +44,18 @@ function ProjectItem({ project, isSelected }: ProjectItemProps) {
 }
 
 export function ProjectList() {
-  const { projects, isLoading, selectProject, toggleFavorite } = useProjects()
+  const {
+    projects,
+    isLoading,
+    selectProject,
+    toggleFavorite,
+    toggleArchive,
+    untrackProject,
+  } = useProjects()
   const { navigate } = useNavigation()
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [selectedPath, setSelectedPath] = useState<string | null>(null)
+  const [confirmUntrack, setConfirmUntrack] = useState<string | null>(null)
   const scrollBoxRef = useRef<ScrollBoxRenderable>(null)
 
   // Sort projects: favorites first, then by last accessed
@@ -89,6 +97,17 @@ export function ProjectList() {
   }, [selectedIndex])
 
   useKeyboard((event: KeyEvent) => {
+    // Handle confirmation dialog
+    if (confirmUntrack) {
+      if (event.name === 'y') {
+        untrackProject(confirmUntrack)
+        setConfirmUntrack(null)
+      } else if (event.name === 'n' || event.name === 'escape') {
+        setConfirmUntrack(null)
+      }
+      return
+    }
+
     if (event.name === 'j' || event.name === 'down') {
       setSelectedIndex((prev: number) => {
         const newIndex = Math.min(prev + 1, sortedProjects.length - 1)
@@ -113,6 +132,16 @@ export function ProjectList() {
         setSelectedPath(project.path)
         toggleFavorite(project.path, !project.isFavorite)
       }
+    } else if (event.name === 'a') {
+      const project = sortedProjects[selectedIndex]
+      if (project) {
+        toggleArchive(project.path, true)
+      }
+    } else if (event.name === 'x') {
+      const project = sortedProjects[selectedIndex]
+      if (project) {
+        setConfirmUntrack(project.path)
+      }
     }
   })
 
@@ -133,8 +162,42 @@ export function ProjectList() {
     )
   }
 
+  // Find project name for confirmation dialog
+  const projectToUntrack = confirmUntrack
+    ? sortedProjects.find(p => p.path === confirmUntrack)
+    : null
+
   return (
     <MainPanel title="Projects">
+      {confirmUntrack && projectToUntrack && (
+        <box
+          flexDirection="column"
+          paddingY={1}
+          borderStyle="single"
+          borderColor="yellow"
+        >
+          <text fg="yellow">
+            <b>Remove project from tracking?</b>
+          </text>
+          <text>"{projectToUntrack.name}"</text>
+          <text fg="gray">
+            (This only removes it from the list, not from disk)
+          </text>
+          <box flexDirection="row" gap={2} paddingTop={1}>
+            <text>
+              Press{' '}
+              <text fg="green">
+                <b>y</b>
+              </text>{' '}
+              to confirm,{' '}
+              <text fg="red">
+                <b>n</b>
+              </text>{' '}
+              to cancel
+            </text>
+          </box>
+        </box>
+      )}
       <scrollbox ref={scrollBoxRef} flexGrow={1} scrollY={true}>
         {sortedProjects.map((project: ProjectInfo, index: number) => (
           <ProjectItem

@@ -346,11 +346,13 @@ export interface ProjectInfo {
   initialized: boolean
   name: string
   isFavorite: boolean
+  isArchived: boolean
 }
 
 export interface ListProjectsRequest {
   includeStale?: boolean
   includeUninitialized?: boolean
+  includeArchived?: boolean
 }
 
 export interface ListProjectsResponse {
@@ -392,6 +394,17 @@ export interface SetProjectFavoriteRequest {
 }
 
 export interface SetProjectFavoriteResponse {
+  success: boolean
+  error: string
+  project: ProjectInfo
+}
+
+export interface SetProjectArchivedRequest {
+  projectPath: string
+  isArchived: boolean
+}
+
+export interface SetProjectArchivedResponse {
   success: boolean
   error: string
   project: ProjectInfo

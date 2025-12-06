@@ -12,6 +12,8 @@ import { daemonGetDaemonInfo } from '../../daemon/daemon-get-daemon-info.js'
 import { daemonControlService } from '../../daemon/daemon-control-service.js'
 import { checkDaemonConnection } from '../../daemon/check-daemon-connection.js'
 import { daemonSetProjectFavorite } from '../../daemon/daemon-set-project-favorite.js'
+import { daemonSetProjectArchived } from '../../daemon/daemon-set-project-archived.js'
+import { daemonUntrackProject } from '../../daemon/daemon-untrack-project.js'
 import { daemonGetDoc } from '../../daemon/daemon-get-doc.js'
 import { daemonGetIssue } from '../../daemon/daemon-get-issue.js'
 import type {
@@ -142,6 +144,50 @@ export class DaemonService {
           error instanceof Error
             ? error.message
             : 'Failed to set project favorite',
+      }
+    }
+  }
+
+  async setProjectArchived(
+    projectPath: string,
+    isArchived: boolean
+  ): Promise<DaemonServiceResult<ProjectInfo>> {
+    try {
+      const response = await daemonSetProjectArchived({
+        projectPath,
+        isArchived,
+      })
+      if (!response.success) {
+        return { success: false, error: response.error }
+      }
+      return { success: true, data: response.project }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to set project archived',
+      }
+    }
+  }
+
+  async untrackProject(
+    projectPath: string
+  ): Promise<DaemonServiceResult<void>> {
+    try {
+      const response = await daemonUntrackProject({
+        projectPath,
+      })
+      if (!response.success) {
+        return { success: false, error: response.error }
+      }
+      return { success: true }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Failed to untrack project',
       }
     }
   }

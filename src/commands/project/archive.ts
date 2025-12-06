@@ -1,0 +1,47 @@
+import { Args, Command, Flags } from '@oclif/core'
+
+import { daemonSetProjectArchived } from '../../daemon/daemon-set-project-archived.js'
+
+/**
+ * Archive or unarchive a project
+ */
+export default class ProjectArchive extends Command {
+  static override args = {
+    path: Args.string({
+      description: 'Path to the project (defaults to current directory)',
+      required: false,
+    }),
+  }
+
+  static override description = 'Archive or unarchive a project'
+
+  static override examples = [
+    '<%= config.bin %> project archive',
+    '<%= config.bin %> project archive /path/to/project',
+    '<%= config.bin %> project archive --off',
+  ]
+
+  static override flags = {
+    off: Flags.boolean({
+      description: 'Unarchive the project',
+      default: false,
+    }),
+  }
+
+  public async run(): Promise<void> {
+    const { args, flags } = await this.parse(ProjectArchive)
+    const projectPath = args.path ?? process.env['CENTY_CWD'] ?? process.cwd()
+
+    const response = await daemonSetProjectArchived({
+      projectPath,
+      isArchived: !flags.off,
+    })
+
+    if (!response.success) {
+      this.error(response.error)
+    }
+
+    const action = flags.off ? 'Unarchived' : 'Archived'
+    this.log(`${action}: "${response.project.name}"`)
+  }
+}
