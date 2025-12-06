@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useKeyboard } from '@opentui/react'
 import type { KeyEvent } from '@opentui/core'
 import { Header } from './components/layout/Header.js'
@@ -15,7 +16,7 @@ import { MainPanel } from './components/layout/MainPanel.js'
 import { useNavigation } from './hooks/useNavigation.js'
 import { useDaemonConnection } from './hooks/useDaemonConnection.js'
 import { useAppState } from './state/app-state.js'
-import { SIDEBAR_VIEWS } from './types/views.js'
+import { getVisibleSidebarViews } from './types/views.js'
 import type { ViewId } from './types/views.js'
 
 interface AppProps {
@@ -28,6 +29,12 @@ export function App({ onExit }: AppProps) {
     useNavigation()
   const { state } = useAppState()
 
+  // Get visible sidebar views based on project selection
+  const visibleViews = useMemo(
+    () => getVisibleSidebarViews(!!state.selectedProjectPath),
+    [state.selectedProjectPath]
+  )
+
   // Global keyboard shortcuts
   useKeyboard((event: KeyEvent) => {
     // Quit
@@ -38,16 +45,16 @@ export function App({ onExit }: AppProps) {
 
     // Navigate sidebar with Tab or number keys
     if (event.name === 'tab') {
-      const nextIndex = (sidebarIndex + 1) % SIDEBAR_VIEWS.length
+      const nextIndex = (sidebarIndex + 1) % visibleViews.length
       selectSidebarItem(nextIndex)
-      navigate(SIDEBAR_VIEWS[nextIndex])
+      navigate(visibleViews[nextIndex])
     }
 
     // Number keys for quick navigation
     const numKey = parseInt(event.name)
-    if (numKey >= 1 && numKey <= SIDEBAR_VIEWS.length) {
+    if (numKey >= 1 && numKey <= visibleViews.length) {
       selectSidebarItem(numKey - 1)
-      navigate(SIDEBAR_VIEWS[numKey - 1])
+      navigate(visibleViews[numKey - 1])
     }
   })
 
@@ -96,6 +103,7 @@ export function App({ onExit }: AppProps) {
         <Sidebar
           currentView={currentView}
           selectedIndex={sidebarIndex}
+          visibleViews={visibleViews}
           onNavigate={navigate}
         />
 

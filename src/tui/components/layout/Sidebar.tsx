@@ -1,13 +1,18 @@
 import type { ViewId } from '../../types/views.js'
-import { SIDEBAR_VIEWS, VIEW_LABELS } from '../../types/views.js'
+import { VIEW_LABELS } from '../../types/views.js'
 
 interface SidebarProps {
   currentView: ViewId
   selectedIndex: number
+  visibleViews: ViewId[]
   onNavigate: (view: ViewId) => void
 }
 
-export function Sidebar({ currentView, selectedIndex }: SidebarProps) {
+export function Sidebar({
+  currentView,
+  selectedIndex,
+  visibleViews,
+}: SidebarProps) {
   return (
     <box width={20} flexDirection="column" borderStyle="single">
       <box height={1} justifyContent="center">
@@ -16,7 +21,7 @@ export function Sidebar({ currentView, selectedIndex }: SidebarProps) {
         </text>
       </box>
       <box flexDirection="column" paddingTop={1}>
-        {SIDEBAR_VIEWS.map((view, index) => {
+        {visibleViews.map((view, index) => {
           const isSelected = index === selectedIndex
           const isCurrent = view === currentView
           const label = `${isSelected ? '>' : ' '} ${VIEW_LABELS[view]}`
