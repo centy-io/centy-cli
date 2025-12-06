@@ -1,6 +1,6 @@
 # Issues
 
-This folder contains project issues managed by [Centy](https://github.com/centy-io/centy-cli).
+This folder contains project issues managed by [Centy](https://github.com/tupe12334/centy-cli).
 
 ## LLM Instructions
 

@@ -1,0 +1,3 @@
+# Add browse folders button to init page for web using File System Access API
+
+Add folder browsing capability to the init page for web browsers using the File System Access API. Currently the Browse button only appears in Tauri (desktop). For web, implement showDirectoryPicker() to let users select project folders. Note: This API works in Chrome/Edge but has limited support in Firefox/Safari.
