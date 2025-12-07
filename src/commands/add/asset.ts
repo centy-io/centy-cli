@@ -55,7 +55,6 @@ export default class AddAsset extends Command {
 
     let fileData: Buffer
     try {
-      // eslint-disable-next-line security/detect-non-literal-fs-filename
       fileData = await readFile(args.file)
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error)

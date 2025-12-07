@@ -63,7 +63,6 @@ export default class GetAsset extends Command {
     }
 
     const outputPath = flags.output ?? args.filename
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     await writeFile(outputPath, response.data)
 
     this.log(`Saved asset to ${outputPath}`)
