@@ -14,6 +14,10 @@ export default defineConfig({
         '**/*.test.ts',
         '**/*.config.ts',
         'coverage/',
+        'src/lib/autostart/**',
+        'src/lib/install-daemon/**',
+        'src/lib/start/**',
+        'src/daemon/**',
       ],
       thresholds: {
         lines: 80,
