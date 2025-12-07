@@ -4,6 +4,7 @@
 
 export type ViewId =
   | 'projects'
+  | 'project-create'
   | 'issues'
   | 'issue-detail'
   | 'issue-create'
@@ -22,6 +23,7 @@ export interface ViewParams {
 
 export const VIEW_LABELS: Record<ViewId, string> = {
   projects: 'Projects',
+  'project-create': 'Add Project',
   issues: 'Issues',
   'issue-detail': 'Issue Detail',
   'issue-create': 'New Issue',

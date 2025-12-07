@@ -18,6 +18,8 @@ import { daemonGetDoc } from '../../daemon/daemon-get-doc.js'
 import { daemonGetIssue } from '../../daemon/daemon-get-issue.js'
 import { daemonCreateIssue } from '../../daemon/daemon-create-issue.js'
 import { daemonCreateDoc } from '../../daemon/daemon-create-doc.js'
+import { daemonRegisterProject } from '../../daemon/daemon-register-project.js'
+import { daemonInit } from '../../daemon/daemon-init.js'
 import type {
   ProjectInfo,
   Issue,
@@ -304,6 +306,42 @@ export class DaemonService {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to create doc',
+      }
+    }
+  }
+
+  async registerProject(
+    projectPath: string,
+    options?: { autoInit?: boolean }
+  ): Promise<DaemonServiceResult<ProjectInfo>> {
+    try {
+      const registerResponse = await daemonRegisterProject({ projectPath })
+      if (!registerResponse.success) {
+        return { success: false, error: registerResponse.error }
+      }
+
+      // Auto-initialize if requested and not already initialized
+      if (options?.autoInit && !registerResponse.project.initialized) {
+        const initResponse = await daemonInit({
+          projectPath,
+          force: true,
+        })
+        if (!initResponse.success) {
+          return { success: false, error: initResponse.error }
+        }
+        // Return updated project info with initialized: true
+        return {
+          success: true,
+          data: { ...registerResponse.project, initialized: true },
+        }
+      }
+
+      return { success: true, data: registerResponse.project }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Failed to register project',
       }
     }
   }

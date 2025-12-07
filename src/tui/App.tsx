@@ -11,6 +11,7 @@ import { IssueCreate } from './components/domain/IssueCreate.js'
 import { DocList } from './components/domain/DocList.js'
 import { DocDetail } from './components/domain/DocDetail.js'
 import { DocCreate } from './components/domain/DocCreate.js'
+import { ProjectCreate } from './components/domain/ProjectCreate.js'
 import { AssetList } from './components/domain/AssetList.js'
 import { ConfigPanel } from './components/domain/ConfigPanel.js'
 import { DaemonPanel } from './components/domain/DaemonPanel.js'
@@ -39,7 +40,9 @@ export function App({ onExit }: AppProps) {
 
   // Views that handle their own keyboard input (forms)
   const isFormView =
-    currentView === 'issue-create' || currentView === 'doc-create'
+    currentView === 'issue-create' ||
+    currentView === 'doc-create' ||
+    currentView === 'project-create'
 
   // Global keyboard shortcuts
   useKeyboard((event: KeyEvent) => {
@@ -90,9 +93,14 @@ export function App({ onExit }: AppProps) {
   // View-specific shortcuts
   const viewShortcuts: Record<ViewId, Array<{ key: string; label: string }>> = {
     projects: [
+      { key: 'n', label: 'new' },
       { key: 'f', label: 'favorite' },
       { key: 'a', label: 'archive' },
       { key: 'x', label: 'remove' },
+    ],
+    'project-create': [
+      { key: '^S', label: 'save' },
+      { key: 'Esc', label: 'cancel' },
     ],
     issues: [{ key: 'n', label: 'new' }],
     'issue-detail': [
@@ -155,6 +163,8 @@ function renderView(view: ViewId) {
   switch (view) {
     case 'projects':
       return <ProjectList />
+    case 'project-create':
+      return <ProjectCreate />
     case 'issues':
       return <IssueList />
     case 'issue-detail':
