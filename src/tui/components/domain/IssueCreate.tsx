@@ -221,8 +221,8 @@ export function IssueCreate() {
           >
             <text>
               {description || (activeField === 'description' ? '' : '')}
-              {activeField === 'description' && <text fg="cyan">_</text>}
             </text>
+            {activeField === 'description' && <text fg="cyan">_</text>}
           </box>
         </box>
 

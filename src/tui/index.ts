@@ -4,6 +4,7 @@ import React from 'react'
 import { App } from './App.js'
 import { AppProvider } from './state/app-state.js'
 import { checkDaemonConnection } from '../daemon/check-daemon-connection.js'
+import { loadIssueSortConfig } from './utils/local-config.js'
 
 export async function startTUI(): Promise<void> {
   // Check daemon connection first
@@ -14,6 +15,9 @@ export async function startTUI(): Promise<void> {
     console.log('Some features will be unavailable.')
     console.log('Run "centy start" to start the daemon.\n')
   }
+
+  // Load saved sort configuration
+  const savedSortConfig = loadIssueSortConfig()
 
   // Create renderer
   const renderer: CliRenderer = await createCliRenderer({
@@ -35,6 +39,7 @@ export async function startTUI(): Promise<void> {
   root.render(
     React.createElement(AppProvider, {
       initialDaemonConnected: connectionStatus.connected,
+      initialIssueSort: savedSortConfig,
       children: React.createElement(App, { onExit: handleExit }),
     })
   )

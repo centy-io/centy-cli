@@ -14,6 +14,34 @@ import type {
   DaemonInfo,
 } from '../../daemon/types.js'
 
+// Sort options for issues list
+export type IssueSortField =
+  | 'priority'
+  | 'displayNumber'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'status'
+
+export type SortDirection = 'asc' | 'desc'
+
+export interface IssueSortConfig {
+  field: IssueSortField
+  direction: SortDirection
+}
+
+export const SORT_FIELD_LABELS: Record<IssueSortField, string> = {
+  priority: 'Priority',
+  displayNumber: 'Number',
+  createdAt: 'Created',
+  updatedAt: 'Updated',
+  status: 'Status',
+}
+
+export const DEFAULT_SORT_CONFIG: IssueSortConfig = {
+  field: 'priority',
+  direction: 'asc', // Lower priority number = higher priority, so asc means highest first
+}
+
 export interface AppState {
   // Navigation
   currentView: ViewId
@@ -41,6 +69,9 @@ export interface AppState {
 
   // Daemon connection
   daemonConnected: boolean
+
+  // Issue list sorting
+  issueSort: IssueSortConfig
 }
 
 export type AppAction =
@@ -60,6 +91,7 @@ export type AppAction =
   | { type: 'SET_LOADING'; loading: boolean }
   | { type: 'SET_ERROR'; error: string | null }
   | { type: 'SET_DAEMON_STATUS'; connected: boolean }
+  | { type: 'SET_ISSUE_SORT'; sort: IssueSortConfig }
 
 const initialState: AppState = {
   currentView: 'projects',
@@ -77,6 +109,7 @@ const initialState: AppState = {
   isLoading: false,
   error: null,
   daemonConnected: false,
+  issueSort: DEFAULT_SORT_CONFIG,
 }
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -160,6 +193,9 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_DAEMON_STATUS':
       return { ...state, daemonConnected: action.connected }
 
+    case 'SET_ISSUE_SORT':
+      return { ...state, issueSort: action.sort }
+
     default:
       return state
   }
@@ -175,15 +211,18 @@ const AppContext = createContext<AppContextValue | null>(null)
 interface AppProviderProps {
   children: ReactNode
   initialDaemonConnected?: boolean
+  initialIssueSort?: IssueSortConfig
 }
 
 export function AppProvider({
   children,
   initialDaemonConnected = false,
+  initialIssueSort,
 }: AppProviderProps) {
   const [state, dispatch] = useReducer(appReducer, {
     ...initialState,
     daemonConnected: initialDaemonConnected,
+    issueSort: initialIssueSort ?? DEFAULT_SORT_CONFIG,
   })
 
   return (
