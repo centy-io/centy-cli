@@ -12,6 +12,10 @@
     "release": true
   },
   "hooks": {
-    "before:init": ["pnpm test", "pnpm build"]
+    "before:init": [
+      "pnpm test",
+      "pnpm build",
+      "git checkout oclif.manifest.json"
+    ]
   }
 }
