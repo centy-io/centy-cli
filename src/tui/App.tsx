@@ -9,6 +9,10 @@ import { IssueList } from './components/domain/IssueList.js'
 import { IssueDetail } from './components/domain/IssueDetail.js'
 import { IssueCreate } from './components/domain/IssueCreate.js'
 import { IssueEdit } from './components/domain/IssueEdit.js'
+import { PRList } from './components/domain/PRList.js'
+import { PRDetail } from './components/domain/PRDetail.js'
+import { PRCreate } from './components/domain/PRCreate.js'
+import { PREdit } from './components/domain/PREdit.js'
 import { DocList } from './components/domain/DocList.js'
 import { DocDetail } from './components/domain/DocDetail.js'
 import { DocCreate } from './components/domain/DocCreate.js'
@@ -47,6 +51,8 @@ export function App({ onExit }: AppProps) {
   const isFormView =
     currentView === 'issue-create' ||
     currentView === 'issue-edit' ||
+    currentView === 'pr-create' ||
+    currentView === 'pr-edit' ||
     currentView === 'doc-create' ||
     currentView === 'project-create'
 
@@ -124,6 +130,22 @@ export function App({ onExit }: AppProps) {
       { key: '^S', label: 'save' },
       { key: 'Esc', label: 'cancel' },
     ],
+    prs: [{ key: 'n', label: 'new' }],
+    'pr-detail': [
+      { key: 'e', label: 'edit' },
+      { key: 'Esc', label: 'back' },
+      { key: 'd/u', label: 'scroll' },
+    ],
+    'pr-create': [
+      { key: 'Tab', label: 'next field' },
+      { key: '^S', label: 'save' },
+      { key: 'Esc', label: 'cancel' },
+    ],
+    'pr-edit': [
+      { key: 'Tab', label: 'next field' },
+      { key: '^S', label: 'save' },
+      { key: 'Esc', label: 'cancel' },
+    ],
     docs: [{ key: 'n', label: 'new' }],
     'doc-detail': [
       { key: 'Esc', label: 'back' },
@@ -185,6 +207,14 @@ function renderView(view: ViewId) {
       return <IssueCreate />
     case 'issue-edit':
       return <IssueEdit />
+    case 'prs':
+      return <PRList />
+    case 'pr-detail':
+      return <PRDetail />
+    case 'pr-create':
+      return <PRCreate />
+    case 'pr-edit':
+      return <PREdit />
     case 'docs':
       return <DocList />
     case 'doc-detail':

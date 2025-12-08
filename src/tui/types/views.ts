@@ -9,6 +9,10 @@ export type ViewId =
   | 'issue-detail'
   | 'issue-create'
   | 'issue-edit'
+  | 'prs'
+  | 'pr-detail'
+  | 'pr-create'
+  | 'pr-edit'
   | 'docs'
   | 'doc-detail'
   | 'doc-create'
@@ -19,6 +23,7 @@ export type ViewId =
 
 export interface ViewParams {
   issueId?: string
+  prId?: string
   docSlug?: string
 }
 
@@ -29,6 +34,10 @@ export const VIEW_LABELS: Record<ViewId, string> = {
   'issue-detail': 'Issue Detail',
   'issue-create': 'New Issue',
   'issue-edit': 'Edit Issue',
+  prs: 'Pull Requests',
+  'pr-detail': 'PR Detail',
+  'pr-create': 'New PR',
+  'pr-edit': 'Edit PR',
   docs: 'Docs',
   'doc-detail': 'Doc Detail',
   'doc-create': 'New Doc',
@@ -41,6 +50,7 @@ export const VIEW_LABELS: Record<ViewId, string> = {
 export const SIDEBAR_VIEWS: ViewId[] = [
   'projects',
   'issues',
+  'prs',
   'docs',
   'assets',
   'config',
@@ -50,6 +60,7 @@ export const SIDEBAR_VIEWS: ViewId[] = [
 /** Views that require a project to be selected */
 export const PROJECT_REQUIRED_VIEWS: Set<ViewId> = new Set([
   'issues',
+  'prs',
   'docs',
   'assets',
   'config',

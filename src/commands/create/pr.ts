@@ -1,12 +1,11 @@
 import { Command, Flags } from '@oclif/core'
 
-import { daemonCreatePr } from '../../daemon/daemon-create-pr.js'
-import { daemonIsInitialized } from '../../daemon/daemon-is-initialized.js'
+import { createPr } from '../../lib/create-pr/index.js'
 
 /**
  * Create a new pull request in the .centy/prs folder
  */
-export default class CreatePr extends Command {
+export default class CreatePrCommand extends Command {
   static override description = 'Create a new pull request in the .centy folder'
 
   static override examples = [
@@ -20,7 +19,6 @@ export default class CreatePr extends Command {
     title: Flags.string({
       char: 't',
       description: 'PR title',
-      required: true,
     }),
     description: Flags.string({
       char: 'd',
@@ -49,58 +47,35 @@ export default class CreatePr extends Command {
     status: Flags.string({
       description: 'Initial status (draft/open)',
       options: ['draft', 'open'],
-      default: 'draft',
     }),
   }
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(CreatePr)
+    const { flags } = await this.parse(CreatePrCommand)
     const cwd = process.env['CENTY_CWD'] ?? process.cwd()
-
-    const initStatus = await daemonIsInitialized({ projectPath: cwd })
-    if (!initStatus.initialized) {
-      this.error('.centy folder not initialized. Run "centy init" first.')
-    }
-
-    // Convert priority string to number
-    const priorityMap: Record<string, number> = {
-      high: 1,
-      medium: 2,
-      low: 3,
-    }
-    const priority = flags.priority ? priorityMap[flags.priority] : 0
 
     // Parse comma-separated lists
     const linkedIssues = flags.issues
       ? flags.issues.split(',').map(s => s.trim())
-      : []
+      : undefined
     const reviewers = flags.reviewers
       ? flags.reviewers.split(',').map(s => s.trim())
-      : []
+      : undefined
 
-    const result = await daemonCreatePr({
-      projectPath: cwd,
+    const result = await createPr({
+      cwd,
       title: flags.title,
-      description: flags.description ?? '',
+      description: flags.description,
       sourceBranch: flags.source,
       targetBranch: flags.target,
       linkedIssues,
       reviewers,
-      priority,
-      status: flags.status ?? 'draft',
-      customFields: {},
+      priority: flags.priority as 'low' | 'medium' | 'high' | undefined,
+      status: flags.status as 'draft' | 'open' | undefined,
     })
 
     if (!result.success) {
-      this.error(result.error ?? 'Failed to create PR')
-    }
-
-    this.log(`Created PR #${result.displayNumber}`)
-    this.log(`ID: ${result.id}`)
-    this.log(`Source branch: ${result.detectedSourceBranch}`)
-    this.log(`\nFiles created:`)
-    for (const file of result.createdFiles) {
-      this.log(`  ${file}`)
+      this.error(result.error)
     }
   }
 }

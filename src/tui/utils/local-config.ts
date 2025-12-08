@@ -7,8 +7,11 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
-import type { IssueSortConfig } from '../state/app-state.js'
-import { DEFAULT_SORT_CONFIG } from '../state/app-state.js'
+import type { IssueSortConfig, PrSortConfig } from '../state/app-state.js'
+import {
+  DEFAULT_SORT_CONFIG,
+  DEFAULT_PR_SORT_CONFIG,
+} from '../state/app-state.js'
 
 // Config directory and file paths for local user preferences
 const CONFIG_DIR = join(homedir(), '.centy')
@@ -16,6 +19,7 @@ const CONFIG_FILE = join(CONFIG_DIR, 'config.local.json')
 
 export interface LocalConfig {
   issueSort?: IssueSortConfig
+  prSort?: PrSortConfig
 }
 
 function ensureConfigDir(): void {
@@ -59,5 +63,16 @@ export function loadIssueSortConfig(): IssueSortConfig {
 export function saveIssueSortConfig(sortConfig: IssueSortConfig): void {
   const config = loadLocalConfig()
   config.issueSort = sortConfig
+  saveLocalConfig(config)
+}
+
+export function loadPrSortConfig(): PrSortConfig {
+  const config = loadLocalConfig()
+  return config.prSort ?? DEFAULT_PR_SORT_CONFIG
+}
+
+export function savePrSortConfig(sortConfig: PrSortConfig): void {
+  const config = loadLocalConfig()
+  config.prSort = sortConfig
   saveLocalConfig(config)
 }

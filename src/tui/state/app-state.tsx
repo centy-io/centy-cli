@@ -12,10 +12,19 @@ import type {
   ProjectInfo,
   Config,
   DaemonInfo,
+  PullRequest,
 } from '../../daemon/types.js'
 
 // Sort options for issues list
 export type IssueSortField =
+  | 'priority'
+  | 'displayNumber'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'status'
+
+// Sort options for PRs list
+export type PrSortField =
   | 'priority'
   | 'displayNumber'
   | 'createdAt'
@@ -29,7 +38,20 @@ export interface IssueSortConfig {
   direction: SortDirection
 }
 
+export interface PrSortConfig {
+  field: PrSortField
+  direction: SortDirection
+}
+
 export const SORT_FIELD_LABELS: Record<IssueSortField, string> = {
+  priority: 'Priority',
+  displayNumber: 'Number',
+  createdAt: 'Created',
+  updatedAt: 'Updated',
+  status: 'Status',
+}
+
+export const PR_SORT_FIELD_LABELS: Record<PrSortField, string> = {
   priority: 'Priority',
   displayNumber: 'Number',
   createdAt: 'Created',
@@ -40,6 +62,11 @@ export const SORT_FIELD_LABELS: Record<IssueSortField, string> = {
 export const DEFAULT_SORT_CONFIG: IssueSortConfig = {
   field: 'priority',
   direction: 'asc', // Lower priority number = higher priority, so asc means highest first
+}
+
+export const DEFAULT_PR_SORT_CONFIG: PrSortConfig = {
+  field: 'priority',
+  direction: 'asc',
 }
 
 export interface AppState {
@@ -54,12 +81,14 @@ export interface AppState {
 
   // Data
   issues: Issue[]
+  prs: PullRequest[]
   docs: Doc[]
   config: Config | null
   daemonInfo: DaemonInfo | null
 
   // Selection
   selectedIssueId: string | null
+  selectedPrId: string | null
   selectedDocSlug: string | null
   sidebarIndex: number
 
@@ -72,6 +101,9 @@ export interface AppState {
 
   // Issue list sorting
   issueSort: IssueSortConfig
+
+  // PR list sorting
+  prSort: PrSortConfig
 }
 
 export type AppAction =
@@ -82,16 +114,19 @@ export type AppAction =
   | { type: 'REMOVE_PROJECT'; path: string }
   | { type: 'SELECT_PROJECT'; path: string }
   | { type: 'SET_ISSUES'; issues: Issue[] }
+  | { type: 'SET_PRS'; prs: PullRequest[] }
   | { type: 'SET_DOCS'; docs: Doc[] }
   | { type: 'SET_CONFIG'; config: Config }
   | { type: 'SET_DAEMON_INFO'; info: DaemonInfo }
   | { type: 'SELECT_ISSUE'; id: string | null }
+  | { type: 'SELECT_PR'; id: string | null }
   | { type: 'SELECT_DOC'; slug: string | null }
   | { type: 'SET_SIDEBAR_INDEX'; index: number }
   | { type: 'SET_LOADING'; loading: boolean }
   | { type: 'SET_ERROR'; error: string | null }
   | { type: 'SET_DAEMON_STATUS'; connected: boolean }
   | { type: 'SET_ISSUE_SORT'; sort: IssueSortConfig }
+  | { type: 'SET_PR_SORT'; sort: PrSortConfig }
 
 const initialState: AppState = {
   currentView: 'projects',
@@ -100,16 +135,19 @@ const initialState: AppState = {
   projects: [],
   selectedProjectPath: null,
   issues: [],
+  prs: [],
   docs: [],
   config: null,
   daemonInfo: null,
   selectedIssueId: null,
+  selectedPrId: null,
   selectedDocSlug: null,
   sidebarIndex: 0,
   isLoading: false,
   error: null,
   daemonConnected: false,
   issueSort: DEFAULT_SORT_CONFIG,
+  prSort: DEFAULT_PR_SORT_CONFIG,
 }
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -159,12 +197,16 @@ function appReducer(state: AppState, action: AppAction): AppState {
         selectedProjectPath: action.path,
         // Reset data when switching projects
         issues: [],
+        prs: [],
         docs: [],
         config: null,
       }
 
     case 'SET_ISSUES':
       return { ...state, issues: action.issues }
+
+    case 'SET_PRS':
+      return { ...state, prs: action.prs }
 
     case 'SET_DOCS':
       return { ...state, docs: action.docs }
@@ -177,6 +219,9 @@ function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'SELECT_ISSUE':
       return { ...state, selectedIssueId: action.id }
+
+    case 'SELECT_PR':
+      return { ...state, selectedPrId: action.id }
 
     case 'SELECT_DOC':
       return { ...state, selectedDocSlug: action.slug }
@@ -196,6 +241,9 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_ISSUE_SORT':
       return { ...state, issueSort: action.sort }
 
+    case 'SET_PR_SORT':
+      return { ...state, prSort: action.sort }
+
     default:
       return state
   }
@@ -212,15 +260,18 @@ interface AppProviderProps {
   children: ReactNode
   initialDaemonConnected?: boolean
   initialIssueSort?: IssueSortConfig
+  initialPrSort?: PrSortConfig
 }
 
 export function AppProvider({
   children,
   initialDaemonConnected = false,
+  initialPrSort,
   initialIssueSort,
 }: AppProviderProps) {
   const [state, dispatch] = useReducer(appReducer, {
     ...initialState,
+    prSort: initialPrSort ?? DEFAULT_PR_SORT_CONFIG,
     daemonConnected: initialDaemonConnected,
     issueSort: initialIssueSort ?? DEFAULT_SORT_CONFIG,
   })

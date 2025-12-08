@@ -4,7 +4,7 @@ import React from 'react'
 import { App } from './App.js'
 import { AppProvider } from './state/app-state.js'
 import { checkDaemonConnection } from '../daemon/check-daemon-connection.js'
-import { loadIssueSortConfig } from './utils/local-config.js'
+import { loadIssueSortConfig, loadPrSortConfig } from './utils/local-config.js'
 
 export async function startTUI(): Promise<void> {
   // Check daemon connection first
@@ -17,7 +17,8 @@ export async function startTUI(): Promise<void> {
   }
 
   // Load saved sort configuration
-  const savedSortConfig = loadIssueSortConfig()
+  const savedIssueSortConfig = loadIssueSortConfig()
+  const savedPrSortConfig = loadPrSortConfig()
 
   // Create renderer
   const renderer: CliRenderer = await createCliRenderer({
@@ -39,7 +40,8 @@ export async function startTUI(): Promise<void> {
   root.render(
     React.createElement(AppProvider, {
       initialDaemonConnected: connectionStatus.connected,
-      initialIssueSort: savedSortConfig,
+      initialIssueSort: savedIssueSortConfig,
+      initialPrSort: savedPrSortConfig,
       children: React.createElement(App, { onExit: handleExit }),
     })
   )

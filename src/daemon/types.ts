@@ -280,6 +280,7 @@ export interface Asset {
 export interface AddAssetRequest {
   projectPath: string
   issueId?: string
+  prId?: string
   filename: string
   data: Buffer
   isShared?: boolean

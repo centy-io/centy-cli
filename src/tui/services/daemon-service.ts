@@ -5,6 +5,7 @@
 
 import { daemonListProjects } from '../../daemon/daemon-list-projects.js'
 import { daemonListIssues } from '../../daemon/daemon-list-issues.js'
+import { daemonListPrs } from '../../daemon/daemon-list-prs.js'
 import { daemonListDocs } from '../../daemon/daemon-list-docs.js'
 import { daemonListAssets } from '../../daemon/daemon-list-assets.js'
 import { daemonGetConfig } from '../../daemon/daemon-get-config.js'
@@ -16,14 +17,18 @@ import { daemonSetProjectArchived } from '../../daemon/daemon-set-project-archiv
 import { daemonUntrackProject } from '../../daemon/daemon-untrack-project.js'
 import { daemonGetDoc } from '../../daemon/daemon-get-doc.js'
 import { daemonGetIssue } from '../../daemon/daemon-get-issue.js'
+import { daemonGetPr } from '../../daemon/daemon-get-pr.js'
 import { daemonCreateIssue } from '../../daemon/daemon-create-issue.js'
+import { daemonCreatePr } from '../../daemon/daemon-create-pr.js'
 import { daemonUpdateIssue } from '../../daemon/daemon-update-issue.js'
+import { daemonUpdatePr } from '../../daemon/daemon-update-pr.js'
 import { daemonCreateDoc } from '../../daemon/daemon-create-doc.js'
 import { daemonRegisterProject } from '../../daemon/daemon-register-project.js'
 import { daemonInit } from '../../daemon/daemon-init.js'
 import type {
   ProjectInfo,
   Issue,
+  PullRequest,
   Doc,
   Config,
   DaemonInfo,
@@ -31,8 +36,10 @@ import type {
   RestartResponse,
   Asset,
   CreateIssueResponse,
+  CreatePrResponse,
   CreateDocResponse,
   UpdateIssueResponse,
+  UpdatePrResponse,
 } from '../../daemon/types.js'
 
 export interface DaemonServiceResult<T> {
@@ -84,6 +91,32 @@ export class DaemonService {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to list issues',
+      }
+    }
+  }
+
+  async listPrs(
+    projectPath: string,
+    filters?: {
+      status?: string
+      priority?: number
+      sourceBranch?: string
+      targetBranch?: string
+    }
+  ): Promise<DaemonServiceResult<PullRequest[]>> {
+    try {
+      const response = await daemonListPrs({
+        projectPath,
+        status: filters?.status,
+        priority: filters?.priority,
+        sourceBranch: filters?.sourceBranch,
+        targetBranch: filters?.targetBranch,
+      })
+      return { success: true, data: response.prs }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to list PRs',
       }
     }
   }
@@ -254,6 +287,21 @@ export class DaemonService {
     }
   }
 
+  async getPr(
+    projectPath: string,
+    prId: string
+  ): Promise<DaemonServiceResult<PullRequest>> {
+    try {
+      const response = await daemonGetPr({ projectPath, prId })
+      return { success: true, data: response }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get PR',
+      }
+    }
+  }
+
   async createIssue(
     projectPath: string,
     options: {
@@ -315,6 +363,85 @@ export class DaemonService {
         success: false,
         error:
           error instanceof Error ? error.message : 'Failed to update issue',
+      }
+    }
+  }
+
+  async createPr(
+    projectPath: string,
+    options: {
+      title: string
+      description: string
+      sourceBranch?: string
+      targetBranch?: string
+      linkedIssues?: string[]
+      reviewers?: string[]
+      priority?: number
+      status?: string
+    }
+  ): Promise<DaemonServiceResult<CreatePrResponse>> {
+    try {
+      const response = await daemonCreatePr({
+        projectPath,
+        title: options.title,
+        description: options.description,
+        sourceBranch: options.sourceBranch,
+        targetBranch: options.targetBranch,
+        linkedIssues: options.linkedIssues ?? [],
+        reviewers: options.reviewers ?? [],
+        priority: options.priority ?? 0,
+        status: options.status ?? 'draft',
+        customFields: {},
+      })
+      if (!response.success) {
+        return { success: false, error: response.error }
+      }
+      return { success: true, data: response }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to create PR',
+      }
+    }
+  }
+
+  async updatePr(
+    projectPath: string,
+    prId: string,
+    options: {
+      title?: string
+      description?: string
+      sourceBranch?: string
+      targetBranch?: string
+      linkedIssues?: string[]
+      reviewers?: string[]
+      priority?: number
+      status?: string
+      customFields?: Record<string, string>
+    }
+  ): Promise<DaemonServiceResult<UpdatePrResponse>> {
+    try {
+      const response = await daemonUpdatePr({
+        projectPath,
+        prId,
+        title: options.title,
+        description: options.description,
+        sourceBranch: options.sourceBranch,
+        targetBranch: options.targetBranch,
+        linkedIssues: options.linkedIssues,
+        reviewers: options.reviewers,
+        priority: options.priority,
+        status: options.status,
+        customFields: options.customFields,
+      })
+      if (!response.success) {
+        return { success: false, error: response.error }
+      }
+      return { success: true, data: response }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to update PR',
       }
     }
   }
