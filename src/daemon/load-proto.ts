@@ -32,6 +32,8 @@ import type {
   CreateDocRequest,
   CreateDocResponse,
   GetDocRequest,
+  GetDocsBySlugRequest,
+  GetDocsBySlugResponse,
   Doc,
   ListDocsRequest,
   ListDocsResponse,
@@ -77,6 +79,8 @@ import type {
   CreatePrResponse,
   GetPrRequest,
   GetPrByDisplayNumberRequest,
+  GetPrsByUuidRequest,
+  GetPrsByUuidResponse,
   PullRequest,
   ListPrsRequest,
   ListPrsResponse,
@@ -190,6 +194,13 @@ interface CentyDaemonClient {
   getDoc(
     request: GetDocRequest,
     callback: (error: ServiceError | null, response: Doc) => void
+  ): void
+  getDocsBySlug(
+    request: GetDocsBySlugRequest,
+    callback: (
+      error: ServiceError | null,
+      response: GetDocsBySlugResponse
+    ) => void
   ): void
   listDocs(
     request: ListDocsRequest,
@@ -321,6 +332,13 @@ interface CentyDaemonClient {
   getPrByDisplayNumber(
     request: GetPrByDisplayNumberRequest,
     callback: (error: ServiceError | null, response: PullRequest) => void
+  ): void
+  getPrsByUuid(
+    request: GetPrsByUuidRequest,
+    callback: (
+      error: ServiceError | null,
+      response: GetPrsByUuidResponse
+    ) => void
   ): void
   listPrs(
     request: ListPrsRequest,

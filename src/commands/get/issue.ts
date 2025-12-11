@@ -5,6 +5,11 @@ import { daemonGetIssueByDisplayNumber } from '../../daemon/daemon-get-issue-by-
 import { daemonGetIssuesByUuid } from '../../daemon/daemon-get-issues-by-uuid.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
+  formatCrossProjectHint,
+  formatCrossProjectJson,
+  isNotFoundError,
+} from '../../utils/cross-project-search.js'
+import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
@@ -131,33 +136,66 @@ export default class GetIssue extends Command {
     const isDisplayNumber =
       isAllDigits && !Number.isNaN(displayNumber) && displayNumber > 0
 
-    const issue = isDisplayNumber
-      ? await daemonGetIssueByDisplayNumber({
-          projectPath: cwd,
-          displayNumber,
-        })
-      : await daemonGetIssue({
-          projectPath: cwd,
-          issueId: args.id,
-        })
+    try {
+      const issue = isDisplayNumber
+        ? await daemonGetIssueByDisplayNumber({
+            projectPath: cwd,
+            displayNumber,
+          })
+        : await daemonGetIssue({
+            projectPath: cwd,
+            issueId: args.id,
+          })
 
-    if (flags.json) {
-      this.log(JSON.stringify(issue, null, 2))
-      return
-    }
+      if (flags.json) {
+        this.log(JSON.stringify(issue, null, 2))
+        return
+      }
 
-    const meta = issue.metadata
-    this.log(`Issue #${issue.displayNumber}`)
-    this.log(`ID: ${issue.id}`)
-    this.log(`Title: ${issue.title}`)
-    this.log(`Status: ${meta !== undefined ? meta.status : 'unknown'}`)
-    this.log(
-      `Priority: ${meta !== undefined ? (meta.priorityLabel !== '' ? meta.priorityLabel : `P${meta.priority}`) : 'P?'}`
-    )
-    this.log(`Created: ${meta !== undefined ? meta.createdAt : 'unknown'}`)
-    this.log(`Updated: ${meta !== undefined ? meta.updatedAt : 'unknown'}`)
-    if (issue.description) {
-      this.log(`\nDescription:\n${issue.description}`)
+      const meta = issue.metadata
+      this.log(`Issue #${issue.displayNumber}`)
+      this.log(`ID: ${issue.id}`)
+      this.log(`Title: ${issue.title}`)
+      this.log(`Status: ${meta !== undefined ? meta.status : 'unknown'}`)
+      this.log(
+        `Priority: ${meta !== undefined ? (meta.priorityLabel !== '' ? meta.priorityLabel : `P${meta.priority}`) : 'P?'}`
+      )
+      this.log(`Created: ${meta !== undefined ? meta.createdAt : 'unknown'}`)
+      this.log(`Updated: ${meta !== undefined ? meta.updatedAt : 'unknown'}`)
+      if (issue.description) {
+        this.log(`\nDescription:\n${issue.description}`)
+      }
+    } catch (error) {
+      // For UUID lookups that fail, try cross-project search to provide helpful hints
+      if (!isDisplayNumber && isNotFoundError(error)) {
+        const uuidRegex =
+          /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i
+        if (uuidRegex.test(args.id)) {
+          // Try global search to see if the issue exists in another project
+          const result = await daemonGetIssuesByUuid({ uuid: args.id })
+          if (result.issues.length > 0) {
+            const matches = result.issues.map(iwp => ({
+              projectName: iwp.projectName,
+              projectPath: iwp.projectPath,
+            }))
+
+            if (flags.json) {
+              this.log(
+                JSON.stringify(
+                  formatCrossProjectJson('issue', args.id, matches),
+                  null,
+                  2
+                )
+              )
+              this.exit(1)
+            }
+
+            this.error(formatCrossProjectHint('issue', args.id, matches))
+          }
+        }
+      }
+      // Re-throw original error if not found anywhere or not a NOT_FOUND error
+      throw error instanceof Error ? error : new Error(String(error))
     }
   }
 }

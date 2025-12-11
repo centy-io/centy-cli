@@ -249,6 +249,24 @@ export interface GetDocRequest {
   slug: string
 }
 
+// ============ Global Doc Search Types ============
+
+export interface GetDocsBySlugRequest {
+  slug: string
+}
+
+export interface DocWithProject {
+  doc: Doc
+  projectPath: string
+  projectName: string
+}
+
+export interface GetDocsBySlugResponse {
+  docs: DocWithProject[]
+  totalCount: number
+  errors: string[]
+}
+
 export interface ListDocsRequest {
   projectPath: string
 }
@@ -552,6 +570,24 @@ export interface GetPrRequest {
 export interface GetPrByDisplayNumberRequest {
   projectPath: string
   displayNumber: number
+}
+
+// ============ Global PR Search Types ============
+
+export interface GetPrsByUuidRequest {
+  uuid: string
+}
+
+export interface PrWithProject {
+  pr: PullRequest
+  projectPath: string
+  projectName: string
+}
+
+export interface GetPrsByUuidResponse {
+  prs: PrWithProject[]
+  totalCount: number
+  errors: string[]
 }
 
 export interface ListPrsRequest {
