@@ -4,9 +4,13 @@ import { spawn } from 'node:child_process'
 import { Command, Flags } from '@oclif/core'
 
 import { checkDaemonConnection } from '../daemon/check-daemon-connection.js'
+import { installDaemon } from '../lib/install-daemon/index.js'
 import { daemonBinaryExists } from '../lib/start/daemon-binary-exists.js'
 import { findDaemonBinary } from '../lib/start/find-daemon-binary.js'
+import { promptForInstall } from '../lib/start/prompt-for-install.js'
 import { waitForDaemon } from '../lib/start/wait-for-daemon.js'
+import { closePromptInterface } from '../utils/close-prompt-interface.js'
+import { createPromptInterface } from '../utils/create-prompt-interface.js'
 
 const getMissingDaemonMsg = (p: string) =>
   `Daemon not found at: ${p}\n\nFix:\n  1. centy install daemon\n  2. centy start\n  3. centy info\n\nOr set CENTY_DAEMON_PATH.`
@@ -21,12 +25,19 @@ export default class Start extends Command {
     '<%= config.bin %> start',
     '<%= config.bin %> start --foreground',
     '<%= config.bin %> start -f',
+    '<%= config.bin %> start --yes  # Auto-install daemon if missing',
+    '<%= config.bin %> start -y',
   ]
 
   static override flags = {
     foreground: Flags.boolean({
       char: 'f',
       description: 'Run daemon in foreground (blocks terminal)',
+      default: false,
+    }),
+    yes: Flags.boolean({
+      char: 'y',
+      description: 'Automatically install daemon if missing (skip prompt)',
       default: false,
     }),
   }
@@ -39,9 +50,19 @@ export default class Start extends Command {
       return
     }
 
-    const daemonPath = findDaemonBinary()
+    let daemonPath = findDaemonBinary()
     if (!daemonBinaryExists(daemonPath)) {
-      this.error(getMissingDaemonMsg(daemonPath))
+      const installed = await this.handleMissingDaemon(daemonPath, flags.yes)
+      if (!installed) {
+        this.error(getMissingDaemonMsg(daemonPath))
+      }
+      // Re-find the daemon path after installation
+      daemonPath = findDaemonBinary()
+      if (!daemonBinaryExists(daemonPath)) {
+        this.error(
+          'Installation succeeded but daemon binary not found. Please try again.'
+        )
+      }
     }
 
     if (flags.foreground) {
@@ -49,6 +70,52 @@ export default class Start extends Command {
     } else {
       await this.startBackground(daemonPath)
     }
+  }
+
+  private async handleMissingDaemon(
+    daemonPath: string,
+    autoYes: boolean
+  ): Promise<boolean> {
+    let shouldInstall = autoYes
+
+    if (!autoYes) {
+      // Check if running in interactive mode (TTY)
+      if (!process.stdin.isTTY) {
+        this.log('Daemon not found and running in non-interactive mode.')
+        this.log('Use --yes flag to auto-install, or run: centy install daemon')
+        return false
+      }
+
+      const rl = createPromptInterface()
+      try {
+        shouldInstall = await promptForInstall({
+          rl,
+          output: process.stdout,
+          daemonPath,
+        })
+      } finally {
+        closePromptInterface(rl)
+      }
+    }
+
+    if (!shouldInstall) {
+      return false
+    }
+
+    this.log('\nInstalling daemon...\n')
+    const result = await installDaemon({
+      log: msg => this.log(msg),
+      warn: msg => this.warn(msg),
+    })
+
+    if (!result.success) {
+      this.error(`Failed to install daemon: ${result.error}`)
+    }
+
+    this.log(
+      `\nDaemon ${result.version} installed successfully to ${result.installPath}\n`
+    )
+    return true
   }
 
   private async startForeground(daemonPath: string): Promise<void> {
