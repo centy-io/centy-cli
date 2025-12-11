@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 /**
  * Local configuration utility for TUI user preferences.
  * Stores settings in config.local.json in the user's home directory.

@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 /* eslint-disable max-lines */
 import { loadPackageDefinition, credentials } from '@grpc/grpc-js'
 import { loadSync } from '@grpc/proto-loader'

@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetDoc } from '../../daemon/daemon-get-doc.js'

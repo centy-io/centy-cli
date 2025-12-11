@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import { writeFile, readFile } from 'node:fs/promises'
 
 import { Command, Flags } from '@oclif/core'

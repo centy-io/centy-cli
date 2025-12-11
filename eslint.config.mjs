@@ -22,7 +22,6 @@ export default [
     rules: {
       'security/detect-non-literal-fs-filename': 'off',
       'no-restricted-syntax': 'off',
-      'ddd/require-spec-file': 'off',
     },
   },
   {
@@ -32,7 +31,6 @@ export default [
       'custom/no-default-class-export': 'off',
       'class-export/class-export': 'off',
       'import/order': 'off',
-      'ddd/require-spec-file': 'off',
       'no-restricted-syntax': 'off',
       'max-lines': 'off',
       'security/detect-non-literal-fs-filename': 'off',
@@ -44,7 +42,6 @@ export default [
     rules: {
       'security/detect-non-literal-fs-filename': 'off',
       'security/detect-object-injection': 'off',
-      'ddd/require-spec-file': 'off',
       'no-restricted-syntax': 'off',
       'max-lines': 'off',
     },
@@ -53,7 +50,6 @@ export default [
     // Daemon client modules use gRPC which requires type assertions and multiple exports
     files: ['src/daemon/**/*.ts'],
     rules: {
-      'ddd/require-spec-file': 'off',
       'no-restricted-syntax': 'off',
       'single-export/single-export': 'off',
       'import/order': 'off',
@@ -63,7 +59,6 @@ export default [
     // TUI modules use React patterns with multiple exports, hooks, and component composition
     files: ['src/tui/**/*.ts', 'src/tui/**/*.tsx'],
     rules: {
-      'ddd/require-spec-file': 'off',
       'no-restricted-syntax': 'off',
       'single-export/single-export': 'off',
       'import/order': 'off',

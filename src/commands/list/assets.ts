@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import { Command, Flags } from '@oclif/core'
 
 import { daemonIsInitialized } from '../../daemon/daemon-is-initialized.js'

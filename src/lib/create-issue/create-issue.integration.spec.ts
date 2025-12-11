@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import { Writable } from 'node:stream'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type {

@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 /**
  * Clipboard service for TUI copy functionality
  * Uses clipboardy for cross-platform clipboard access

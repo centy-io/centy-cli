@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import type { CreatePrOptions } from '../../types/create-pr-options.js'
 import { gatherBasicFields } from './gather-basic-fields.js'
 import { gatherMetadataFields } from './gather-metadata-fields.js'

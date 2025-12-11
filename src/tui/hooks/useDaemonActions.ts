@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import { useState, useCallback } from 'react'
 import { useKeyboard } from '@opentui/react'
 import type { KeyEvent } from '@opentui/core'

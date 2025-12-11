@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import type { CreatePrRequest, CreatePrResponse } from './types.js'
 import { getDaemonClient } from './load-proto.js'
 

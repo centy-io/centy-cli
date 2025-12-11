@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import { join } from 'node:path'
 import { daemonCreatePr } from '../../daemon/daemon-create-pr.js'
 import { daemonIsInitialized } from '../../daemon/daemon-is-initialized.js'

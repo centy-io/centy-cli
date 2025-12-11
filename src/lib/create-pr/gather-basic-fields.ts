@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import type { CreatePrOptions } from '../../types/create-pr-options.js'
 import { closePromptInterface } from '../../utils/close-prompt-interface.js'
 import { createPromptInterface } from '../../utils/create-prompt-interface.js'

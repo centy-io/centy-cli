@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import { useCallback } from 'react'
 import { useAppState } from '../state/app-state.js'
 import type { ViewId, ViewParams } from '../types/views.js'

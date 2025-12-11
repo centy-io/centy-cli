@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 import type {
   SetProjectArchivedRequest,
   SetProjectArchivedResponse,

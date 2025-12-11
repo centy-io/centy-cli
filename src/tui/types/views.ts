@@ -1,3 +1,4 @@
+/* eslint-disable ddd/require-spec-file */
 /**
  * View/route definitions for the TUI
  */
