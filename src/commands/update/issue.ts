@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonUpdateIssue } from '../../daemon/daemon-update-issue.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Update an existing issue
@@ -24,6 +25,7 @@ export default class UpdateIssue extends Command {
     '<%= config.bin %> update issue 1 --status closed',
     '<%= config.bin %> update issue 1 --title "New title" --priority high',
     '<%= config.bin %> update issue abc123 --status in-progress',
+    '<%= config.bin %> update issue 1 --status closed --project centy-daemon',
   ]
 
   static override flags = {
@@ -43,6 +45,7 @@ export default class UpdateIssue extends Command {
       char: 'p',
       description: 'New priority (low/medium/high or 1-3)',
     }),
+    project: projectFlag,
   }
 
   private convertPriority(priority: string | undefined): number | undefined {
@@ -63,7 +66,7 @@ export default class UpdateIssue extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(UpdateIssue)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

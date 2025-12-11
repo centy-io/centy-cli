@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Command, Flags } from '@oclif/core'
 
 import { daemonListDocs } from '../../daemon/daemon-list-docs.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * List all documentation files
@@ -16,6 +17,7 @@ export default class ListDocs extends Command {
   static override examples = [
     '<%= config.bin %> list docs',
     '<%= config.bin %> list docs --json',
+    '<%= config.bin %> list docs --project centy-daemon',
   ]
 
   static override flags = {
@@ -23,11 +25,12 @@ export default class ListDocs extends Command {
       description: 'Output as JSON',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(ListDocs)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

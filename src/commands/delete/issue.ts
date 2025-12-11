@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeleteIssue } from '../../daemon/daemon-delete-issue.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Delete an issue
@@ -24,6 +25,7 @@ export default class DeleteIssue extends Command {
     '<%= config.bin %> delete issue 1',
     '<%= config.bin %> delete issue abc123-uuid',
     '<%= config.bin %> delete issue 1 --force',
+    '<%= config.bin %> delete issue 1 --project centy-daemon',
   ]
 
   static override flags = {
@@ -32,11 +34,12 @@ export default class DeleteIssue extends Command {
       description: 'Skip confirmation prompt',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(DeleteIssue)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonSetProjectFavorite } from '../../daemon/daemon-set-project-favorite.js'

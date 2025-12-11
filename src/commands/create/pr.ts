@@ -1,7 +1,8 @@
-/* eslint-disable ddd/require-spec-file */
 import { Command, Flags } from '@oclif/core'
 
+import { projectFlag } from '../../flags/project-flag.js'
 import { createPr } from '../../lib/create-pr/index.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Create a new pull request in the .centy/prs folder
@@ -14,6 +15,7 @@ export default class CreatePrCommand extends Command {
     '<%= config.bin %> create pr --title "Add feature" --source feature-branch',
     '<%= config.bin %> create pr -t "Bug fix" -s bugfix/123 --target main',
     '<%= config.bin %> create pr -t "Feature" --issues 1,2 --reviewers alice,bob',
+    '<%= config.bin %> create pr -t "Feature" --project centy-daemon',
   ]
 
   static override flags = {
@@ -49,11 +51,12 @@ export default class CreatePrCommand extends Command {
       description: 'Initial status (draft/open)',
       options: ['draft', 'open'],
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(CreatePrCommand)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     // Parse comma-separated lists
     const linkedIssues = flags.issues

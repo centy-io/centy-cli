@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetProjectInfo } from '../../daemon/daemon-get-project-info.js'

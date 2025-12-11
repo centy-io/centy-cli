@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonSetProjectArchived } from '../../daemon/daemon-set-project-archived.js'

@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonRegisterProject } from '../../daemon/daemon-register-project.js'

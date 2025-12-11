@@ -1,12 +1,13 @@
-/* eslint-disable ddd/require-spec-file */
 import { Command, Flags } from '@oclif/core'
 
 import { daemonListAssets } from '../../daemon/daemon-list-assets.js'
+import { daemonListSharedAssets } from '../../daemon/daemon-list-shared-assets.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
-import { daemonListSharedAssets } from '../../daemon/daemon-list-shared-assets.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * List assets for an issue or shared assets
@@ -18,6 +19,7 @@ export default class ListAssets extends Command {
     '<%= config.bin %> list assets --issue 1',
     '<%= config.bin %> list assets --shared',
     '<%= config.bin %> list assets --issue 1 --include-shared',
+    '<%= config.bin %> list assets --issue 1 --project centy-daemon',
   ]
 
   static override flags = {
@@ -38,11 +40,12 @@ export default class ListAssets extends Command {
       description: 'Output as JSON',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(ListAssets)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

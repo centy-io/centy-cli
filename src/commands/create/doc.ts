@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Command, Flags } from '@oclif/core'
 
 import { daemonCreateDoc } from '../../daemon/daemon-create-doc.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Create a new documentation file
@@ -17,6 +18,7 @@ export default class CreateDoc extends Command {
     '<%= config.bin %> create doc --title "Getting Started"',
     '<%= config.bin %> create doc -t "API Reference" -c "# API\n\nDocumentation here"',
     '<%= config.bin %> create doc --title "Guide" --slug my-guide',
+    '<%= config.bin %> create doc --title "Guide" --project centy-daemon',
   ]
 
   static override flags = {
@@ -36,11 +38,12 @@ export default class CreateDoc extends Command {
     template: Flags.string({
       description: 'Template name to use',
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(CreateDoc)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

@@ -1,12 +1,13 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetPrByDisplayNumber } from '../../daemon/daemon-get-pr-by-display-number.js'
 import { daemonUpdatePr } from '../../daemon/daemon-update-pr.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 const PRIORITY_MAP: Record<string, number> = { high: 1, medium: 2, low: 3 }
 
@@ -23,6 +24,7 @@ export default class UpdatePr extends Command {
   static override examples = [
     '<%= config.bin %> update pr 1 --status open',
     '<%= config.bin %> update pr 1 --title "New title"',
+    '<%= config.bin %> update pr 1 --status open --project centy-daemon',
   ]
 
   static override flags = {
@@ -48,11 +50,12 @@ export default class UpdatePr extends Command {
       description: 'New priority (low/medium/high)',
       options: ['low', 'medium', 'high'],
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(UpdatePr)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

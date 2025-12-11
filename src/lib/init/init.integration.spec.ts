@@ -1,4 +1,4 @@
-/* eslint-disable ddd/require-spec-file */
+/* eslint-disable ddd/require-spec-file -- Integration test */
 import { Writable } from 'node:stream'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ReconciliationPlan, InitResponse } from '../../daemon/types.js'

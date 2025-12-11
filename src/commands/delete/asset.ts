@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeleteAsset } from '../../daemon/daemon-delete-asset.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Delete an asset
@@ -24,6 +25,7 @@ export default class DeleteAsset extends Command {
     '<%= config.bin %> delete asset screenshot.png --issue 1',
     '<%= config.bin %> delete asset logo.svg --shared',
     '<%= config.bin %> delete asset old-image.png --issue 1 --force',
+    '<%= config.bin %> delete asset screenshot.png --issue 1 --project centy-daemon',
   ]
 
   static override flags = {
@@ -41,11 +43,12 @@ export default class DeleteAsset extends Command {
       description: 'Skip confirmation prompt',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(DeleteAsset)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

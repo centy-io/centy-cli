@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 import { spawn } from 'node:child_process'
 
 import { Command, Flags } from '@oclif/core'

@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 import { useCallback, useEffect } from 'react'
 import { useAppState } from '../state/app-state.js'
 import { daemonService } from '../services/daemon-service.js'

@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 import { useCallback, useRef } from 'react'
 import { useAppState } from '../state/app-state.js'
 import { clipboardService } from '../services/clipboard-service.js'

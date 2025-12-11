@@ -1,13 +1,14 @@
-/* eslint-disable ddd/require-spec-file */
 import { readFile } from 'node:fs/promises'
 import { basename } from 'node:path'
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonAddAsset } from '../../daemon/daemon-add-asset.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Add an asset to an issue, PR, or as a shared asset
@@ -28,6 +29,7 @@ export default class AddAsset extends Command {
     '<%= config.bin %> add asset screenshot.png --pr 1',
     '<%= config.bin %> add asset diagram.svg --shared',
     '<%= config.bin %> add asset image.jpg --issue 1 --name my-image.jpg',
+    '<%= config.bin %> add asset screenshot.png --issue 1 --project centy-daemon',
   ]
 
   static override flags = {
@@ -48,11 +50,12 @@ export default class AddAsset extends Command {
       char: 'n',
       description: 'Custom filename (defaults to original filename)',
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(AddAsset)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

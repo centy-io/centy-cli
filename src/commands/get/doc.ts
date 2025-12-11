@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetDoc } from '../../daemon/daemon-get-doc.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Get a single doc by slug
@@ -25,6 +26,7 @@ export default class GetDoc extends Command {
   static override examples = [
     '<%= config.bin %> get doc getting-started',
     '<%= config.bin %> get doc api-reference --json',
+    '<%= config.bin %> get doc api-reference --project centy-daemon',
   ]
 
   static override flags = {
@@ -32,11 +34,12 @@ export default class GetDoc extends Command {
       description: 'Output as JSON',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(GetDoc)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

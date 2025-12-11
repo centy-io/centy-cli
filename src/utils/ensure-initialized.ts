@@ -1,5 +1,4 @@
 /* eslint-disable single-export/single-export */
-/* eslint-disable ddd/require-spec-file */
 /**
  * Initialization check utilities
  * Multiple exports allowed for related error class and function

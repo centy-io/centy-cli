@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 import { useEffect, useRef } from 'react'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'

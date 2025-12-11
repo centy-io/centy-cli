@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 /**
  * Unified daemon service layer for TUI
  * Wraps existing daemon functions with a cleaner API

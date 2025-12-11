@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeleteDoc } from '../../daemon/daemon-delete-doc.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Delete a doc
@@ -23,6 +24,7 @@ export default class DeleteDoc extends Command {
   static override examples = [
     '<%= config.bin %> delete doc getting-started',
     '<%= config.bin %> delete doc api-reference --force',
+    '<%= config.bin %> delete doc api-reference --project centy-daemon',
   ]
 
   static override flags = {
@@ -31,11 +33,12 @@ export default class DeleteDoc extends Command {
       description: 'Skip confirmation prompt',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(DeleteDoc)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

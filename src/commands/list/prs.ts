@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Command, Flags } from '@oclif/core'
 
 import { daemonListPrs } from '../../daemon/daemon-list-prs.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * List all pull requests in the .centy/prs folder
@@ -18,6 +19,7 @@ export default class ListPrs extends Command {
     '<%= config.bin %> list prs --status open',
     '<%= config.bin %> list prs --source feature-branch',
     '<%= config.bin %> list prs --target main',
+    '<%= config.bin %> list prs --project centy-daemon',
   ]
 
   static override flags = {
@@ -39,11 +41,12 @@ export default class ListPrs extends Command {
       description: 'Output as JSON',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(ListPrs)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

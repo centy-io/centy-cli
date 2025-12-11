@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeletePr } from '../../daemon/daemon-delete-pr.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Delete a pull request
@@ -24,6 +25,7 @@ export default class DeletePr extends Command {
     '<%= config.bin %> delete pr 1',
     '<%= config.bin %> delete pr abc123-uuid',
     '<%= config.bin %> delete pr 1 --force',
+    '<%= config.bin %> delete pr 1 --project centy-daemon',
   ]
 
   static override flags = {
@@ -32,11 +34,12 @@ export default class DeletePr extends Command {
       description: 'Skip confirmation prompt',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(DeletePr)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

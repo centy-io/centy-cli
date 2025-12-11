@@ -1,12 +1,13 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetPr } from '../../daemon/daemon-get-pr.js'
 import { daemonGetPrByDisplayNumber } from '../../daemon/daemon-get-pr-by-display-number.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Get a single pull request by ID or display number
@@ -28,6 +29,7 @@ export default class GetPr extends Command {
     '<%= config.bin %> get pr 1',
     '<%= config.bin %> get pr abc123-uuid',
     '<%= config.bin %> get pr 1 --json',
+    '<%= config.bin %> get pr 1 --project centy-daemon',
   ]
 
   static override flags = {
@@ -35,11 +37,12 @@ export default class GetPr extends Command {
       description: 'Output as JSON',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(GetPr)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

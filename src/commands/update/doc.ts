@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonUpdateDoc } from '../../daemon/daemon-update-doc.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Update an existing doc
@@ -24,6 +25,7 @@ export default class UpdateDoc extends Command {
     '<%= config.bin %> update doc getting-started --title "New Title"',
     '<%= config.bin %> update doc api-reference --content "# New Content"',
     '<%= config.bin %> update doc old-slug --new-slug new-slug',
+    '<%= config.bin %> update doc api-reference --title "New Title" --project centy-daemon',
   ]
 
   static override flags = {
@@ -38,11 +40,12 @@ export default class UpdateDoc extends Command {
     'new-slug': Flags.string({
       description: 'Rename the doc to a new slug',
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(UpdateDoc)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

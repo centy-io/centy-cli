@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 import type { Interface } from 'node:readline'
 
 type Status = 'draft' | 'open'

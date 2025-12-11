@@ -1,7 +1,8 @@
-/* eslint-disable ddd/require-spec-file */
 import { Command, Flags } from '@oclif/core'
 
+import { projectFlag } from '../../flags/project-flag.js'
 import { createIssue } from '../../lib/create-issue/index.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Create a new issue in the .centy/issues folder
@@ -13,6 +14,7 @@ export default class CreateIssue extends Command {
     '<%= config.bin %> create issue',
     '<%= config.bin %> create issue --title "Bug in login" --priority high',
     '<%= config.bin %> create issue -t "Add feature" -d "Implement dark mode"',
+    '<%= config.bin %> create issue -t "Add feature" --project centy-daemon',
   ]
 
   static override flags = {
@@ -34,13 +36,12 @@ export default class CreateIssue extends Command {
       description: 'Initial status',
       default: 'open',
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(CreateIssue)
-
-    // Allow CENTY_CWD env var to override working directory (for testing)
-    const cwd = process.env['CENTY_CWD']
+    const cwd = await resolveProjectPath(flags.project)
 
     const result = await createIssue({
       cwd,

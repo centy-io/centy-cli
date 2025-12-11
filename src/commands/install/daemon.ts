@@ -1,4 +1,3 @@
-/* eslint-disable ddd/require-spec-file */
 import { Command, Flags } from '@oclif/core'
 
 import { installDaemon } from '../../lib/install-daemon/index.js'

@@ -1,11 +1,12 @@
-/* eslint-disable ddd/require-spec-file */
 import { Command, Flags } from '@oclif/core'
 
 import { daemonListIssues } from '../../daemon/daemon-list-issues.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * List all issues in the .centy/issues folder
@@ -17,6 +18,7 @@ export default class ListIssues extends Command {
     '<%= config.bin %> list issues',
     '<%= config.bin %> list issues --status open',
     '<%= config.bin %> list issues --priority 1',
+    '<%= config.bin %> list issues --project centy-daemon',
   ]
 
   static override flags = {
@@ -32,11 +34,12 @@ export default class ListIssues extends Command {
       description: 'Output as JSON',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(ListIssues)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

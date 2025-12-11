@@ -1,12 +1,13 @@
-/* eslint-disable ddd/require-spec-file */
 import { writeFile } from 'node:fs/promises'
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetAsset } from '../../daemon/daemon-get-asset.js'
+import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Get an asset and save it to a file
@@ -26,6 +27,7 @@ export default class GetAsset extends Command {
   static override examples = [
     '<%= config.bin %> get asset screenshot.png --issue 1 --output ./screenshot.png',
     '<%= config.bin %> get asset logo.svg --shared --output ./logo.svg',
+    '<%= config.bin %> get asset screenshot.png --issue 1 --project centy-daemon',
   ]
 
   static override flags = {
@@ -42,11 +44,12 @@ export default class GetAsset extends Command {
       char: 'o',
       description: 'Output file path (defaults to asset filename)',
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(GetAsset)
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)
