@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { init } from './init.js'
+import { buildConfigFromOptions, init } from './init.js'
 
 describe('init', () => {
   it('should return error when daemon is not running', async () => {
@@ -22,5 +22,122 @@ describe('init', () => {
     expect(result).toHaveProperty('reset')
     expect(result).toHaveProperty('skipped')
     expect(result).toHaveProperty('userFiles')
+  })
+})
+
+describe('buildConfigFromOptions', () => {
+  it('should return undefined when no config options are provided', () => {
+    const result = buildConfigFromOptions({})
+    expect(result).toBeUndefined()
+  })
+
+  it('should return undefined when only non-config options are provided', () => {
+    const result = buildConfigFromOptions({
+      cwd: '/some/path',
+      force: true,
+    })
+    expect(result).toBeUndefined()
+  })
+
+  it('should build config with priorityLevels', () => {
+    const result = buildConfigFromOptions({ priorityLevels: 5 })
+    expect(result).toBeDefined()
+    expect(result!.priorityLevels).toBe(5)
+  })
+
+  it('should build config with defaultState', () => {
+    const result = buildConfigFromOptions({ defaultState: 'todo' })
+    expect(result).toBeDefined()
+    expect(result!.defaultState).toBe('todo')
+  })
+
+  it('should build config with allowedStates', () => {
+    const result = buildConfigFromOptions({
+      allowedStates: ['open', 'closed'],
+    })
+    expect(result).toBeDefined()
+    expect(result!.allowedStates).toEqual(['open', 'closed'])
+  })
+
+  it('should build config with version', () => {
+    const result = buildConfigFromOptions({ version: '1.0.0' })
+    expect(result).toBeDefined()
+    expect(result!.version).toBe('1.0.0')
+  })
+
+  it('should build config with llmAutoClose', () => {
+    const result = buildConfigFromOptions({ llmAutoClose: true })
+    expect(result).toBeDefined()
+    expect(result!.llm.autoCloseOnComplete).toBe(true)
+    expect(result!.llm.updateStatusOnStart).toBe(false)
+    expect(result!.llm.allowDirectEdits).toBe(false)
+  })
+
+  it('should build config with llmUpdateStatus', () => {
+    const result = buildConfigFromOptions({ llmUpdateStatus: true })
+    expect(result).toBeDefined()
+    expect(result!.llm.updateStatusOnStart).toBe(true)
+    expect(result!.llm.autoCloseOnComplete).toBe(false)
+    expect(result!.llm.allowDirectEdits).toBe(false)
+  })
+
+  it('should build config with llmAllowDirectEdits', () => {
+    const result = buildConfigFromOptions({ llmAllowDirectEdits: true })
+    expect(result).toBeDefined()
+    expect(result!.llm.allowDirectEdits).toBe(true)
+    expect(result!.llm.autoCloseOnComplete).toBe(false)
+    expect(result!.llm.updateStatusOnStart).toBe(false)
+  })
+
+  it('should build config with all LLM options', () => {
+    const result = buildConfigFromOptions({
+      llmAutoClose: true,
+      llmUpdateStatus: true,
+      llmAllowDirectEdits: true,
+    })
+    expect(result).toBeDefined()
+    expect(result!.llm.autoCloseOnComplete).toBe(true)
+    expect(result!.llm.updateStatusOnStart).toBe(true)
+    expect(result!.llm.allowDirectEdits).toBe(true)
+  })
+
+  it('should build config with all options combined', () => {
+    const result = buildConfigFromOptions({
+      priorityLevels: 5,
+      defaultState: 'todo',
+      allowedStates: ['todo', 'doing', 'done'],
+      version: '2.0.0',
+      llmAutoClose: true,
+      llmUpdateStatus: false,
+      llmAllowDirectEdits: true,
+    })
+    expect(result).toBeDefined()
+    expect(result!.priorityLevels).toBe(5)
+    expect(result!.defaultState).toBe('todo')
+    expect(result!.allowedStates).toEqual(['todo', 'doing', 'done'])
+    expect(result!.version).toBe('2.0.0')
+    expect(result!.llm.autoCloseOnComplete).toBe(true)
+    expect(result!.llm.updateStatusOnStart).toBe(false)
+    expect(result!.llm.allowDirectEdits).toBe(true)
+    // Non-configurable fields should have defaults
+    expect(result!.customFields).toEqual([])
+    expect(result!.defaults).toEqual({})
+    expect(result!.stateColors).toEqual({})
+    expect(result!.priorityColors).toEqual({})
+    expect(result!.customLinkTypes).toEqual([])
+  })
+
+  it('should use default values for unset config fields', () => {
+    const result = buildConfigFromOptions({ priorityLevels: 3 })
+    expect(result).toBeDefined()
+    expect(result!.priorityLevels).toBe(3)
+    // Unset fields should use proto defaults (0, '', [])
+    expect(result!.defaultState).toBe('')
+    expect(result!.allowedStates).toEqual([])
+    expect(result!.version).toBe('')
+    // LLM defaults when no LLM options set
+    expect(result!.llm.autoCloseOnComplete).toBe(false)
+    expect(result!.llm.updateStatusOnStart).toBe(false)
+    expect(result!.llm.allowDirectEdits).toBe(false)
   })
 })

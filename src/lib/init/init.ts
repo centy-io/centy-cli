@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines , single-export/single-export */
 
 import { join } from 'node:path'
 import { daemonExecuteReconciliation } from '../../daemon/daemon-execute-reconciliation.js'
@@ -186,7 +186,7 @@ async function gatherDecisions(
  * Returns undefined if no config options were set.
  * Proto default values (0, "", []) signal "use default from CentyConfig::default()"
  */
-function buildConfigFromOptions(opts: InitOptions): Config | undefined {
+export function buildConfigFromOptions(opts: InitOptions): Config | undefined {
   const hasConfigOptions =
     opts.priorityLevels !== undefined ||
     opts.defaultState !== undefined ||
