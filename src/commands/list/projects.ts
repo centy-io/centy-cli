@@ -12,6 +12,8 @@ export default class ListProjects extends Command {
     '<%= config.bin %> list projects',
     '<%= config.bin %> list projects --include-stale',
     '<%= config.bin %> list projects --include-uninitialized',
+    '<%= config.bin %> list projects --org centy-io',
+    '<%= config.bin %> list projects --ungrouped',
     '<%= config.bin %> list projects --json',
   ]
 
@@ -22,6 +24,13 @@ export default class ListProjects extends Command {
     }),
     'include-uninitialized': Flags.boolean({
       description: 'Include projects that are not initialized',
+      default: false,
+    }),
+    org: Flags.string({
+      description: 'Filter by organization slug',
+    }),
+    ungrouped: Flags.boolean({
+      description: 'Only show projects without an organization',
       default: false,
     }),
     json: Flags.boolean({
@@ -36,6 +45,8 @@ export default class ListProjects extends Command {
     const response = await daemonListProjects({
       includeStale: flags['include-stale'],
       includeUninitialized: flags['include-uninitialized'],
+      organizationSlug: flags.org,
+      ungroupedOnly: flags.ungrouped,
     })
 
     if (flags.json) {
@@ -61,6 +72,9 @@ export default class ListProjects extends Command {
       const favorite = project.isFavorite ? '★' : ' '
       this.log(`${favorite} ${status} ${project.name}`)
       this.log(`    Path: ${project.path}`)
+      if (project.organizationName) {
+        this.log(`    Organization: ${project.organizationName} (${project.organizationSlug})`)
+      }
       this.log(`    Issues: ${project.issueCount}, Docs: ${project.docCount}`)
       this.log(`    Last accessed: ${project.lastAccessed}`)
       this.log('')

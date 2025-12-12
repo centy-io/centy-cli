@@ -105,6 +105,19 @@ import type {
   SaveMigrationResponse,
   MarkIssuesCompactedRequest,
   MarkIssuesCompactedResponse,
+  // Organization types
+  SetProjectOrganizationRequest,
+  SetProjectOrganizationResponse,
+  CreateOrganizationRequest,
+  CreateOrganizationResponse,
+  ListOrganizationsRequest,
+  ListOrganizationsResponse,
+  GetOrganizationRequest,
+  GetOrganizationResponse,
+  UpdateOrganizationRequest,
+  UpdateOrganizationResponse,
+  DeleteOrganizationRequest,
+  DeleteOrganizationResponse,
 } from './types.js'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
@@ -281,6 +294,50 @@ interface CentyDaemonClient {
     callback: (
       error: ServiceError | null,
       response: SetProjectArchivedResponse
+    ) => void
+  ): void
+  setProjectOrganization(
+    request: SetProjectOrganizationRequest,
+    callback: (
+      error: ServiceError | null,
+      response: SetProjectOrganizationResponse
+    ) => void
+  ): void
+
+  // Organization operations
+  createOrganization(
+    request: CreateOrganizationRequest,
+    callback: (
+      error: ServiceError | null,
+      response: CreateOrganizationResponse
+    ) => void
+  ): void
+  listOrganizations(
+    request: ListOrganizationsRequest,
+    callback: (
+      error: ServiceError | null,
+      response: ListOrganizationsResponse
+    ) => void
+  ): void
+  getOrganization(
+    request: GetOrganizationRequest,
+    callback: (
+      error: ServiceError | null,
+      response: GetOrganizationResponse
+    ) => void
+  ): void
+  updateOrganization(
+    request: UpdateOrganizationRequest,
+    callback: (
+      error: ServiceError | null,
+      response: UpdateOrganizationResponse
+    ) => void
+  ): void
+  deleteOrganization(
+    request: DeleteOrganizationRequest,
+    callback: (
+      error: ServiceError | null,
+      response: DeleteOrganizationResponse
     ) => void
   ): void
 

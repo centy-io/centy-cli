@@ -386,12 +386,16 @@ export interface ProjectInfo {
   name: string
   isFavorite: boolean
   isArchived: boolean
+  organizationSlug: string
+  organizationName: string
 }
 
 export interface ListProjectsRequest {
   includeStale?: boolean
   includeUninitialized?: boolean
   includeArchived?: boolean
+  organizationSlug?: string
+  ungroupedOnly?: boolean
 }
 
 export interface ListProjectsResponse {
@@ -447,6 +451,80 @@ export interface SetProjectArchivedResponse {
   success: boolean
   error: string
   project: ProjectInfo
+}
+
+export interface SetProjectOrganizationRequest {
+  projectPath: string
+  organizationSlug: string
+}
+
+export interface SetProjectOrganizationResponse {
+  success: boolean
+  error: string
+  project: ProjectInfo
+}
+
+// ============ Organization Types ============
+
+export interface Organization {
+  slug: string
+  name: string
+  description: string
+  createdAt: string
+  updatedAt: string
+  projectCount: number
+}
+
+export interface CreateOrganizationRequest {
+  slug?: string
+  name: string
+  description?: string
+}
+
+export interface CreateOrganizationResponse {
+  success: boolean
+  error: string
+  organization?: Organization
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface ListOrganizationsRequest {}
+
+export interface ListOrganizationsResponse {
+  organizations: Organization[]
+  totalCount: number
+}
+
+export interface GetOrganizationRequest {
+  slug: string
+}
+
+export interface GetOrganizationResponse {
+  found: boolean
+  organization?: Organization
+}
+
+export interface UpdateOrganizationRequest {
+  slug: string
+  name?: string
+  description?: string
+  newSlug?: string
+}
+
+export interface UpdateOrganizationResponse {
+  success: boolean
+  error: string
+  organization?: Organization
+}
+
+export interface DeleteOrganizationRequest {
+  slug: string
+}
+
+export interface DeleteOrganizationResponse {
+  success: boolean
+  error: string
+  unassignedProjects: number
 }
 
 // ============ Version Types ============

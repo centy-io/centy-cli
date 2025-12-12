@@ -639,6 +639,47 @@
         "issue.js"
       ]
     },
+    "delete:org": {
+      "aliases": [
+        "delete:organization"
+      ],
+      "args": {
+        "slug": {
+          "description": "Organization slug",
+          "name": "slug",
+          "required": true
+        }
+      },
+      "description": "Delete an organization (must have no projects assigned)",
+      "examples": [
+        "<%= config.bin %> delete org my-org",
+        "<%= config.bin %> delete organization old-org"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Skip confirmation prompt",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "delete:org",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "delete",
+        "org.js"
+      ]
+    },
     "delete:pr": {
       "aliases": [],
       "args": {
@@ -685,6 +726,55 @@
         "commands",
         "delete",
         "pr.js"
+      ]
+    },
+    "install:daemon": {
+      "aliases": [],
+      "args": {},
+      "description": "Download and install the centy daemon binary",
+      "examples": [
+        "<%= config.bin %> install daemon",
+        "<%= config.bin %> install daemon --version 0.1.0",
+        "<%= config.bin %> install daemon --force",
+        "<%= config.bin %> install daemon --skip-checksum"
+      ],
+      "flags": {
+        "version": {
+          "char": "v",
+          "description": "Specific version to install (default: latest)",
+          "name": "version",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "force": {
+          "char": "f",
+          "description": "Force reinstall even if already installed",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "skip-checksum": {
+          "description": "Skip SHA256 checksum verification",
+          "name": "skip-checksum",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "install:daemon",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "install",
+        "daemon.js"
       ]
     },
     "get:asset": {
@@ -869,6 +959,46 @@
         "issue.js"
       ]
     },
+    "get:org": {
+      "aliases": [
+        "get:organization"
+      ],
+      "args": {
+        "slug": {
+          "description": "Organization slug",
+          "name": "slug",
+          "required": true
+        }
+      },
+      "description": "Get organization details by slug",
+      "examples": [
+        "<%= config.bin %> get org centy-io",
+        "<%= config.bin %> get organization my-org --json"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "get:org",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "get",
+        "org.js"
+      ]
+    },
     "get:pr": {
       "aliases": [
         "show:pr"
@@ -968,302 +1098,6 @@
         "project.js"
       ]
     },
-    "create:doc": {
-      "aliases": [],
-      "args": {},
-      "description": "Create a new documentation file",
-      "examples": [
-        "<%= config.bin %> create doc --title \"Getting Started\"",
-        "<%= config.bin %> create doc -t \"API Reference\" -c \"# API\n\nDocumentation here\"",
-        "<%= config.bin %> create doc --title \"Guide\" --slug my-guide",
-        "<%= config.bin %> create doc --title \"Guide\" --project centy-daemon"
-      ],
-      "flags": {
-        "title": {
-          "char": "t",
-          "description": "Doc title",
-          "name": "title",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "content": {
-          "char": "c",
-          "description": "Doc content (markdown)",
-          "name": "content",
-          "default": "",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "slug": {
-          "description": "Custom slug (auto-generated from title if not provided)",
-          "name": "slug",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "template": {
-          "description": "Template name to use",
-          "name": "template",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "create:doc",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": [
-        "dist",
-        "commands",
-        "create",
-        "doc.js"
-      ]
-    },
-    "create:issue": {
-      "aliases": [],
-      "args": {},
-      "description": "Create a new issue in the .centy folder",
-      "examples": [
-        "<%= config.bin %> create issue",
-        "<%= config.bin %> create issue --title \"Bug in login\" --priority high",
-        "<%= config.bin %> create issue -t \"Add feature\" -d \"Implement dark mode\"",
-        "<%= config.bin %> create issue -t \"Add feature\" --project centy-daemon"
-      ],
-      "flags": {
-        "title": {
-          "char": "t",
-          "description": "Issue title",
-          "name": "title",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "description": {
-          "char": "d",
-          "description": "Issue description",
-          "name": "description",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "priority": {
-          "char": "p",
-          "description": "Priority level (low/medium/high)",
-          "name": "priority",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "options": [
-            "low",
-            "medium",
-            "high"
-          ],
-          "type": "option"
-        },
-        "status": {
-          "char": "s",
-          "description": "Initial status",
-          "name": "status",
-          "default": "open",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "create:issue",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": [
-        "dist",
-        "commands",
-        "create",
-        "issue.js"
-      ]
-    },
-    "create:pr": {
-      "aliases": [],
-      "args": {},
-      "description": "Create a new pull request in the .centy folder",
-      "examples": [
-        "<%= config.bin %> create pr",
-        "<%= config.bin %> create pr --title \"Add feature\" --source feature-branch",
-        "<%= config.bin %> create pr -t \"Bug fix\" -s bugfix/123 --target main",
-        "<%= config.bin %> create pr -t \"Feature\" --issues 1,2 --reviewers alice,bob",
-        "<%= config.bin %> create pr -t \"Feature\" --project centy-daemon"
-      ],
-      "flags": {
-        "title": {
-          "char": "t",
-          "description": "PR title",
-          "name": "title",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "description": {
-          "char": "d",
-          "description": "PR description",
-          "name": "description",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "source": {
-          "char": "s",
-          "description": "Source branch name (auto-detected if not provided)",
-          "name": "source",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "target": {
-          "description": "Target branch name (defaults to main)",
-          "name": "target",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "issues": {
-          "char": "i",
-          "description": "Linked issue IDs (comma-separated)",
-          "name": "issues",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "reviewers": {
-          "char": "r",
-          "description": "Reviewers (comma-separated)",
-          "name": "reviewers",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "priority": {
-          "char": "p",
-          "description": "Priority level (low/medium/high)",
-          "name": "priority",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "options": [
-            "low",
-            "medium",
-            "high"
-          ],
-          "type": "option"
-        },
-        "status": {
-          "description": "Initial status (draft/open)",
-          "name": "status",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "options": [
-            "draft",
-            "open"
-          ],
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "create:pr",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": [
-        "dist",
-        "commands",
-        "create",
-        "pr.js"
-      ]
-    },
-    "install:daemon": {
-      "aliases": [],
-      "args": {},
-      "description": "Download and install the centy daemon binary",
-      "examples": [
-        "<%= config.bin %> install daemon",
-        "<%= config.bin %> install daemon --version 0.1.0",
-        "<%= config.bin %> install daemon --force",
-        "<%= config.bin %> install daemon --skip-checksum"
-      ],
-      "flags": {
-        "version": {
-          "char": "v",
-          "description": "Specific version to install (default: latest)",
-          "name": "version",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "force": {
-          "char": "f",
-          "description": "Force reinstall even if already installed",
-          "name": "force",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "skip-checksum": {
-          "description": "Skip SHA256 checksum verification",
-          "name": "skip-checksum",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "install:daemon",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": [
-        "dist",
-        "commands",
-        "install",
-        "daemon.js"
-      ]
-    },
     "project:archive": {
       "aliases": [],
       "args": {
@@ -1342,323 +1176,50 @@
         "favorite.js"
       ]
     },
-    "register:project": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Register a project for tracking",
-      "examples": [
-        "<%= config.bin %> register project",
-        "<%= config.bin %> register project /path/to/project",
-        "<%= config.bin %> register project --no-init"
+    "project:org": {
+      "aliases": [
+        "project:organization"
       ],
-      "flags": {
-        "init": {
-          "char": "i",
-          "description": "Initialize .centy folder if not already initialized",
-          "name": "init",
-          "allowNo": true,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "register:project",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": [
-        "dist",
-        "commands",
-        "register",
-        "project.js"
-      ]
-    },
-    "update:doc": {
-      "aliases": [],
       "args": {
         "slug": {
-          "description": "Doc slug",
+          "description": "Organization slug (omit to remove from organization)",
           "name": "slug",
-          "required": true
-        }
-      },
-      "description": "Update an existing documentation file",
-      "examples": [
-        "<%= config.bin %> update doc getting-started --title \"New Title\"",
-        "<%= config.bin %> update doc api-reference --content \"# New Content\"",
-        "<%= config.bin %> update doc old-slug --new-slug new-slug",
-        "<%= config.bin %> update doc api-reference --title \"New Title\" --project centy-daemon"
-      ],
-      "flags": {
-        "title": {
-          "char": "t",
-          "description": "New title",
-          "name": "title",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "content": {
-          "char": "c",
-          "description": "New content (markdown)",
-          "name": "content",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "new-slug": {
-          "description": "Rename the doc to a new slug",
-          "name": "new-slug",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "update:doc",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": [
-        "dist",
-        "commands",
-        "update",
-        "doc.js"
-      ]
-    },
-    "update:issue": {
-      "aliases": [],
-      "args": {
-        "id": {
-          "description": "Issue ID (UUID) or display number",
-          "name": "id",
-          "required": true
-        }
-      },
-      "description": "Update an existing issue",
-      "examples": [
-        "<%= config.bin %> update issue 1 --status closed",
-        "<%= config.bin %> update issue 1 --title \"New title\" --priority high",
-        "<%= config.bin %> update issue abc123 --status in-progress",
-        "<%= config.bin %> update issue 1 --status closed --project centy-daemon"
-      ],
-      "flags": {
-        "title": {
-          "char": "t",
-          "description": "New title",
-          "name": "title",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "description": {
-          "char": "d",
-          "description": "New description",
-          "name": "description",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "status": {
-          "char": "s",
-          "description": "New status (e.g., open, in-progress, closed)",
-          "name": "status",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "priority": {
-          "char": "p",
-          "description": "New priority (low/medium/high or 1-3)",
-          "name": "priority",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "update:issue",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": [
-        "dist",
-        "commands",
-        "update",
-        "issue.js"
-      ]
-    },
-    "update:pr": {
-      "aliases": [],
-      "args": {
-        "id": {
-          "description": "PR ID (UUID) or display number",
-          "name": "id",
-          "required": true
-        }
-      },
-      "description": "Update an existing pull request",
-      "examples": [
-        "<%= config.bin %> update pr 1 --status open",
-        "<%= config.bin %> update pr 1 --title \"New title\"",
-        "<%= config.bin %> update pr 1 --status open --project centy-daemon"
-      ],
-      "flags": {
-        "title": {
-          "char": "t",
-          "description": "New title",
-          "name": "title",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "description": {
-          "char": "d",
-          "description": "New description",
-          "name": "description",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "status": {
-          "char": "s",
-          "description": "New status (draft, open, merged, closed)",
-          "name": "status",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "options": [
-            "draft",
-            "open",
-            "merged",
-            "closed"
-          ],
-          "type": "option"
-        },
-        "source": {
-          "description": "New source branch",
-          "name": "source",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "target": {
-          "description": "New target branch",
-          "name": "target",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "issues": {
-          "char": "i",
-          "description": "Linked issue IDs (comma-separated)",
-          "name": "issues",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "reviewers": {
-          "char": "r",
-          "description": "Reviewers (comma-separated)",
-          "name": "reviewers",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "priority": {
-          "char": "p",
-          "description": "New priority (low/medium/high)",
-          "name": "priority",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "options": [
-            "low",
-            "medium",
-            "high"
-          ],
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "update:pr",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": [
-        "dist",
-        "commands",
-        "update",
-        "pr.js"
-      ]
-    },
-    "untrack:project": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
           "required": false
         }
       },
-      "description": "Remove a project from tracking",
+      "description": "Assign or remove a project from an organization",
       "examples": [
-        "<%= config.bin %> untrack project",
-        "<%= config.bin %> untrack project /path/to/project",
-        "<%= config.bin %> untrack project --force"
+        "<%= config.bin %> project org centy-io",
+        "<%= config.bin %> project org my-org --path /path/to/project",
+        "<%= config.bin %> project org --remove",
+        "<%= config.bin %> project organization centy-io"
       ],
       "flags": {
-        "force": {
-          "char": "f",
-          "description": "Skip confirmation prompt",
-          "name": "force",
+        "path": {
+          "char": "p",
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "remove": {
+          "char": "r",
+          "description": "Remove project from its organization",
+          "name": "remove",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
           "allowNo": false,
           "type": "boolean"
         }
       },
       "hasDynamicHelp": false,
       "hiddenAliases": [],
-      "id": "untrack:project",
+      "id": "project:org",
       "pluginAlias": "centy",
       "pluginName": "centy",
       "pluginType": "core",
@@ -1668,8 +1229,8 @@
       "relativePath": [
         "dist",
         "commands",
-        "untrack",
-        "project.js"
+        "project",
+        "org.js"
       ]
     },
     "list:assets": {
@@ -1831,6 +1392,41 @@
         "issues.js"
       ]
     },
+    "list:orgs": {
+      "aliases": [
+        "list:organizations"
+      ],
+      "args": {},
+      "description": "List all organizations",
+      "examples": [
+        "<%= config.bin %> list orgs",
+        "<%= config.bin %> list organizations",
+        "<%= config.bin %> list orgs --json"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:orgs",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "list",
+        "orgs.js"
+      ]
+    },
     "list:projects": {
       "aliases": [],
       "args": {},
@@ -1839,6 +1435,8 @@
         "<%= config.bin %> list projects",
         "<%= config.bin %> list projects --include-stale",
         "<%= config.bin %> list projects --include-uninitialized",
+        "<%= config.bin %> list projects --org centy-io",
+        "<%= config.bin %> list projects --ungrouped",
         "<%= config.bin %> list projects --json"
       ],
       "flags": {
@@ -1851,6 +1449,19 @@
         "include-uninitialized": {
           "description": "Include projects that are not initialized",
           "name": "include-uninitialized",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "org": {
+          "description": "Filter by organization slug",
+          "name": "org",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "ungrouped": {
+          "description": "Only show projects without an organization",
+          "name": "ungrouped",
           "allowNo": false,
           "type": "boolean"
         },
@@ -1947,6 +1558,706 @@
         "commands",
         "list",
         "prs.js"
+      ]
+    },
+    "register:project": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Register a project for tracking",
+      "examples": [
+        "<%= config.bin %> register project",
+        "<%= config.bin %> register project /path/to/project",
+        "<%= config.bin %> register project --no-init"
+      ],
+      "flags": {
+        "init": {
+          "char": "i",
+          "description": "Initialize .centy folder if not already initialized",
+          "name": "init",
+          "allowNo": true,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "register:project",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "register",
+        "project.js"
+      ]
+    },
+    "untrack:project": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Remove a project from tracking",
+      "examples": [
+        "<%= config.bin %> untrack project",
+        "<%= config.bin %> untrack project /path/to/project",
+        "<%= config.bin %> untrack project --force"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Skip confirmation prompt",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "untrack:project",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "untrack",
+        "project.js"
+      ]
+    },
+    "create:doc": {
+      "aliases": [],
+      "args": {},
+      "description": "Create a new documentation file",
+      "examples": [
+        "<%= config.bin %> create doc --title \"Getting Started\"",
+        "<%= config.bin %> create doc -t \"API Reference\" -c \"# API\n\nDocumentation here\"",
+        "<%= config.bin %> create doc --title \"Guide\" --slug my-guide",
+        "<%= config.bin %> create doc --title \"Guide\" --project centy-daemon"
+      ],
+      "flags": {
+        "title": {
+          "char": "t",
+          "description": "Doc title",
+          "name": "title",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "content": {
+          "char": "c",
+          "description": "Doc content (markdown)",
+          "name": "content",
+          "default": "",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "slug": {
+          "description": "Custom slug (auto-generated from title if not provided)",
+          "name": "slug",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "template": {
+          "description": "Template name to use",
+          "name": "template",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "create:doc",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "create",
+        "doc.js"
+      ]
+    },
+    "create:issue": {
+      "aliases": [],
+      "args": {},
+      "description": "Create a new issue in the .centy folder",
+      "examples": [
+        "<%= config.bin %> create issue",
+        "<%= config.bin %> create issue --title \"Bug in login\" --priority high",
+        "<%= config.bin %> create issue -t \"Add feature\" -d \"Implement dark mode\"",
+        "<%= config.bin %> create issue -t \"Add feature\" --project centy-daemon"
+      ],
+      "flags": {
+        "title": {
+          "char": "t",
+          "description": "Issue title",
+          "name": "title",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "description": {
+          "char": "d",
+          "description": "Issue description",
+          "name": "description",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "priority": {
+          "char": "p",
+          "description": "Priority level (low/medium/high)",
+          "name": "priority",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "type": "option"
+        },
+        "status": {
+          "char": "s",
+          "description": "Initial status",
+          "name": "status",
+          "default": "open",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "create:issue",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "create",
+        "issue.js"
+      ]
+    },
+    "create:org": {
+      "aliases": [
+        "create:organization"
+      ],
+      "args": {
+        "name": {
+          "description": "Organization display name",
+          "name": "name",
+          "required": true
+        }
+      },
+      "description": "Create a new organization to group projects",
+      "examples": [
+        "<%= config.bin %> create org \"My Company\"",
+        "<%= config.bin %> create org \"Centy.io\" --slug centy-io",
+        "<%= config.bin %> create org \"My Org\" --description \"Official projects\"",
+        "<%= config.bin %> create organization \"Work Projects\""
+      ],
+      "flags": {
+        "slug": {
+          "char": "s",
+          "description": "Custom slug (auto-generated from name if not provided)",
+          "name": "slug",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "description": {
+          "char": "d",
+          "description": "Organization description",
+          "name": "description",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "create:org",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "create",
+        "org.js"
+      ]
+    },
+    "create:pr": {
+      "aliases": [],
+      "args": {},
+      "description": "Create a new pull request in the .centy folder",
+      "examples": [
+        "<%= config.bin %> create pr",
+        "<%= config.bin %> create pr --title \"Add feature\" --source feature-branch",
+        "<%= config.bin %> create pr -t \"Bug fix\" -s bugfix/123 --target main",
+        "<%= config.bin %> create pr -t \"Feature\" --issues 1,2 --reviewers alice,bob",
+        "<%= config.bin %> create pr -t \"Feature\" --project centy-daemon"
+      ],
+      "flags": {
+        "title": {
+          "char": "t",
+          "description": "PR title",
+          "name": "title",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "description": {
+          "char": "d",
+          "description": "PR description",
+          "name": "description",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "source": {
+          "char": "s",
+          "description": "Source branch name (auto-detected if not provided)",
+          "name": "source",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "target": {
+          "description": "Target branch name (defaults to main)",
+          "name": "target",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "issues": {
+          "char": "i",
+          "description": "Linked issue IDs (comma-separated)",
+          "name": "issues",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "reviewers": {
+          "char": "r",
+          "description": "Reviewers (comma-separated)",
+          "name": "reviewers",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "priority": {
+          "char": "p",
+          "description": "Priority level (low/medium/high)",
+          "name": "priority",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "type": "option"
+        },
+        "status": {
+          "description": "Initial status (draft/open)",
+          "name": "status",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "draft",
+            "open"
+          ],
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "create:pr",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "create",
+        "pr.js"
+      ]
+    },
+    "update:doc": {
+      "aliases": [],
+      "args": {
+        "slug": {
+          "description": "Doc slug",
+          "name": "slug",
+          "required": true
+        }
+      },
+      "description": "Update an existing documentation file",
+      "examples": [
+        "<%= config.bin %> update doc getting-started --title \"New Title\"",
+        "<%= config.bin %> update doc api-reference --content \"# New Content\"",
+        "<%= config.bin %> update doc old-slug --new-slug new-slug",
+        "<%= config.bin %> update doc api-reference --title \"New Title\" --project centy-daemon"
+      ],
+      "flags": {
+        "title": {
+          "char": "t",
+          "description": "New title",
+          "name": "title",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "content": {
+          "char": "c",
+          "description": "New content (markdown)",
+          "name": "content",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "new-slug": {
+          "description": "Rename the doc to a new slug",
+          "name": "new-slug",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "update:doc",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "update",
+        "doc.js"
+      ]
+    },
+    "update:issue": {
+      "aliases": [],
+      "args": {
+        "id": {
+          "description": "Issue ID (UUID) or display number",
+          "name": "id",
+          "required": true
+        }
+      },
+      "description": "Update an existing issue",
+      "examples": [
+        "<%= config.bin %> update issue 1 --status closed",
+        "<%= config.bin %> update issue 1 --title \"New title\" --priority high",
+        "<%= config.bin %> update issue abc123 --status in-progress",
+        "<%= config.bin %> update issue 1 --status closed --project centy-daemon"
+      ],
+      "flags": {
+        "title": {
+          "char": "t",
+          "description": "New title",
+          "name": "title",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "description": {
+          "char": "d",
+          "description": "New description",
+          "name": "description",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "status": {
+          "char": "s",
+          "description": "New status (e.g., open, in-progress, closed)",
+          "name": "status",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "priority": {
+          "char": "p",
+          "description": "New priority (low/medium/high or 1-3)",
+          "name": "priority",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "update:issue",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "update",
+        "issue.js"
+      ]
+    },
+    "update:org": {
+      "aliases": [
+        "update:organization"
+      ],
+      "args": {
+        "slug": {
+          "description": "Organization slug",
+          "name": "slug",
+          "required": true
+        }
+      },
+      "description": "Update an organization",
+      "examples": [
+        "<%= config.bin %> update org my-org --name \"New Name\"",
+        "<%= config.bin %> update org my-org --description \"Updated description\"",
+        "<%= config.bin %> update org my-org --new-slug new-slug",
+        "<%= config.bin %> update organization centy-io --name \"Centy.io\""
+      ],
+      "flags": {
+        "name": {
+          "char": "n",
+          "description": "New organization name",
+          "name": "name",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "description": {
+          "char": "d",
+          "description": "New organization description",
+          "name": "description",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "new-slug": {
+          "description": "Rename the organization slug",
+          "name": "new-slug",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "update:org",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "update",
+        "org.js"
+      ]
+    },
+    "update:pr": {
+      "aliases": [],
+      "args": {
+        "id": {
+          "description": "PR ID (UUID) or display number",
+          "name": "id",
+          "required": true
+        }
+      },
+      "description": "Update an existing pull request",
+      "examples": [
+        "<%= config.bin %> update pr 1 --status open",
+        "<%= config.bin %> update pr 1 --title \"New title\"",
+        "<%= config.bin %> update pr 1 --status open --project centy-daemon"
+      ],
+      "flags": {
+        "title": {
+          "char": "t",
+          "description": "New title",
+          "name": "title",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "description": {
+          "char": "d",
+          "description": "New description",
+          "name": "description",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "status": {
+          "char": "s",
+          "description": "New status (draft, open, merged, closed)",
+          "name": "status",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "draft",
+            "open",
+            "merged",
+            "closed"
+          ],
+          "type": "option"
+        },
+        "source": {
+          "description": "New source branch",
+          "name": "source",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "target": {
+          "description": "New target branch",
+          "name": "target",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "issues": {
+          "char": "i",
+          "description": "Linked issue IDs (comma-separated)",
+          "name": "issues",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "reviewers": {
+          "char": "r",
+          "description": "Reviewers (comma-separated)",
+          "name": "reviewers",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "priority": {
+          "char": "p",
+          "description": "New priority (low/medium/high)",
+          "name": "priority",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "update:pr",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "update",
+        "pr.js"
       ]
     }
   },
