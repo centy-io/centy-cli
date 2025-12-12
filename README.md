@@ -106,6 +106,10 @@ centy list issues
 centy get issue 1
 centy get issue abc123-uuid
 
+# Shorthand (same as above)
+centy issue 1
+centy issue abc123-uuid
+
 # Update an issue
 centy update issue 1 --status closed
 centy update issue 1 --title "New title" --priority high
