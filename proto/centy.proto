@@ -804,7 +804,7 @@ message CreatePrRequest {
   string description = 3;
   string source_branch = 4;         // Source branch name (auto-detected if empty)
   string target_branch = 5;         // Target branch name (default: "main")
-  repeated string linked_issues = 6; // Linked issue IDs or display numbers
+  reserved 6;                       // Removed: linked_issues (use Link system instead)
   repeated string reviewers = 7;     // Reviewer usernames/identifiers
   int32 priority = 8;               // 1 = highest priority, 0 = use default
   string status = 9;                // default: "draft"
@@ -859,7 +859,7 @@ message PrMetadata {
   string status = 2;                  // e.g., "draft", "open", "merged", "closed"
   string source_branch = 3;
   string target_branch = 4;
-  repeated string linked_issues = 5;
+  reserved 5;                         // Removed: linked_issues (use Link system instead)
   repeated string reviewers = 6;
   int32 priority = 7;                 // 1 = highest priority, N = lowest
   string priority_label = 8;          // Human-readable label (e.g., "high", "P1")
@@ -924,7 +924,7 @@ message UpdatePrRequest {
   string status = 5;
   string source_branch = 6;
   string target_branch = 7;
-  repeated string linked_issues = 8;
+  reserved 8;                         // Removed: linked_issues (use Link system instead)
   repeated string reviewers = 9;
   int32 priority = 10;                // 0 = don't update, otherwise 1-N
   map<string, string> custom_fields = 11;
