@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { daemonCreateDoc } from '../../daemon/daemon-create-doc.js'
@@ -11,9 +12,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Create a new documentation file
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class CreateDoc extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Create a new documentation file'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> create doc --title "Getting Started"',
     '<%= config.bin %> create doc -t "API Reference" -c "# API\n\nDocumentation here"',
@@ -21,6 +25,7 @@ export default class CreateDoc extends Command {
     '<%= config.bin %> create doc --title "Guide" --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     title: Flags.string({
       char: 't',

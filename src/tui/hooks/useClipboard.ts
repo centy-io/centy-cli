@@ -30,6 +30,7 @@ export function useClipboard() {
       } else {
         dispatch({
           type: 'SET_COPY_MESSAGE',
+          // eslint-disable-next-line no-restricted-syntax
           message: result.error ?? 'Copy failed',
         })
 

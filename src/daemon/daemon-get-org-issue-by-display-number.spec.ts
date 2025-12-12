@@ -1,10 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
+// eslint-disable-next-line import/order
 import { daemonGetOrgIssueByDisplayNumber } from './daemon-get-org-issue-by-display-number.js'
 
 vi.mock('./load-proto.js', () => ({
   getDaemonClient: vi.fn(),
 }))
 
+// eslint-disable-next-line import/first
 import { getDaemonClient } from './load-proto.js'
 
 describe('daemonGetOrgIssueByDisplayNumber', () => {
@@ -19,8 +21,10 @@ describe('daemonGetOrgIssueByDisplayNumber', () => {
         callback(null, mockResponse)
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
+    // eslint-disable-next-line no-restricted-syntax
     const result = await daemonGetOrgIssueByDisplayNumber({} as never)
 
     expect(result).toEqual(mockResponse)
@@ -37,8 +41,10 @@ describe('daemonGetOrgIssueByDisplayNumber', () => {
         callback(mockError, null)
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
+    // eslint-disable-next-line no-restricted-syntax
     await expect(daemonGetOrgIssueByDisplayNumber({} as never)).rejects.toThrow(
       'gRPC error'
     )

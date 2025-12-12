@@ -21,6 +21,7 @@ function createMockResponse(
   data?: unknown,
   statusText = ''
 ): Response {
+  // eslint-disable-next-line no-restricted-syntax
   return {
     ok: status >= 200 && status < 300,
     status,

@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonUpdateIssue } from '../../daemon/daemon-update-issue.js'
@@ -11,7 +12,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Update an existing issue
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class UpdateIssue extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     id: Args.string({
       description: 'Issue ID (UUID) or display number',
@@ -19,8 +22,10 @@ export default class UpdateIssue extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Update an existing issue'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> update issue 1 --status closed',
     '<%= config.bin %> update issue 1 --title "New title" --priority high',
@@ -28,6 +33,7 @@ export default class UpdateIssue extends Command {
     '<%= config.bin %> update issue 1 --status closed --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     title: Flags.string({
       char: 't',
@@ -57,6 +63,7 @@ export default class UpdateIssue extends Command {
         return 2
       case 'low':
         return 3
+      // eslint-disable-next-line no-restricted-syntax
       default: {
         const num = Number.parseInt(priority, 10)
         return Number.isNaN(num) ? undefined : num

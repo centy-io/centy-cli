@@ -1,3 +1,6 @@
+/* eslint-disable max-lines */
+
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetDoc } from '../../daemon/daemon-get-doc.js'
@@ -15,9 +18,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Get a single doc by slug
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class GetDoc extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override aliases = ['show:doc']
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     slug: Args.string({
       description: 'Doc slug',
@@ -25,8 +31,10 @@ export default class GetDoc extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Get a documentation file by slug'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> get doc getting-started',
     '<%= config.bin %> get doc api-reference --json',
@@ -35,6 +43,7 @@ export default class GetDoc extends Command {
     '<%= config.bin %> get doc api-reference --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',

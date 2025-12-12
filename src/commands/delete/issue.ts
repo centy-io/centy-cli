@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeleteIssue } from '../../daemon/daemon-delete-issue.js'
@@ -11,7 +12,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Delete an issue
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class DeleteIssue extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     id: Args.string({
       description: 'Issue ID (UUID) or display number',
@@ -19,8 +22,10 @@ export default class DeleteIssue extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Delete an issue'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> delete issue 1',
     '<%= config.bin %> delete issue abc123-uuid',
@@ -28,6 +33,7 @@ export default class DeleteIssue extends Command {
     '<%= config.bin %> delete issue 1 --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     force: Flags.boolean({
       char: 'f',

@@ -42,6 +42,7 @@ export async function gatherIssueInput(
   }
 
   // Get priority (prompt if not provided)
+  // eslint-disable-next-line no-restricted-syntax
   let priority: Priority = opts.priority ?? 'medium'
   if (opts.priority === undefined) {
     const rl = createPromptInterface(opts.input, opts.output)

@@ -4,6 +4,7 @@ import { GithubApiError, ReleaseNotFoundError } from './errors.js'
 
 // eslint-disable-next-line default/no-hardcoded-urls -- Fallback for standard GitHub API
 const DEFAULT_GITHUB_API = 'https://api.github.com'
+// eslint-disable-next-line no-restricted-syntax
 const GITHUB_API_BASE = process.env.GITHUB_API_URL ?? DEFAULT_GITHUB_API
 const REPO_OWNER = 'centy-io'
 const REPO_NAME = 'centy-daemon'
@@ -24,6 +25,7 @@ export async function fetchLatestRelease(): Promise<GithubRelease> {
   })
 
   if (latestResponse.ok) {
+    // eslint-disable-next-line no-restricted-syntax
     return latestResponse.json() as Promise<GithubRelease>
   }
 
@@ -38,6 +40,7 @@ export async function fetchLatestRelease(): Promise<GithubRelease> {
     })
 
     if (allResponse.ok) {
+      // eslint-disable-next-line no-restricted-syntax
       const releases = (await allResponse.json()) as GithubRelease[]
       if (releases.length > 0) {
         return releases[0]
@@ -71,5 +74,6 @@ export async function fetchRelease(version: string): Promise<GithubRelease> {
     )
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   return response.json() as Promise<GithubRelease>
 }

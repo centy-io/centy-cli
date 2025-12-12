@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeleteOrganization } from '../../daemon/daemon-delete-organization.js'
@@ -5,9 +6,12 @@ import { daemonDeleteOrganization } from '../../daemon/daemon-delete-organizatio
 /**
  * Delete an organization
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class DeleteOrg extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override aliases = ['delete:organization']
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     slug: Args.string({
       description: 'Organization slug',
@@ -15,14 +19,17 @@ export default class DeleteOrg extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description =
     'Delete an organization (must have no projects assigned)'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> delete org my-org',
     '<%= config.bin %> delete organization old-org',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     force: Flags.boolean({
       char: 'f',

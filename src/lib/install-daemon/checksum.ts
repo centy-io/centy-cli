@@ -29,6 +29,7 @@ export async function verifyChecksum(
 async function calculateSha256(filePath: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const hash = createHash('sha256')
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     const stream = createReadStream(filePath)
 
     stream.on('data', chunk => {

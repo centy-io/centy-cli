@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { projectFlag } from '../../flags/project-flag.js'
@@ -7,9 +8,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Create a new issue in the .centy/issues folder
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class CreateIssue extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Create a new issue in the .centy folder'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> create issue',
     '<%= config.bin %> create issue --title "Bug in login" --priority high',
@@ -17,6 +21,7 @@ export default class CreateIssue extends Command {
     '<%= config.bin %> create issue -t "Add feature" --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     title: Flags.string({
       char: 't',
@@ -47,11 +52,13 @@ export default class CreateIssue extends Command {
       cwd,
       title: flags.title,
       description: flags.description,
+      // eslint-disable-next-line no-restricted-syntax
       priority: flags.priority as 'low' | 'medium' | 'high' | undefined,
       status: flags.status,
     })
 
     if (!result.success) {
+      // eslint-disable-next-line no-restricted-syntax
       this.error(result.error ?? 'Failed to create issue')
     }
   }

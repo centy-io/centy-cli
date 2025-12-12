@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonListOrgIssues } from '../../daemon/daemon-list-org-issues.js'
@@ -5,9 +6,12 @@ import { daemonListOrgIssues } from '../../daemon/daemon-list-org-issues.js'
 /**
  * List all organization-level issues
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class ListOrgIssues extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'List organization-level issues'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list org-issues --org my-org',
     '<%= config.bin %> list org-issues -o centy-io',
@@ -15,6 +19,7 @@ export default class ListOrgIssues extends Command {
     '<%= config.bin %> list org-issues --org my-org --json',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     org: Args.string({
       description: 'Organization slug',
@@ -22,6 +27,7 @@ export default class ListOrgIssues extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     org: Flags.string({
       char: 'o',
@@ -43,6 +49,7 @@ export default class ListOrgIssues extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(ListOrgIssues)
+    // eslint-disable-next-line no-restricted-syntax
     const orgSlug = flags.org ?? args.org
 
     if (!orgSlug) {

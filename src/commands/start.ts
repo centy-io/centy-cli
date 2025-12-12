@@ -1,5 +1,9 @@
+/* eslint-disable max-lines */
+
+// eslint-disable-next-line import/order
 import { spawn } from 'node:child_process'
 
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { checkDaemonConnection } from '../daemon/check-daemon-connection.js'
@@ -17,9 +21,12 @@ const getMissingDaemonMsg = (p: string) =>
 const getPermissionDeniedMsg = (p: string) =>
   `Permission denied: ${p}\n\nRun: chmod +x "${p}"`
 
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Start extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Start the centy daemon'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> start',
     '<%= config.bin %> start --foreground',
@@ -28,6 +35,7 @@ export default class Start extends Command {
     '<%= config.bin %> start -y',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     foreground: Flags.boolean({
       char: 'f',
@@ -155,6 +163,7 @@ export default class Start extends Command {
   }
 
   private handleSpawnError(error: Error, daemonPath: string): void {
+    // eslint-disable-next-line no-restricted-syntax
     const errno = (error as NodeJS.ErrnoException).code
     if (errno === 'ENOENT') {
       this.error(getMissingDaemonMsg(daemonPath))

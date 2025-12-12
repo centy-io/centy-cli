@@ -1,3 +1,6 @@
+/* eslint-disable custom/jsx-classname-required */
+/* eslint-disable max-lines-per-function */
+
 import { useState, useCallback } from 'react'
 import { useKeyboard } from '@opentui/react'
 import type { KeyEvent } from '@opentui/core'

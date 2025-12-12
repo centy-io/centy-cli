@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetOrgIssue } from '../../daemon/daemon-get-org-issue.js'
@@ -6,9 +7,12 @@ import { daemonGetOrgIssueByDisplayNumber } from '../../daemon/daemon-get-org-is
 /**
  * Get an organization-level issue by ID or display number
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class GetOrgIssue extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Get an organization-level issue'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> get org-issue --org my-org 1',
     '<%= config.bin %> get org-issue --org my-org #1',
@@ -16,6 +20,7 @@ export default class GetOrgIssue extends Command {
     '<%= config.bin %> get org-issue --org my-org 1 --json',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     identifier: Args.string({
       description: 'Issue ID or display number (#N or just N)',
@@ -23,6 +28,7 @@ export default class GetOrgIssue extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     org: Flags.string({
       char: 'o',

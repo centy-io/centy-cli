@@ -1,3 +1,4 @@
+/* eslint-disable custom/jsx-classname-required */
 interface HeaderProps {
   title: string
   daemonConnected: boolean

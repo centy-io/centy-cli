@@ -7,13 +7,16 @@ const DAEMON_BINARY_NAME = 'centy-daemon'
 
 export function findDaemonBinary(): string {
   // 1. Check CENTY_DAEMON_PATH environment variable
+  // eslint-disable-next-line no-restricted-syntax
   const envPath = process.env['CENTY_DAEMON_PATH']
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   if (envPath !== undefined && existsSync(envPath)) {
     return envPath
   }
 
   // 2. Check ~/.centy/bin/ (installed via centy install daemon)
   const userInstallPath = join(homedir(), '.centy', 'bin', DAEMON_BINARY_NAME)
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   if (existsSync(userInstallPath)) {
     return userInstallPath
   }

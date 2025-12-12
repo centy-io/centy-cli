@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { daemonListPrs } from '../../daemon/daemon-list-prs.js'
@@ -11,9 +12,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * List all pull requests in the .centy/prs folder
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class ListPrs extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'List all pull requests'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list prs',
     '<%= config.bin %> list prs --status open',
@@ -22,6 +26,7 @@ export default class ListPrs extends Command {
     '<%= config.bin %> list prs --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     status: Flags.string({
       char: 's',

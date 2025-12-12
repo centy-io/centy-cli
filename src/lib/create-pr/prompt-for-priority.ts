@@ -20,7 +20,9 @@ export function promptForPriority(
         resolve('medium')
         return
       }
+      // eslint-disable-next-line no-restricted-syntax
       if (PRIORITY_OPTIONS.includes(trimmed as Priority)) {
+        // eslint-disable-next-line no-restricted-syntax
         resolve(trimmed as Priority)
         return
       }

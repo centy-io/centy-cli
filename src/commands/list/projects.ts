@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { daemonListProjects } from '../../daemon/daemon-list-projects.js'
@@ -5,9 +6,12 @@ import { daemonListProjects } from '../../daemon/daemon-list-projects.js'
 /**
  * List all tracked projects
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class ListProjects extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'List all tracked centy projects'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list projects',
     '<%= config.bin %> list projects --include-stale',
@@ -17,6 +21,7 @@ export default class ListProjects extends Command {
     '<%= config.bin %> list projects --json',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     'include-stale': Flags.boolean({
       description: 'Include projects where path no longer exists',

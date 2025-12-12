@@ -1,10 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
+// eslint-disable-next-line import/order
 import { daemonExecuteReconciliation } from './daemon-execute-reconciliation.js'
 
 vi.mock('./load-proto.js', () => ({
   getDaemonClient: vi.fn(),
 }))
 
+// eslint-disable-next-line import/first
 import { getDaemonClient } from './load-proto.js'
 
 describe('daemonExecuteReconciliation', () => {
@@ -19,8 +21,10 @@ describe('daemonExecuteReconciliation', () => {
         callback(null, mockResponse)
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
+    // eslint-disable-next-line no-restricted-syntax
     const result = await daemonExecuteReconciliation({} as never)
 
     expect(result).toEqual(mockResponse)
@@ -37,8 +41,10 @@ describe('daemonExecuteReconciliation', () => {
         callback(mockError, null)
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
+    // eslint-disable-next-line no-restricted-syntax
     await expect(daemonExecuteReconciliation({} as never)).rejects.toThrow(
       'gRPC error'
     )

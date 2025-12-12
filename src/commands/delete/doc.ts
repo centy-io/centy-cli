@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeleteDoc } from '../../daemon/daemon-delete-doc.js'
@@ -11,7 +12,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Delete a doc
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class DeleteDoc extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     slug: Args.string({
       description: 'Doc slug',
@@ -19,14 +22,17 @@ export default class DeleteDoc extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Delete a documentation file'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> delete doc getting-started',
     '<%= config.bin %> delete doc api-reference --force',
     '<%= config.bin %> delete doc api-reference --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     force: Flags.boolean({
       char: 'f',

@@ -7,5 +7,6 @@ export function daemonBinaryExists(path: string): boolean {
   if (path === DAEMON_BINARY_NAME) {
     return true
   }
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   return existsSync(path)
 }

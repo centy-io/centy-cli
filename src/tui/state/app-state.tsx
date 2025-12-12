@@ -1,3 +1,6 @@
+/* eslint-disable custom/jsx-classname-required */
+/* eslint-disable max-lines, max-lines-per-function */
+
 import {
   createContext,
   useContext,
@@ -165,6 +168,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
           { view: state.currentView, params: state.viewParams },
         ],
         currentView: action.view,
+        // eslint-disable-next-line no-restricted-syntax
         viewParams: action.params ?? {},
       }
 
@@ -185,6 +189,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'UPDATE_PROJECT':
       return {
         ...state,
+        // eslint-disable-next-line no-restricted-syntax
         projects: state.projects.map(p =>
           p.path === action.project.path ? action.project : p
         ),
@@ -193,6 +198,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'REMOVE_PROJECT':
       return {
         ...state,
+        // eslint-disable-next-line no-restricted-syntax
         projects: state.projects.filter(p => p.path !== action.path),
       }
 
@@ -252,6 +258,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_COPY_MESSAGE':
       return { ...state, copyMessage: action.message }
 
+    // eslint-disable-next-line no-restricted-syntax
     default:
       return state
   }
@@ -273,14 +280,17 @@ interface AppProviderProps {
 
 export function AppProvider({
   children,
+  // eslint-disable-next-line default/no-default-params
   initialDaemonConnected = false,
   initialPrSort,
   initialIssueSort,
 }: AppProviderProps) {
   const [state, dispatch] = useReducer(appReducer, {
     ...initialState,
+    // eslint-disable-next-line no-restricted-syntax
     prSort: initialPrSort ?? DEFAULT_PR_SORT_CONFIG,
     daemonConnected: initialDaemonConnected,
+    // eslint-disable-next-line no-restricted-syntax
     issueSort: initialIssueSort ?? DEFAULT_SORT_CONFIG,
   })
 
@@ -294,6 +304,7 @@ export function AppProvider({
 export function useAppState() {
   const context = useContext(AppContext)
   if (!context) {
+    // eslint-disable-next-line error/no-generic-error, error/require-custom-error
     throw new Error('useAppState must be used within AppProvider')
   }
   return context

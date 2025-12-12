@@ -1,10 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
+// eslint-disable-next-line import/order
 import { daemonGetCompact } from './daemon-get-compact.js'
 
 vi.mock('./load-proto.js', () => ({
   getDaemonClient: vi.fn(),
 }))
 
+// eslint-disable-next-line import/first
 import { getDaemonClient } from './load-proto.js'
 
 describe('daemonGetCompact', () => {
@@ -19,8 +21,10 @@ describe('daemonGetCompact', () => {
         callback(null, mockResponse)
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
+    // eslint-disable-next-line no-restricted-syntax
     const result = await daemonGetCompact({} as never)
 
     expect(result).toEqual(mockResponse)
@@ -34,8 +38,10 @@ describe('daemonGetCompact', () => {
         callback(mockError, null)
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
+    // eslint-disable-next-line no-restricted-syntax
     await expect(daemonGetCompact({} as never)).rejects.toThrow('gRPC error')
   })
 })

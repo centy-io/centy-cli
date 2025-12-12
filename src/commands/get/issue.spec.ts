@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 import GetIssue from './issue.js'

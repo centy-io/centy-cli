@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonUpdateDoc } from '../../daemon/daemon-update-doc.js'
@@ -11,7 +12,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Update an existing doc
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class UpdateDoc extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     slug: Args.string({
       description: 'Doc slug',
@@ -19,8 +22,10 @@ export default class UpdateDoc extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Update an existing documentation file'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> update doc getting-started --title "New Title"',
     '<%= config.bin %> update doc api-reference --content "# New Content"',
@@ -28,6 +33,7 @@ export default class UpdateDoc extends Command {
     '<%= config.bin %> update doc api-reference --title "New Title" --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     title: Flags.string({
       char: 't',

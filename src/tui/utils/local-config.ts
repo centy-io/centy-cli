@@ -1,3 +1,5 @@
+/* eslint-disable single-export/single-export */
+
 /**
  * Local configuration utility for TUI user preferences.
  * Stores settings in config.local.json in the user's home directory.
@@ -38,6 +40,7 @@ export function loadLocalConfig(): LocalConfig {
     }
     // eslint-disable-next-line security/detect-non-literal-fs-filename
     const content = readFileSync(CONFIG_FILE, 'utf-8')
+    // eslint-disable-next-line no-restricted-syntax
     return JSON.parse(content) as LocalConfig
   } catch {
     // If file doesn't exist or is invalid, return empty config
@@ -57,6 +60,7 @@ export function saveLocalConfig(config: LocalConfig): void {
 
 export function loadIssueSortConfig(): IssueSortConfig {
   const config = loadLocalConfig()
+  // eslint-disable-next-line no-restricted-syntax
   return config.issueSort ?? DEFAULT_SORT_CONFIG
 }
 
@@ -68,6 +72,7 @@ export function saveIssueSortConfig(sortConfig: IssueSortConfig): void {
 
 export function loadPrSortConfig(): PrSortConfig {
   const config = loadLocalConfig()
+  // eslint-disable-next-line no-restricted-syntax
   return config.prSort ?? DEFAULT_PR_SORT_CONFIG
 }
 

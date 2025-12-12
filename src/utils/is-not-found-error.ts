@@ -6,9 +6,11 @@ export function isNotFoundError(error: unknown): boolean {
     error !== null &&
     typeof error === 'object' &&
     'code' in error &&
+    // eslint-disable-next-line no-restricted-syntax
     typeof (error as { code: unknown }).code === 'number'
   ) {
     // gRPC NOT_FOUND code is 5
+    // eslint-disable-next-line no-restricted-syntax
     return (error as { code: number }).code === 5
   }
   return false

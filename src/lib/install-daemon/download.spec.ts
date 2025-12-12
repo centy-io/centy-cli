@@ -10,6 +10,7 @@ describe('downloadChecksums', () => {
     }
 
     await expect(
+      // eslint-disable-next-line no-restricted-syntax
       downloadChecksums(release as Parameters<typeof downloadChecksums>[0])
     ).rejects.toThrow(DownloadError)
   })

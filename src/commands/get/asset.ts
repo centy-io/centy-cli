@@ -1,4 +1,5 @@
 import { writeFile } from 'node:fs/promises'
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetAsset } from '../../daemon/daemon-get-asset.js'
@@ -12,9 +13,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Get an asset and save it to a file
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class GetAsset extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override aliases = ['show:asset']
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     filename: Args.string({
       description: 'Asset filename',
@@ -22,14 +26,17 @@ export default class GetAsset extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Get an asset and save it to a file'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> get asset screenshot.png --issue 1 --output ./screenshot.png',
     '<%= config.bin %> get asset logo.svg --shared --output ./logo.svg',
     '<%= config.bin %> get asset screenshot.png --issue 1 --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     issue: Flags.string({
       char: 'i',
@@ -75,7 +82,9 @@ export default class GetAsset extends Command {
       this.error(response.error)
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     const outputPath = flags.output ?? args.filename
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     await writeFile(outputPath, response.data)
 
     this.log(`Saved asset to ${outputPath}`)

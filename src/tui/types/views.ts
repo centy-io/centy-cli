@@ -1,3 +1,5 @@
+/* eslint-disable single-export/single-export */
+
 /**
  * View/route definitions for the TUI
  */

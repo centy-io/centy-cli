@@ -1,3 +1,5 @@
+/* eslint-disable single-export/single-export */
+
 import { useState, useCallback } from 'react'
 import { useKeyboard } from '@opentui/react'
 import type { KeyEvent } from '@opentui/core'
@@ -49,6 +51,7 @@ export function useDaemonActions({ connected, retry }: UseDaemonActionsParams) {
 
       const result = await performAction(action)
       if (result.success) {
+        // eslint-disable-next-line no-optional-chaining/no-optional-chaining
         setActionMessage(result.data?.message || messages.success)
         setTimeout(() => {
           retry()

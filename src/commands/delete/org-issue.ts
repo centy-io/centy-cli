@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeleteOrgIssue } from '../../daemon/daemon-delete-org-issue.js'
@@ -6,15 +7,19 @@ import { daemonGetOrgIssueByDisplayNumber } from '../../daemon/daemon-get-org-is
 /**
  * Delete an organization-level issue
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class DeleteOrgIssue extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Delete an organization-level issue'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> delete org-issue --org my-org 1',
     '<%= config.bin %> delete org-issue --org my-org #1',
     '<%= config.bin %> delete org-issue -o centy-io abc123',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     identifier: Args.string({
       description: 'Issue ID or display number (#N or just N)',
@@ -22,6 +27,7 @@ export default class DeleteOrgIssue extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     org: Flags.string({
       char: 'o',

@@ -1,3 +1,5 @@
+/* eslint-disable single-export/single-export */
+
 /**
  * Clipboard service for TUI copy functionality
  * Uses clipboardy for cross-platform clipboard access

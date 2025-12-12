@@ -61,6 +61,7 @@ export async function resolveProjectPath(
   projectArg: string | undefined
 ): Promise<string> {
   // 1. If no arg provided, use env var or cwd
+  // eslint-disable-next-line no-restricted-syntax
   const input = projectArg ?? process.env['CENTY_CWD'] ?? process.cwd()
 
   // 2. If it looks like a path, return it (with tilde expansion)

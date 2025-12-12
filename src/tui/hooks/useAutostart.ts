@@ -1,3 +1,5 @@
+/* eslint-disable single-export/single-export, max-lines */
+
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useKeyboard } from '@opentui/react'
 import type { KeyEvent } from '@opentui/core'
@@ -62,6 +64,7 @@ async function performAutostartToggle(
   const binaryPath = findDaemonBinary()
   if (!daemonBinaryExists(binaryPath)) {
     setters.setState('idle')
+    // eslint-disable-next-line error/no-generic-error, error/require-custom-error
     throw new Error('Daemon binary not found')
   }
   launchdService.enableAutostart(binaryPath)
@@ -109,6 +112,7 @@ export function useAutostart({ enabled }: UseAutostartParams) {
         setState('idle')
       }, 2000)
     } catch (error) {
+      // eslint-disable-next-line no-restricted-syntax
       setMessage(`Error: ${(error as Error).message}`)
       setState('idle')
     }

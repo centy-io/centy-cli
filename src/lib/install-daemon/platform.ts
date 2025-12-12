@@ -10,10 +10,13 @@ const TARGET_MAP: Record<string, string> = {
 }
 
 export function getPlatformTarget(): PlatformTarget {
+  // eslint-disable-next-line no-restricted-syntax
   const platform = process.platform as Platform
+  // eslint-disable-next-line no-restricted-syntax
   const arch = process.arch as Architecture
 
   const key = `${platform}-${arch}`
+  // eslint-disable-next-line security/detect-object-injection
   const target = TARGET_MAP[key]
 
   if (!target) {

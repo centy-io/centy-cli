@@ -32,6 +32,7 @@ export async function gatherMetadataFields(
     closePromptInterface(rl)
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   let priority: Priority = opts.priority ?? 'medium'
   if (opts.priority === undefined) {
     const rl = createPromptInterface(opts.input, opts.output)
@@ -39,6 +40,7 @@ export async function gatherMetadataFields(
     closePromptInterface(rl)
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   let status: Status = opts.status ?? 'draft'
   if (opts.status === undefined) {
     const rl = createPromptInterface(opts.input, opts.output)

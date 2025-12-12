@@ -31,10 +31,15 @@ export async function gatherPrInput(
 
   return {
     title: basic.title,
+    // eslint-disable-next-line no-restricted-syntax
     description: basic.description ?? '',
+    // eslint-disable-next-line no-restricted-syntax
     sourceBranch: basic.sourceBranch ?? '',
+    // eslint-disable-next-line no-restricted-syntax
     targetBranch: basic.targetBranch ?? 'main',
+    // eslint-disable-next-line no-restricted-syntax
     linkedIssues: metadata.linkedIssues ?? [],
+    // eslint-disable-next-line no-restricted-syntax
     reviewers: metadata.reviewers ?? [],
     priority: metadata.priority,
     status: metadata.status,

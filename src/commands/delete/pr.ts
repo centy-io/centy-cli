@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeletePr } from '../../daemon/daemon-delete-pr.js'
@@ -11,7 +12,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Delete a pull request
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class DeletePr extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     id: Args.string({
       description: 'PR ID (UUID) or display number',
@@ -19,8 +22,10 @@ export default class DeletePr extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Delete a pull request'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> delete pr 1',
     '<%= config.bin %> delete pr abc123-uuid',
@@ -28,6 +33,7 @@ export default class DeletePr extends Command {
     '<%= config.bin %> delete pr 1 --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     force: Flags.boolean({
       char: 'f',

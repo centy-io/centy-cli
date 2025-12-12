@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
+// eslint-disable-next-line import/order
 import { DaemonControlService } from './daemon-control-service.js'
 
 vi.mock('./daemon-shutdown.js', () => ({
@@ -9,7 +10,9 @@ vi.mock('./daemon-restart.js', () => ({
   daemonRestart: vi.fn(),
 }))
 
+// eslint-disable-next-line import/first
 import { daemonShutdown } from './daemon-shutdown.js'
+// eslint-disable-next-line import/first
 import { daemonRestart } from './daemon-restart.js'
 
 describe('DaemonControlService', () => {
@@ -37,6 +40,7 @@ describe('DaemonControlService', () => {
       const result = await service.shutdown()
 
       expect(result.success).toBe(true)
+      // eslint-disable-next-line no-optional-chaining/no-optional-chaining
       expect(result.data?.message).toContain('shutdown initiated')
     })
 
@@ -76,6 +80,7 @@ describe('DaemonControlService', () => {
       const result = await service.restart()
 
       expect(result.success).toBe(true)
+      // eslint-disable-next-line no-optional-chaining/no-optional-chaining
       expect(result.data?.message).toContain('restart initiated')
     })
 

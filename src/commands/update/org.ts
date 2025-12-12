@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonUpdateOrganization } from '../../daemon/daemon-update-organization.js'
@@ -5,9 +6,12 @@ import { daemonUpdateOrganization } from '../../daemon/daemon-update-organizatio
 /**
  * Update an organization
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class UpdateOrg extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override aliases = ['update:organization']
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     slug: Args.string({
       description: 'Organization slug',
@@ -15,8 +19,10 @@ export default class UpdateOrg extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Update an organization'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> update org my-org --name "New Name"',
     '<%= config.bin %> update org my-org --description "Updated description"',
@@ -24,6 +30,7 @@ export default class UpdateOrg extends Command {
     '<%= config.bin %> update organization centy-io --name "Centy.io"',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     name: Flags.string({
       char: 'n',

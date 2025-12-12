@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises'
 import { basename } from 'node:path'
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonAddAsset } from '../../daemon/daemon-add-asset.js'
@@ -13,7 +14,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Add an asset to an issue, PR, or as a shared asset
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class AddAsset extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     file: Args.string({
       description: 'Path to the file to add',
@@ -21,9 +24,11 @@ export default class AddAsset extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description =
     'Add an asset to an issue, PR, or as a shared asset'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> add asset screenshot.png --issue 1',
     '<%= config.bin %> add asset screenshot.png --pr 1',
@@ -32,6 +37,7 @@ export default class AddAsset extends Command {
     '<%= config.bin %> add asset screenshot.png --issue 1 --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     issue: Flags.string({
       char: 'i',
@@ -76,6 +82,7 @@ export default class AddAsset extends Command {
 
     let fileData: Buffer
     try {
+      // eslint-disable-next-line security/detect-non-literal-fs-filename
       fileData = await readFile(args.file)
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error)
@@ -85,6 +92,7 @@ export default class AddAsset extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     const filename = flags.name ?? basename(args.file)
 
     const response = await daemonAddAsset({

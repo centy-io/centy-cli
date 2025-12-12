@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock the load-proto module before importing the function
@@ -5,7 +6,9 @@ vi.mock('./load-proto.js', () => ({
   getDaemonClient: vi.fn(),
 }))
 
+// eslint-disable-next-line import/first
 import { daemonGetDocsBySlug } from './daemon-get-docs-by-slug.js'
+// eslint-disable-next-line import/first
 import { getDaemonClient } from './load-proto.js'
 
 describe('daemonGetDocsBySlug', () => {
@@ -29,6 +32,7 @@ describe('daemonGetDocsBySlug', () => {
       }
     )
 
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue({
       getDocsBySlug: mockGetDocsBySlug,
     } as ReturnType<typeof getDaemonClient>)
@@ -49,6 +53,7 @@ describe('daemonGetDocsBySlug', () => {
       }
     )
 
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue({
       getDocsBySlug: mockGetDocsBySlug,
     } as ReturnType<typeof getDaemonClient>)

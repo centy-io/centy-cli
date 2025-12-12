@@ -29,9 +29,11 @@ export async function downloadAsset(
     throw new DownloadError('No response body')
   }
 
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   const fileStream = createWriteStream(destPath)
   await pipeline(
     Readable.fromWeb(
+      // eslint-disable-next-line no-restricted-syntax
       response.body as unknown as Parameters<typeof Readable.fromWeb>[0]
     ),
     fileStream

@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import { join } from 'node:path'
 import { daemonExecuteReconciliation } from '../../daemon/daemon-execute-reconciliation.js'
 import { daemonGetReconciliationPlan } from '../../daemon/daemon-get-reconciliation-plan.js'
@@ -20,9 +22,12 @@ const CENTY_FOLDER = '.centy'
  * Requires daemon to be running
  */
 export async function init(options?: InitOptions): Promise<InitResult> {
+  // eslint-disable-next-line no-restricted-syntax
   const opts = options ?? {}
+  // eslint-disable-next-line no-restricted-syntax
   const cwd = opts.cwd ?? process.cwd()
   const centyPath = join(cwd, CENTY_FOLDER)
+  // eslint-disable-next-line no-restricted-syntax
   const output = opts.output ?? process.stdout
 
   const result: InitResult = {

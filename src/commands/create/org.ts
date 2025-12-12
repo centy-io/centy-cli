@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonCreateOrganization } from '../../daemon/daemon-create-organization.js'
@@ -5,9 +6,12 @@ import { daemonCreateOrganization } from '../../daemon/daemon-create-organizatio
 /**
  * Create a new organization
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class CreateOrg extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override aliases = ['create:organization']
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     name: Args.string({
       description: 'Organization display name',
@@ -15,8 +19,10 @@ export default class CreateOrg extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Create a new organization to group projects'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> create org "My Company"',
     '<%= config.bin %> create org "Centy.io" --slug centy-io',
@@ -24,6 +30,7 @@ export default class CreateOrg extends Command {
     '<%= config.bin %> create organization "Work Projects"',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     slug: Flags.string({
       char: 's',

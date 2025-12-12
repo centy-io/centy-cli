@@ -1,10 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
+// eslint-disable-next-line import/order
 import { checkDaemonConnection } from './check-daemon-connection.js'
 
 vi.mock('./load-proto.js', () => ({
   getDaemonClient: vi.fn(),
 }))
 
+// eslint-disable-next-line import/first
 import { getDaemonClient } from './load-proto.js'
 
 describe('checkDaemonConnection', () => {
@@ -19,6 +21,7 @@ describe('checkDaemonConnection', () => {
         callback(null, { version: '1.0.0' })
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
     const resultPromise = checkDaemonConnection()
@@ -35,6 +38,7 @@ describe('checkDaemonConnection', () => {
         callback({ message: 'UNAVAILABLE: connection refused' }, null)
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
     const resultPromise = checkDaemonConnection()
@@ -51,6 +55,7 @@ describe('checkDaemonConnection', () => {
         // Never calls callback - simulates timeout
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
     const resultPromise = checkDaemonConnection()
@@ -67,6 +72,7 @@ describe('checkDaemonConnection', () => {
         callback({ message: 'Some other error' }, null)
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
     const resultPromise = checkDaemonConnection()

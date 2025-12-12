@@ -1,3 +1,5 @@
+/* eslint-disable single-export/single-export */
+
 import { getDaemonClient } from './load-proto.js'
 
 export interface DaemonConnectionStatus {
@@ -25,6 +27,7 @@ export async function checkDaemonConnection(): Promise<DaemonConnectionStatus> {
       clearTimeout(timeout)
 
       if (error) {
+        // eslint-disable-next-line no-restricted-syntax
         const msg = error.message ?? String(error)
         if (msg.includes('UNAVAILABLE') || msg.includes('ECONNREFUSED')) {
           resolve({

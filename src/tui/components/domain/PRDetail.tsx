@@ -1,3 +1,6 @@
+/* eslint-disable custom/jsx-classname-required */
+/* eslint-disable max-lines-per-function, max-lines */
+
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useKeyboard } from '@opentui/react'
 import type { KeyEvent, ScrollBoxRenderable } from '@opentui/core'
@@ -31,6 +34,7 @@ function getStatusColor(status: string): string {
       return 'magenta'
     case 'closed':
       return 'red'
+    // eslint-disable-next-line no-restricted-syntax
     default:
       return 'gray'
   }

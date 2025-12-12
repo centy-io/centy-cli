@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { daemonGetProjectVersion } from '../daemon/daemon-get-project-version.js'
@@ -10,16 +11,20 @@ import {
 /**
  * Update project to a target version
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Update extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description =
     'Update project to a target version (runs migrations)'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> update',
     '<%= config.bin %> update --target 0.2.0',
     '<%= config.bin %> update --force',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     target: Flags.string({
       char: 't',
@@ -34,6 +39,7 @@ export default class Update extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Update)
+    // eslint-disable-next-line no-restricted-syntax
     const cwd = process.env['CENTY_CWD'] ?? process.cwd()
 
     try {
@@ -46,6 +52,7 @@ export default class Update extends Command {
     }
 
     const versionInfo = await daemonGetProjectVersion({ projectPath: cwd })
+    // eslint-disable-next-line no-restricted-syntax
     const targetVersion = flags.target ?? versionInfo.daemonVersion
 
     if (versionInfo.projectVersion === targetVersion) {

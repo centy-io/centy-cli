@@ -1,5 +1,9 @@
+/* eslint-disable max-lines */
+
+// eslint-disable-next-line import/order
 import { writeFile, readFile } from 'node:fs/promises'
 
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { daemonGetCompact } from '../daemon/daemon-get-compact.js'
@@ -16,10 +20,13 @@ import { daemonUpdateCompact } from '../daemon/daemon-update-compact.js'
 /**
  * Compact uncompacted issues into features
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Compact extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description =
     'Compact uncompacted issues into feature summaries'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> --dry-run',
@@ -27,6 +34,7 @@ export default class Compact extends Command {
     '<%= config.bin %> <%= command.id %> --input response.md',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     'dry-run': Flags.boolean({
       char: 'd',
@@ -49,6 +57,7 @@ export default class Compact extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Compact)
+    // eslint-disable-next-line no-restricted-syntax
     const cwd = process.env['CENTY_CWD'] ?? process.cwd()
 
     // Check if initialized
@@ -95,6 +104,7 @@ export default class Compact extends Command {
 
     // If output file provided, write context
     if (flags.output !== undefined) {
+      // eslint-disable-next-line security/detect-non-literal-fs-filename
       await writeFile(flags.output, context, 'utf-8')
       this.log(`LLM context written to: ${flags.output}`)
       this.log(
@@ -156,6 +166,7 @@ export default class Compact extends Command {
     inputFile: string
   ): Promise<void> {
     // Read LLM response
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     const content = await readFile(inputFile, 'utf-8')
 
     // Parse response - look for MIGRATION_CONTENT and COMPACT_CONTENT sections

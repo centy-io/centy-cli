@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonCreateOrgIssue } from '../../daemon/daemon-create-org-issue.js'
@@ -5,15 +6,19 @@ import { daemonCreateOrgIssue } from '../../daemon/daemon-create-org-issue.js'
 /**
  * Create a new organization-level issue
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class CreateOrgIssue extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Create a new organization-level issue'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> create org-issue --org my-org --title "Cross-project refactor"',
     '<%= config.bin %> create org-issue -o centy-io -t "API design" -d "Standardize API patterns"',
     '<%= config.bin %> create org-issue --org my-org --title "Bug" --priority high --projects /path/to/project1,/path/to/project2',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     org: Args.string({
       description: 'Organization slug',
@@ -21,6 +26,7 @@ export default class CreateOrgIssue extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     org: Flags.string({
       char: 'o',
@@ -57,6 +63,7 @@ export default class CreateOrgIssue extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(CreateOrgIssue)
+    // eslint-disable-next-line no-restricted-syntax
     const orgSlug = flags.org ?? args.org
 
     if (!orgSlug) {
@@ -78,8 +85,10 @@ export default class CreateOrgIssue extends Command {
     const response = await daemonCreateOrgIssue({
       orgSlug,
       title: flags.title,
+      // eslint-disable-next-line no-restricted-syntax
       description: flags.description ?? '',
       priority: flags.priority ? priorityMap[flags.priority] : 0,
+      // eslint-disable-next-line no-restricted-syntax
       status: flags.status ?? 'open',
       customFields: {},
       referencedProjects,

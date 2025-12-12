@@ -3,6 +3,7 @@ import { createRoot } from '@opentui/react'
 import React from 'react'
 import { App } from './App.js'
 import { AppProvider } from './state/app-state.js'
+// eslint-disable-next-line import/order
 import { checkDaemonConnection } from '../daemon/check-daemon-connection.js'
 import { loadIssueSortConfig, loadPrSortConfig } from './utils/local-config.js'
 

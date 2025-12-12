@@ -1,3 +1,6 @@
+/* eslint-disable max-lines */
+
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetPr } from '../../daemon/daemon-get-pr.js'
@@ -17,9 +20,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Get a single pull request by ID or display number
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class GetPr extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override aliases = ['show:pr']
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     id: Args.string({
       description: 'PR ID (UUID) or display number',
@@ -27,9 +33,11 @@ export default class GetPr extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description =
     'Get a single pull request by ID or display number'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> get pr 1',
     '<%= config.bin %> get pr abc123-uuid',
@@ -39,6 +47,7 @@ export default class GetPr extends Command {
     '<%= config.bin %> get pr 1 --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',

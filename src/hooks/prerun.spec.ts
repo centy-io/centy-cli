@@ -20,6 +20,7 @@ describe('prerun hook', () => {
       Command: { id: 'info' },
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     await hook.call({ error: mockError }, options as never)
 
     expect(mockCheckDaemonConnection).not.toHaveBeenCalled()
@@ -31,6 +32,7 @@ describe('prerun hook', () => {
       Command: { id: 'shutdown' },
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     await hook.call({ error: mockError }, options as never)
 
     expect(mockCheckDaemonConnection).not.toHaveBeenCalled()
@@ -42,6 +44,7 @@ describe('prerun hook', () => {
       Command: { id: 'restart' },
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     await hook.call({ error: mockError }, options as never)
 
     expect(mockCheckDaemonConnection).not.toHaveBeenCalled()
@@ -55,6 +58,7 @@ describe('prerun hook', () => {
       Command: { id: 'init' },
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     await hook.call({ error: mockError }, options as never)
 
     expect(mockCheckDaemonConnection).toHaveBeenCalled()
@@ -68,6 +72,7 @@ describe('prerun hook', () => {
       Command: { id: 'init' },
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     await hook.call({ error: mockError }, options as never)
 
     expect(mockCheckDaemonConnection).toHaveBeenCalled()
@@ -86,6 +91,7 @@ describe('prerun hook', () => {
       Command: { id: 'list:issues' },
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     await hook.call({ error: mockError }, options as never)
 
     expect(mockCheckDaemonConnection).toHaveBeenCalled()

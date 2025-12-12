@@ -29,8 +29,11 @@ describe('handleNotInitializedWithSearch', () => {
     )
 
     expect(result).not.toBeNull()
+    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
     expect(result?.foundElsewhere).toBe(false)
+    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
     expect(result?.message).toContain('No .centy folder found')
+    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
     expect(result?.message).toContain('--global (-g)')
   })
 
@@ -51,8 +54,11 @@ describe('handleNotInitializedWithSearch', () => {
     )
 
     expect(result).not.toBeNull()
+    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
     expect(result?.foundElsewhere).toBe(true)
+    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
     expect(result?.message).toContain('other-project')
+    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
     expect(result?.message).toContain('--global')
   })
 
@@ -73,7 +79,9 @@ describe('handleNotInitializedWithSearch', () => {
     )
 
     expect(result).not.toBeNull()
+    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
     expect(result?.foundElsewhere).toBe(true)
+    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
     expect(result?.jsonOutput).toBeDefined()
   })
 
@@ -92,7 +100,9 @@ describe('handleNotInitializedWithSearch', () => {
     )
 
     expect(globalSearchFn).not.toHaveBeenCalled()
+    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
     expect(result?.foundElsewhere).toBe(false)
+    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
     expect(result?.message).toContain('--global (-g)')
   })
 

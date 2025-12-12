@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { describe, expect, it } from 'vitest'
 import { existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'

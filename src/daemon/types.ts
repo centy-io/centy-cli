@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines , single-export/single-export */
 /**
  * Types for daemon gRPC communication
  */

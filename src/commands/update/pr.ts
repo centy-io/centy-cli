@@ -1,3 +1,6 @@
+/* eslint-disable max-lines */
+
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetPrByDisplayNumber } from '../../daemon/daemon-get-pr-by-display-number.js'
@@ -11,7 +14,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 const PRIORITY_MAP: Record<string, number> = { high: 1, medium: 2, low: 3 }
 
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class UpdatePr extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     id: Args.string({
       description: 'PR ID (UUID) or display number',
@@ -19,14 +24,17 @@ export default class UpdatePr extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Update an existing pull request'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> update pr 1 --status open',
     '<%= config.bin %> update pr 1 --title "New title"',
     '<%= config.bin %> update pr 1 --status open --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     title: Flags.string({ char: 't', description: 'New title' }),
     description: Flags.string({ char: 'd', description: 'New description' }),

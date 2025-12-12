@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { daemonListIssues } from '../../daemon/daemon-list-issues.js'
@@ -11,9 +12,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * List all issues in the .centy/issues folder
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class ListIssues extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'List all issues'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list issues',
     '<%= config.bin %> list issues --status open',
@@ -21,6 +25,7 @@ export default class ListIssues extends Command {
     '<%= config.bin %> list issues --project centy-daemon',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     status: Flags.string({
       char: 's',

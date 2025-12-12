@@ -12,6 +12,7 @@ export async function askYesNo(
   question: string,
   defaultYes: boolean | undefined
 ): Promise<boolean> {
+  // eslint-disable-next-line no-restricted-syntax
   const useDefaultYes = defaultYes ?? false
   const hint = useDefaultYes ? '[Y/n]' : '[y/N]'
   return new Promise(resolve => {

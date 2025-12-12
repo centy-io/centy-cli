@@ -15,12 +15,14 @@ describe('load-proto', () => {
   beforeEach(() => {
     vi.resetModules()
     vi.clearAllMocks()
+    // eslint-disable-next-line no-restricted-syntax
     delete process.env['CENTY_DAEMON_ADDR']
   })
 
   it('should create daemon client with default address', async () => {
     const { loadPackageDefinition } = await import('@grpc/grpc-js')
     const MockClient = vi.fn()
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(loadPackageDefinition).mockReturnValue({
       centy: { CentyDaemon: MockClient },
     } as never)
@@ -32,10 +34,12 @@ describe('load-proto', () => {
   })
 
   it('should use CENTY_DAEMON_ADDR environment variable when set', async () => {
+    // eslint-disable-next-line no-restricted-syntax
     process.env['CENTY_DAEMON_ADDR'] = 'localhost:9999'
 
     const { loadPackageDefinition } = await import('@grpc/grpc-js')
     const MockClient = vi.fn()
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(loadPackageDefinition).mockReturnValue({
       centy: { CentyDaemon: MockClient },
     } as never)
@@ -50,11 +54,13 @@ describe('load-proto', () => {
     const { loadPackageDefinition } = await import('@grpc/grpc-js')
     let constructorCallCount = 0
     class MockClient {
+      // eslint-disable-next-line no-restricted-syntax
       mock = 'client'
       constructor() {
         constructorCallCount++
       }
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(loadPackageDefinition).mockReturnValue({
       centy: { CentyDaemon: MockClient },
     } as never)

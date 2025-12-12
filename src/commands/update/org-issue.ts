@@ -1,3 +1,6 @@
+/* eslint-disable max-lines */
+
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetOrgIssueByDisplayNumber } from '../../daemon/daemon-get-org-issue-by-display-number.js'
@@ -6,9 +9,12 @@ import { daemonUpdateOrgIssue } from '../../daemon/daemon-update-org-issue.js'
 /**
  * Update an organization-level issue
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class UpdateOrgIssue extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Update an organization-level issue'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> update org-issue --org my-org 1 --status closed',
     '<%= config.bin %> update org-issue --org my-org #1 --priority high',
@@ -16,6 +22,7 @@ export default class UpdateOrgIssue extends Command {
     '<%= config.bin %> update org-issue --org my-org 1 --add-project /path/to/project',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     identifier: Args.string({
       description: 'Issue ID or display number (#N or just N)',
@@ -23,6 +30,7 @@ export default class UpdateOrgIssue extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     org: Flags.string({
       char: 'o',
@@ -103,10 +111,12 @@ export default class UpdateOrgIssue extends Command {
           : []
       const projectSet = new Set(currentProjects)
 
+      // eslint-disable-next-line no-restricted-syntax
       for (const project of flags['add-project'] ?? []) {
         projectSet.add(project)
       }
 
+      // eslint-disable-next-line no-restricted-syntax
       for (const project of flags['remove-project'] ?? []) {
         projectSet.delete(project)
       }

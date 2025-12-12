@@ -20,7 +20,9 @@ export function promptForStatus(
         resolve('draft')
         return
       }
+      // eslint-disable-next-line no-restricted-syntax
       if (STATUS_OPTIONS.includes(trimmed as Status)) {
+        // eslint-disable-next-line no-restricted-syntax
         resolve(trimmed as Status)
         return
       }

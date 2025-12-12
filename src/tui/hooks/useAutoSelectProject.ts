@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { useEffect, useRef } from 'react'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'

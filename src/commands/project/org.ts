@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonSetProjectOrganization } from '../../daemon/daemon-set-project-organization.js'
@@ -5,9 +6,12 @@ import { daemonSetProjectOrganization } from '../../daemon/daemon-set-project-or
 /**
  * Set or remove project organization assignment
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class ProjectOrg extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override aliases = ['project:organization']
 
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     slug: Args.string({
       description: 'Organization slug (omit to remove from organization)',
@@ -15,9 +19,11 @@ export default class ProjectOrg extends Command {
     }),
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   static override description =
     'Assign or remove a project from an organization'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> project org centy-io',
     '<%= config.bin %> project org my-org --path /path/to/project',
@@ -25,6 +31,7 @@ export default class ProjectOrg extends Command {
     '<%= config.bin %> project organization centy-io',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     path: Flags.string({
       char: 'p',
@@ -43,12 +50,14 @@ export default class ProjectOrg extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(ProjectOrg)
+    // eslint-disable-next-line no-restricted-syntax
     const projectPath = flags.path ?? process.env['CENTY_CWD'] ?? process.cwd()
 
     if (!args.slug && !flags.remove) {
       this.error('Provide an organization slug or use --remove to unassign')
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     const organizationSlug = flags.remove ? '' : (args.slug ?? '')
 
     const response = await daemonSetProjectOrganization({

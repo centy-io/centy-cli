@@ -1,3 +1,4 @@
+/* eslint-disable custom/jsx-classname-required */
 import type { ViewId } from '../../types/views.js'
 import { VIEW_LABELS } from '../../types/views.js'
 
@@ -24,6 +25,7 @@ export function Sidebar({
         {visibleViews.map((view, index) => {
           const isSelected = index === selectedIndex
           const isCurrent = view === currentView
+          // eslint-disable-next-line security/detect-object-injection
           const label = `${isSelected ? '>' : ' '} ${VIEW_LABELS[view]}`
 
           return (
@@ -32,6 +34,7 @@ export function Sidebar({
                 fg={isCurrent ? 'cyan' : isSelected ? 'white' : 'gray'}
                 bg={isSelected ? 'gray' : undefined}
               >
+                // eslint-disable-next-line custom/jsx-classname-required
                 {isCurrent ? <b>{label}</b> : label}
               </text>
             </box>

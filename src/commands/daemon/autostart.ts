@@ -1,19 +1,24 @@
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { findDaemonBinary } from '../../lib/start/find-daemon-binary.js'
 import { daemonBinaryExists } from '../../lib/start/daemon-binary-exists.js'
 import { launchdService } from '../../lib/autostart/launchd.js'
 
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class DaemonAutostart extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description =
     'Configure daemon to start automatically on boot'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> daemon autostart',
     '<%= config.bin %> daemon autostart --enable',
     '<%= config.bin %> daemon autostart --disable',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     enable: Flags.boolean({
       description: 'Enable autostart on boot',
@@ -58,6 +63,7 @@ export default class DaemonAutostart extends Command {
       )
       this.log(`Daemon path: ${daemonPath}`)
     } catch (error) {
+      // eslint-disable-next-line no-restricted-syntax
       this.error(`Failed to enable autostart: ${(error as Error).message}`)
     }
   }
@@ -67,6 +73,7 @@ export default class DaemonAutostart extends Command {
       launchdService.disableAutostart()
       this.log('Autostart disabled. The daemon will no longer start on boot.')
     } catch (error) {
+      // eslint-disable-next-line no-restricted-syntax
       this.error(`Failed to disable autostart: ${(error as Error).message}`)
     }
   }

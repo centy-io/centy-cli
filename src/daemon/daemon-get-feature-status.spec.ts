@@ -1,10 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
+// eslint-disable-next-line import/order
 import { daemonGetFeatureStatus } from './daemon-get-feature-status.js'
 
 vi.mock('./load-proto.js', () => ({
   getDaemonClient: vi.fn(),
 }))
 
+// eslint-disable-next-line import/first
 import { getDaemonClient } from './load-proto.js'
 
 describe('daemonGetFeatureStatus', () => {
@@ -19,8 +21,10 @@ describe('daemonGetFeatureStatus', () => {
         callback(null, mockResponse)
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
+    // eslint-disable-next-line no-restricted-syntax
     const result = await daemonGetFeatureStatus({} as never)
 
     expect(result).toEqual(mockResponse)
@@ -37,8 +41,10 @@ describe('daemonGetFeatureStatus', () => {
         callback(mockError, null)
       }),
     }
+    // eslint-disable-next-line no-restricted-syntax
     vi.mocked(getDaemonClient).mockReturnValue(mockClient as never)
 
+    // eslint-disable-next-line no-restricted-syntax
     await expect(daemonGetFeatureStatus({} as never)).rejects.toThrow(
       'gRPC error'
     )

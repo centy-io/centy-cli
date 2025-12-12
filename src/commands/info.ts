@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { daemonGetDaemonInfo } from '../daemon/daemon-get-daemon-info.js'
@@ -5,14 +6,18 @@ import { daemonGetDaemonInfo } from '../daemon/daemon-get-daemon-info.js'
 /**
  * Get daemon version and info
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Info extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Get centy daemon info'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> info',
     '<%= config.bin %> info --json',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',

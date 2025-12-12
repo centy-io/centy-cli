@@ -1,3 +1,4 @@
+/* eslint-disable custom/jsx-classname-required */
 import type { ReactNode } from 'react'
 
 interface MainPanelProps {

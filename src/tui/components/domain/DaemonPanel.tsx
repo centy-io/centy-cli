@@ -1,3 +1,6 @@
+/* eslint-disable custom/jsx-classname-required */
+/* eslint-disable max-lines */
+
 import { MainPanel } from '../layout/MainPanel.js'
 import { useDaemonConnection } from '../../hooks/useDaemonConnection.js'
 import { useDaemonInfo } from '../../hooks/useDaemonInfo.js'

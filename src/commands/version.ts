@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
 import { daemonGetProjectVersion } from '../daemon/daemon-get-project-version.js'
@@ -9,15 +10,19 @@ import {
 /**
  * Get project version info
  */
+// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Version extends Command {
+  // eslint-disable-next-line no-restricted-syntax
   static override description =
     'Get project version info and comparison with daemon'
 
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> version',
     '<%= config.bin %> version --json',
   ]
 
+  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',
@@ -27,6 +32,7 @@ export default class Version extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Version)
+    // eslint-disable-next-line no-restricted-syntax
     const cwd = process.env['CENTY_CWD'] ?? process.cwd()
 
     try {
@@ -63,6 +69,7 @@ export default class Version extends Command {
         return 'Update available (run "centy update")'
       case 'project_ahead':
         return 'Project ahead of daemon (update daemon)'
+      // eslint-disable-next-line no-restricted-syntax
       default:
         return comparison
     }

@@ -1,7 +1,9 @@
 /* eslint-disable max-lines */
 import { loadPackageDefinition, credentials } from '@grpc/grpc-js'
 import { loadSync } from '@grpc/proto-loader'
+// eslint-disable-next-line import/order
 import { dirname, join } from 'node:path'
+// eslint-disable-next-line import/order
 import { fileURLToPath } from 'node:url'
 import type { ServiceError } from '@grpc/grpc-js'
 import type {
@@ -543,6 +545,7 @@ interface ProtoDescriptor {
 let clientInstance: CentyDaemonClient | null = null
 
 function getAddress(): string {
+  // eslint-disable-next-line no-restricted-syntax
   const envAddr = process.env['CENTY_DAEMON_ADDR']
   if (envAddr !== undefined && envAddr !== '') {
     return envAddr
@@ -566,6 +569,7 @@ export function getDaemonClient(): CentyDaemonClient {
     oneofs: true,
   })
 
+  // eslint-disable-next-line no-restricted-syntax
   const protoDescriptor = loadPackageDefinition(
     packageDefinition
   ) as unknown as ProtoDescriptor

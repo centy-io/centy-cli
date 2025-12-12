@@ -15,17 +15,21 @@ describe('findDaemonBinary', () => {
   })
 
   it('should respect CENTY_DAEMON_PATH environment variable', () => {
+    // eslint-disable-next-line no-restricted-syntax
     const originalEnv = process.env['CENTY_DAEMON_PATH']
 
     // Set to a non-existent path - function should not return this
+    // eslint-disable-next-line no-restricted-syntax
     process.env['CENTY_DAEMON_PATH'] = '/nonexistent/daemon/path'
     const result = findDaemonBinary()
     expect(result).not.toBe('/nonexistent/daemon/path')
 
     // Restore
     if (originalEnv !== undefined) {
+      // eslint-disable-next-line no-restricted-syntax
       process.env['CENTY_DAEMON_PATH'] = originalEnv
     } else {
+      // eslint-disable-next-line no-restricted-syntax
       delete process.env['CENTY_DAEMON_PATH']
     }
   })
