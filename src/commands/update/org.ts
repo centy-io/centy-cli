@@ -46,7 +46,9 @@ export default class UpdateOrg extends Command {
     const { args, flags } = await this.parse(UpdateOrg)
 
     if (!flags.name && !flags.description && !flags['new-slug']) {
-      this.error('At least one of --name, --description, or --new-slug is required')
+      this.error(
+        'At least one of --name, --description, or --new-slug is required'
+      )
     }
 
     const response = await daemonUpdateOrganization({

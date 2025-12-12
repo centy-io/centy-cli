@@ -15,7 +15,8 @@ export default class DeleteOrg extends Command {
     }),
   }
 
-  static override description = 'Delete an organization (must have no projects assigned)'
+  static override description =
+    'Delete an organization (must have no projects assigned)'
 
   static override examples = [
     '<%= config.bin %> delete org my-org',

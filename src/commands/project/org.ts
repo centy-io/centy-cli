@@ -15,7 +15,8 @@ export default class ProjectOrg extends Command {
     }),
   }
 
-  static override description = 'Assign or remove a project from an organization'
+  static override description =
+    'Assign or remove a project from an organization'
 
   static override examples = [
     '<%= config.bin %> project org centy-io',
@@ -67,7 +68,9 @@ export default class ProjectOrg extends Command {
     if (flags.remove || !args.slug) {
       this.log(`Removed "${response.project.name}" from organization`)
     } else {
-      this.log(`Assigned "${response.project.name}" to organization: ${args.slug}`)
+      this.log(
+        `Assigned "${response.project.name}" to organization: ${args.slug}`
+      )
     }
   }
 }

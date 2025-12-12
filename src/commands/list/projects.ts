@@ -73,7 +73,9 @@ export default class ListProjects extends Command {
       this.log(`${favorite} ${status} ${project.name}`)
       this.log(`    Path: ${project.path}`)
       if (project.organizationName) {
-        this.log(`    Organization: ${project.organizationName} (${project.organizationSlug})`)
+        this.log(
+          `    Organization: ${project.organizationName} (${project.organizationSlug})`
+        )
       }
       this.log(`    Issues: ${project.issueCount}, Docs: ${project.docCount}`)
       this.log(`    Last accessed: ${project.lastAccessed}`)
