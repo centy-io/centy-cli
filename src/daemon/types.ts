@@ -785,3 +785,114 @@ export interface MarkIssuesCompactedResponse {
   error: string
   markedCount: number
 }
+
+// ============ Organization Issue Types ============
+
+export interface OrgIssue {
+  id: string
+  displayNumber: number
+  issueNumber: string
+  title: string
+  description: string
+  metadata: OrgIssueMetadata
+}
+
+export interface OrgIssueMetadata {
+  displayNumber: number
+  status: string
+  priority: number
+  createdAt: string
+  updatedAt: string
+  customFields: Record<string, string>
+  priorityLabel: string
+  referencedProjects: string[]
+}
+
+export interface CreateOrgIssueRequest {
+  orgSlug: string
+  title: string
+  description: string
+  priority: number
+  status: string
+  customFields: Record<string, string>
+  referencedProjects: string[]
+}
+
+export interface CreateOrgIssueResponse {
+  success: boolean
+  error: string
+  id: string
+  displayNumber: number
+  issueNumber: string
+  createdFiles: string[]
+}
+
+export interface GetOrgIssueRequest {
+  orgSlug: string
+  issueId: string
+}
+
+export interface GetOrgIssueByDisplayNumberRequest {
+  orgSlug: string
+  displayNumber: number
+}
+
+export interface ListOrgIssuesRequest {
+  orgSlug: string
+  status?: string
+  priority?: number
+}
+
+export interface ListOrgIssuesResponse {
+  issues: OrgIssue[]
+  totalCount: number
+}
+
+export interface UpdateOrgIssueRequest {
+  orgSlug: string
+  issueId: string
+  title?: string
+  description?: string
+  status?: string
+  priority?: number
+  customFields?: Record<string, string>
+  referencedProjects?: string[]
+}
+
+export interface UpdateOrgIssueResponse {
+  success: boolean
+  error: string
+  issue: OrgIssue
+}
+
+export interface DeleteOrgIssueRequest {
+  orgSlug: string
+  issueId: string
+}
+
+export interface DeleteOrgIssueResponse {
+  success: boolean
+  error: string
+}
+
+export interface GetOrgConfigRequest {
+  orgSlug: string
+}
+
+export interface OrgConfig {
+  priorityLevels: number
+  allowedStates: string[]
+  defaultState: string
+  customFields: CustomFieldDefinition[]
+}
+
+export interface UpdateOrgConfigRequest {
+  orgSlug: string
+  config: OrgConfig
+}
+
+export interface UpdateOrgConfigResponse {
+  success: boolean
+  error: string
+  config: OrgConfig
+}

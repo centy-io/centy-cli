@@ -118,6 +118,22 @@ import type {
   UpdateOrganizationResponse,
   DeleteOrganizationRequest,
   DeleteOrganizationResponse,
+  // Org issue types
+  CreateOrgIssueRequest,
+  CreateOrgIssueResponse,
+  GetOrgIssueRequest,
+  GetOrgIssueByDisplayNumberRequest,
+  OrgIssue,
+  ListOrgIssuesRequest,
+  ListOrgIssuesResponse,
+  UpdateOrgIssueRequest,
+  UpdateOrgIssueResponse,
+  DeleteOrgIssueRequest,
+  DeleteOrgIssueResponse,
+  GetOrgConfigRequest,
+  OrgConfig,
+  UpdateOrgConfigRequest,
+  UpdateOrgConfigResponse,
 } from './types.js'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
@@ -338,6 +354,55 @@ interface CentyDaemonClient {
     callback: (
       error: ServiceError | null,
       response: DeleteOrganizationResponse
+    ) => void
+  ): void
+
+  // Org issue operations
+  createOrgIssue(
+    request: CreateOrgIssueRequest,
+    callback: (
+      error: ServiceError | null,
+      response: CreateOrgIssueResponse
+    ) => void
+  ): void
+  getOrgIssue(
+    request: GetOrgIssueRequest,
+    callback: (error: ServiceError | null, response: OrgIssue) => void
+  ): void
+  getOrgIssueByDisplayNumber(
+    request: GetOrgIssueByDisplayNumberRequest,
+    callback: (error: ServiceError | null, response: OrgIssue) => void
+  ): void
+  listOrgIssues(
+    request: ListOrgIssuesRequest,
+    callback: (
+      error: ServiceError | null,
+      response: ListOrgIssuesResponse
+    ) => void
+  ): void
+  updateOrgIssue(
+    request: UpdateOrgIssueRequest,
+    callback: (
+      error: ServiceError | null,
+      response: UpdateOrgIssueResponse
+    ) => void
+  ): void
+  deleteOrgIssue(
+    request: DeleteOrgIssueRequest,
+    callback: (
+      error: ServiceError | null,
+      response: DeleteOrgIssueResponse
+    ) => void
+  ): void
+  getOrgConfig(
+    request: GetOrgConfigRequest,
+    callback: (error: ServiceError | null, response: OrgConfig) => void
+  ): void
+  updateOrgConfig(
+    request: UpdateOrgConfigRequest,
+    callback: (
+      error: ServiceError | null,
+      response: UpdateOrgConfigResponse
     ) => void
   ): void
 
