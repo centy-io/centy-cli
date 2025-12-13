@@ -65,7 +65,8 @@
       "target": "./dist/commands"
     },
     "hooks": {
-      "prerun": "./dist/hooks/prerun.js"
+      "prerun": "./dist/hooks/prerun.js",
+      "postrun": "./dist/hooks/postrun.js"
     },
     "plugins": [
       "@oclif/plugin-help"
@@ -78,6 +79,7 @@
     "@cspell/dict-he": "^4.0.5",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
+    "@types/update-notifier": "^6.0.8",
     "@vitest/coverage-v8": "^4.0.15",
     "bun-types": "^1.3.3",
     "cspell": "^9.4.0",
@@ -105,6 +107,7 @@
     "@opentui/react": "^0.1.56",
     "clipboardy": "^5.0.1",
     "react": "^19.2.1",
-    "tar": "^7.5.2"
+    "tar": "^7.5.2",
+    "update-notifier": "^7.3.1"
   }
 }

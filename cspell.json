@@ -26,6 +26,7 @@
     "oneofs",
     "opentui",
     "pnpm",
+    "postrun",
     "prerun",
     "Tauri",
     "tsconfig",
