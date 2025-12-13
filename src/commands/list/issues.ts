@@ -23,6 +23,8 @@ export default class ListIssues extends Command {
     '<%= config.bin %> list issues --status open',
     '<%= config.bin %> list issues --priority 1',
     '<%= config.bin %> list issues --project centy-daemon',
+    '<%= config.bin %> list issues --draft',
+    '<%= config.bin %> list issues --no-draft',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -38,6 +40,11 @@ export default class ListIssues extends Command {
     json: Flags.boolean({
       description: 'Output as JSON',
       default: false,
+    }),
+    draft: Flags.boolean({
+      description:
+        'Filter by draft status (--draft for drafts only, --no-draft for non-drafts)',
+      allowNo: true,
     }),
     project: projectFlag,
   }
@@ -59,6 +66,7 @@ export default class ListIssues extends Command {
       projectPath: cwd,
       status: flags.status,
       priority: flags.priority,
+      draft: flags.draft,
     })
 
     if (flags.json) {
@@ -81,8 +89,10 @@ export default class ListIssues extends Command {
             : `P${meta.priority}`
           : 'P?'
       const status = meta !== undefined ? meta.status : 'unknown'
+      const draftIndicator =
+        meta !== undefined && meta.draft === true ? ' [DRAFT]' : ''
       this.log(
-        `#${issue.displayNumber} [${priority}] [${status}] ${issue.title}`
+        `#${issue.displayNumber} [${priority}] [${status}]${draftIndicator} ${issue.title}`
       )
     }
   }

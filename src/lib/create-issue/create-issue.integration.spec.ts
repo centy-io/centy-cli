@@ -95,6 +95,7 @@ describe('createIssue integration tests', () => {
         priority: 2, // medium = 2
         status: 'open',
         customFields: {},
+        draft: false,
       })
     })
 
@@ -120,6 +121,7 @@ describe('createIssue integration tests', () => {
         priority: 1, // high = 1
         status: 'in-progress',
         customFields: {},
+        draft: false,
       })
     })
 

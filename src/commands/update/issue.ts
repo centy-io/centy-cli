@@ -51,6 +51,10 @@ export default class UpdateIssue extends Command {
       char: 'p',
       description: 'New priority (low/medium/high or 1-3)',
     }),
+    draft: Flags.boolean({
+      description: 'Mark as draft (use --no-draft to unmark)',
+      allowNo: true,
+    }),
     project: projectFlag,
   }
 
@@ -88,7 +92,8 @@ export default class UpdateIssue extends Command {
       !flags.title &&
       !flags.description &&
       !flags.status &&
-      !flags.priority
+      !flags.priority &&
+      flags.draft === undefined
     ) {
       this.error('At least one field must be specified to update.')
     }
@@ -100,6 +105,7 @@ export default class UpdateIssue extends Command {
       description: flags.description,
       status: flags.status,
       priority: this.convertPriority(flags.priority),
+      draft: flags.draft,
     })
 
     if (!response.success) {

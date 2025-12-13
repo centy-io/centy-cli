@@ -18,4 +18,6 @@ export interface CreateIssueOptions {
   input?: NodeJS.ReadableStream
   /** Output stream for messages (defaults to process.stdout) */
   output?: NodeJS.WritableStream
+  /** Whether to create the issue as a draft */
+  draft?: boolean
 }

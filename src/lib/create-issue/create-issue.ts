@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { join } from 'node:path'
 import { daemonCreateIssue } from '../../daemon/daemon-create-issue.js'
 import { daemonIsInitialized } from '../../daemon/daemon-is-initialized.js'
@@ -103,6 +104,8 @@ export async function createIssue(
       // eslint-disable-next-line no-restricted-syntax
       status: opts.status ?? 'open',
       customFields: convertCustomFields(opts.customFields),
+      // eslint-disable-next-line no-restricted-syntax
+      draft: opts.draft ?? false,
     })
 
     if (!response.success) {

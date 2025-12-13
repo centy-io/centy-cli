@@ -323,6 +323,7 @@ message CreateIssueRequest {
   string status = 5;    // default: "open"
   map<string, string> custom_fields = 6;
   string template = 7;  // Optional template name (without .md extension)
+  bool draft = 8;       // Create as draft (default: false)
 }
 
 message CreateIssueResponse {
@@ -381,6 +382,7 @@ message IssueMetadata {
   string priority_label = 7;      // Human-readable label (e.g., "high", "P1")
   bool compacted = 8;             // Whether issue has been compacted into features
   string compacted_at = 9;        // ISO timestamp when compacted (empty if not)
+  bool draft = 10;                // Whether this issue is a draft
 }
 
 message GetIssueRequest {
@@ -419,6 +421,7 @@ message ListIssuesRequest {
   // Optional filters
   string status = 2;              // Filter by status (empty = all)
   int32 priority = 3;             // Filter by priority (0 = all)
+  optional bool draft = 4;        // Filter by draft status (absent = all, true = drafts only, false = non-drafts only)
 }
 
 message ListIssuesResponse {
@@ -436,6 +439,7 @@ message UpdateIssueRequest {
   string status = 5;
   int32 priority = 6;             // 0 = don't update, otherwise 1-N
   map<string, string> custom_fields = 7;
+  optional bool draft = 8;        // Update draft status (absent = don't update)
 }
 
 message UpdateIssueResponse {
