@@ -4,7 +4,7 @@ import { isValidUuid } from './is-valid-uuid.js'
 describe('isValidUuid', () => {
   it('returns true for valid UUIDs', () => {
     expect(isValidUuid('77ed0337-1654-4c29-bbf1-e226fc6e261d')).toBe(true)
-    expect(isValidUuid('ABC12345-1234-1234-1234-123456789ABC')).toBe(true)
+    expect(isValidUuid('A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11')).toBe(true)
     expect(isValidUuid('00000000-0000-0000-0000-000000000000')).toBe(true)
   })
 
