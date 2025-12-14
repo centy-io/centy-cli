@@ -122,7 +122,11 @@ describe('UpdateDoc command', () => {
 
     const cmd = createMockCommand(Command, {
       args: { slug: 'original-slug' },
-      flags: { title: 'Updated Title', content: '# Updated', 'new-slug': 'updated-slug' },
+      flags: {
+        title: 'Updated Title',
+        content: '# Updated',
+        'new-slug': 'updated-slug',
+      },
     })
     await cmd.run()
 
@@ -145,7 +149,9 @@ describe('UpdateDoc command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors).toContain('At least one field must be specified to update.')
+    expect(cmd.errors).toContain(
+      'At least one field must be specified to update.'
+    )
   })
 
   it('should handle daemon update failure', async () => {
@@ -167,9 +173,8 @@ describe('UpdateDoc command', () => {
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./doc.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )

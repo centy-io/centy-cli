@@ -86,7 +86,9 @@ describe('CreateOrgIssue command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors.some(e => e.includes('Organization slug is required'))).toBe(true)
+    expect(
+      cmd.errors.some(e => e.includes('Organization slug is required'))
+    ).toBe(true)
   })
 
   it('should create with priority', async () => {
@@ -99,7 +101,12 @@ describe('CreateOrgIssue command', () => {
     })
 
     const cmd = createMockCommand(Command, {
-      flags: { org: 'my-org', title: 'New Issue', priority: 'high', json: false },
+      flags: {
+        org: 'my-org',
+        title: 'New Issue',
+        priority: 'high',
+        json: false,
+      },
       args: {},
     })
 
@@ -120,7 +127,12 @@ describe('CreateOrgIssue command', () => {
     })
 
     const cmd = createMockCommand(Command, {
-      flags: { org: 'my-org', title: 'New Issue', description: 'Details here', json: false },
+      flags: {
+        org: 'my-org',
+        title: 'New Issue',
+        description: 'Details here',
+        json: false,
+      },
       args: {},
     })
 
@@ -141,7 +153,12 @@ describe('CreateOrgIssue command', () => {
     })
 
     const cmd = createMockCommand(Command, {
-      flags: { org: 'my-org', title: 'New Issue', projects: '/path/a, /path/b', json: false },
+      flags: {
+        org: 'my-org',
+        title: 'New Issue',
+        projects: '/path/a, /path/b',
+        json: false,
+      },
       args: {},
     })
 

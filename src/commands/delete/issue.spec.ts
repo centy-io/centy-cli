@@ -105,9 +105,8 @@ describe('DeleteIssue command', () => {
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./issue.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )

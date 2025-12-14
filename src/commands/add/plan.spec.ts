@@ -64,7 +64,9 @@ describe('AddPlan command', () => {
       issueId: '1',
       content: '# Plan Content\n- Step 1\n- Step 2',
     })
-    expect(cmd.logs.some(log => log.includes('Plan updated for issue 1'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('Plan updated for issue 1'))).toBe(
+      true
+    )
   })
 
   it('should handle file not found error', async () => {
@@ -100,9 +102,8 @@ describe('AddPlan command', () => {
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./plan.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )

@@ -14,7 +14,8 @@ vi.mock('../../daemon/daemon-list-assets.js', () => ({
 }))
 
 vi.mock('../../daemon/daemon-list-shared-assets.js', () => ({
-  daemonListSharedAssets: (...args: unknown[]) => mockDaemonListSharedAssets(...args),
+  daemonListSharedAssets: (...args: unknown[]) =>
+    mockDaemonListSharedAssets(...args),
 }))
 
 vi.mock('../../utils/resolve-project-path.js', () => ({
@@ -65,7 +66,11 @@ describe('ListAssets command', () => {
     mockDaemonListAssets.mockResolvedValue({
       assets: [
         createMockAsset({ filename: 'screenshot.png', size: 2048 }),
-        createMockAsset({ filename: 'diagram.svg', size: 512, mimeType: 'image/svg+xml' }),
+        createMockAsset({
+          filename: 'diagram.svg',
+          size: 512,
+          mimeType: 'image/svg+xml',
+        }),
       ],
       totalCount: 2,
     })
@@ -89,9 +94,7 @@ describe('ListAssets command', () => {
   it('should list shared assets', async () => {
     const { default: Command } = await import('./assets.js')
     mockDaemonListSharedAssets.mockResolvedValue({
-      assets: [
-        createMockAsset({ filename: 'logo.png', isShared: true }),
-      ],
+      assets: [createMockAsset({ filename: 'logo.png', isShared: true })],
       totalCount: 1,
     })
 
@@ -170,14 +173,15 @@ describe('ListAssets command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors).toContain('Either --issue or --shared must be specified.')
+    expect(cmd.errors).toContain(
+      'Either --issue or --shared must be specified.'
+    )
   })
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./assets.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )
@@ -212,7 +216,11 @@ describe('ListAssets command', () => {
     const { default: Command } = await import('./assets.js')
     mockDaemonListAssets.mockResolvedValue({
       assets: [
-        createMockAsset({ filename: 'image.png', size: 1024, mimeType: 'image/png' }),
+        createMockAsset({
+          filename: 'image.png',
+          size: 1024,
+          mimeType: 'image/png',
+        }),
       ],
       totalCount: 1,
     })

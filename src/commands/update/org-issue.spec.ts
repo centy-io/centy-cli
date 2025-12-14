@@ -65,9 +65,9 @@ describe('UpdateOrgIssue command', () => {
         title: 'Updated Title',
       })
     )
-    expect(cmd.logs.some(log => log.includes('Updated organization issue #1'))).toBe(
-      true
-    )
+    expect(
+      cmd.logs.some(log => log.includes('Updated organization issue #1'))
+    ).toBe(true)
   })
 
   it('should update org issue by display number with hash', async () => {

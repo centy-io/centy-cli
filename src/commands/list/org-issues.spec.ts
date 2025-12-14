@@ -148,9 +148,7 @@ describe('ListOrgIssues command', () => {
 
   it('should output JSON when json flag is set', async () => {
     const { default: Command } = await import('./org-issues.js')
-    const issues = [
-      { id: 'issue-1', displayNumber: 1, title: 'Test' },
-    ]
+    const issues = [{ id: 'issue-1', displayNumber: 1, title: 'Test' }]
     mockDaemonListOrgIssues.mockResolvedValue({
       issues,
       totalCount: 1,
@@ -195,9 +193,9 @@ describe('ListOrgIssues command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors.some(e => e.includes('Organization slug is required'))).toBe(
-      true
-    )
+    expect(
+      cmd.errors.some(e => e.includes('Organization slug is required'))
+    ).toBe(true)
   })
 
   it('should handle issues without priorityLabel', async () => {

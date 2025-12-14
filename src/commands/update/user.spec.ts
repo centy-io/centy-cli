@@ -177,9 +177,8 @@ describe('UpdateUser command', () => {
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./user.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )
@@ -235,7 +234,12 @@ describe('UpdateUser command', () => {
     const { default: Command } = await import('./user.js')
     mockDaemonUpdateUser.mockResolvedValue({
       success: true,
-      user: { id: 'test', name: 'Test', email: 'test@example.com', gitUsernames: [] },
+      user: {
+        id: 'test',
+        name: 'Test',
+        email: 'test@example.com',
+        gitUsernames: [],
+      },
     })
 
     const cmd = createMockCommand(Command, {

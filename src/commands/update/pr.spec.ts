@@ -212,7 +212,9 @@ describe('UpdatePr command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors).toContain('At least one field must be specified to update.')
+    expect(cmd.errors).toContain(
+      'At least one field must be specified to update.'
+    )
   })
 
   it('should handle daemon update failure', async () => {
@@ -235,9 +237,8 @@ describe('UpdatePr command', () => {
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./pr.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )

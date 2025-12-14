@@ -74,7 +74,9 @@ describe('ListDocs command', () => {
     })
     expect(cmd.logs.some(log => log.includes('Found 2 doc(s)'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('readme: README'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('contributing: Contributing Guide'))).toBe(true)
+    expect(
+      cmd.logs.some(log => log.includes('contributing: Contributing Guide'))
+    ).toBe(true)
   })
 
   it('should output JSON when json flag is set', async () => {
@@ -110,9 +112,8 @@ describe('ListDocs command', () => {
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./docs.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )

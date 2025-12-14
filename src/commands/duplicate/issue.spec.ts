@@ -9,7 +9,8 @@ const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
 vi.mock('../../daemon/daemon-duplicate-issue.js', () => ({
-  daemonDuplicateIssue: (...args: unknown[]) => mockDaemonDuplicateIssue(...args),
+  daemonDuplicateIssue: (...args: unknown[]) =>
+    mockDaemonDuplicateIssue(...args),
 }))
 
 vi.mock('../../utils/resolve-project-path.js', () => ({
@@ -113,9 +114,8 @@ describe('DuplicateIssue command', () => {
 
   it('should handle NotInitializedError on source project', async () => {
     const { default: Command } = await import('./issue.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )
@@ -133,9 +133,8 @@ describe('DuplicateIssue command', () => {
 
   it('should handle NotInitializedError on target project', async () => {
     const { default: Command } = await import('./issue.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockResolveProjectPath
       .mockResolvedValueOnce('/source/project')
       .mockResolvedValueOnce('/target/project')

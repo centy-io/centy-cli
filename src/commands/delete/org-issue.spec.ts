@@ -58,7 +58,9 @@ describe('DeleteOrgIssue command', () => {
       orgSlug: 'my-org',
       issueId: 'issue-uuid-123',
     })
-    expect(cmd.logs.some(log => log.includes('Deleted organization issue'))).toBe(true)
+    expect(
+      cmd.logs.some(log => log.includes('Deleted organization issue'))
+    ).toBe(true)
     expect(cmd.logs.some(log => log.includes('my-org'))).toBe(true)
   })
 

@@ -105,9 +105,8 @@ describe('DeleteDoc command', () => {
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./doc.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )

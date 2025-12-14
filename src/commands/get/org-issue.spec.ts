@@ -61,7 +61,9 @@ describe('GetOrgIssue command', () => {
       displayNumber: 1,
     })
     expect(mockDaemonGetOrgIssue).not.toHaveBeenCalled()
-    expect(cmd.logs.some(log => log.includes('Organization Issue #1'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('Organization Issue #1'))).toBe(
+      true
+    )
     expect(cmd.logs.some(log => log.includes('Test Issue'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('Status: open'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('Priority: High'))).toBe(true)
@@ -76,7 +78,12 @@ describe('GetOrgIssue command', () => {
       id: 'issue-uuid-456',
       displayNumber: 5,
       title: 'Test',
-      metadata: { status: 'open', priority: 2, createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      metadata: {
+        status: 'open',
+        priority: 2,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01',
+      },
     })
 
     const cmd = createMockCommand(Command, {
@@ -97,7 +104,12 @@ describe('GetOrgIssue command', () => {
       id: 'abc-123-uuid',
       displayNumber: 3,
       title: 'UUID Issue',
-      metadata: { status: 'closed', priority: 3, createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      metadata: {
+        status: 'closed',
+        priority: 3,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01',
+      },
     })
 
     const cmd = createMockCommand(Command, {
@@ -141,7 +153,12 @@ describe('GetOrgIssue command', () => {
       id: 'issue-uuid',
       displayNumber: 1,
       title: 'Test',
-      metadata: { status: 'open', priority: 2, createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      metadata: {
+        status: 'open',
+        priority: 2,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01',
+      },
     })
 
     const cmd = createMockCommand(Command, {
@@ -177,7 +194,12 @@ describe('GetOrgIssue command', () => {
       id: 'issue-uuid',
       displayNumber: 1,
       title: 'No Description',
-      metadata: { status: 'open', priority: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      metadata: {
+        status: 'open',
+        priority: 1,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01',
+      },
     })
 
     const cmd = createMockCommand(Command, {
@@ -210,7 +232,9 @@ describe('GetOrgIssue command', () => {
     })
     await cmd.run()
 
-    expect(cmd.logs.some(log => log.includes('Referenced Projects'))).toBe(false)
+    expect(cmd.logs.some(log => log.includes('Referenced Projects'))).toBe(
+      false
+    )
   })
 
   it('should handle get issue failure', async () => {

@@ -56,7 +56,11 @@ describe('DeleteAsset command', () => {
 
   it('should delete issue asset with force flag', async () => {
     const { default: Command } = await import('./asset.js')
-    mockDaemonDeleteAsset.mockResolvedValue({ success: true, filename: 'test.png', wasShared: false })
+    mockDaemonDeleteAsset.mockResolvedValue({
+      success: true,
+      filename: 'test.png',
+      wasShared: false,
+    })
 
     const cmd = createMockCommand(Command, {
       flags: { force: true, issue: '1', shared: false },
@@ -76,7 +80,11 @@ describe('DeleteAsset command', () => {
 
   it('should delete shared asset with force flag', async () => {
     const { default: Command } = await import('./asset.js')
-    mockDaemonDeleteAsset.mockResolvedValue({ success: true, filename: 'logo.svg', wasShared: true })
+    mockDaemonDeleteAsset.mockResolvedValue({
+      success: true,
+      filename: 'logo.svg',
+      wasShared: true,
+    })
 
     const cmd = createMockCommand(Command, {
       flags: { force: true, shared: true },
@@ -91,7 +99,9 @@ describe('DeleteAsset command', () => {
       filename: 'logo.svg',
       isShared: true,
     })
-    expect(cmd.logs.some(log => log.includes('Deleted shared asset'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('Deleted shared asset'))).toBe(
+      true
+    )
   })
 
   it('should error when neither --issue nor --shared specified', async () => {
@@ -105,13 +115,21 @@ describe('DeleteAsset command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors.some(e => e.includes('Either --issue or --shared must be specified'))).toBe(true)
+    expect(
+      cmd.errors.some(e =>
+        e.includes('Either --issue or --shared must be specified')
+      )
+    ).toBe(true)
   })
 
   it('should delete asset after confirmation', async () => {
     const { default: Command } = await import('./asset.js')
     setupReadlineMock('y')
-    mockDaemonDeleteAsset.mockResolvedValue({ success: true, filename: 'test.png', wasShared: false })
+    mockDaemonDeleteAsset.mockResolvedValue({
+      success: true,
+      filename: 'test.png',
+      wasShared: false,
+    })
 
     const cmd = createMockCommand(Command, {
       flags: { force: false, issue: '1', shared: false },
@@ -140,9 +158,8 @@ describe('DeleteAsset command', () => {
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./asset.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )
@@ -193,10 +210,19 @@ describe('DeleteAsset command', () => {
   it('should use project flag', async () => {
     const { default: Command } = await import('./asset.js')
     mockResolveProjectPath.mockResolvedValue('/other/project')
-    mockDaemonDeleteAsset.mockResolvedValue({ success: true, filename: 'test.png', wasShared: false })
+    mockDaemonDeleteAsset.mockResolvedValue({
+      success: true,
+      filename: 'test.png',
+      wasShared: false,
+    })
 
     const cmd = createMockCommand(Command, {
-      flags: { force: true, issue: '1', shared: false, project: 'other-project' },
+      flags: {
+        force: true,
+        issue: '1',
+        shared: false,
+        project: 'other-project',
+      },
       args: { filename: 'test.png' },
     })
 

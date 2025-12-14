@@ -59,7 +59,9 @@ describe('Manifest command', () => {
 
     expect(cmd.logs.some(log => log.includes('Centy Manifest'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('Schema Version: 1.0'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('Centy Version: 0.5.0'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('Centy Version: 0.5.0'))).toBe(
+      true
+    )
     expect(cmd.logs.some(log => log.includes('Created:'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('Updated:'))).toBe(true)
   })
@@ -80,7 +82,9 @@ describe('Manifest command', () => {
 
     await cmd.run()
 
-    expect(cmd.logs.some(log => log.includes('"schemaVersion": "1.0"'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('"schemaVersion": "1.0"'))).toBe(
+      true
+    )
   })
 
   it('should handle NotInitializedError', async () => {

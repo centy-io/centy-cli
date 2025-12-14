@@ -174,6 +174,8 @@ describe('Update command', () => {
     await cmd.run()
 
     expect(cmd.logs.some(log => log.includes('Updated project'))).toBe(true)
-    expect(cmd.logs.every(log => !log.includes('Migrations applied'))).toBe(true)
+    expect(cmd.logs.every(log => !log.includes('Migrations applied'))).toBe(
+      true
+    )
   })
 })

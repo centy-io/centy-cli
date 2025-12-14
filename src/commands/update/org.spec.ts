@@ -52,7 +52,9 @@ describe('UpdateOrg command', () => {
       description: undefined,
       newSlug: undefined,
     })
-    expect(cmd.logs.some(log => log.includes('Updated organization'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('Updated organization'))).toBe(
+      true
+    )
     expect(cmd.logs.some(log => log.includes('New Name'))).toBe(true)
   })
 
@@ -60,7 +62,11 @@ describe('UpdateOrg command', () => {
     const { default: Command } = await import('./org.js')
     mockDaemonUpdateOrganization.mockResolvedValue({
       success: true,
-      organization: { name: 'My Org', slug: 'my-org', description: 'Updated description' },
+      organization: {
+        name: 'My Org',
+        slug: 'my-org',
+        description: 'Updated description',
+      },
     })
 
     const cmd = createMockCommand(Command, {
@@ -75,7 +81,9 @@ describe('UpdateOrg command', () => {
       description: 'Updated description',
       newSlug: undefined,
     })
-    expect(cmd.logs.some(log => log.includes('Description: Updated description'))).toBe(true)
+    expect(
+      cmd.logs.some(log => log.includes('Description: Updated description'))
+    ).toBe(true)
   })
 
   it('should rename organization slug', async () => {
@@ -104,12 +112,20 @@ describe('UpdateOrg command', () => {
     const { default: Command } = await import('./org.js')
     mockDaemonUpdateOrganization.mockResolvedValue({
       success: true,
-      organization: { name: 'New Name', slug: 'new-slug', description: 'New desc' },
+      organization: {
+        name: 'New Name',
+        slug: 'new-slug',
+        description: 'New desc',
+      },
     })
 
     const cmd = createMockCommand(Command, {
       args: { slug: 'old-slug' },
-      flags: { name: 'New Name', description: 'New desc', 'new-slug': 'new-slug' },
+      flags: {
+        name: 'New Name',
+        description: 'New desc',
+        'new-slug': 'new-slug',
+      },
     })
     await cmd.run()
 
@@ -148,7 +164,9 @@ describe('UpdateOrg command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors).toContain('At least one of --name, --description, or --new-slug is required')
+    expect(cmd.errors).toContain(
+      'At least one of --name, --description, or --new-slug is required'
+    )
   })
 
   it('should handle daemon update failure', async () => {

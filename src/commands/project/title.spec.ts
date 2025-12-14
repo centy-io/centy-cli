@@ -169,7 +169,12 @@ describe('ProjectTitle command', () => {
     })
 
     const cmd = createMockCommand(Command, {
-      flags: { shared: false, clear: false, json: false, path: '/other/project' },
+      flags: {
+        shared: false,
+        clear: false,
+        json: false,
+        path: '/other/project',
+      },
       args: { title: 'Custom Title' },
     })
 

@@ -80,8 +80,13 @@ describe('GetAsset command', () => {
       filename: 'screenshot.png',
       isShared: false,
     })
-    expect(mockWriteFile).toHaveBeenCalledWith('screenshot.png', expect.any(Buffer))
-    expect(cmd.logs.some(log => log.includes('Saved asset to screenshot.png'))).toBe(true)
+    expect(mockWriteFile).toHaveBeenCalledWith(
+      'screenshot.png',
+      expect.any(Buffer)
+    )
+    expect(
+      cmd.logs.some(log => log.includes('Saved asset to screenshot.png'))
+    ).toBe(true)
     expect(cmd.logs.some(log => log.includes('1024 bytes'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('image/png'))).toBe(true)
   })
@@ -130,8 +135,15 @@ describe('GetAsset command', () => {
     })
     await cmd.run()
 
-    expect(mockWriteFile).toHaveBeenCalledWith('./output/my-screenshot.png', expect.any(Buffer))
-    expect(cmd.logs.some(log => log.includes('Saved asset to ./output/my-screenshot.png'))).toBe(true)
+    expect(mockWriteFile).toHaveBeenCalledWith(
+      './output/my-screenshot.png',
+      expect.any(Buffer)
+    )
+    expect(
+      cmd.logs.some(log =>
+        log.includes('Saved asset to ./output/my-screenshot.png')
+      )
+    ).toBe(true)
   })
 
   it('should error when neither --issue nor --shared is specified', async () => {
@@ -144,7 +156,9 @@ describe('GetAsset command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors).toContain('Either --issue or --shared must be specified.')
+    expect(cmd.errors).toContain(
+      'Either --issue or --shared must be specified.'
+    )
   })
 
   it('should handle daemon get asset failure', async () => {
@@ -166,9 +180,8 @@ describe('GetAsset command', () => {
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./asset.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )

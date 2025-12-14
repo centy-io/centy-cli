@@ -105,7 +105,9 @@ describe('Start command', () => {
       [],
       expect.objectContaining({ detached: true, stdio: 'ignore' })
     )
-    expect(cmd.logs.some(log => log.includes('started successfully'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('started successfully'))).toBe(
+      true
+    )
   })
 
   it('should error when daemon not responding after start', async () => {
@@ -148,9 +150,7 @@ describe('Start command', () => {
     const { default: Command } = await import('./start.js')
     mockCheckDaemonConnection.mockResolvedValue({ connected: false })
     // First call: not exists, second call: exists after install
-    mockDaemonBinaryExists
-      .mockReturnValueOnce(false)
-      .mockReturnValueOnce(true)
+    mockDaemonBinaryExists.mockReturnValueOnce(false).mockReturnValueOnce(true)
     mockInstallDaemon.mockResolvedValue({
       success: true,
       version: '1.0.0',

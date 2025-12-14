@@ -60,7 +60,9 @@ describe('CloseOrgIssue command', () => {
       issueId: 'issue-uuid-123',
       status: 'closed',
     })
-    expect(cmd.logs.some(log => log.includes('Closed organization issue #1'))).toBe(true)
+    expect(
+      cmd.logs.some(log => log.includes('Closed organization issue #1'))
+    ).toBe(true)
   })
 
   it('should close org issue by display number with hash', async () => {
@@ -114,7 +116,12 @@ describe('CloseOrgIssue command', () => {
 
   it('should output JSON when json flag is set', async () => {
     const { default: Command } = await import('./org-issue.js')
-    const mockIssue = { id: 'issue-uuid', displayNumber: 1, status: 'closed', title: 'Test' }
+    const mockIssue = {
+      id: 'issue-uuid',
+      displayNumber: 1,
+      status: 'closed',
+      title: 'Test',
+    }
     mockDaemonGetOrgIssueByDisplayNumber.mockResolvedValue({
       id: 'issue-uuid',
       displayNumber: 1,

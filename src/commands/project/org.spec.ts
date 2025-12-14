@@ -106,7 +106,9 @@ describe('ProjectOrg command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors).toContain('Provide an organization slug or use --remove to unassign')
+    expect(cmd.errors).toContain(
+      'Provide an organization slug or use --remove to unassign'
+    )
   })
 
   it('should handle daemon error', async () => {

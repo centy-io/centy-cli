@@ -152,7 +152,12 @@ describe('ListIssues command', () => {
         {
           displayNumber: 1,
           title: 'Issue with metadata',
-          metadata: { priority: 1, priorityLabel: 'High', status: 'open', draft: false },
+          metadata: {
+            priority: 1,
+            priorityLabel: 'High',
+            status: 'open',
+            draft: false,
+          },
         },
       ],
       totalCount: 1,
@@ -176,7 +181,12 @@ describe('ListIssues command', () => {
         {
           displayNumber: 2,
           title: 'Issue without label',
-          metadata: { priority: 2, priorityLabel: '', status: 'in-progress', draft: false },
+          metadata: {
+            priority: 2,
+            priorityLabel: '',
+            status: 'in-progress',
+            draft: false,
+          },
         },
       ],
       totalCount: 1,
@@ -220,7 +230,12 @@ describe('ListIssues command', () => {
         {
           displayNumber: 4,
           title: 'Draft issue',
-          metadata: { priority: 1, priorityLabel: 'High', status: 'open', draft: true },
+          metadata: {
+            priority: 1,
+            priorityLabel: 'High',
+            status: 'open',
+            draft: true,
+          },
         },
       ],
       totalCount: 1,

@@ -47,7 +47,9 @@ describe('Info command', () => {
     expect(mockDaemonGetDaemonInfo).toHaveBeenCalledWith({})
     expect(cmd.logs.some(log => log.includes('Centy Daemon'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('1.0.0'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('/usr/local/bin/centyd'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('/usr/local/bin/centyd'))).toBe(
+      true
+    )
     expect(cmd.logs.some(log => log.includes('Available versions'))).toBe(true)
   })
 

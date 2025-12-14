@@ -1,7 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  createMockCommand,
-} from '../../testing/command-test-utils.js'
+import { createMockCommand } from '../../testing/command-test-utils.js'
 
 const mockDaemonListOrganizations = vi.fn()
 

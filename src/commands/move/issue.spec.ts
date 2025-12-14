@@ -63,7 +63,9 @@ describe('MoveIssue command', () => {
       issueId: '5',
       targetProjectPath: '/target/project',
     })
-    expect(cmd.logs.some(log => log.includes('Moved issue #5 → #12'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('Moved issue #5 → #12'))).toBe(
+      true
+    )
     expect(cmd.logs.some(log => log.includes('/target/project'))).toBe(true)
   })
 
@@ -94,9 +96,8 @@ describe('MoveIssue command', () => {
 
   it('should handle NotInitializedError on source project', async () => {
     const { default: Command } = await import('./issue.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockResolveProjectPath
       .mockResolvedValueOnce('/source/project')
       .mockResolvedValueOnce('/target/project')
@@ -117,9 +118,8 @@ describe('MoveIssue command', () => {
 
   it('should handle NotInitializedError on target project', async () => {
     const { default: Command } = await import('./issue.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockResolveProjectPath
       .mockResolvedValueOnce('/source/project')
       .mockResolvedValueOnce('/target/project')

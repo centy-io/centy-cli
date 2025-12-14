@@ -89,7 +89,9 @@ describe('GetPlan command', () => {
     await cmd.run()
 
     expect(mockWriteFile).toHaveBeenCalledWith('./plan.md', '## Plan Content')
-    expect(cmd.logs.some(log => log.includes('Saved plan to ./plan.md'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('Saved plan to ./plan.md'))).toBe(
+      true
+    )
   })
 
   it('should error when plan not found', async () => {

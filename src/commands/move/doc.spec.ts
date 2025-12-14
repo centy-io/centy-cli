@@ -96,9 +96,8 @@ describe('MoveDoc command', () => {
 
   it('should handle NotInitializedError on source project', async () => {
     const { default: Command } = await import('./doc.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockResolveProjectPath
       .mockResolvedValueOnce('/source/project')
       .mockResolvedValueOnce('/target/project')
@@ -119,9 +118,8 @@ describe('MoveDoc command', () => {
 
   it('should handle NotInitializedError on target project', async () => {
     const { default: Command } = await import('./doc.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockResolveProjectPath
       .mockResolvedValueOnce('/source/project')
       .mockResolvedValueOnce('/target/project')
