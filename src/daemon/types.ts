@@ -1178,7 +1178,7 @@ export interface UnassignIssueResponse {
 export interface SpawnAgentRequest {
   projectPath: string
   issueId: string
-  action: 'PLAN' | 'IMPLEMENT'
+  action: number // 1 = plan, 2 = implement
   agentName?: string
   extraArgs?: string[]
 }

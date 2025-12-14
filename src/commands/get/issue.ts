@@ -91,8 +91,7 @@ export default class GetIssue extends Command {
       const response = await daemonSpawnAgent({
         projectPath: cwd,
         issueId: args.id,
-
-        action: flags.action === 'implement' ? 'IMPLEMENT' : 'PLAN',
+        action: flags.action === 'implement' ? 2 : 1, // 1 = plan, 2 = implement
       })
 
       if (!response.success) {
