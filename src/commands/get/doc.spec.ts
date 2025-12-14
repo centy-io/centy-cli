@@ -42,7 +42,15 @@ vi.mock('../../utils/cross-project-search.js', () => ({
     matches,
   })),
   handleNotInitializedWithSearch: vi.fn().mockResolvedValue(null),
-  isNotFoundError: vi.fn((e) => e?.message?.includes('not found')),
+  isNotFoundError: vi.fn(e => {
+    if (e === null || e === undefined) return false
+    if (typeof e !== 'object') return false
+    const err = e
+    if (!('message' in err)) return false
+    const message = err.message
+    if (typeof message !== 'string') return false
+    return message.includes('not found')
+  }),
 }))
 
 describe('GetDoc command', () => {

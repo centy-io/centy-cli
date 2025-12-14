@@ -3,7 +3,6 @@ import {
   createMockCommand,
   runCommandSafely,
 } from '../../testing/command-test-utils.js'
-
 import GetIssue from './issue.js'
 
 const mockDaemonGetIssue = vi.fn()
@@ -56,9 +55,17 @@ vi.mock('../../utils/cross-project-search.js', () => ({
     matches,
   })),
   handleNotInitializedWithSearch: vi.fn().mockResolvedValue(null),
-  isNotFoundError: vi.fn((e) => e?.message?.includes('not found')),
-  isValidUuid: vi.fn(
-    (id) => /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(id)
+  isNotFoundError: vi.fn(e => {
+    if (e === null || e === undefined) return false
+    if (typeof e !== 'object') return false
+    const err = e
+    if (!('message' in err)) return false
+    const message = err.message
+    if (typeof message !== 'string') return false
+    return message.includes('not found')
+  }),
+  isValidUuid: vi.fn(id =>
+    /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(id)
   ),
 }))
 
@@ -220,7 +227,7 @@ describe('GetIssue command', () => {
     expect(mockDaemonSpawnAgent).toHaveBeenCalledWith({
       projectPath: '/test/project',
       issueId: '1',
-      action: 'PLAN',
+      action: 1, // 1 = plan
     })
     expect(cmd.logs.some(log => log.includes('Agent spawned'))).toBe(true)
   })
@@ -243,7 +250,7 @@ describe('GetIssue command', () => {
 
     expect(mockDaemonSpawnAgent).toHaveBeenCalledWith(
       expect.objectContaining({
-        action: 'IMPLEMENT',
+        action: 2, // 2 = implement
       })
     )
   })
@@ -288,9 +295,8 @@ describe('GetIssue command', () => {
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./issue.js')
-    const { NotInitializedError } = await import(
-      '../../utils/ensure-initialized.js'
-    )
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )

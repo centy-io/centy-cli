@@ -113,7 +113,7 @@ describe('DuplicateDoc command', () => {
 
   it('should duplicate doc to different project', async () => {
     const { default: Command } = await import('./doc.js')
-    mockResolveProjectPath.mockImplementation((path) => {
+    mockResolveProjectPath.mockImplementation(path => {
       if (path === '/other/project') return Promise.resolve('/other/project')
       return Promise.resolve('/test/project')
     })
@@ -176,14 +176,14 @@ describe('DuplicateDoc command', () => {
     const { default: Command } = await import('./doc.js')
     const { NotInitializedError } =
       await import('../../utils/ensure-initialized.js')
-    
+
     let callCount = 0
     mockEnsureInitialized.mockImplementation(() => {
       callCount++
       if (callCount === 1) return Promise.resolve()
       throw new NotInitializedError('Target not initialized')
     })
-    mockResolveProjectPath.mockImplementation((path) => {
+    mockResolveProjectPath.mockImplementation(path => {
       if (path === '/other/project') return Promise.resolve('/other/project')
       return Promise.resolve('/test/project')
     })
@@ -213,14 +213,14 @@ describe('DuplicateDoc command', () => {
 
   it('should handle other errors during target initialization', async () => {
     const { default: Command } = await import('./doc.js')
-    
+
     let callCount = 0
     mockEnsureInitialized.mockImplementation(() => {
       callCount++
       if (callCount === 1) return Promise.resolve()
       throw new Error('Unknown target error')
     })
-    mockResolveProjectPath.mockImplementation((path) => {
+    mockResolveProjectPath.mockImplementation(path => {
       if (path === '/other/project') return Promise.resolve('/other/project')
       return Promise.resolve('/test/project')
     })

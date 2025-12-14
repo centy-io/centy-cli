@@ -48,9 +48,17 @@ vi.mock('../../utils/cross-project-search.js', () => ({
     matches,
   })),
   handleNotInitializedWithSearch: vi.fn().mockResolvedValue(null),
-  isNotFoundError: vi.fn((e) => e?.message?.includes('not found')),
-  isValidUuid: vi.fn(
-    (id) => /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(id)
+  isNotFoundError: vi.fn(e => {
+    if (e === null || e === undefined) return false
+    if (typeof e !== 'object') return false
+    const err = e
+    if (!('message' in err)) return false
+    const message = err.message
+    if (typeof message !== 'string') return false
+    return message.includes('not found')
+  }),
+  isValidUuid: vi.fn(id =>
+    /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(id)
   ),
 }))
 

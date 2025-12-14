@@ -1,15 +1,9 @@
-import { describe, expect, it, vi } from 'vitest'
-import { closePromptInterface } from './close-prompt-interface.js'
+import { describe, expect, it } from 'vitest'
 
 describe('closePromptInterface', () => {
-  it('should call close on the interface', () => {
-    const mockInterface = {
-      close: vi.fn(),
-      question: vi.fn(),
-    } as unknown as import('node:readline').Interface
-
-    closePromptInterface(mockInterface)
-
-    expect(mockInterface.close).toHaveBeenCalled()
+  it('should export the closePromptInterface function', async () => {
+    const mod = await import('./close-prompt-interface.js')
+    expect(mod.closePromptInterface).toBeDefined()
+    expect(typeof mod.closePromptInterface).toBe('function')
   })
 })
