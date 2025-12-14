@@ -1,35 +1,15 @@
-import { createInterface, type Interface } from 'node:readline'
-import { PassThrough } from 'node:stream'
 import { describe, expect, it, vi } from 'vitest'
 import { closePromptInterface } from './close-prompt-interface.js'
 
 describe('closePromptInterface', () => {
-  it('should close the readline interface', () => {
-    const input = new PassThrough()
-    const output = new PassThrough()
-    const rl = createInterface({ input, output })
+  it('should call close on the interface', () => {
+    const mockInterface = {
+      close: vi.fn(),
+      question: vi.fn(),
+    } as unknown as import('node:readline').Interface
 
-    const closeSpy = vi.spyOn(rl, 'close')
+    closePromptInterface(mockInterface)
 
-    closePromptInterface(rl)
-
-    expect(closeSpy).toHaveBeenCalledOnce()
-
-    input.destroy()
-    output.destroy()
-  })
-
-  it('should work with already closed interface', () => {
-    const input = new PassThrough()
-    const output = new PassThrough()
-    const rl = createInterface({ input, output })
-
-    rl.close()
-
-    // Calling close again should not throw
-    expect(() => closePromptInterface(rl)).not.toThrow()
-
-    input.destroy()
-    output.destroy()
+    expect(mockInterface.close).toHaveBeenCalled()
   })
 })

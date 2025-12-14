@@ -9,8 +9,7 @@ const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
 vi.mock('../../daemon/daemon-duplicate-issue.js', () => ({
-  daemonDuplicateIssue: (...args: unknown[]) =>
-    mockDaemonDuplicateIssue(...args),
+  daemonDuplicateIssue: (...args: unknown[]) => mockDaemonDuplicateIssue(...args),
 }))
 
 vi.mock('../../utils/resolve-project-path.js', () => ({
@@ -41,13 +40,6 @@ describe('DuplicateIssue command', () => {
     expect(typeof Command.description).toBe('string')
   })
 
-  it('should export a valid oclif command class', async () => {
-    const { default: Command } = await import('./issue.js')
-
-    expect(Command).toBeDefined()
-    expect(Command.prototype.run).toBeDefined()
-  })
-
   it('should duplicate issue in same project', async () => {
     const { default: Command } = await import('./issue.js')
     mockDaemonDuplicateIssue.mockResolvedValue({
@@ -62,14 +54,14 @@ describe('DuplicateIssue command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonDuplicateIssue).toHaveBeenCalledWith(
-      expect.objectContaining({
-        sourceProjectPath: '/test/project',
-        issueId: '1',
-        targetProjectPath: '/test/project',
-      })
-    )
-    expect(cmd.logs[0]).toContain('Duplicated issue')
+    expect(mockDaemonDuplicateIssue).toHaveBeenCalledWith({
+      sourceProjectPath: '/test/project',
+      issueId: '1',
+      targetProjectPath: '/test/project',
+      newTitle: undefined,
+    })
+    expect(cmd.logs.some(log => log.includes('Duplicated issue'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('in current project'))).toBe(true)
   })
 
   it('should duplicate issue to different project', async () => {
@@ -79,7 +71,7 @@ describe('DuplicateIssue command', () => {
       .mockResolvedValueOnce('/target/project')
     mockDaemonDuplicateIssue.mockResolvedValue({
       success: true,
-      issue: { displayNumber: 1, title: 'Copy' },
+      issue: { displayNumber: 5, title: 'Duplicated Issue' },
     })
 
     const cmd = createMockCommand(Command, {
@@ -89,35 +81,41 @@ describe('DuplicateIssue command', () => {
 
     await cmd.run()
 
+    expect(mockDaemonDuplicateIssue).toHaveBeenCalledWith({
+      sourceProjectPath: '/source/project',
+      issueId: '1',
+      targetProjectPath: '/target/project',
+      newTitle: undefined,
+    })
+    expect(cmd.logs.some(log => log.includes('in /target/project'))).toBe(true)
+  })
+
+  it('should duplicate issue with custom title', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockDaemonDuplicateIssue.mockResolvedValue({
+      success: true,
+      issue: { displayNumber: 2, title: 'Custom Title' },
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { title: 'Custom Title' },
+      args: { id: '1' },
+    })
+
+    await cmd.run()
+
     expect(mockDaemonDuplicateIssue).toHaveBeenCalledWith(
       expect.objectContaining({
-        targetProjectPath: '/target/project',
+        newTitle: 'Custom Title',
       })
     )
   })
 
-  it('should handle error response', async () => {
+  it('should handle NotInitializedError on source project', async () => {
     const { default: Command } = await import('./issue.js')
-    mockDaemonDuplicateIssue.mockResolvedValue({
-      success: false,
-      error: 'Issue not found',
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: {},
-      args: { id: '999' },
-    })
-
-    const { error } = await runCommandSafely(cmd)
-
-    expect(error).toBeDefined()
-    expect(cmd.errors).toContain('Issue not found')
-  })
-
-  it('should handle NotInitializedError', async () => {
-    const { default: Command } = await import('./issue.js')
-    const { NotInitializedError } =
-      await import('../../utils/ensure-initialized.js')
+    const { NotInitializedError } = await import(
+      '../../utils/ensure-initialized.js'
+    )
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )
@@ -130,6 +128,80 @@ describe('DuplicateIssue command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors[0]).toContain('Project not initialized')
+    expect(cmd.errors.some(e => e.includes('Source project'))).toBe(true)
+  })
+
+  it('should handle NotInitializedError on target project', async () => {
+    const { default: Command } = await import('./issue.js')
+    const { NotInitializedError } = await import(
+      '../../utils/ensure-initialized.js'
+    )
+    mockResolveProjectPath
+      .mockResolvedValueOnce('/source/project')
+      .mockResolvedValueOnce('/target/project')
+    mockEnsureInitialized
+      .mockResolvedValueOnce('/source/project/.centy')
+      .mockRejectedValueOnce(new NotInitializedError('Project not initialized'))
+
+    const cmd = createMockCommand(Command, {
+      flags: { to: '/target/project' },
+      args: { id: '1' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(cmd.errors.some(e => e.includes('Target project'))).toBe(true)
+  })
+
+  it('should handle daemon duplicate failure', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockDaemonDuplicateIssue.mockResolvedValue({
+      success: false,
+      error: 'Issue not found',
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+      args: { id: 'nonexistent' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(cmd.errors).toContain('Issue not found')
+  })
+
+  it('should handle non-Error throws in source ensureInitialized', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockEnsureInitialized.mockRejectedValue('string error')
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+      args: { id: '1' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+  })
+
+  it('should handle non-Error throws in target ensureInitialized', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockResolveProjectPath
+      .mockResolvedValueOnce('/source/project')
+      .mockResolvedValueOnce('/target/project')
+    mockEnsureInitialized
+      .mockResolvedValueOnce('/source/project/.centy')
+      .mockRejectedValueOnce('string error')
+
+    const cmd = createMockCommand(Command, {
+      flags: { to: '/target/project' },
+      args: { id: '1' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
   })
 })

@@ -131,4 +131,165 @@ describe('ListIssues command', () => {
     expect(mockResolveProjectPath).toHaveBeenCalledWith('other-project')
     expect(mockEnsureInitialized).toHaveBeenCalledWith('/other/project')
   })
+
+  it('should display no issues found message', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockDaemonListIssues.mockResolvedValue({ issues: [], totalCount: 0 })
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('No issues found'))).toBe(true)
+  })
+
+  it('should display formatted output with metadata', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockDaemonListIssues.mockResolvedValue({
+      issues: [
+        {
+          displayNumber: 1,
+          title: 'Issue with metadata',
+          metadata: { priority: 1, priorityLabel: 'High', status: 'open', draft: false },
+        },
+      ],
+      totalCount: 1,
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('#1'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('[High]'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('[open]'))).toBe(true)
+  })
+
+  it('should use P{priority} when priorityLabel is empty', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockDaemonListIssues.mockResolvedValue({
+      issues: [
+        {
+          displayNumber: 2,
+          title: 'Issue without label',
+          metadata: { priority: 2, priorityLabel: '', status: 'in-progress', draft: false },
+        },
+      ],
+      totalCount: 1,
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('[P2]'))).toBe(true)
+  })
+
+  it('should show P? when no metadata', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockDaemonListIssues.mockResolvedValue({
+      issues: [
+        {
+          displayNumber: 3,
+          title: 'Issue without metadata',
+        },
+      ],
+      totalCount: 1,
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('[P?]'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('[unknown]'))).toBe(true)
+  })
+
+  it('should show draft indicator for draft issues', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockDaemonListIssues.mockResolvedValue({
+      issues: [
+        {
+          displayNumber: 4,
+          title: 'Draft issue',
+          metadata: { priority: 1, priorityLabel: 'High', status: 'open', draft: true },
+        },
+      ],
+      totalCount: 1,
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('[DRAFT]'))).toBe(true)
+  })
+
+  it('should filter by priority', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockDaemonListIssues.mockResolvedValue({
+      issues: [{ displayNumber: 1, title: 'High priority' }],
+      totalCount: 1,
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { priority: 1 },
+    })
+
+    await cmd.run()
+
+    expect(mockDaemonListIssues).toHaveBeenCalledWith(
+      expect.objectContaining({ priority: 1 })
+    )
+  })
+
+  it('should filter by draft status', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockDaemonListIssues.mockResolvedValue({
+      issues: [],
+      totalCount: 0,
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { draft: true },
+    })
+
+    await cmd.run()
+
+    expect(mockDaemonListIssues).toHaveBeenCalledWith(
+      expect.objectContaining({ draft: true })
+    )
+  })
+
+  it('should handle generic error during ensureInitialized', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockEnsureInitialized.mockRejectedValue(new Error('Generic error'))
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+    })
+
+    await expect(cmd.run()).rejects.toThrow('Generic error')
+  })
+
+  it('should handle non-Error throws in ensureInitialized', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockEnsureInitialized.mockRejectedValue('string error')
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+    })
+
+    await expect(cmd.run()).rejects.toThrow('string error')
+  })
 })

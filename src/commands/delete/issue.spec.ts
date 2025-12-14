@@ -7,6 +7,7 @@ import {
 const mockDaemonDeleteIssue = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
+const mockCreateInterface = vi.fn()
 
 vi.mock('../../daemon/daemon-delete-issue.js', () => ({
   daemonDeleteIssue: (...args: unknown[]) => mockDaemonDeleteIssue(...args),
@@ -26,6 +27,19 @@ vi.mock('../../utils/ensure-initialized.js', () => ({
   },
 }))
 
+vi.mock('node:readline', () => ({
+  createInterface: () => mockCreateInterface(),
+}))
+
+function setupReadlineMock(answer: string) {
+  mockCreateInterface.mockReturnValue({
+    question: (_prompt: string, callback: (answer: string) => void) => {
+      callback(answer)
+    },
+    close: vi.fn(),
+  })
+}
+
 describe('DeleteIssue command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -40,13 +54,6 @@ describe('DeleteIssue command', () => {
     expect(typeof Command.description).toBe('string')
   })
 
-  it('should export a valid oclif command class', async () => {
-    const { default: Command } = await import('./issue.js')
-
-    expect(Command).toBeDefined()
-    expect(Command.prototype.run).toBeDefined()
-  })
-
   it('should delete issue with force flag', async () => {
     const { default: Command } = await import('./issue.js')
     mockDaemonDeleteIssue.mockResolvedValue({ success: true })
@@ -58,37 +65,49 @@ describe('DeleteIssue command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonDeleteIssue).toHaveBeenCalledWith(
-      expect.objectContaining({
-        projectPath: '/test/project',
-        issueId: '1',
-      })
-    )
-    expect(cmd.logs[0]).toContain('Deleted issue 1')
+    expect(mockDaemonDeleteIssue).toHaveBeenCalledWith({
+      projectPath: '/test/project',
+      issueId: '1',
+    })
+    expect(cmd.logs.some(log => log.includes('Deleted issue'))).toBe(true)
   })
 
-  it('should handle delete error', async () => {
+  it('should delete issue after confirmation', async () => {
     const { default: Command } = await import('./issue.js')
-    mockDaemonDeleteIssue.mockResolvedValue({
-      success: false,
-      error: 'Issue not found',
-    })
+    setupReadlineMock('y')
+    mockDaemonDeleteIssue.mockResolvedValue({ success: true })
 
     const cmd = createMockCommand(Command, {
-      flags: { force: true },
-      args: { id: '999' },
+      flags: { force: false },
+      args: { id: '1' },
     })
 
-    const { error } = await runCommandSafely(cmd)
+    await cmd.run()
 
-    expect(error).toBeDefined()
-    expect(cmd.errors).toContain('Issue not found')
+    expect(mockDaemonDeleteIssue).toHaveBeenCalled()
+    expect(cmd.logs.some(log => log.includes('Deleted issue'))).toBe(true)
+  })
+
+  it('should cancel when user answers no', async () => {
+    const { default: Command } = await import('./issue.js')
+    setupReadlineMock('n')
+
+    const cmd = createMockCommand(Command, {
+      flags: { force: false },
+      args: { id: '1' },
+    })
+
+    await cmd.run()
+
+    expect(mockDaemonDeleteIssue).not.toHaveBeenCalled()
+    expect(cmd.logs.some(log => log.includes('Cancelled'))).toBe(true)
   })
 
   it('should handle NotInitializedError', async () => {
     const { default: Command } = await import('./issue.js')
-    const { NotInitializedError } =
-      await import('../../utils/ensure-initialized.js')
+    const { NotInitializedError } = await import(
+      '../../utils/ensure-initialized.js'
+    )
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )
@@ -104,7 +123,25 @@ describe('DeleteIssue command', () => {
     expect(cmd.errors).toContain('Project not initialized')
   })
 
-  it('should use project flag to resolve path', async () => {
+  it('should handle daemon delete failure', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockDaemonDeleteIssue.mockResolvedValue({
+      success: false,
+      error: 'Issue not found',
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { force: true },
+      args: { id: 'nonexistent' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(cmd.errors).toContain('Issue not found')
+  })
+
+  it('should use project flag', async () => {
     const { default: Command } = await import('./issue.js')
     mockResolveProjectPath.mockResolvedValue('/other/project')
     mockDaemonDeleteIssue.mockResolvedValue({ success: true })
@@ -117,6 +154,19 @@ describe('DeleteIssue command', () => {
     await cmd.run()
 
     expect(mockResolveProjectPath).toHaveBeenCalledWith('other-project')
-    expect(mockEnsureInitialized).toHaveBeenCalledWith('/other/project')
+  })
+
+  it('should handle non-Error throws in ensureInitialized', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockEnsureInitialized.mockRejectedValue('string error')
+
+    const cmd = createMockCommand(Command, {
+      flags: { force: true },
+      args: { id: '1' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
   })
 })

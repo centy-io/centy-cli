@@ -29,6 +29,7 @@ vi.mock('../../utils/ensure-initialized.js', () => ({
 describe('MoveDoc command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockResolveProjectPath.mockResolvedValue('/test/project')
     mockEnsureInitialized.mockResolvedValue('/test/project/.centy')
   })
 
@@ -39,22 +40,15 @@ describe('MoveDoc command', () => {
     expect(typeof Command.description).toBe('string')
   })
 
-  it('should export a valid oclif command class', async () => {
-    const { default: Command } = await import('./doc.js')
-
-    expect(Command).toBeDefined()
-    expect(Command.prototype.run).toBeDefined()
-  })
-
-  it('should move doc to target project', async () => {
+  it('should move doc to different project', async () => {
     const { default: Command } = await import('./doc.js')
     mockResolveProjectPath
       .mockResolvedValueOnce('/source/project')
       .mockResolvedValueOnce('/target/project')
     mockDaemonMoveDoc.mockResolvedValue({
       success: true,
-      doc: { slug: 'my-doc', title: 'My Doc' },
       oldSlug: 'my-doc',
+      doc: { slug: 'my-doc' },
     })
 
     const cmd = createMockCommand(Command, {
@@ -64,14 +58,14 @@ describe('MoveDoc command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonMoveDoc).toHaveBeenCalledWith(
-      expect.objectContaining({
-        sourceProjectPath: '/source/project',
-        slug: 'my-doc',
-        targetProjectPath: '/target/project',
-      })
-    )
-    expect(cmd.logs[0]).toContain('Moved doc')
+    expect(mockDaemonMoveDoc).toHaveBeenCalledWith({
+      sourceProjectPath: '/source/project',
+      slug: 'my-doc',
+      targetProjectPath: '/target/project',
+      newSlug: undefined,
+    })
+    expect(cmd.logs.some(log => log.includes('Moved doc'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('/target/project'))).toBe(true)
   })
 
   it('should move doc with new slug', async () => {
@@ -81,8 +75,8 @@ describe('MoveDoc command', () => {
       .mockResolvedValueOnce('/target/project')
     mockDaemonMoveDoc.mockResolvedValue({
       success: true,
-      doc: { slug: 'new-slug', title: 'My Doc' },
       oldSlug: 'old-slug',
+      doc: { slug: 'new-slug' },
     })
 
     const cmd = createMockCommand(Command, {
@@ -97,6 +91,53 @@ describe('MoveDoc command', () => {
         newSlug: 'new-slug',
       })
     )
+    expect(cmd.logs.some(log => log.includes('old-slug → new-slug'))).toBe(true)
+  })
+
+  it('should handle NotInitializedError on source project', async () => {
+    const { default: Command } = await import('./doc.js')
+    const { NotInitializedError } = await import(
+      '../../utils/ensure-initialized.js'
+    )
+    mockResolveProjectPath
+      .mockResolvedValueOnce('/source/project')
+      .mockResolvedValueOnce('/target/project')
+    mockEnsureInitialized.mockRejectedValue(
+      new NotInitializedError('Project not initialized')
+    )
+
+    const cmd = createMockCommand(Command, {
+      flags: { to: '/target/project' },
+      args: { slug: 'my-doc' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(cmd.errors.some(e => e.includes('Source project'))).toBe(true)
+  })
+
+  it('should handle NotInitializedError on target project', async () => {
+    const { default: Command } = await import('./doc.js')
+    const { NotInitializedError } = await import(
+      '../../utils/ensure-initialized.js'
+    )
+    mockResolveProjectPath
+      .mockResolvedValueOnce('/source/project')
+      .mockResolvedValueOnce('/target/project')
+    mockEnsureInitialized
+      .mockResolvedValueOnce('/source/project/.centy')
+      .mockRejectedValueOnce(new NotInitializedError('Project not initialized'))
+
+    const cmd = createMockCommand(Command, {
+      flags: { to: '/target/project' },
+      args: { slug: 'my-doc' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(cmd.errors.some(e => e.includes('Target project'))).toBe(true)
   })
 
   it('should error when source and target are the same', async () => {
@@ -111,10 +152,10 @@ describe('MoveDoc command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors[0]).toContain('cannot be the same')
+    expect(cmd.errors.some(e => e.includes('cannot be the same'))).toBe(true)
   })
 
-  it('should handle error response', async () => {
+  it('should handle daemon move failure', async () => {
     const { default: Command } = await import('./doc.js')
     mockResolveProjectPath
       .mockResolvedValueOnce('/source/project')
@@ -135,16 +176,12 @@ describe('MoveDoc command', () => {
     expect(cmd.errors).toContain('Doc not found')
   })
 
-  it('should handle NotInitializedError for source', async () => {
+  it('should handle non-Error throws in source ensureInitialized', async () => {
     const { default: Command } = await import('./doc.js')
-    const { NotInitializedError } =
-      await import('../../utils/ensure-initialized.js')
     mockResolveProjectPath
       .mockResolvedValueOnce('/source/project')
       .mockResolvedValueOnce('/target/project')
-    mockEnsureInitialized.mockRejectedValue(
-      new NotInitializedError('Project not initialized')
-    )
+    mockEnsureInitialized.mockRejectedValue('string error')
 
     const cmd = createMockCommand(Command, {
       flags: { to: '/target/project' },
@@ -154,6 +191,24 @@ describe('MoveDoc command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors[0]).toContain('Project not initialized')
+  })
+
+  it('should handle non-Error throws in target ensureInitialized', async () => {
+    const { default: Command } = await import('./doc.js')
+    mockResolveProjectPath
+      .mockResolvedValueOnce('/source/project')
+      .mockResolvedValueOnce('/target/project')
+    mockEnsureInitialized
+      .mockResolvedValueOnce('/source/project/.centy')
+      .mockRejectedValueOnce('string error')
+
+    const cmd = createMockCommand(Command, {
+      flags: { to: '/target/project' },
+      args: { slug: 'my-doc' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
   })
 })
