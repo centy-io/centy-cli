@@ -1,13 +1,14 @@
 /* eslint-disable custom/jsx-classname-required */
 /* eslint-disable max-lines-per-function */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useKeyboard } from '@opentui/react'
-import type { KeyEvent } from '@opentui/core'
+import type { KeyEvent, InputRenderable } from '@opentui/core'
 import { MainPanel } from '../layout/MainPanel.js'
 import { useNavigation } from '../../hooks/useNavigation.js'
 import { useAppState } from '../../state/app-state.js'
 import { daemonService } from '../../services/daemon-service.js'
+import { FormInput } from '../form/index.js'
 
 export function ProjectCreate() {
   const { goBack, navigate } = useNavigation()
@@ -16,6 +17,8 @@ export function ProjectCreate() {
   const [path, setPath] = useState(process.cwd())
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const pathInputRef = useRef<InputRenderable>(null)
 
   const handleSubmit = useCallback(async () => {
     if (!path.trim()) {
@@ -54,15 +57,7 @@ export function ProjectCreate() {
       return
     }
 
-    // Handle text input for path
-    if (event.name === 'backspace') {
-      setPath(prev => prev.slice(0, -1))
-    } else if (event.name === 'space') {
-      setPath(prev => prev + ' ')
-    } else if (event.name.length === 1 && !event.ctrl && !event.meta) {
-      const char = event.shift ? event.name.toUpperCase() : event.name
-      setPath(prev => prev + char)
-    }
+    // Text input is handled by native <input> component
   })
 
   if (isSubmitting) {
@@ -94,8 +89,13 @@ export function ProjectCreate() {
             <b>Path</b>
           </text>
           <box paddingLeft={2} borderStyle="single">
-            <text>{path}</text>
-            <text fg="cyan">_</text>
+            <FormInput
+              ref={pathInputRef}
+              value={path}
+              focused={true}
+              placeholder="/path/to/project"
+              onInput={setPath}
+            />
           </box>
         </box>
 

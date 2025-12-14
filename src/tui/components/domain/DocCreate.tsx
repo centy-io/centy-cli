@@ -1,13 +1,18 @@
 /* eslint-disable custom/jsx-classname-required */
 /* eslint-disable max-lines-per-function, max-lines */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useKeyboard } from '@opentui/react'
-import type { KeyEvent } from '@opentui/core'
+import type {
+  KeyEvent,
+  InputRenderable,
+  TextareaRenderable,
+} from '@opentui/core'
 import { MainPanel } from '../layout/MainPanel.js'
 import { useNavigation } from '../../hooks/useNavigation.js'
 import { useAppState } from '../../state/app-state.js'
 import { daemonService } from '../../services/daemon-service.js'
+import { FormInput, FormTextarea } from '../form/index.js'
 
 type FormField = 'title' | 'content'
 
@@ -18,10 +23,12 @@ export function DocCreate() {
   const { state, dispatch } = useAppState()
 
   const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
   const [activeField, setActiveField] = useState<FormField>('title')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const titleInputRef = useRef<InputRenderable>(null)
+  const contentRef = useRef<TextareaRenderable>(null)
 
   const handleSubmit = useCallback(async () => {
     if (!state.selectedProjectPath) return
@@ -33,9 +40,12 @@ export function DocCreate() {
     setIsSubmitting(true)
     setError(null)
 
+    // eslint-disable-next-line no-restricted-syntax, no-optional-chaining/no-optional-chaining
+    const contentText = contentRef.current?.plainText ?? ''
+
     const result = await daemonService.createDoc(state.selectedProjectPath, {
       title: title.trim(),
-      content: content.trim(),
+      content: contentText.trim(),
     })
 
     setIsSubmitting(false)
@@ -47,7 +57,7 @@ export function DocCreate() {
     } else {
       setError(result.error || 'Failed to create doc')
     }
-  }, [state.selectedProjectPath, title, content, dispatch, navigate])
+  }, [state.selectedProjectPath, title, dispatch, navigate])
 
   const moveToNextField = useCallback(() => {
     const currentIndex = FIELDS.indexOf(activeField)
@@ -86,35 +96,7 @@ export function DocCreate() {
       return
     }
 
-    // Handle text input
-    if (activeField === 'title' || activeField === 'content') {
-      if (event.name === 'backspace') {
-        if (activeField === 'title') {
-          setTitle(prev => prev.slice(0, -1))
-        } else {
-          setContent(prev => prev.slice(0, -1))
-        }
-      } else if (event.name === 'return') {
-        if (activeField === 'content') {
-          setContent(prev => prev + '\n')
-        } else {
-          moveToNextField()
-        }
-      } else if (event.name === 'space') {
-        if (activeField === 'title') {
-          setTitle(prev => prev + ' ')
-        } else {
-          setContent(prev => prev + ' ')
-        }
-      } else if (event.name.length === 1 && !event.ctrl && !event.meta) {
-        const char = event.shift ? event.name.toUpperCase() : event.name
-        if (activeField === 'title') {
-          setTitle(prev => prev + char)
-        } else {
-          setContent(prev => prev + char)
-        }
-      }
-    }
+    // Text input is handled by native <input> and <textarea> components
   })
 
   // eslint-disable-next-line no-optional-chaining/no-optional-chaining
@@ -162,8 +144,13 @@ export function DocCreate() {
             paddingLeft={2}
             borderStyle={activeField === 'title' ? 'single' : undefined}
           >
-            <text>{title || (activeField === 'title' ? '│' : '')}</text>
-            {activeField === 'title' && <text fg="cyan">_</text>}
+            <FormInput
+              ref={titleInputRef}
+              value={title}
+              focused={activeField === 'title'}
+              placeholder="Enter document title..."
+              onInput={setTitle}
+            />
           </box>
           <box paddingLeft={2}>
             <text fg="gray">Slug will be auto-generated from title</text>
@@ -178,16 +165,14 @@ export function DocCreate() {
           <box
             paddingLeft={2}
             borderStyle={activeField === 'content' ? 'single' : undefined}
-            height={10}
           >
-            <text>{content || (activeField === 'content' ? '' : '')}</text>
-            {activeField === 'content' && <text fg="cyan">_</text>}
+            <FormTextarea
+              ref={contentRef}
+              focused={activeField === 'content'}
+              placeholder="Enter markdown content..."
+              height={10}
+            />
           </box>
-          {activeField === 'content' && (
-            <box paddingLeft={2}>
-              <text fg="gray">Press Enter for new lines</text>
-            </box>
-          )}
         </box>
 
         {/* Submit hint */}

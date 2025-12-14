@@ -1,15 +1,20 @@
 /* eslint-disable custom/jsx-classname-required */
 /* eslint-disable max-lines-per-function, max-lines */
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useKeyboard } from '@opentui/react'
-import type { KeyEvent } from '@opentui/core'
+import type {
+  KeyEvent,
+  InputRenderable,
+  TextareaRenderable,
+} from '@opentui/core'
 import { MainPanel } from '../layout/MainPanel.js'
 import { useNavigation } from '../../hooks/useNavigation.js'
 import { useAppState } from '../../state/app-state.js'
 import { useConfig } from '../../hooks/useConfig.js'
 import { daemonService } from '../../services/daemon-service.js'
 import type { PullRequest } from '../../../daemon/types.js'
+import { FormInput, FormTextarea } from '../form/index.js'
 
 type FormField =
   | 'title'
@@ -66,7 +71,7 @@ export function PREdit() {
   const [pr, setPr] = useState<PullRequest | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
+  const [initialDescription, setInitialDescription] = useState('')
   const [sourceBranch, setSourceBranch] = useState('')
   const [targetBranch, setTargetBranch] = useState('')
   const [priority, setPriority] = useState(3)
@@ -74,6 +79,11 @@ export function PREdit() {
   const [activeField, setActiveField] = useState<FormField>('title')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const titleInputRef = useRef<InputRenderable>(null)
+  const descriptionRef = useRef<TextareaRenderable>(null)
+  const sourceBranchRef = useRef<InputRenderable>(null)
+  const targetBranchRef = useRef<InputRenderable>(null)
 
   // eslint-disable-next-line no-restricted-syntax, no-optional-chaining/no-optional-chaining
   const priorityLevels = config?.priorityLevels ?? 3
@@ -92,7 +102,7 @@ export function PREdit() {
       const loadedPr = result.data
       setPr(loadedPr)
       setTitle(loadedPr.title)
-      setDescription(loadedPr.description || '')
+      setInitialDescription(loadedPr.description || '')
       setSourceBranch(loadedPr.metadata.sourceBranch)
       setTargetBranch(loadedPr.metadata.targetBranch)
       setPriority(loadedPr.metadata.priority)
@@ -124,12 +134,15 @@ export function PREdit() {
     setIsSubmitting(true)
     setError(null)
 
+    // eslint-disable-next-line no-restricted-syntax, no-optional-chaining/no-optional-chaining
+    const descriptionText = descriptionRef.current?.plainText ?? ''
+
     const result = await daemonService.updatePr(
       state.selectedProjectPath,
       pr.id,
       {
         title: title.trim(),
-        description: description.trim(),
+        description: descriptionText.trim(),
         sourceBranch: sourceBranch.trim(),
         targetBranch: targetBranch.trim(),
         priority,
@@ -150,7 +163,6 @@ export function PREdit() {
     state.selectedProjectPath,
     pr,
     title,
-    description,
     sourceBranch,
     targetBranch,
     priority,
@@ -223,7 +235,7 @@ export function PREdit() {
       return
     }
 
-    // Handle input based on active field
+    // Handle priority field with arrow keys
     if (activeField === 'priority') {
       if (
         event.name === 'up' ||
@@ -256,35 +268,9 @@ export function PREdit() {
       ) {
         cycleStatus('down')
       }
-    } else {
-      // Handle text input for title, description, sourceBranch, targetBranch
-      const setters: Record<
-        string,
-        React.Dispatch<React.SetStateAction<string>>
-      > = {
-        title: setTitle,
-        description: setDescription,
-        sourceBranch: setSourceBranch,
-        targetBranch: setTargetBranch,
-      }
-      // eslint-disable-next-line security/detect-object-injection
-      const setter = setters[activeField]
-
-      if (event.name === 'backspace') {
-        setter(prev => prev.slice(0, -1))
-      } else if (event.name === 'return') {
-        if (activeField === 'description') {
-          setter(prev => prev + '\n')
-        } else {
-          moveToNextField()
-        }
-      } else if (event.name === 'space') {
-        setter(prev => prev + ' ')
-      } else if (event.name.length === 1 && !event.ctrl && !event.meta) {
-        const char = event.shift ? event.name.toUpperCase() : event.name
-        setter(prev => prev + char)
-      }
     }
+
+    // Text input is handled by native <input> and <textarea> components
   })
 
   // eslint-disable-next-line no-optional-chaining/no-optional-chaining
@@ -348,8 +334,13 @@ export function PREdit() {
             paddingLeft={2}
             borderStyle={activeField === 'title' ? 'single' : undefined}
           >
-            <text>{title || (activeField === 'title' ? '│' : '')}</text>
-            {activeField === 'title' && <text fg="cyan">_</text>}
+            <FormInput
+              ref={titleInputRef}
+              value={title}
+              focused={activeField === 'title'}
+              placeholder="Enter PR title..."
+              onInput={setTitle}
+            />
           </box>
         </box>
 
@@ -361,12 +352,14 @@ export function PREdit() {
           <box
             paddingLeft={2}
             borderStyle={activeField === 'description' ? 'single' : undefined}
-            height={3}
           >
-            <text>
-              {description || (activeField === 'description' ? '' : '')}
-            </text>
-            {activeField === 'description' && <text fg="cyan">_</text>}
+            <FormTextarea
+              ref={descriptionRef}
+              initialValue={initialDescription}
+              focused={activeField === 'description'}
+              placeholder="Enter description..."
+              height={3}
+            />
           </box>
         </box>
 
@@ -379,10 +372,13 @@ export function PREdit() {
             paddingLeft={2}
             borderStyle={activeField === 'sourceBranch' ? 'single' : undefined}
           >
-            <text>
-              {sourceBranch || (activeField === 'sourceBranch' ? '│' : '')}
-            </text>
-            {activeField === 'sourceBranch' && <text fg="cyan">_</text>}
+            <FormInput
+              ref={sourceBranchRef}
+              value={sourceBranch}
+              focused={activeField === 'sourceBranch'}
+              placeholder="feature/my-branch"
+              onInput={setSourceBranch}
+            />
           </box>
         </box>
 
@@ -395,10 +391,13 @@ export function PREdit() {
             paddingLeft={2}
             borderStyle={activeField === 'targetBranch' ? 'single' : undefined}
           >
-            <text>
-              {targetBranch || (activeField === 'targetBranch' ? '│' : '')}
-            </text>
-            {activeField === 'targetBranch' && <text fg="cyan">_</text>}
+            <FormInput
+              ref={targetBranchRef}
+              value={targetBranch}
+              focused={activeField === 'targetBranch'}
+              placeholder="main"
+              onInput={setTargetBranch}
+            />
           </box>
         </box>
 
