@@ -21,7 +21,6 @@ export default [
   {
     files: ['**/testing/**/*.ts', '**/command-test-utils.ts'],
     rules: {
-      'ddd/require-spec-file': 'off',
       'single-export/single-export': 'off',
       'error/no-generic-error': 'off',
       'error/require-custom-error': 'off',
