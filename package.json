@@ -1,12 +1,12 @@
 {
   "name": "centy",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "description": "CLI for managing project issues and docs via code in the .centy folder",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "centy": "./bin/run.js"
+    "centy": "./bin/run"
   },
   "exports": {
     ".": {

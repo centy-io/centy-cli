@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 import { execute } from '@oclif/core'
 
 // Check if running with no arguments (or just --interactive flag)
