@@ -1,9 +1,0 @@
-#!/bin/sh
-SCRIPT_DIR="$(dirname "$0")"
-
-if command -v bun >/dev/null 2>&1; then
-  exec bun "$SCRIPT_DIR/run.js" "$@"
-else
-  echo "Tip: Install Bun for faster CLI performance: https://bun.sh" >&2
-  exec node "$SCRIPT_DIR/run.js" "$@"
-fi

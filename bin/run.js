@@ -1,4 +1,22 @@
 #!/usr/bin/env node
+
+// Bun optimization: re-exec with Bun if available (but not already running under Bun)
+if (typeof Bun === 'undefined') {
+  const { execSync, spawnSync } = await import('child_process')
+  try {
+    // Check if bun is installed
+    execSync('bun --version', { stdio: 'ignore' })
+    // Re-exec with bun and exit with its exit code
+    const result = spawnSync('bun', [import.meta.filename, ...process.argv.slice(2)], {
+      stdio: 'inherit'
+    })
+    process.exit(result.status ?? 0)
+  } catch {
+    // Bun not installed, continue with Node
+    console.error('Tip: Install Bun for faster CLI performance: https://bun.sh')
+  }
+}
+
 import { execute } from '@oclif/core'
 
 // Check if running with no arguments (or just --interactive flag)
