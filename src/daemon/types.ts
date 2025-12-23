@@ -697,6 +697,7 @@ export interface DaemonInfo {
   version: string
   availableVersions: string[]
   binaryPath: string
+  vscodeAvailable: boolean
 }
 
 export interface GetProjectVersionRequest {
