@@ -5,13 +5,10 @@ CLI for managing project issues and docs via code in the `.centy` folder. Local-
 ## Installation
 
 ```bash
-# Using npm
-npm install -g centy
-
-# Using pnpm
+# Using pnpm (recommended)
 pnpm add -g centy
 
-# Or run directly with npx/pnpm dlx
+# Or run directly without installing
 pnpm dlx centy
 ```
 
