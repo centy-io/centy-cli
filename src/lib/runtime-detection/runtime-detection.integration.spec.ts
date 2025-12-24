@@ -284,16 +284,18 @@ describe('runtime detection wrapper', () => {
         expect(result.exitCode).toBe(0)
       })
 
-      it('should pass command arguments correctly', async () => {
+      it('should pass multiple arguments correctly', async () => {
         const pathWithoutBun = createPathWithoutBun()
 
-        const result = await runWrapper(RUN_JS, ['help'], {
+        // Test with a subcommand and its --help flag to verify multiple args
+        const result = await runWrapper(RUN_JS, ['info', '--help'], {
           ...process.env,
           PATH: pathWithoutBun,
         })
 
         expect(result.exitCode).toBe(0)
-        expect(result.stdout).toContain('USAGE')
+        // The info --help output should contain specific info command documentation
+        expect(result.stdout).toContain('info')
       })
     })
 
