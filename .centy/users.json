@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": "ofek-gabay",
+      "name": "Ofek Gabay",
+      "email": "61761153+tupe12334@users.noreply.github.com",
+      "gitUsernames": ["Ofek Gabay"],
+      "createdAt": "2025-12-24T17:36:01.226370+00:00",
+      "updatedAt": "2025-12-24T17:36:01.226370+00:00"
+    },
+    {
+      "id": "tupe12334",
+      "name": "tupe12334",
+      "email": "ofek.gabay.he@gmail.com",
+      "gitUsernames": ["tupe12334"],
+      "createdAt": "2025-12-24T17:36:01.226045+00:00",
+      "updatedAt": "2025-12-24T17:36:01.226045+00:00"
+    }
+  ]
+}
