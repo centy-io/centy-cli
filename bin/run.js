@@ -46,6 +46,14 @@ if (isVersion) {
   } catch {
     console.log(`Daemon: not running`)
   }
+} else if (args.length === 0) {
+  // Bare invocation: launch centy-tui
+  const { launchTui } = await import('../dist/lib/launch-tui/index.js')
+  const result = await launchTui()
+  if (!result.success) {
+    console.error(result.error)
+    process.exit(1)
+  }
 } else {
   await execute({ dir: import.meta.url })
 }

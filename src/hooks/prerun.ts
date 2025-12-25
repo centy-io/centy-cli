@@ -9,6 +9,7 @@ const EXCLUDED_COMMANDS = [
   'install',
   'install:daemon',
   'daemon',
+  'cockpit',
 ]
 
 const hook: Hook<'prerun'> = async function (options) {
