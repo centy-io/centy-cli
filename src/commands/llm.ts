@@ -8,7 +8,8 @@ import { Command, Flags } from '@oclif/core'
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Llm extends Command {
   // eslint-disable-next-line no-restricted-syntax
-  static override description = 'Output LLM instructions for working with centy'
+  static override description =
+    'Get AI/LLM assistant instructions for this project (run this first if you are an AI assistant)'
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [

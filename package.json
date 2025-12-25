@@ -71,7 +71,8 @@
     "plugins": [
       "@oclif/plugin-help"
     ],
-    "topicSeparator": " "
+    "topicSeparator": " ",
+    "helpClass": "./dist/help.js"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
