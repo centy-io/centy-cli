@@ -269,6 +269,13 @@ describe('runtime detection wrapper', () => {
           PATH: pathWithoutBun,
         })
 
+        // Debug output on failure
+        if (result.exitCode !== 0) {
+          console.error('--help failed with exit code:', result.exitCode)
+          console.error('stdout:', result.stdout)
+          console.error('stderr:', result.stderr)
+        }
+
         expect(result.exitCode).toBe(0)
         expect(result.stdout.length).toBeGreaterThan(0)
       })
@@ -292,6 +299,13 @@ describe('runtime detection wrapper', () => {
           ...process.env,
           PATH: pathWithoutBun,
         })
+
+        // Debug output on failure
+        if (result.exitCode !== 0) {
+          console.error('info --help failed with exit code:', result.exitCode)
+          console.error('stdout:', result.stdout)
+          console.error('stderr:', result.stderr)
+        }
 
         expect(result.exitCode).toBe(0)
         // The info --help output should contain specific info command documentation
