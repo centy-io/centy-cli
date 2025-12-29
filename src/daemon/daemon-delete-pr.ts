@@ -1,5 +1,5 @@
 import type { DeletePrRequest, DeletePrResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Delete a PR via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonDeletePr(
   request: DeletePrRequest
 ): Promise<DeletePrResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().deletePr(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.deletePr.bind(client), request)
 }

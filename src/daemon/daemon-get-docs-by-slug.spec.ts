@@ -1,10 +1,23 @@
+/* eslint-disable no-restricted-syntax */
 // eslint-disable-next-line import/order
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock the load-proto module before importing the function
-vi.mock('./load-proto.js', () => ({
-  getDaemonClient: vi.fn(),
-}))
+vi.mock('./load-proto.js', () => {
+  const mockCallWithDeadline = vi.fn(async (method, request, _timeout) => {
+    return new Promise((resolve, reject) => {
+      method(request, {}, (error: Error | null, response: unknown) => {
+        if (error) reject(error)
+        else resolve(response)
+      })
+    })
+  })
+  return {
+    getDaemonClient: vi.fn(),
+    callWithDeadline: mockCallWithDeadline,
+    LONG_GRPC_TIMEOUT_MS: 120000,
+  }
+})
 
 // eslint-disable-next-line import/first
 import { daemonGetDocsBySlug } from './daemon-get-docs-by-slug.js'
@@ -26,14 +39,14 @@ describe('daemonGetDocsBySlug', () => {
     const mockGetDocsBySlug = vi.fn(
       (
         _request: unknown,
+        _options: unknown,
         callback: (error: Error | null, response: typeof mockResponse) => void
       ) => {
         callback(null, mockResponse)
       }
     )
 
-    // eslint-disable-next-line no-restricted-syntax
-    vi.mocked(getDaemonClient).mockReturnValue({
+    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue({
       getDocsBySlug: mockGetDocsBySlug,
     } as ReturnType<typeof getDaemonClient>)
 
@@ -47,14 +60,14 @@ describe('daemonGetDocsBySlug', () => {
     const mockGetDocsBySlug = vi.fn(
       (
         _request: unknown,
+        _options: unknown,
         callback: (error: Error | null, response: unknown) => void
       ) => {
         callback(mockError, null)
       }
     )
 
-    // eslint-disable-next-line no-restricted-syntax
-    vi.mocked(getDaemonClient).mockReturnValue({
+    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue({
       getDocsBySlug: mockGetDocsBySlug,
     } as ReturnType<typeof getDaemonClient>)
 

@@ -1,5 +1,5 @@
 import type { GetOrgIssueRequest, OrgIssue } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Get an organization issue by ID via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonGetOrgIssue(
   request: GetOrgIssueRequest
 ): Promise<OrgIssue> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().getOrgIssue(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.getOrgIssue.bind(client), request)
 }

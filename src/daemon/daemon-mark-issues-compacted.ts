@@ -2,7 +2,7 @@ import type {
   MarkIssuesCompactedRequest,
   MarkIssuesCompactedResponse,
 } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Mark issues as compacted via daemon
@@ -10,13 +10,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonMarkIssuesCompacted(
   request: MarkIssuesCompactedRequest
 ): Promise<MarkIssuesCompactedResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().markIssuesCompacted(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.markIssuesCompacted.bind(client), request)
 }

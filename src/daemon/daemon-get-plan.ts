@@ -1,5 +1,5 @@
 import type { GetPlanRequest, GetPlanResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Get plan via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonGetPlan(
   request: GetPlanRequest
 ): Promise<GetPlanResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().getPlan(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.getPlan.bind(client), request)
 }

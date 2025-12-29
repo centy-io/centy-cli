@@ -1,5 +1,5 @@
 import type { GetAssetRequest, GetAssetResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Get an asset via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonGetAsset(
   request: GetAssetRequest
 ): Promise<GetAssetResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().getAsset(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.getAsset.bind(client), request)
 }

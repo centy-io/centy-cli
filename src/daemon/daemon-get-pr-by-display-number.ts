@@ -1,5 +1,5 @@
 import type { GetPrByDisplayNumberRequest, PullRequest } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Get a PR by display number via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonGetPrByDisplayNumber(
   request: GetPrByDisplayNumberRequest
 ): Promise<PullRequest> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().getPrByDisplayNumber(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.getPrByDisplayNumber.bind(client), request)
 }

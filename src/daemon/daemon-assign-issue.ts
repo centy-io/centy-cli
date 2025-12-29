@@ -1,5 +1,5 @@
 import type { AssignIssueRequest, AssignIssueResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Assign users to an issue via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonAssignIssue(
   request: AssignIssueRequest
 ): Promise<AssignIssueResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().assignIssue(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.assignIssue.bind(client), request)
 }

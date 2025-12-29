@@ -2,7 +2,7 @@ import type {
   CloseTempWorkspaceRequest,
   CloseTempWorkspaceResponse,
 } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Close and remove a temporary workspace
@@ -10,13 +10,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonCloseTempWorkspace(
   request: CloseTempWorkspaceRequest
 ): Promise<CloseTempWorkspaceResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().closeTempWorkspace(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.closeTempWorkspace.bind(client), request)
 }

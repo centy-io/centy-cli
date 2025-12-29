@@ -1,17 +1,19 @@
 import type { InitRequest, InitResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import {
+  getDaemonClient,
+  callWithDeadline,
+  LONG_GRPC_TIMEOUT_MS,
+} from './load-proto.js'
 
 /**
  * Initialize centy via daemon
+ * Uses a longer timeout as init can be slow for large projects
  */
 export function daemonInit(request: InitRequest): Promise<InitResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().init(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(
+    client.init.bind(client),
+    request,
+    LONG_GRPC_TIMEOUT_MS
+  )
 }

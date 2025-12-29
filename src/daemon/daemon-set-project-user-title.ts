@@ -2,7 +2,7 @@ import type {
   SetProjectUserTitleRequest,
   SetProjectUserTitleResponse,
 } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Set project user-scope title via daemon
@@ -11,13 +11,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonSetProjectUserTitle(
   request: SetProjectUserTitleRequest
 ): Promise<SetProjectUserTitleResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().setProjectUserTitle(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.setProjectUserTitle.bind(client), request)
 }

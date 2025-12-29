@@ -2,7 +2,7 @@ import type {
   ListUncompactedIssuesRequest,
   ListUncompactedIssuesResponse,
 } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * List uncompacted issues via daemon
@@ -10,13 +10,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonListUncompactedIssues(
   request: ListUncompactedIssuesRequest
 ): Promise<ListUncompactedIssuesResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().listUncompactedIssues(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.listUncompactedIssues.bind(client), request)
 }

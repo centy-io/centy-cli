@@ -1,5 +1,5 @@
 import type { DeletePlanRequest, DeletePlanResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Delete plan via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonDeletePlan(
   request: DeletePlanRequest
 ): Promise<DeletePlanResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().deletePlan(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.deletePlan.bind(client), request)
 }

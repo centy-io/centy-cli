@@ -1,5 +1,5 @@
 import type { GetIssueByDisplayNumberRequest, Issue } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Get a single issue by display number via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonGetIssueByDisplayNumber(
   request: GetIssueByDisplayNumberRequest
 ): Promise<Issue> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().getIssueByDisplayNumber(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.getIssueByDisplayNumber.bind(client), request)
 }

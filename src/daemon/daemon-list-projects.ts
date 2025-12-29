@@ -1,5 +1,5 @@
 import type { ListProjectsRequest, ListProjectsResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * List projects via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonListProjects(
   request: ListProjectsRequest
 ): Promise<ListProjectsResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().listProjects(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.listProjects.bind(client), request)
 }

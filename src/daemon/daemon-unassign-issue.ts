@@ -1,5 +1,5 @@
 import type { UnassignIssueRequest, UnassignIssueResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Unassign users from an issue via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonUnassignIssue(
   request: UnassignIssueRequest
 ): Promise<UnassignIssueResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().unassignIssue(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.unassignIssue.bind(client), request)
 }

@@ -2,7 +2,7 @@ import type {
   GetOrganizationRequest,
   GetOrganizationResponse,
 } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Get a single organization by slug via daemon
@@ -10,13 +10,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonGetOrganization(
   request: GetOrganizationRequest
 ): Promise<GetOrganizationResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().getOrganization(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.getOrganization.bind(client), request)
 }

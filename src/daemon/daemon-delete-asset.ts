@@ -1,5 +1,5 @@
 import type { DeleteAssetRequest, DeleteAssetResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Delete an asset via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonDeleteAsset(
   request: DeleteAssetRequest
 ): Promise<DeleteAssetResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().deleteAsset(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.deleteAsset.bind(client), request)
 }

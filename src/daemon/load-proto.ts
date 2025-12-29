@@ -1,11 +1,12 @@
 /* eslint-disable max-lines */
-import { loadPackageDefinition, credentials } from '@grpc/grpc-js'
-import { loadSync } from '@grpc/proto-loader'
-// eslint-disable-next-line import/order
+/* eslint-disable single-export/single-export */
+/* eslint-disable default/no-default-params */
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { dirname, join } from 'node:path'
-// eslint-disable-next-line import/order
 import { fileURLToPath } from 'node:url'
-import type { ServiceError } from '@grpc/grpc-js'
+import { loadPackageDefinition, credentials, status } from '@grpc/grpc-js'
+import type { ServiceError, ChannelOptions, CallOptions } from '@grpc/grpc-js'
+import { loadSync } from '@grpc/proto-loader'
 import type {
   InitRequest,
   InitResponse,
@@ -62,7 +63,6 @@ import type {
   DeleteAssetRequest,
   DeleteAssetResponse,
   ListSharedAssetsRequest,
-  // Plan types
   GetPlanRequest,
   GetPlanResponse,
   UpdatePlanRequest,
@@ -93,7 +93,6 @@ import type {
   ShutdownResponse,
   RestartRequest,
   RestartResponse,
-  // PR types
   CreatePrRequest,
   CreatePrResponse,
   GetPrRequest,
@@ -109,7 +108,6 @@ import type {
   DeletePrResponse,
   GetNextPrNumberRequest,
   GetNextPrNumberResponse,
-  // Features types
   GetFeatureStatusRequest,
   GetFeatureStatusResponse,
   ListUncompactedIssuesRequest,
@@ -124,10 +122,8 @@ import type {
   SaveMigrationResponse,
   MarkIssuesCompactedRequest,
   MarkIssuesCompactedResponse,
-  // Organization types
   SetProjectOrganizationRequest,
   SetProjectOrganizationResponse,
-  // Custom title types
   SetProjectUserTitleRequest,
   SetProjectUserTitleResponse,
   SetProjectTitleRequest,
@@ -142,7 +138,6 @@ import type {
   UpdateOrganizationResponse,
   DeleteOrganizationRequest,
   DeleteOrganizationResponse,
-  // Org issue types
   CreateOrgIssueRequest,
   CreateOrgIssueResponse,
   GetOrgIssueRequest,
@@ -158,7 +153,6 @@ import type {
   OrgConfig,
   UpdateOrgConfigRequest,
   UpdateOrgConfigResponse,
-  // User types
   User,
   CreateUserRequest,
   CreateUserResponse,
@@ -171,15 +165,12 @@ import type {
   DeleteUserResponse,
   SyncUsersRequest,
   SyncUsersResponse,
-  // Issue assignee types
   AssignIssueRequest,
   AssignIssueResponse,
   UnassignIssueRequest,
   UnassignIssueResponse,
-  // LLM Agent types
   SpawnAgentRequest,
   SpawnAgentResponse,
-  // Temp workspace types
   OpenInTempVscodeRequest,
   OpenInTempVscodeResponse,
   ListTempWorkspacesRequest,
@@ -190,541 +181,302 @@ import type {
   CleanupExpiredWorkspacesResponse,
 } from './types.js'
 
+/**
+ * Default timeout for gRPC calls in milliseconds (30 seconds)
+ */
+export const DEFAULT_GRPC_TIMEOUT_MS = 30_000
+
+/**
+ * Timeout for long-running operations like init/compact (2 minutes)
+ */
+export const LONG_GRPC_TIMEOUT_MS = 120_000
+
+/**
+ * Channel options for gRPC connection management
+ */
+const CHANNEL_OPTIONS: ChannelOptions = {
+  // Initial connection timeout (10 seconds)
+  'grpc.initial_reconnect_backoff_ms': 1000,
+  'grpc.max_reconnect_backoff_ms': 10000,
+  // Keepalive settings
+  'grpc.keepalive_time_ms': 30000,
+  'grpc.keepalive_timeout_ms': 10000,
+  'grpc.keepalive_permit_without_calls': 1,
+  // Connection management
+  'grpc.max_connection_idle_ms': 60000,
+  'grpc.max_connection_age_ms': 300000,
+  // Enable HTTP/2 true binary
+  'grpc.http2.true_binary': 1,
+}
+
+/**
+ * Create call options with a deadline
+ */
+export function createCallOptions(
+  timeoutMs: number = DEFAULT_GRPC_TIMEOUT_MS
+): CallOptions {
+  return {
+    deadline: new Date(Date.now() + timeoutMs),
+  }
+}
+
+/**
+ * Error class for gRPC deadline exceeded
+ */
+export class GrpcTimeoutError extends Error {
+  constructor(methodName: string, timeoutMs: number) {
+    super(
+      `gRPC call '${methodName}' timed out after ${timeoutMs}ms. The daemon may not be responding.`
+    )
+    this.name = 'GrpcTimeoutError'
+  }
+}
+
+/**
+ * Check if an error is a deadline exceeded error
+ */
+export function isDeadlineExceededError(error: ServiceError): boolean {
+  return error.code === status.DEADLINE_EXCEEDED
+}
+
+/**
+ * Check if an error indicates the daemon is unavailable
+ */
+export function isDaemonUnavailableError(error: ServiceError): boolean {
+  return (
+    error.code === status.UNAVAILABLE ||
+    error.message.includes('ECONNREFUSED') ||
+    error.message.includes('UNAVAILABLE')
+  )
+}
+
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const PROTO_PATH = join(currentDir, '../../proto/centy.proto')
 
 const DEFAULT_DAEMON_ADDRESS = '127.0.0.1:50051'
 
+/**
+ * gRPC method type that supports options
+ */
+type GrpcMethod<Req, Res> = {
+  (
+    request: Req,
+    callback: (error: ServiceError | null, response: Res) => void
+  ): void
+  (
+    request: Req,
+    options: CallOptions,
+    callback: (error: ServiceError | null, response: Res) => void
+  ): void
+}
+
+/**
+ * Generic wrapper for gRPC calls with deadline support
+ * This ensures all calls have a timeout and won't hang forever
+ */
+export function callWithDeadline<Req, Res>(
+  method: GrpcMethod<Req, Res>,
+  request: Req,
+  timeoutMs: number = DEFAULT_GRPC_TIMEOUT_MS
+): Promise<Res> {
+  return new Promise((resolve, reject) => {
+    const options = createCallOptions(timeoutMs)
+    method(request, options, (error: ServiceError | null, response: Res) => {
+      if (error !== null) {
+        reject(error)
+      } else {
+        resolve(response)
+      }
+    })
+  })
+}
+
 interface CentyDaemonClient {
   // Init operations
-  init(
-    request: InitRequest,
-    callback: (error: ServiceError | null, response: InitResponse) => void
-  ): void
-  getReconciliationPlan(
-    request: GetReconciliationPlanRequest,
-    callback: (error: ServiceError | null, response: ReconciliationPlan) => void
-  ): void
-  executeReconciliation(
-    request: ExecuteReconciliationRequest,
-    callback: (error: ServiceError | null, response: InitResponse) => void
-  ): void
-  isInitialized(
-    request: IsInitializedRequest,
-    callback: (
-      error: ServiceError | null,
-      response: IsInitializedResponse
-    ) => void
-  ): void
+  init: GrpcMethod<InitRequest, InitResponse>
+  getReconciliationPlan: GrpcMethod<
+    GetReconciliationPlanRequest,
+    ReconciliationPlan
+  >
+  executeReconciliation: GrpcMethod<ExecuteReconciliationRequest, InitResponse>
+  isInitialized: GrpcMethod<IsInitializedRequest, IsInitializedResponse>
 
   // Issue operations
-  createIssue(
-    request: CreateIssueRequest,
-    callback: (
-      error: ServiceError | null,
-      response: CreateIssueResponse
-    ) => void
-  ): void
-  getIssue(
-    request: GetIssueRequest,
-    callback: (error: ServiceError | null, response: Issue) => void
-  ): void
-  getIssueByDisplayNumber(
-    request: GetIssueByDisplayNumberRequest,
-    callback: (error: ServiceError | null, response: Issue) => void
-  ): void
-  getIssuesByUuid(
-    request: GetIssuesByUuidRequest,
-    callback: (
-      error: ServiceError | null,
-      response: GetIssuesByUuidResponse
-    ) => void
-  ): void
-  listIssues(
-    request: ListIssuesRequest,
-    callback: (error: ServiceError | null, response: ListIssuesResponse) => void
-  ): void
-  updateIssue(
-    request: UpdateIssueRequest,
-    callback: (
-      error: ServiceError | null,
-      response: UpdateIssueResponse
-    ) => void
-  ): void
-  deleteIssue(
-    request: DeleteIssueRequest,
-    callback: (
-      error: ServiceError | null,
-      response: DeleteIssueResponse
-    ) => void
-  ): void
-  moveIssue(
-    request: MoveIssueRequest,
-    callback: (error: ServiceError | null, response: MoveIssueResponse) => void
-  ): void
-  duplicateIssue(
-    request: DuplicateIssueRequest,
-    callback: (
-      error: ServiceError | null,
-      response: DuplicateIssueResponse
-    ) => void
-  ): void
+  createIssue: GrpcMethod<CreateIssueRequest, CreateIssueResponse>
+  getIssue: GrpcMethod<GetIssueRequest, Issue>
+  getIssueByDisplayNumber: GrpcMethod<GetIssueByDisplayNumberRequest, Issue>
+  getIssuesByUuid: GrpcMethod<GetIssuesByUuidRequest, GetIssuesByUuidResponse>
+  listIssues: GrpcMethod<ListIssuesRequest, ListIssuesResponse>
+  updateIssue: GrpcMethod<UpdateIssueRequest, UpdateIssueResponse>
+  deleteIssue: GrpcMethod<DeleteIssueRequest, DeleteIssueResponse>
+  moveIssue: GrpcMethod<MoveIssueRequest, MoveIssueResponse>
+  duplicateIssue: GrpcMethod<DuplicateIssueRequest, DuplicateIssueResponse>
 
   // Manifest and Config
-  getManifest(
-    request: GetManifestRequest,
-    callback: (error: ServiceError | null, response: Manifest) => void
-  ): void
-  getConfig(
-    request: GetConfigRequest,
-    callback: (error: ServiceError | null, response: Config) => void
-  ): void
-  updateConfig(
-    request: UpdateConfigRequest,
-    callback: (
-      error: ServiceError | null,
-      response: UpdateConfigResponse
-    ) => void
-  ): void
+  getManifest: GrpcMethod<GetManifestRequest, Manifest>
+  getConfig: GrpcMethod<GetConfigRequest, Config>
+  updateConfig: GrpcMethod<UpdateConfigRequest, UpdateConfigResponse>
 
   // Doc operations
-  createDoc(
-    request: CreateDocRequest,
-    callback: (error: ServiceError | null, response: CreateDocResponse) => void
-  ): void
-  getDoc(
-    request: GetDocRequest,
-    callback: (error: ServiceError | null, response: Doc) => void
-  ): void
-  getDocsBySlug(
-    request: GetDocsBySlugRequest,
-    callback: (
-      error: ServiceError | null,
-      response: GetDocsBySlugResponse
-    ) => void
-  ): void
-  listDocs(
-    request: ListDocsRequest,
-    callback: (error: ServiceError | null, response: ListDocsResponse) => void
-  ): void
-  updateDoc(
-    request: UpdateDocRequest,
-    callback: (error: ServiceError | null, response: UpdateDocResponse) => void
-  ): void
-  deleteDoc(
-    request: DeleteDocRequest,
-    callback: (error: ServiceError | null, response: DeleteDocResponse) => void
-  ): void
-  moveDoc(
-    request: MoveDocRequest,
-    callback: (error: ServiceError | null, response: MoveDocResponse) => void
-  ): void
-  duplicateDoc(
-    request: DuplicateDocRequest,
-    callback: (
-      error: ServiceError | null,
-      response: DuplicateDocResponse
-    ) => void
-  ): void
+  createDoc: GrpcMethod<CreateDocRequest, CreateDocResponse>
+  getDoc: GrpcMethod<GetDocRequest, Doc>
+  getDocsBySlug: GrpcMethod<GetDocsBySlugRequest, GetDocsBySlugResponse>
+  listDocs: GrpcMethod<ListDocsRequest, ListDocsResponse>
+  updateDoc: GrpcMethod<UpdateDocRequest, UpdateDocResponse>
+  deleteDoc: GrpcMethod<DeleteDocRequest, DeleteDocResponse>
+  moveDoc: GrpcMethod<MoveDocRequest, MoveDocResponse>
+  duplicateDoc: GrpcMethod<DuplicateDocRequest, DuplicateDocResponse>
 
   // Asset operations
-  addAsset(
-    request: AddAssetRequest,
-    callback: (error: ServiceError | null, response: AddAssetResponse) => void
-  ): void
-  listAssets(
-    request: ListAssetsRequest,
-    callback: (error: ServiceError | null, response: ListAssetsResponse) => void
-  ): void
-  getAsset(
-    request: GetAssetRequest,
-    callback: (error: ServiceError | null, response: GetAssetResponse) => void
-  ): void
-  deleteAsset(
-    request: DeleteAssetRequest,
-    callback: (
-      error: ServiceError | null,
-      response: DeleteAssetResponse
-    ) => void
-  ): void
-  listSharedAssets(
-    request: ListSharedAssetsRequest,
-    callback: (error: ServiceError | null, response: ListAssetsResponse) => void
-  ): void
+  addAsset: GrpcMethod<AddAssetRequest, AddAssetResponse>
+  listAssets: GrpcMethod<ListAssetsRequest, ListAssetsResponse>
+  getAsset: GrpcMethod<GetAssetRequest, GetAssetResponse>
+  deleteAsset: GrpcMethod<DeleteAssetRequest, DeleteAssetResponse>
+  listSharedAssets: GrpcMethod<ListSharedAssetsRequest, ListAssetsResponse>
 
   // Plan operations
-  getPlan(
-    request: GetPlanRequest,
-    callback: (error: ServiceError | null, response: GetPlanResponse) => void
-  ): void
-  updatePlan(
-    request: UpdatePlanRequest,
-    callback: (error: ServiceError | null, response: UpdatePlanResponse) => void
-  ): void
-  deletePlan(
-    request: DeletePlanRequest,
-    callback: (error: ServiceError | null, response: DeletePlanResponse) => void
-  ): void
+  getPlan: GrpcMethod<GetPlanRequest, GetPlanResponse>
+  updatePlan: GrpcMethod<UpdatePlanRequest, UpdatePlanResponse>
+  deletePlan: GrpcMethod<DeletePlanRequest, DeletePlanResponse>
 
   // Project registry operations
-  listProjects(
-    request: ListProjectsRequest,
-    callback: (
-      error: ServiceError | null,
-      response: ListProjectsResponse
-    ) => void
-  ): void
-  registerProject(
-    request: RegisterProjectRequest,
-    callback: (
-      error: ServiceError | null,
-      response: RegisterProjectResponse
-    ) => void
-  ): void
-  untrackProject(
-    request: UntrackProjectRequest,
-    callback: (
-      error: ServiceError | null,
-      response: UntrackProjectResponse
-    ) => void
-  ): void
-  getProjectInfo(
-    request: GetProjectInfoRequest,
-    callback: (
-      error: ServiceError | null,
-      response: GetProjectInfoResponse
-    ) => void
-  ): void
-  setProjectFavorite(
-    request: SetProjectFavoriteRequest,
-    callback: (
-      error: ServiceError | null,
-      response: SetProjectFavoriteResponse
-    ) => void
-  ): void
-  setProjectArchived(
-    request: SetProjectArchivedRequest,
-    callback: (
-      error: ServiceError | null,
-      response: SetProjectArchivedResponse
-    ) => void
-  ): void
-  setProjectOrganization(
-    request: SetProjectOrganizationRequest,
-    callback: (
-      error: ServiceError | null,
-      response: SetProjectOrganizationResponse
-    ) => void
-  ): void
-  setProjectUserTitle(
-    request: SetProjectUserTitleRequest,
-    callback: (
-      error: ServiceError | null,
-      response: SetProjectUserTitleResponse
-    ) => void
-  ): void
-  setProjectTitle(
-    request: SetProjectTitleRequest,
-    callback: (
-      error: ServiceError | null,
-      response: SetProjectTitleResponse
-    ) => void
-  ): void
+  listProjects: GrpcMethod<ListProjectsRequest, ListProjectsResponse>
+  registerProject: GrpcMethod<RegisterProjectRequest, RegisterProjectResponse>
+  untrackProject: GrpcMethod<UntrackProjectRequest, UntrackProjectResponse>
+  getProjectInfo: GrpcMethod<GetProjectInfoRequest, GetProjectInfoResponse>
+  setProjectFavorite: GrpcMethod<
+    SetProjectFavoriteRequest,
+    SetProjectFavoriteResponse
+  >
+  setProjectArchived: GrpcMethod<
+    SetProjectArchivedRequest,
+    SetProjectArchivedResponse
+  >
+  setProjectOrganization: GrpcMethod<
+    SetProjectOrganizationRequest,
+    SetProjectOrganizationResponse
+  >
+  setProjectUserTitle: GrpcMethod<
+    SetProjectUserTitleRequest,
+    SetProjectUserTitleResponse
+  >
+  setProjectTitle: GrpcMethod<SetProjectTitleRequest, SetProjectTitleResponse>
 
   // Organization operations
-  createOrganization(
-    request: CreateOrganizationRequest,
-    callback: (
-      error: ServiceError | null,
-      response: CreateOrganizationResponse
-    ) => void
-  ): void
-  listOrganizations(
-    request: ListOrganizationsRequest,
-    callback: (
-      error: ServiceError | null,
-      response: ListOrganizationsResponse
-    ) => void
-  ): void
-  getOrganization(
-    request: GetOrganizationRequest,
-    callback: (
-      error: ServiceError | null,
-      response: GetOrganizationResponse
-    ) => void
-  ): void
-  updateOrganization(
-    request: UpdateOrganizationRequest,
-    callback: (
-      error: ServiceError | null,
-      response: UpdateOrganizationResponse
-    ) => void
-  ): void
-  deleteOrganization(
-    request: DeleteOrganizationRequest,
-    callback: (
-      error: ServiceError | null,
-      response: DeleteOrganizationResponse
-    ) => void
-  ): void
+  createOrganization: GrpcMethod<
+    CreateOrganizationRequest,
+    CreateOrganizationResponse
+  >
+  listOrganizations: GrpcMethod<
+    ListOrganizationsRequest,
+    ListOrganizationsResponse
+  >
+  getOrganization: GrpcMethod<GetOrganizationRequest, GetOrganizationResponse>
+  updateOrganization: GrpcMethod<
+    UpdateOrganizationRequest,
+    UpdateOrganizationResponse
+  >
+  deleteOrganization: GrpcMethod<
+    DeleteOrganizationRequest,
+    DeleteOrganizationResponse
+  >
 
   // Org issue operations
-  createOrgIssue(
-    request: CreateOrgIssueRequest,
-    callback: (
-      error: ServiceError | null,
-      response: CreateOrgIssueResponse
-    ) => void
-  ): void
-  getOrgIssue(
-    request: GetOrgIssueRequest,
-    callback: (error: ServiceError | null, response: OrgIssue) => void
-  ): void
-  getOrgIssueByDisplayNumber(
-    request: GetOrgIssueByDisplayNumberRequest,
-    callback: (error: ServiceError | null, response: OrgIssue) => void
-  ): void
-  listOrgIssues(
-    request: ListOrgIssuesRequest,
-    callback: (
-      error: ServiceError | null,
-      response: ListOrgIssuesResponse
-    ) => void
-  ): void
-  updateOrgIssue(
-    request: UpdateOrgIssueRequest,
-    callback: (
-      error: ServiceError | null,
-      response: UpdateOrgIssueResponse
-    ) => void
-  ): void
-  deleteOrgIssue(
-    request: DeleteOrgIssueRequest,
-    callback: (
-      error: ServiceError | null,
-      response: DeleteOrgIssueResponse
-    ) => void
-  ): void
-  getOrgConfig(
-    request: GetOrgConfigRequest,
-    callback: (error: ServiceError | null, response: OrgConfig) => void
-  ): void
-  updateOrgConfig(
-    request: UpdateOrgConfigRequest,
-    callback: (
-      error: ServiceError | null,
-      response: UpdateOrgConfigResponse
-    ) => void
-  ): void
+  createOrgIssue: GrpcMethod<CreateOrgIssueRequest, CreateOrgIssueResponse>
+  getOrgIssue: GrpcMethod<GetOrgIssueRequest, OrgIssue>
+  getOrgIssueByDisplayNumber: GrpcMethod<
+    GetOrgIssueByDisplayNumberRequest,
+    OrgIssue
+  >
+  listOrgIssues: GrpcMethod<ListOrgIssuesRequest, ListOrgIssuesResponse>
+  updateOrgIssue: GrpcMethod<UpdateOrgIssueRequest, UpdateOrgIssueResponse>
+  deleteOrgIssue: GrpcMethod<DeleteOrgIssueRequest, DeleteOrgIssueResponse>
+  getOrgConfig: GrpcMethod<GetOrgConfigRequest, OrgConfig>
+  updateOrgConfig: GrpcMethod<UpdateOrgConfigRequest, UpdateOrgConfigResponse>
 
   // Version operations
-  getDaemonInfo(
-    request: GetDaemonInfoRequest,
-    callback: (error: ServiceError | null, response: DaemonInfo) => void
-  ): void
-  getProjectVersion(
-    request: GetProjectVersionRequest,
-    callback: (error: ServiceError | null, response: ProjectVersionInfo) => void
-  ): void
-  updateVersion(
-    request: UpdateVersionRequest,
-    callback: (
-      error: ServiceError | null,
-      response: UpdateVersionResponse
-    ) => void
-  ): void
+  getDaemonInfo: GrpcMethod<GetDaemonInfoRequest, DaemonInfo>
+  getProjectVersion: GrpcMethod<GetProjectVersionRequest, ProjectVersionInfo>
+  updateVersion: GrpcMethod<UpdateVersionRequest, UpdateVersionResponse>
 
   // Issue number
-  getNextIssueNumber(
-    request: GetNextIssueNumberRequest,
-    callback: (
-      error: ServiceError | null,
-      response: GetNextIssueNumberResponse
-    ) => void
-  ): void
+  getNextIssueNumber: GrpcMethod<
+    GetNextIssueNumberRequest,
+    GetNextIssueNumberResponse
+  >
 
   // Daemon control operations
-  shutdown(
-    request: ShutdownRequest,
-    callback: (error: ServiceError | null, response: ShutdownResponse) => void
-  ): void
-  restart(
-    request: RestartRequest,
-    callback: (error: ServiceError | null, response: RestartResponse) => void
-  ): void
+  shutdown: GrpcMethod<ShutdownRequest, ShutdownResponse>
+  restart: GrpcMethod<RestartRequest, RestartResponse>
 
   // PR operations
-  createPr(
-    request: CreatePrRequest,
-    callback: (error: ServiceError | null, response: CreatePrResponse) => void
-  ): void
-  getPr(
-    request: GetPrRequest,
-    callback: (error: ServiceError | null, response: PullRequest) => void
-  ): void
-  getPrByDisplayNumber(
-    request: GetPrByDisplayNumberRequest,
-    callback: (error: ServiceError | null, response: PullRequest) => void
-  ): void
-  getPrsByUuid(
-    request: GetPrsByUuidRequest,
-    callback: (
-      error: ServiceError | null,
-      response: GetPrsByUuidResponse
-    ) => void
-  ): void
-  listPrs(
-    request: ListPrsRequest,
-    callback: (error: ServiceError | null, response: ListPrsResponse) => void
-  ): void
-  updatePr(
-    request: UpdatePrRequest,
-    callback: (error: ServiceError | null, response: UpdatePrResponse) => void
-  ): void
-  deletePr(
-    request: DeletePrRequest,
-    callback: (error: ServiceError | null, response: DeletePrResponse) => void
-  ): void
-  getNextPrNumber(
-    request: GetNextPrNumberRequest,
-    callback: (
-      error: ServiceError | null,
-      response: GetNextPrNumberResponse
-    ) => void
-  ): void
+  createPr: GrpcMethod<CreatePrRequest, CreatePrResponse>
+  getPr: GrpcMethod<GetPrRequest, PullRequest>
+  getPrByDisplayNumber: GrpcMethod<GetPrByDisplayNumberRequest, PullRequest>
+  getPrsByUuid: GrpcMethod<GetPrsByUuidRequest, GetPrsByUuidResponse>
+  listPrs: GrpcMethod<ListPrsRequest, ListPrsResponse>
+  updatePr: GrpcMethod<UpdatePrRequest, UpdatePrResponse>
+  deletePr: GrpcMethod<DeletePrRequest, DeletePrResponse>
+  getNextPrNumber: GrpcMethod<GetNextPrNumberRequest, GetNextPrNumberResponse>
 
   // Features operations
-  getFeatureStatus(
-    request: GetFeatureStatusRequest,
-    callback: (
-      error: ServiceError | null,
-      response: GetFeatureStatusResponse
-    ) => void
-  ): void
-  listUncompactedIssues(
-    request: ListUncompactedIssuesRequest,
-    callback: (
-      error: ServiceError | null,
-      response: ListUncompactedIssuesResponse
-    ) => void
-  ): void
-  getInstruction(
-    request: GetInstructionRequest,
-    callback: (
-      error: ServiceError | null,
-      response: GetInstructionResponse
-    ) => void
-  ): void
-  getCompact(
-    request: GetCompactRequest,
-    callback: (error: ServiceError | null, response: GetCompactResponse) => void
-  ): void
-  updateCompact(
-    request: UpdateCompactRequest,
-    callback: (
-      error: ServiceError | null,
-      response: UpdateCompactResponse
-    ) => void
-  ): void
-  saveMigration(
-    request: SaveMigrationRequest,
-    callback: (
-      error: ServiceError | null,
-      response: SaveMigrationResponse
-    ) => void
-  ): void
-  markIssuesCompacted(
-    request: MarkIssuesCompactedRequest,
-    callback: (
-      error: ServiceError | null,
-      response: MarkIssuesCompactedResponse
-    ) => void
-  ): void
+  getFeatureStatus: GrpcMethod<
+    GetFeatureStatusRequest,
+    GetFeatureStatusResponse
+  >
+  listUncompactedIssues: GrpcMethod<
+    ListUncompactedIssuesRequest,
+    ListUncompactedIssuesResponse
+  >
+  getInstruction: GrpcMethod<GetInstructionRequest, GetInstructionResponse>
+  getCompact: GrpcMethod<GetCompactRequest, GetCompactResponse>
+  updateCompact: GrpcMethod<UpdateCompactRequest, UpdateCompactResponse>
+  saveMigration: GrpcMethod<SaveMigrationRequest, SaveMigrationResponse>
+  markIssuesCompacted: GrpcMethod<
+    MarkIssuesCompactedRequest,
+    MarkIssuesCompactedResponse
+  >
 
   // User operations
-  createUser(
-    request: CreateUserRequest,
-    callback: (error: ServiceError | null, response: CreateUserResponse) => void
-  ): void
-  getUser(
-    request: GetUserRequest,
-    callback: (error: ServiceError | null, response: User) => void
-  ): void
-  listUsers(
-    request: ListUsersRequest,
-    callback: (error: ServiceError | null, response: ListUsersResponse) => void
-  ): void
-  updateUser(
-    request: UpdateUserRequest,
-    callback: (error: ServiceError | null, response: UpdateUserResponse) => void
-  ): void
-  deleteUser(
-    request: DeleteUserRequest,
-    callback: (error: ServiceError | null, response: DeleteUserResponse) => void
-  ): void
-  syncUsers(
-    request: SyncUsersRequest,
-    callback: (error: ServiceError | null, response: SyncUsersResponse) => void
-  ): void
+  createUser: GrpcMethod<CreateUserRequest, CreateUserResponse>
+  getUser: GrpcMethod<GetUserRequest, User>
+  listUsers: GrpcMethod<ListUsersRequest, ListUsersResponse>
+  updateUser: GrpcMethod<UpdateUserRequest, UpdateUserResponse>
+  deleteUser: GrpcMethod<DeleteUserRequest, DeleteUserResponse>
+  syncUsers: GrpcMethod<SyncUsersRequest, SyncUsersResponse>
 
   // Issue assignee operations
-  assignIssue(
-    request: AssignIssueRequest,
-    callback: (
-      error: ServiceError | null,
-      response: AssignIssueResponse
-    ) => void
-  ): void
-  unassignIssue(
-    request: UnassignIssueRequest,
-    callback: (
-      error: ServiceError | null,
-      response: UnassignIssueResponse
-    ) => void
-  ): void
+  assignIssue: GrpcMethod<AssignIssueRequest, AssignIssueResponse>
+  unassignIssue: GrpcMethod<UnassignIssueRequest, UnassignIssueResponse>
 
   // LLM Agent operations
-  spawnAgent(
-    request: SpawnAgentRequest,
-    callback: (error: ServiceError | null, response: SpawnAgentResponse) => void
-  ): void
+  spawnAgent: GrpcMethod<SpawnAgentRequest, SpawnAgentResponse>
 
   // Temp workspace operations
-  openInTempVscode(
-    request: OpenInTempVscodeRequest,
-    callback: (
-      error: ServiceError | null,
-      response: OpenInTempVscodeResponse
-    ) => void
-  ): void
-  listTempWorkspaces(
-    request: ListTempWorkspacesRequest,
-    callback: (
-      error: ServiceError | null,
-      response: ListTempWorkspacesResponse
-    ) => void
-  ): void
-  closeTempWorkspace(
-    request: CloseTempWorkspaceRequest,
-    callback: (
-      error: ServiceError | null,
-      response: CloseTempWorkspaceResponse
-    ) => void
-  ): void
-  cleanupExpiredWorkspaces(
-    request: CleanupExpiredWorkspacesRequest,
-    callback: (
-      error: ServiceError | null,
-      response: CleanupExpiredWorkspacesResponse
-    ) => void
-  ): void
+  openInTempVscode: GrpcMethod<
+    OpenInTempVscodeRequest,
+    OpenInTempVscodeResponse
+  >
+  listTempWorkspaces: GrpcMethod<
+    ListTempWorkspacesRequest,
+    ListTempWorkspacesResponse
+  >
+  closeTempWorkspace: GrpcMethod<
+    CloseTempWorkspaceRequest,
+    CloseTempWorkspaceResponse
+  >
+  cleanupExpiredWorkspaces: GrpcMethod<
+    CleanupExpiredWorkspacesRequest,
+    CleanupExpiredWorkspacesResponse
+  >
 }
 
 interface ProtoDescriptor {
   centy: {
     CentyDaemon: new (
       address: string,
-      creds: ReturnType<typeof credentials.createInsecure>
+      creds: ReturnType<typeof credentials.createInsecure>,
+      options?: ChannelOptions
     ) => CentyDaemonClient
   }
 }
@@ -741,7 +493,15 @@ function getAddress(): string {
 }
 
 /**
- * Load proto and create daemon client
+ * Reset the client instance (useful for testing or reconnection)
+ */
+export function resetDaemonClient(): void {
+  clientInstance = null
+}
+
+/**
+ * Load proto and create daemon client with channel options for connection management.
+ * The client uses keepalive and reconnection settings to handle network issues.
  */
 export function getDaemonClient(): CentyDaemonClient {
   if (clientInstance !== null) {
@@ -764,7 +524,8 @@ export function getDaemonClient(): CentyDaemonClient {
   const address = getAddress()
   clientInstance = new protoDescriptor.centy.CentyDaemon(
     address,
-    credentials.createInsecure()
+    credentials.createInsecure(),
+    CHANNEL_OPTIONS
   )
 
   return clientInstance

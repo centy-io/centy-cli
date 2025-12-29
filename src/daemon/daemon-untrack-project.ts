@@ -1,5 +1,5 @@
 import type { UntrackProjectRequest, UntrackProjectResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Untrack a project via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonUntrackProject(
   request: UntrackProjectRequest
 ): Promise<UntrackProjectResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().untrackProject(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.untrackProject.bind(client), request)
 }

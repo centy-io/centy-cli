@@ -1,5 +1,9 @@
 import type { SaveMigrationRequest, SaveMigrationResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import {
+  getDaemonClient,
+  callWithDeadline,
+  LONG_GRPC_TIMEOUT_MS,
+} from './load-proto.js'
 
 /**
  * Save a migration file via daemon
@@ -7,13 +11,10 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonSaveMigration(
   request: SaveMigrationRequest
 ): Promise<SaveMigrationResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().saveMigration(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(
+    client.saveMigration.bind(client),
+    request,
+    LONG_GRPC_TIMEOUT_MS
+  )
 }

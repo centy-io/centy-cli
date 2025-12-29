@@ -1,5 +1,5 @@
 import type { GetDaemonInfoRequest, DaemonInfo } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Get daemon info via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonGetDaemonInfo(
   request: GetDaemonInfoRequest
 ): Promise<DaemonInfo> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().getDaemonInfo(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.getDaemonInfo.bind(client), request)
 }

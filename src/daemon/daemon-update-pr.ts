@@ -1,5 +1,5 @@
 import type { UpdatePrRequest, UpdatePrResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Update a PR via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonUpdatePr(
   request: UpdatePrRequest
 ): Promise<UpdatePrResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().updatePr(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.updatePr.bind(client), request)
 }

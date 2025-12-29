@@ -1,5 +1,5 @@
 import type { CreateIssueRequest, CreateIssueResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Create an issue via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonCreateIssue(
   request: CreateIssueRequest
 ): Promise<CreateIssueResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().createIssue(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.createIssue.bind(client), request)
 }

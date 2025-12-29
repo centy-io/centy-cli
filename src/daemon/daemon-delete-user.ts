@@ -1,5 +1,5 @@
 import type { DeleteUserRequest, DeleteUserResponse } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Delete a user via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonDeleteUser(
   request: DeleteUserRequest
 ): Promise<DeleteUserResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().deleteUser(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.deleteUser.bind(client), request)
 }

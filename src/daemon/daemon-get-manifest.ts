@@ -1,5 +1,5 @@
 import type { GetManifestRequest, Manifest } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Get manifest via daemon
@@ -7,13 +7,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonGetManifest(
   request: GetManifestRequest
 ): Promise<Manifest> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().getManifest(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.getManifest.bind(client), request)
 }

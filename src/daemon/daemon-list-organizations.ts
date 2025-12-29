@@ -2,7 +2,7 @@ import type {
   ListOrganizationsRequest,
   ListOrganizationsResponse,
 } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * List all organizations via daemon
@@ -10,13 +10,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonListOrganizations(
   request: ListOrganizationsRequest
 ): Promise<ListOrganizationsResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().listOrganizations(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.listOrganizations.bind(client), request)
 }

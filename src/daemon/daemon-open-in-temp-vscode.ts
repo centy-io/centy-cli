@@ -2,7 +2,7 @@ import type {
   OpenInTempVscodeRequest,
   OpenInTempVscodeResponse,
 } from './types.js'
-import { getDaemonClient } from './load-proto.js'
+import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Open a project in a temporary VS Code workspace
@@ -10,13 +10,6 @@ import { getDaemonClient } from './load-proto.js'
 export function daemonOpenInTempVscode(
   request: OpenInTempVscodeRequest
 ): Promise<OpenInTempVscodeResponse> {
-  return new Promise((resolve, reject) => {
-    getDaemonClient().openInTempVscode(request, (error, response) => {
-      if (error !== null) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  const client = getDaemonClient()
+  return callWithDeadline(client.openInTempVscode.bind(client), request)
 }
