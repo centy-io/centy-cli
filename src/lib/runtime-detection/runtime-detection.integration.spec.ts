@@ -422,17 +422,21 @@ describe('runtime detection wrapper', () => {
       }
     )
 
-    itOnWindows('should pass arguments correctly', async () => {
-      const pathWithoutBun = createPathWithoutBun()
+    // Note: This test also uses --help which has the same flaky oclif ESM issue on Node 20 CI
+    it.skipIf(!IS_WINDOWS || skipOnNode20CI)(
+      'should pass arguments correctly',
+      async () => {
+        const pathWithoutBun = createPathWithoutBun()
 
-      const result = await runBatchFile(RUN_CMD, ['--help'], {
-        ...process.env,
-        PATH: pathWithoutBun,
-      })
+        const result = await runBatchFile(RUN_CMD, ['--help'], {
+          ...process.env,
+          PATH: pathWithoutBun,
+        })
 
-      expect(result.exitCode).toBe(0)
-      expect(result.stdout).toContain('USAGE')
-    })
+        expect(result.exitCode).toBe(0)
+        expect(result.stdout).toContain('USAGE')
+      }
+    )
   })
 
   // ===========================================================================
