@@ -188,6 +188,15 @@ async function runBatchFile(
 describe('runtime detection wrapper', () => {
   const bunAvailable = checkBunAvailable()
 
+  // Note: The following tests are skipped on Node 20 in CI due to a flaky oclif/ESM module resolution
+  // issue where the help class resolution fails intermittently with "Unknown file extension .ts".
+  // This is not related to the actual CLI functionality and passes on Node 22 and locally.
+  // See: https://github.com/oclif/core/issues - ESM resolution issues
+  const isNode20 = process.version.startsWith('v20.')
+  // eslint-disable-next-line no-restricted-syntax
+  const isCI = process.env['CI'] === 'true'
+  const skipOnNode20CI = isNode20 && isCI
+
   // ===========================================================================
   // bin/run.js Tests (Cross-platform)
   // ===========================================================================
@@ -259,15 +268,6 @@ describe('runtime detection wrapper', () => {
         expect(result.stdout).toContain('CLI:')
       })
     })
-
-    // Note: The following tests are skipped on Node 20 in CI due to a flaky oclif/ESM module resolution
-    // issue where the help class resolution fails intermittently with "Unknown file extension .ts".
-    // This is not related to the actual CLI functionality and passes on Node 22 and locally.
-    // See: https://github.com/oclif/core/issues - ESM resolution issues
-    const isNode20 = process.version.startsWith('v20.')
-    // eslint-disable-next-line no-restricted-syntax
-    const isCI = process.env['CI'] === 'true'
-    const skipOnNode20CI = isNode20 && isCI
 
     describe('argument passing', () => {
       it.skipIf(skipOnNode20CI)(
