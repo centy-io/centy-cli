@@ -75,7 +75,15 @@ export default class WorkspaceOpen extends Command {
       this.error(response.error)
     }
 
-    this.log(`Created workspace at: ${response.workspacePath}`)
+    if (response.workspaceReused) {
+      this.log(`Reopened existing workspace at: ${response.workspacePath}`)
+      if (response.originalCreatedAt) {
+        this.log(`Originally created: ${response.originalCreatedAt}`)
+      }
+    } else {
+      this.log(`Created workspace at: ${response.workspacePath}`)
+    }
+
     this.log(`Issue: #${response.issueDisplayNumber} - ${response.issueTitle}`)
     this.log(`Expires: ${response.expiresAt}`)
 

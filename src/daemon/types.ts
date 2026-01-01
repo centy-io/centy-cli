@@ -1212,6 +1212,8 @@ export interface OpenInTempVscodeResponse {
   issueDisplayNumber: number
   issueTitle: string
   vscodeOpened: boolean
+  workspaceReused: boolean
+  originalCreatedAt: string
 }
 
 export interface TempWorkspace {
