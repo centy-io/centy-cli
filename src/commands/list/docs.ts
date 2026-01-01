@@ -18,6 +18,9 @@ export default class ListDocs extends Command {
   static override description = 'List all documentation files'
 
   // eslint-disable-next-line no-restricted-syntax
+  static override aliases = ['doc:list']
+
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list docs',
     '<%= config.bin %> list docs --json',

@@ -19,6 +19,9 @@ export default class ListAssets extends Command {
   static override description = 'List assets for an issue or shared assets'
 
   // eslint-disable-next-line no-restricted-syntax
+  static override aliases = ['asset:list']
+
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list assets --issue 1',
     '<%= config.bin %> list assets --shared',

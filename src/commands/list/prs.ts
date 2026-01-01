@@ -18,6 +18,9 @@ export default class ListPrs extends Command {
   static override description = 'List all pull requests'
 
   // eslint-disable-next-line no-restricted-syntax
+  static override aliases = ['pr:list']
+
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list prs',
     '<%= config.bin %> list prs --status open',

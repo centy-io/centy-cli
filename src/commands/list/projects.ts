@@ -12,6 +12,9 @@ export default class ListProjects extends Command {
   static override description = 'List all tracked centy projects'
 
   // eslint-disable-next-line no-restricted-syntax
+  static override aliases = ['project:list']
+
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list projects',
     '<%= config.bin %> list projects --include-stale',

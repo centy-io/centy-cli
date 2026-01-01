@@ -18,6 +18,9 @@ export default class ListUsers extends Command {
   static override description = 'List all users in the project'
 
   // eslint-disable-next-line no-restricted-syntax
+  static override aliases = ['user:list']
+
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list users',
     '<%= config.bin %> list users --json',

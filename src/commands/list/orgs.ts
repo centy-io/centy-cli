@@ -9,7 +9,7 @@ import { daemonListOrganizations } from '../../daemon/daemon-list-organizations.
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class ListOrgs extends Command {
   // eslint-disable-next-line no-restricted-syntax
-  static override aliases = ['list:organizations']
+  static override aliases = ['list:organizations', 'org:list']
 
   // eslint-disable-next-line no-restricted-syntax
   static override description = 'List all organizations'

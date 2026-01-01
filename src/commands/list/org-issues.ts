@@ -12,6 +12,9 @@ export default class ListOrgIssues extends Command {
   static override description = 'List organization-level issues'
 
   // eslint-disable-next-line no-restricted-syntax
+  static override aliases = ['org-issue:list']
+
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list org-issues --org my-org',
     '<%= config.bin %> list org-issues -o centy-io',

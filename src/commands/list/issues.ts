@@ -18,6 +18,9 @@ export default class ListIssues extends Command {
   static override description = 'List all issues'
 
   // eslint-disable-next-line no-restricted-syntax
+  static override aliases = ['issue:list']
+
+  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list issues',
     '<%= config.bin %> list issues --status open',
