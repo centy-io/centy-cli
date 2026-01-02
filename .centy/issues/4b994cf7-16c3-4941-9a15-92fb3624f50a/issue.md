@@ -1,0 +1,42 @@
+# Add CLI commands for link management
+
+## Summary
+
+Implement CLI commands for managing links between issues, docs, and PRs.
+
+## Commands to implement
+
+- `centy link issue <issue-number> --<link-type> <target-type>:<target-id>` - Create a link from an issue
+- `centy link doc <slug> --<link-type> <target-type>:<target-id>` - Create a link from a doc
+- `centy link pr <pr-number> --<link-type> <target-type>:<target-id>` - Create a link from a PR
+- `centy unlink issue <issue-number> <target-type>:<target-id> [--type <link-type>]` - Remove a link
+- `centy unlink doc <slug> <target-type>:<target-id> [--type <link-type>]` - Remove a link
+- `centy unlink pr <pr-number> <target-type>:<target-id> [--type <link-type>]` - Remove a link
+- `centy links issue <issue-number>` - List all links for an issue
+- `centy links doc <slug>` - List all links for a doc
+- `centy links pr <pr-number>` - List all links for a PR
+
+## Example usage
+
+```bash
+# Issue 1 blocks issue 2
+centy link issue 1 --blocks issue:2
+
+# Doc links to related issue
+centy link doc getting-started --relates-to issue:5
+
+# PR is child of issue
+centy link pr 3 --child-of issue:7
+
+# Remove link
+centy unlink issue 1 issue:2
+
+# List links
+centy links issue 1
+```
+
+## Notes
+
+- Use existing gRPC Link RPCs (CreateLink, DeleteLink, ListLinks)
+- Support custom link types from config
+- Display bidirectional link info

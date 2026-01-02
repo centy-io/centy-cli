@@ -1,0 +1,59 @@
+# Update all documentation to prefer pnpm over npm
+
+## Summary
+
+We want to encourage users to work with pnpm rather than npm across all our documentation and user-facing content.
+
+## Current State
+
+Several locations in the codebase show npm/npx as the first option or give it equal prominence with pnpm:
+
+### CLI
+
+1. **centy-cli/README.md** (line 7-16) - Shows npm first before pnpm in installation instructions
+2. **centy-cli/README.md** (line 14) - Mentions "npx/pnpm dlx"
+
+### App
+
+3. **centy-app/components/layout/DaemonDisconnectedOverlay.tsx** (line 42) - Shows `npm install -g centy`
+
+### Landing Page
+
+4. **centy-landing/src/components/HowItWorks.tsx** (line 7) - Shows `npm install -g centy`
+
+### Docs
+
+5. **centy-docs/docs/installation.md** - Shows all three package managers (npm, yarn, pnpm) but should de-emphasize npm
+
+### Internal Commands
+
+6. **.claude/commands/tupe/boot.md** (line 79) - Uses `npx tsc --noEmit` instead of `pnpm exec tsc --noEmit`
+
+## Desired State
+
+- pnpm should be the primary/first option shown in all documentation
+- Use `pnpm dlx` instead of `npx` in examples
+- Use `pnpm exec` instead of `npx` for running local binaries
+- Use `pnpm add -g` instead of `npm install -g` in examples
+- Consider removing npm/yarn examples entirely or moving them to a collapsible "Alternative package managers" section
+
+## Files to Update
+
+Key user-facing files to review:
+
+- `centy-cli/README.md`
+- `centy-app/components/layout/DaemonDisconnectedOverlay.tsx`
+- `centy-landing/src/components/HowItWorks.tsx`
+- `centy-docs/docs/installation.md`
+- `.claude/commands/tupe/boot.md`
+- Any other files with npm/npx references
+
+## Acceptance Criteria
+
+- [ ] All installation examples show pnpm first
+- [ ] `npx` replaced with `pnpm dlx` or `pnpm exec` in all examples
+- [ ] `npm install -g` replaced with `pnpm add -g` in all examples
+- [ ] App overlay shows pnpm command
+- [ ] Landing page shows pnpm command
+- [ ] npm/yarn instructions moved to secondary position or collapsible section in docs
+- [ ] Consistent messaging across all documentation

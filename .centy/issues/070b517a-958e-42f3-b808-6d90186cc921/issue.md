@@ -1,0 +1,24 @@
+# Remove TUI from centy-cli
+
+Remove the embedded TUI (Text User Interface) from the centy-cli project.
+
+## Background
+
+The centy-cli currently includes a TUI implementation at `src/tui/` that provides an interactive terminal interface. This TUI should be removed as there is already a separate `centy-tui` Rust project for terminal UI functionality.
+
+## Scope
+
+The following should be removed:
+
+- `src/tui/` directory and all its contents (components, hooks, services, utils, types)
+- TUI-related dependencies from package.json (@opentui/\*, ink, react for TUI, etc.)
+- TUI configuration from tsconfig.json, vitest.config.ts, knip.json
+- TUI documentation (`.centy/docs/tui-guide.md`)
+- TUI assets (assets/tui.png)
+- Any TUI-related commands or entry points in bin/run.js
+
+## Benefits
+
+- Reduced bundle size and dependencies
+- Single source of truth for TUI functionality (centy-tui Rust project)
+- Simplified centy-cli codebase focused on CLI commands
