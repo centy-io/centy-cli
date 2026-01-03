@@ -1,0 +1,21 @@
+{
+  "git": {
+    "commitMessage": "chore(release): bump version to ${version}",
+    "tagName": "v${version}",
+    "requireBranch": "main",
+    "requireCleanWorkingDir": true
+  },
+  "npm": {
+    "publish": true
+  },
+  "github": {
+    "release": true
+  },
+  "hooks": {
+    "before:init": [
+      "pnpm test",
+      "pnpm build",
+      "git checkout oclif.manifest.json"
+    ]
+  }
+}
