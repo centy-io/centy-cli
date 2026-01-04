@@ -1,67 +1,55 @@
 import { spawn } from 'node:child_process'
+import { getPermissionDeniedMsg } from '../../utils/get-permission-denied-msg.js'
+import { getMissingBinaryMsg } from '../../utils/get-missing-binary-msg.js'
 import { findTuiBinary } from './find-tui-binary.js'
 import { tuiBinaryExists } from './tui-binary-exists.js'
 
 interface LaunchTuiResult {
-  success: boolean
   error?: string
+  success: boolean
 }
 
 const TUI_ENV_VAR = 'CENTY_TUI_PATH'
 
 function getMissingTuiMsg(path: string): string {
-  return `TUI not found at: ${path}
-
-The centy-tui binary could not be located.
-Set ${TUI_ENV_VAR} to specify the binary path.`
-}
-
-function getPermissionDeniedMsg(path: string): string {
-  return `Permission denied: ${path}
-
-Run: chmod +x "${path}"`
+  return getMissingBinaryMsg(path, 'centy-tui', TUI_ENV_VAR)
 }
 
 export async function launchTui(): Promise<LaunchTuiResult> {
-  const tuiPath = findTuiBinary()
+  const tuiPath = await findTuiBinary()
 
   if (!tuiBinaryExists(tuiPath)) {
-    return { success: false, error: getMissingTuiMsg(tuiPath) }
+    return {
+      error: getMissingTuiMsg(tuiPath),
+      success: false,
+    }
   }
 
-  return new Promise(resolve => {
-    let child
-    try {
-      child = spawn(tuiPath, [], { stdio: 'inherit' })
-    } catch (error) {
-      // spawn can throw synchronously on some platforms
-      const message = error instanceof Error ? error.message : String(error)
-      resolve({ success: false, error: `Failed to launch TUI: ${message}` })
-      return
-    }
+  return new Promise<LaunchTuiResult>((resolve, reject) => {
+    const child = spawn(tuiPath, [], {
+      detached: true,
+      stdio: 'ignore',
+    })
 
     child.on('error', (error: NodeJS.ErrnoException) => {
-      const errno = error.code
-      if (errno === 'ENOENT') {
-        resolve({ success: false, error: getMissingTuiMsg(tuiPath) })
-      } else if (errno === 'EACCES') {
-        resolve({ success: false, error: getPermissionDeniedMsg(tuiPath) })
-      } else if (errno === 'ENOTSUP' || errno === 'Unknown system error -88') {
-        // Binary exists but cannot be executed (e.g., wrong architecture)
+      if (error.code === 'ENOENT') {
         resolve({
+          error: getMissingTuiMsg(tuiPath),
           success: false,
-          error: `Cannot execute TUI binary: ${tuiPath}`,
+        })
+      } else if (error.code === 'EACCES') {
+        resolve({
+          error: getPermissionDeniedMsg(tuiPath),
+          success: false,
         })
       } else {
-        resolve({
-          success: false,
-          error: `Failed to launch TUI: ${error.message}`,
-        })
+        reject(error)
       }
     })
 
-    child.on('exit', code => {
-      resolve({ success: code === 0 })
+    child.on('spawn', () => {
+      child.unref()
+      resolve({ success: true })
     })
   })
 }

@@ -1,64 +1,55 @@
 import { spawn } from 'node:child_process'
+import { getPermissionDeniedMsg } from '../../utils/get-permission-denied-msg.js'
+import { getMissingBinaryMsg } from '../../utils/get-missing-binary-msg.js'
 import { findTuiManagerBinary } from './find-tui-manager-binary.js'
 import { tuiManagerBinaryExists } from './tui-manager-binary-exists.js'
 
 interface LaunchTuiManagerResult {
-  success: boolean
   error?: string
+  success: boolean
 }
 
 const TUI_MANAGER_ENV_VAR = 'CENTY_TUI_MANAGER_PATH'
 
 function getMissingTuiManagerMsg(path: string): string {
-  return `TUI Manager not found at: ${path}
-
-The tui-manager binary could not be located.
-Set ${TUI_MANAGER_ENV_VAR} to specify the binary path.`
-}
-
-function getPermissionDeniedMsg(path: string): string {
-  return `Permission denied: ${path}
-
-Run: chmod +x "${path}"`
+  return getMissingBinaryMsg(path, 'tui-manager', TUI_MANAGER_ENV_VAR)
 }
 
 export async function launchTuiManager(): Promise<LaunchTuiManagerResult> {
-  const managerPath = findTuiManagerBinary()
+  const tuiManagerPath = await findTuiManagerBinary()
 
-  if (!tuiManagerBinaryExists(managerPath)) {
-    return { success: false, error: getMissingTuiManagerMsg(managerPath) }
+  if (!tuiManagerBinaryExists(tuiManagerPath)) {
+    return {
+      error: getMissingTuiManagerMsg(tuiManagerPath),
+      success: false,
+    }
   }
 
-  return new Promise(resolve => {
-    let child
-    try {
-      child = spawn(managerPath, [], { stdio: 'inherit' })
-    } catch (error) {
-      // spawn can throw synchronously on some platforms
-      const message = error instanceof Error ? error.message : String(error)
-      resolve({
-        success: false,
-        error: `Failed to launch TUI Manager: ${message}`,
-      })
-      return
-    }
+  return new Promise<LaunchTuiManagerResult>((resolve, reject) => {
+    const child = spawn(tuiManagerPath, [], {
+      detached: true,
+      stdio: 'ignore',
+    })
 
     child.on('error', (error: NodeJS.ErrnoException) => {
-      const errno = error.code
-      if (errno === 'ENOENT') {
-        resolve({ success: false, error: getMissingTuiManagerMsg(managerPath) })
-      } else if (errno === 'EACCES') {
-        resolve({ success: false, error: getPermissionDeniedMsg(managerPath) })
-      } else {
+      if (error.code === 'ENOENT') {
         resolve({
+          error: getMissingTuiManagerMsg(tuiManagerPath),
           success: false,
-          error: `Failed to launch TUI Manager: ${error.message}`,
         })
+      } else if (error.code === 'EACCES') {
+        resolve({
+          error: getPermissionDeniedMsg(tuiManagerPath),
+          success: false,
+        })
+      } else {
+        reject(error)
       }
     })
 
-    child.on('exit', code => {
-      resolve({ success: code === 0 })
+    child.on('spawn', () => {
+      child.unref()
+      resolve({ success: true })
     })
   })
 }
