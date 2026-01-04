@@ -8,14 +8,13 @@ import { daemonBinaryExists } from '../lib/start/daemon-binary-exists.js'
 import { findDaemonBinary } from '../lib/start/find-daemon-binary.js'
 import { promptForInstall } from '../lib/start/prompt-for-install.js'
 import { waitForDaemon } from '../lib/start/wait-for-daemon.js'
+import { getPermissionDeniedMsg } from '../utils/get-permission-denied-msg.js'
 import { closePromptInterface } from '../utils/close-prompt-interface.js'
 import { createPromptInterface } from '../utils/create-prompt-interface.js'
 
 const getMissingDaemonMsg = (p: string) =>
   `Daemon not found at: ${p}\n\nFix:\n  1. centy install daemon\n  2. centy start\n  3. centy info\n\nOr set CENTY_DAEMON_PATH.`
 
-const getPermissionDeniedMsg = (p: string) =>
-  `Permission denied: ${p}\n\nRun: chmod +x "${p}"`
 
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Start extends Command {
