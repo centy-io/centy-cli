@@ -1,0 +1,36 @@
+# Support GetSupportedEditors RPC and provide editor selection
+
+## Overview
+
+The daemon now supports a `GetSupportedEditors` RPC that returns available workspace editors (VS Code, Terminal) with their availability status.
+
+## Requirements
+
+1. **Call GetSupportedEditors RPC** when user initiates workspace opening commands
+1. **Filter by availability** - only show editors that are available on the system
+1. **Provide selection UI** - allow user to choose between available editors
+1. **Update open commands** - modify `centy open` and related commands to:
+   - Accept `--editor` flag (vscode, terminal)
+   - If no flag provided, show interactive selection when multiple editors available
+   - Default to VS Code if available and no selection made
+
+## API Reference
+
+```protobuf
+rpc GetSupportedEditors(GetSupportedEditorsRequest) returns (GetSupportedEditorsResponse);
+
+message EditorInfo {
+  EditorType editor_type = 1;  // VSCODE or TERMINAL
+  string name = 2;             // "VS Code" or "Terminal"
+  string description = 3;      // Brief description
+  bool available = 4;          // Whether available on system
+}
+```
+
+## Acceptance Criteria
+
+- [ ] `centy open --editor vscode` opens in VS Code
+- [ ] `centy open --editor terminal` opens in Terminal
+- [ ] Interactive selection shown when no –editor flag and multiple available
+- [ ] Error message if selected editor is not available
+- [ ] Help text updated with new options
