@@ -15,7 +15,6 @@ import { createPromptInterface } from '../utils/create-prompt-interface.js'
 const getMissingDaemonMsg = (p: string) =>
   `Daemon not found at: ${p}\n\nFix:\n  1. centy install daemon\n  2. centy start\n  3. centy info\n\nOr set CENTY_DAEMON_PATH.`
 
-
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Start extends Command {
   // eslint-disable-next-line no-restricted-syntax
