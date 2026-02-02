@@ -8,4 +8,5 @@ export interface InstallOptions {
 export interface InstallResult {
   binaryPath: string
   version: string
+  newerPrereleaseAvailable?: string
 }

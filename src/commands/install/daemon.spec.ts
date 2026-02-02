@@ -64,4 +64,47 @@ describe('InstallDaemon command', () => {
       })
     )
   })
+
+  it('should display prerelease notification when newer version available', async () => {
+    mockInstallDaemon.mockResolvedValue({
+      binaryPath: '/Users/test/.centy/bin/centy-daemon',
+      version: '1.0.0',
+      newerPrereleaseAvailable: '1.1.0-alpha.1',
+    })
+
+    const { default: Command } = await import('./daemon.js')
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+      args: {},
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.join('\n')).toContain(
+      'A newer prerelease version is available: v1.1.0-alpha.1'
+    )
+    expect(cmd.logs.join('\n')).toContain(
+      "Run 'centy install daemon --prerelease' to upgrade"
+    )
+  })
+
+  it('should not display prerelease notification when no newer version', async () => {
+    mockInstallDaemon.mockResolvedValue({
+      binaryPath: '/Users/test/.centy/bin/centy-daemon',
+      version: '1.0.0',
+      newerPrereleaseAvailable: undefined,
+    })
+
+    const { default: Command } = await import('./daemon.js')
+
+    const cmd = createMockCommand(Command, {
+      flags: {},
+      args: {},
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.join('\n')).not.toContain('prerelease')
+  })
 })
