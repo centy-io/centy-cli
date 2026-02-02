@@ -37,6 +37,15 @@ export default class InstallDaemon extends Command {
       })
 
       this.log(`centy-daemon v${result.version} installed successfully`)
+
+      // Notify user if a newer prerelease is available
+      if (result.newerPrereleaseAvailable !== undefined) {
+        this.log('')
+        this.log(
+          `Note: A newer prerelease version is available: v${result.newerPrereleaseAvailable}`
+        )
+        this.log(`      Run 'centy install daemon --prerelease' to upgrade`)
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       this.error(`Failed to install centy-daemon: ${message}`)

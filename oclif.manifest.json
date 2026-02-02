@@ -704,42 +704,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "close", "org-issue.js"]
     },
-    "daemon:autostart": {
-      "aliases": [],
-      "args": {},
-      "description": "Configure daemon to start automatically on boot",
-      "examples": [
-        "<%= config.bin %> daemon autostart",
-        "<%= config.bin %> daemon autostart --enable",
-        "<%= config.bin %> daemon autostart --disable"
-      ],
-      "flags": {
-        "enable": {
-          "description": "Enable autostart on boot",
-          "exclusive": ["disable"],
-          "name": "enable",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "disable": {
-          "description": "Disable autostart on boot",
-          "exclusive": ["enable"],
-          "name": "disable",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "daemon:autostart",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "daemon", "autostart.js"]
-    },
     "create:doc": {
       "aliases": [],
       "args": {},
@@ -1527,6 +1491,42 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "delete", "user.js"]
     },
+    "daemon:autostart": {
+      "aliases": [],
+      "args": {},
+      "description": "Configure daemon to start automatically on boot",
+      "examples": [
+        "<%= config.bin %> daemon autostart",
+        "<%= config.bin %> daemon autostart --enable",
+        "<%= config.bin %> daemon autostart --disable"
+      ],
+      "flags": {
+        "enable": {
+          "description": "Enable autostart on boot",
+          "exclusive": ["disable"],
+          "name": "enable",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "disable": {
+          "description": "Disable autostart on boot",
+          "exclusive": ["enable"],
+          "name": "disable",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "daemon:autostart",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "daemon", "autostart.js"]
+    },
     "duplicate:doc": {
       "aliases": [],
       "args": {
@@ -1636,6 +1636,116 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "duplicate", "issue.js"]
+    },
+    "install:all": {
+      "aliases": [],
+      "args": {},
+      "description": "Download and install all centy binaries (daemon and tui)",
+      "examples": [
+        "<%= config.bin %> install all",
+        "<%= config.bin %> install all --prerelease"
+      ],
+      "flags": {
+        "version": {
+          "char": "v",
+          "description": "Specific version to install (default: latest)",
+          "name": "version",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "prerelease": {
+          "char": "p",
+          "description": "Include prerelease versions when fetching latest",
+          "name": "prerelease",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "install:all",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "install", "all.js"]
+    },
+    "install:daemon": {
+      "aliases": [],
+      "args": {},
+      "description": "Download and install the centy daemon binary",
+      "examples": [
+        "<%= config.bin %> install daemon",
+        "<%= config.bin %> install daemon --prerelease",
+        "<%= config.bin %> install daemon --version 0.2.0-alpha.9"
+      ],
+      "flags": {
+        "version": {
+          "char": "v",
+          "description": "Specific version to install (default: latest)",
+          "name": "version",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "prerelease": {
+          "char": "p",
+          "description": "Include prerelease versions when fetching latest",
+          "name": "prerelease",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "install:daemon",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "install", "daemon.js"]
+    },
+    "install:tui": {
+      "aliases": [],
+      "args": {},
+      "description": "Download and install the centy TUI binary",
+      "examples": [
+        "<%= config.bin %> install tui",
+        "<%= config.bin %> install tui --prerelease",
+        "<%= config.bin %> install tui --version 0.1.0"
+      ],
+      "flags": {
+        "version": {
+          "char": "v",
+          "description": "Specific version to install (default: latest)",
+          "name": "version",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "prerelease": {
+          "char": "p",
+          "description": "Include prerelease versions when fetching latest",
+          "name": "prerelease",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "install:tui",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "install", "tui.js"]
     },
     "get:asset": {
       "aliases": ["show:asset"],
@@ -2055,115 +2165,101 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "get", "user.js"]
     },
-    "install:all": {
+    "move:doc": {
       "aliases": [],
-      "args": {},
-      "description": "Download and install all centy binaries (daemon and tui)",
+      "args": {
+        "slug": {
+          "description": "Doc slug",
+          "name": "slug",
+          "required": true
+        }
+      },
+      "description": "Move a doc to a different project",
       "examples": [
-        "<%= config.bin %> install all",
-        "<%= config.bin %> install all --prerelease"
+        "<%= config.bin %> move doc my-doc --to /path/to/target/project",
+        "<%= config.bin %> move doc readme --to ../other-project --new-slug new-readme",
+        "<%= config.bin %> move doc api-guide --to ~/projects/target --project ./source"
       ],
       "flags": {
-        "version": {
-          "char": "v",
-          "description": "Specific version to install (default: latest)",
-          "name": "version",
+        "to": {
+          "char": "t",
+          "description": "Target project path",
+          "name": "to",
+          "required": true,
           "hasDynamicHelp": false,
           "multiple": false,
           "type": "option"
         },
-        "prerelease": {
-          "char": "p",
-          "description": "Include prerelease versions when fetching latest",
-          "name": "prerelease",
-          "allowNo": false,
-          "type": "boolean"
+        "new-slug": {
+          "char": "s",
+          "description": "New slug for the doc (if slug already exists in target)",
+          "name": "new-slug",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
         }
       },
       "hasDynamicHelp": false,
       "hiddenAliases": [],
-      "id": "install:all",
+      "id": "move:doc",
       "pluginAlias": "centy",
       "pluginName": "centy",
       "pluginType": "core",
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "install", "all.js"]
+      "relativePath": ["dist", "commands", "move", "doc.js"]
     },
-    "install:daemon": {
+    "move:issue": {
       "aliases": [],
-      "args": {},
-      "description": "Download and install the centy daemon binary",
+      "args": {
+        "id": {
+          "description": "Issue ID (UUID) or display number",
+          "name": "id",
+          "required": true
+        }
+      },
+      "description": "Move an issue to a different project",
       "examples": [
-        "<%= config.bin %> install daemon",
-        "<%= config.bin %> install daemon --prerelease",
-        "<%= config.bin %> install daemon --version 0.2.0-alpha.9"
+        "<%= config.bin %> move issue 1 --to /path/to/target/project",
+        "<%= config.bin %> move issue abc123-uuid --to ../other-project",
+        "<%= config.bin %> move issue 5 --to ~/projects/target --project ./source"
       ],
       "flags": {
-        "version": {
-          "char": "v",
-          "description": "Specific version to install (default: latest)",
-          "name": "version",
+        "to": {
+          "char": "t",
+          "description": "Target project path",
+          "name": "to",
+          "required": true,
           "hasDynamicHelp": false,
           "multiple": false,
           "type": "option"
         },
-        "prerelease": {
-          "char": "p",
-          "description": "Include prerelease versions when fetching latest",
-          "name": "prerelease",
-          "allowNo": false,
-          "type": "boolean"
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
         }
       },
       "hasDynamicHelp": false,
       "hiddenAliases": [],
-      "id": "install:daemon",
+      "id": "move:issue",
       "pluginAlias": "centy",
       "pluginName": "centy",
       "pluginType": "core",
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "install", "daemon.js"]
-    },
-    "install:tui": {
-      "aliases": [],
-      "args": {},
-      "description": "Download and install the centy TUI binary",
-      "examples": [
-        "<%= config.bin %> install tui",
-        "<%= config.bin %> install tui --prerelease",
-        "<%= config.bin %> install tui --version 0.1.0"
-      ],
-      "flags": {
-        "version": {
-          "char": "v",
-          "description": "Specific version to install (default: latest)",
-          "name": "version",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "prerelease": {
-          "char": "p",
-          "description": "Include prerelease versions when fetching latest",
-          "name": "prerelease",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "install:tui",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "install", "tui.js"]
+      "relativePath": ["dist", "commands", "move", "issue.js"]
     },
     "list:assets": {
       "aliases": ["asset:list"],
@@ -2754,52 +2850,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "project", "title.js"]
     },
-    "unassign:issue": {
-      "aliases": [],
-      "args": {
-        "issueId": {
-          "description": "Issue ID (UUID) or display number",
-          "name": "issueId",
-          "required": true
-        },
-        "userIds": {
-          "description": "User IDs to unassign (space-separated)",
-          "name": "userIds",
-          "required": true
-        }
-      },
-      "description": "Unassign users from an issue",
-      "examples": [
-        "<%= config.bin %> unassign issue 1 john-doe",
-        "<%= config.bin %> unassign issue abc123-uuid alice bob",
-        "<%= config.bin %> unassign issue 1 john-doe --project centy-daemon"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "unassign:issue",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": false,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "unassign", "issue.js"]
-    },
     "register:project": {
       "aliases": [],
       "args": {
@@ -2834,331 +2884,6 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "register", "project.js"]
-    },
-    "sync:users": {
-      "aliases": [],
-      "args": {},
-      "description": "Sync users from git history",
-      "examples": [
-        "<%= config.bin %> sync users",
-        "<%= config.bin %> sync users --dry-run",
-        "<%= config.bin %> sync users --json",
-        "<%= config.bin %> sync users --project centy-daemon"
-      ],
-      "flags": {
-        "dry-run": {
-          "char": "d",
-          "description": "Show what would be done without making changes",
-          "name": "dry-run",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "sync:users",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "sync", "users.js"]
-    },
-    "move:doc": {
-      "aliases": [],
-      "args": {
-        "slug": {
-          "description": "Doc slug",
-          "name": "slug",
-          "required": true
-        }
-      },
-      "description": "Move a doc to a different project",
-      "examples": [
-        "<%= config.bin %> move doc my-doc --to /path/to/target/project",
-        "<%= config.bin %> move doc readme --to ../other-project --new-slug new-readme",
-        "<%= config.bin %> move doc api-guide --to ~/projects/target --project ./source"
-      ],
-      "flags": {
-        "to": {
-          "char": "t",
-          "description": "Target project path",
-          "name": "to",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "new-slug": {
-          "char": "s",
-          "description": "New slug for the doc (if slug already exists in target)",
-          "name": "new-slug",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "move:doc",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "move", "doc.js"]
-    },
-    "move:issue": {
-      "aliases": [],
-      "args": {
-        "id": {
-          "description": "Issue ID (UUID) or display number",
-          "name": "id",
-          "required": true
-        }
-      },
-      "description": "Move an issue to a different project",
-      "examples": [
-        "<%= config.bin %> move issue 1 --to /path/to/target/project",
-        "<%= config.bin %> move issue abc123-uuid --to ../other-project",
-        "<%= config.bin %> move issue 5 --to ~/projects/target --project ./source"
-      ],
-      "flags": {
-        "to": {
-          "char": "t",
-          "description": "Target project path",
-          "name": "to",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "move:issue",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "move", "issue.js"]
-    },
-    "untrack:project": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Remove a project from tracking",
-      "examples": [
-        "<%= config.bin %> untrack project",
-        "<%= config.bin %> untrack project /path/to/project",
-        "<%= config.bin %> untrack project --force"
-      ],
-      "flags": {
-        "force": {
-          "char": "f",
-          "description": "Skip confirmation prompt",
-          "name": "force",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "untrack:project",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "untrack", "project.js"]
-    },
-    "workspace:cleanup": {
-      "aliases": [],
-      "args": {},
-      "description": "Cleanup all expired temporary workspaces",
-      "examples": ["<%= config.bin %> workspace cleanup"],
-      "flags": {},
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:cleanup",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "cleanup.js"]
-    },
-    "workspace:close": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the workspace to close",
-          "name": "path",
-          "required": true
-        }
-      },
-      "description": "Close and remove a temporary workspace",
-      "examples": [
-        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123",
-        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123 --force"
-      ],
-      "flags": {
-        "force": {
-          "char": "f",
-          "description": "Force removal even if VS Code may be open",
-          "name": "force",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:close",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "close.js"]
-    },
-    "workspace:list": {
-      "aliases": [],
-      "args": {},
-      "description": "List all temporary workspaces",
-      "examples": [
-        "<%= config.bin %> workspace list",
-        "<%= config.bin %> workspace list --include-expired",
-        "<%= config.bin %> workspace list --project ./my-project"
-      ],
-      "flags": {
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "include-expired": {
-          "description": "Include expired workspaces",
-          "name": "include-expired",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "all": {
-          "description": "Show workspaces from all projects",
-          "name": "all",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:list",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "list.js"]
-    },
-    "workspace:open": {
-      "aliases": [],
-      "args": {
-        "issueId": {
-          "description": "Issue ID or display number",
-          "name": "issueId",
-          "required": true
-        }
-      },
-      "description": "Open an issue in a temporary VS Code workspace",
-      "examples": [
-        "<%= config.bin %> workspace open 1",
-        "<%= config.bin %> workspace open 1 --action implement",
-        "<%= config.bin %> workspace open abc-123 --ttl 24"
-      ],
-      "flags": {
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "action": {
-          "char": "a",
-          "description": "Action for the AI agent",
-          "name": "action",
-          "default": "plan",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "options": ["plan", "implement"],
-          "type": "option"
-        },
-        "ttl": {
-          "description": "Workspace TTL in hours (default: 12)",
-          "name": "ttl",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "agent": {
-          "description": "Agent name to use (default: project default)",
-          "name": "agent",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:open",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "open.js"]
     },
     "update:doc": {
       "aliases": [],
@@ -3606,6 +3331,281 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "update", "user.js"]
+    },
+    "sync:users": {
+      "aliases": [],
+      "args": {},
+      "description": "Sync users from git history",
+      "examples": [
+        "<%= config.bin %> sync users",
+        "<%= config.bin %> sync users --dry-run",
+        "<%= config.bin %> sync users --json",
+        "<%= config.bin %> sync users --project centy-daemon"
+      ],
+      "flags": {
+        "dry-run": {
+          "char": "d",
+          "description": "Show what would be done without making changes",
+          "name": "dry-run",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "sync:users",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "sync", "users.js"]
+    },
+    "unassign:issue": {
+      "aliases": [],
+      "args": {
+        "issueId": {
+          "description": "Issue ID (UUID) or display number",
+          "name": "issueId",
+          "required": true
+        },
+        "userIds": {
+          "description": "User IDs to unassign (space-separated)",
+          "name": "userIds",
+          "required": true
+        }
+      },
+      "description": "Unassign users from an issue",
+      "examples": [
+        "<%= config.bin %> unassign issue 1 john-doe",
+        "<%= config.bin %> unassign issue abc123-uuid alice bob",
+        "<%= config.bin %> unassign issue 1 john-doe --project centy-daemon"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "unassign:issue",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": false,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "unassign", "issue.js"]
+    },
+    "untrack:project": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Remove a project from tracking",
+      "examples": [
+        "<%= config.bin %> untrack project",
+        "<%= config.bin %> untrack project /path/to/project",
+        "<%= config.bin %> untrack project --force"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Skip confirmation prompt",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "untrack:project",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "untrack", "project.js"]
+    },
+    "workspace:cleanup": {
+      "aliases": [],
+      "args": {},
+      "description": "Cleanup all expired temporary workspaces",
+      "examples": ["<%= config.bin %> workspace cleanup"],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:cleanup",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "cleanup.js"]
+    },
+    "workspace:close": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the workspace to close",
+          "name": "path",
+          "required": true
+        }
+      },
+      "description": "Close and remove a temporary workspace",
+      "examples": [
+        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123",
+        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123 --force"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Force removal even if VS Code may be open",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:close",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "close.js"]
+    },
+    "workspace:list": {
+      "aliases": [],
+      "args": {},
+      "description": "List all temporary workspaces",
+      "examples": [
+        "<%= config.bin %> workspace list",
+        "<%= config.bin %> workspace list --include-expired",
+        "<%= config.bin %> workspace list --project ./my-project"
+      ],
+      "flags": {
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "include-expired": {
+          "description": "Include expired workspaces",
+          "name": "include-expired",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "all": {
+          "description": "Show workspaces from all projects",
+          "name": "all",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:list",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "list.js"]
+    },
+    "workspace:open": {
+      "aliases": [],
+      "args": {
+        "issueId": {
+          "description": "Issue ID or display number",
+          "name": "issueId",
+          "required": true
+        }
+      },
+      "description": "Open an issue in a temporary VS Code workspace",
+      "examples": [
+        "<%= config.bin %> workspace open 1",
+        "<%= config.bin %> workspace open 1 --action implement",
+        "<%= config.bin %> workspace open abc-123 --ttl 24"
+      ],
+      "flags": {
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "action": {
+          "char": "a",
+          "description": "Action for the AI agent",
+          "name": "action",
+          "default": "plan",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": ["plan", "implement"],
+          "type": "option"
+        },
+        "ttl": {
+          "description": "Workspace TTL in hours (default: 12)",
+          "name": "ttl",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "agent": {
+          "description": "Agent name to use (default: project default)",
+          "name": "agent",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:open",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "open.js"]
     }
   },
   "version": "0.2.3"
