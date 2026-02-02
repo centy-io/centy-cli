@@ -8,7 +8,10 @@ export default class InstallAll extends Command {
     'Download and install all centy binaries (daemon and tui)'
 
   // eslint-disable-next-line no-restricted-syntax
-  static override examples = ['<%= config.bin %> install all']
+  static override examples = [
+    '<%= config.bin %> install all',
+    '<%= config.bin %> install all --prerelease',
+  ]
 
   // eslint-disable-next-line no-restricted-syntax
   static override flags = {

@@ -9,7 +9,8 @@ export default class InstallDaemon extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> install daemon',
-    '<%= config.bin %> install daemon --version 0.1.0',
+    '<%= config.bin %> install daemon --prerelease',
+    '<%= config.bin %> install daemon --version 0.2.0-alpha.9',
   ]
 
   // eslint-disable-next-line no-restricted-syntax

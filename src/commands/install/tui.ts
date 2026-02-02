@@ -9,6 +9,7 @@ export default class InstallTui extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> install tui',
+    '<%= config.bin %> install tui --prerelease',
     '<%= config.bin %> install tui --version 0.1.0',
   ]
 
