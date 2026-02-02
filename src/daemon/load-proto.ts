@@ -83,10 +83,6 @@ import type {
   SetProjectArchivedResponse,
   GetDaemonInfoRequest,
   DaemonInfo,
-  GetProjectVersionRequest,
-  ProjectVersionInfo,
-  UpdateVersionRequest,
-  UpdateVersionResponse,
   GetNextIssueNumberRequest,
   GetNextIssueNumberResponse,
   ShutdownRequest,
@@ -396,8 +392,6 @@ interface CentyDaemonClient {
 
   // Version operations
   getDaemonInfo: GrpcMethod<GetDaemonInfoRequest, DaemonInfo>
-  getProjectVersion: GrpcMethod<GetProjectVersionRequest, ProjectVersionInfo>
-  updateVersion: GrpcMethod<UpdateVersionRequest, UpdateVersionResponse>
 
   // Issue number
   getNextIssueNumber: GrpcMethod<

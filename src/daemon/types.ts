@@ -695,33 +695,8 @@ export interface GetDaemonInfoRequest {}
 
 export interface DaemonInfo {
   version: string
-  availableVersions: string[]
   binaryPath: string
   vscodeAvailable: boolean
-}
-
-export interface GetProjectVersionRequest {
-  projectPath: string
-}
-
-export interface ProjectVersionInfo {
-  projectVersion: string
-  daemonVersion: string
-  comparison: 'equal' | 'project_behind' | 'project_ahead'
-  degradedMode: boolean
-}
-
-export interface UpdateVersionRequest {
-  projectPath: string
-  targetVersion: string
-}
-
-export interface UpdateVersionResponse {
-  success: boolean
-  error: string
-  fromVersion: string
-  toVersion: string
-  migrationsApplied: string[]
 }
 
 // ============ Daemon Control Types ============
@@ -885,7 +860,6 @@ export interface GetFeatureStatusResponse {
   initialized: boolean
   hasCompact: boolean
   hasInstruction: boolean
-  migrationCount: number
   uncompactedCount: number
 }
 

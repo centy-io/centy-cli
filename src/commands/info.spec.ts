@@ -34,7 +34,6 @@ describe('Info command', () => {
     mockDaemonGetDaemonInfo.mockResolvedValue({
       version: '1.0.0',
       binaryPath: '/usr/local/bin/centyd',
-      availableVersions: ['1.0.0', '0.9.0'],
     })
 
     const cmd = createMockCommand(Command, {
@@ -50,7 +49,6 @@ describe('Info command', () => {
     expect(cmd.logs.some(log => log.includes('/usr/local/bin/centyd'))).toBe(
       true
     )
-    expect(cmd.logs.some(log => log.includes('Available versions'))).toBe(true)
   })
 
   it('should output JSON when json flag is set', async () => {
@@ -58,7 +56,6 @@ describe('Info command', () => {
     const mockInfo = {
       version: '1.0.0',
       binaryPath: '/usr/local/bin/centyd',
-      availableVersions: [],
     }
     mockDaemonGetDaemonInfo.mockResolvedValue(mockInfo)
 
@@ -118,7 +115,6 @@ describe('Info command', () => {
     const { default: Command } = await import('./info.js')
     mockDaemonGetDaemonInfo.mockResolvedValue({
       version: '1.0.0',
-      availableVersions: [],
     })
 
     const cmd = createMockCommand(Command, {

@@ -41,11 +41,6 @@ export default class Info extends Command {
       if (response.binaryPath) {
         this.log(`  Binary: ${response.binaryPath}`)
       }
-      if (response.availableVersions.length > 0) {
-        this.log(
-          `  Available versions: ${response.availableVersions.join(', ')}`
-        )
-      }
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error)
       if (msg.includes('UNAVAILABLE') || msg.includes('ECONNREFUSED')) {
