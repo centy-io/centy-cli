@@ -13,6 +13,8 @@ export async function installDaemon(
   options: InstallOptions
 ): Promise<InstallResult> {
   const version = options.version
+  const prerelease =
+    options.prerelease !== undefined ? options.prerelease : false
   const onProgress = options.onProgress
   const log = onProgress !== undefined ? onProgress : noop
 
@@ -23,7 +25,10 @@ export async function installDaemon(
   let targetVersion = version
   if (targetVersion === undefined) {
     log('Fetching latest release info...')
-    const latestRelease = await getLatestRelease('centy-io/centy-daemon')
+    const latestRelease = await getLatestRelease(
+      'centy-io/centy-daemon',
+      prerelease
+    )
     targetVersion = latestRelease.tag_name.replace(/^v/, '')
   }
 

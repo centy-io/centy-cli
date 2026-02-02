@@ -13,6 +13,8 @@ export async function installTui(
   options: InstallOptions
 ): Promise<InstallResult> {
   const version = options.version
+  const prerelease =
+    options.prerelease !== undefined ? options.prerelease : false
   const onProgress = options.onProgress
   const log = onProgress !== undefined ? onProgress : noop
 
@@ -21,7 +23,7 @@ export async function installTui(
 
   const versionSuffix = version !== undefined ? ` v${version}` : ''
   log(`Fetching release info for centy-tui${versionSuffix}...`)
-  const releaseInfo = await getTuiReleaseInfo(assetName, version)
+  const releaseInfo = await getTuiReleaseInfo(assetName, version, prerelease)
 
   log(`Downloading centy-tui v${releaseInfo.version}...`)
   const binaryName = getBinaryFileName('centy-tui')

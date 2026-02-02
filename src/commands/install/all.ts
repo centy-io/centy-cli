@@ -16,6 +16,11 @@ export default class InstallAll extends Command {
       char: 'v',
       description: 'Specific version to install (default: latest)',
     }),
+    prerelease: Flags.boolean({
+      char: 'p',
+      description: 'Include prerelease versions when fetching latest',
+      default: false,
+    }),
   }
 
   public async run(): Promise<void> {
@@ -24,6 +29,7 @@ export default class InstallAll extends Command {
     try {
       await installAll({
         version: flags.version,
+        prerelease: flags.prerelease,
         onProgress: message => this.log(message),
       })
 

@@ -18,6 +18,11 @@ export default class InstallTui extends Command {
       char: 'v',
       description: 'Specific version to install (default: latest)',
     }),
+    prerelease: Flags.boolean({
+      char: 'p',
+      description: 'Include prerelease versions when fetching latest',
+      default: false,
+    }),
   }
 
   public async run(): Promise<void> {
@@ -26,6 +31,7 @@ export default class InstallTui extends Command {
     try {
       const result = await installTui({
         version: flags.version,
+        prerelease: flags.prerelease,
         onProgress: message => this.log(message),
       })
 

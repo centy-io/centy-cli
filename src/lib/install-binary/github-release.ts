@@ -1,4 +1,4 @@
-/* eslint-disable ddd/require-spec-file, single-export/single-export, error/no-generic-error, error/require-custom-error, default/no-hardcoded-urls, no-restricted-syntax */
+/* eslint-disable ddd/require-spec-file, single-export/single-export, error/no-generic-error, error/require-custom-error, default/no-hardcoded-urls, no-restricted-syntax, default/no-default-params, max-lines */
 interface GitHubAsset {
   name: string
   browser_download_url: string
@@ -36,7 +36,19 @@ async function fetchJson<T>(url: string): Promise<T> {
   return response.json() as Promise<T>
 }
 
-export async function getLatestRelease(repo: string): Promise<GitHubRelease> {
+export async function getLatestRelease(
+  repo: string,
+  includePrerelease = false
+): Promise<GitHubRelease> {
+  if (includePrerelease) {
+    // Fetch all releases and return the first one (most recent)
+    const url = `${GITHUB_API_BASE}/repos/${repo}/releases?per_page=1`
+    const releases = await fetchJson<GitHubRelease[]>(url)
+    if (releases.length === 0) {
+      throw new Error(`No releases found for ${repo}`)
+    }
+    return releases[0]
+  }
   const url = `${GITHUB_API_BASE}/repos/${repo}/releases/latest`
   return fetchJson<GitHubRelease>(url)
 }
@@ -58,13 +70,14 @@ export function findAsset(
 
 export async function getTuiReleaseInfo(
   assetName: string,
-  version?: string
+  version?: string,
+  prerelease = false
 ): Promise<ReleaseInfo> {
   const repo = 'centy-io/centy-tui'
   const release =
     version !== undefined
       ? await getReleaseByTag(repo, `v${version}`)
-      : await getLatestRelease(repo)
+      : await getLatestRelease(repo, prerelease)
 
   const asset = findAsset(release, assetName)
   if (asset === undefined) {
@@ -84,13 +97,14 @@ export async function getTuiReleaseInfo(
 
 export async function getDaemonReleaseInfo(
   assetPattern: string,
-  version?: string
+  version?: string,
+  prerelease = false
 ): Promise<ReleaseInfo> {
   const repo = 'centy-io/centy-daemon'
   const release =
     version !== undefined
       ? await getReleaseByTag(repo, `v${version}`)
-      : await getLatestRelease(repo)
+      : await getLatestRelease(repo, prerelease)
 
   const releaseVersion = release.tag_name.replace(/^v/, '')
   const expectedAssetName = assetPattern.replace('{version}', releaseVersion)
