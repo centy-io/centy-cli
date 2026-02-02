@@ -94,31 +94,6 @@ describe('WorkspaceOpen command', () => {
     expect(cmd.errors).toContain('Issue not found')
   })
 
-  it('should use implement action when specified', async () => {
-    const { default: Command } = await import('./open.js')
-    mockDaemonOpenInTempVscode.mockResolvedValue({
-      success: true,
-      workspacePath: '/tmp/workspace',
-      issueDisplayNumber: 1,
-      issueTitle: 'Test',
-      expiresAt: '2024-12-15T00:00:00Z',
-      vscodeOpened: true,
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { action: 'implement' },
-      args: { issueId: '1' },
-    })
-
-    await cmd.run()
-
-    expect(mockDaemonOpenInTempVscode).toHaveBeenCalledWith(
-      expect.objectContaining({
-        action: 'IMPLEMENT',
-      })
-    )
-  })
-
   it('should warn when VS Code could not be opened', async () => {
     const { default: Command } = await import('./open.js')
     mockDaemonOpenInTempVscode.mockResolvedValue({

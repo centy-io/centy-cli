@@ -8,7 +8,6 @@ import GetIssue from './issue.js'
 const mockDaemonGetIssue = vi.fn()
 const mockDaemonGetIssueByDisplayNumber = vi.fn()
 const mockDaemonGetIssuesByUuid = vi.fn()
-const mockDaemonSpawnAgent = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
@@ -24,10 +23,6 @@ vi.mock('../../daemon/daemon-get-issue-by-display-number.js', () => ({
 vi.mock('../../daemon/daemon-get-issues-by-uuid.js', () => ({
   daemonGetIssuesByUuid: (...args: unknown[]) =>
     mockDaemonGetIssuesByUuid(...args),
-}))
-
-vi.mock('../../daemon/daemon-spawn-agent.js', () => ({
-  daemonSpawnAgent: (...args: unknown[]) => mockDaemonSpawnAgent(...args),
 }))
 
 vi.mock('../../utils/resolve-project-path.js', () => ({
@@ -206,91 +201,6 @@ describe('GetIssue command', () => {
     await cmd.run()
 
     expect(cmd.logs.some(log => log.includes('No issues found'))).toBe(true)
-  })
-
-  it('should spawn agent with --action plan', async () => {
-    const { default: Command } = await import('./issue.js')
-    mockDaemonSpawnAgent.mockResolvedValue({
-      success: true,
-      agentName: 'test-agent',
-      displayNumber: 1,
-      promptPreview: 'Plan for issue...',
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: false, global: false, action: 'plan' },
-      args: { id: '1' },
-    })
-
-    await cmd.run()
-
-    expect(mockDaemonSpawnAgent).toHaveBeenCalledWith({
-      projectPath: '/test/project',
-      issueId: '1',
-      action: 1, // 1 = plan
-    })
-    expect(cmd.logs.some(log => log.includes('Agent spawned'))).toBe(true)
-  })
-
-  it('should spawn agent with --action implement', async () => {
-    const { default: Command } = await import('./issue.js')
-    mockDaemonSpawnAgent.mockResolvedValue({
-      success: true,
-      agentName: 'test-agent',
-      displayNumber: 1,
-      promptPreview: 'Implement issue...',
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: false, global: false, action: 'implement' },
-      args: { id: '1' },
-    })
-
-    await cmd.run()
-
-    expect(mockDaemonSpawnAgent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        action: 2, // 2 = implement
-      })
-    )
-  })
-
-  it('should handle agent spawn failure', async () => {
-    const { default: Command } = await import('./issue.js')
-    mockDaemonSpawnAgent.mockResolvedValue({
-      success: false,
-      error: 'Failed to spawn agent',
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: false, global: false, action: 'plan' },
-      args: { id: '1' },
-    })
-
-    const { error } = await runCommandSafely(cmd)
-
-    expect(error).toBeDefined()
-    expect(cmd.errors).toContain('Failed to spawn agent')
-  })
-
-  it('should output JSON for agent spawn', async () => {
-    const { default: Command } = await import('./issue.js')
-    const response = {
-      success: true,
-      agentName: 'test-agent',
-      displayNumber: 1,
-      promptPreview: 'Plan...',
-    }
-    mockDaemonSpawnAgent.mockResolvedValue(response)
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: true, global: false, action: 'plan' },
-      args: { id: '1' },
-    })
-
-    await cmd.run()
-
-    expect(cmd.logs[0]).toBe(JSON.stringify(response, null, 2))
   })
 
   it('should handle NotInitializedError', async () => {

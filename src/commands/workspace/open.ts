@@ -20,7 +20,6 @@ export default class WorkspaceOpen extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> workspace open 1',
-    '<%= config.bin %> workspace open 1 --action implement',
     '<%= config.bin %> workspace open abc-123 --ttl 24',
   ]
 
@@ -35,12 +34,6 @@ export default class WorkspaceOpen extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     project: projectFlag,
-    action: Flags.string({
-      char: 'a',
-      description: 'Action for the AI agent',
-      options: ['plan', 'implement'],
-      default: 'plan',
-    }),
     ttl: Flags.integer({
       description: 'Workspace TTL in hours (default: 12)',
     }),
@@ -65,8 +58,7 @@ export default class WorkspaceOpen extends Command {
     const response = await daemonOpenInTempVscode({
       projectPath: cwd,
       issueId: args.issueId,
-
-      action: flags.action === 'implement' ? 'IMPLEMENT' : 'PLAN',
+      action: 'PLAN',
       agentName: flags.agent,
       ttlHours: flags.ttl,
     })
