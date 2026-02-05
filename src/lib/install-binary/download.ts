@@ -64,7 +64,12 @@ export async function downloadFile(
       const { done, value } = await reader.read()
       if (done) break
 
-      fileStream.write(value)
+      const canContinue = fileStream.write(value)
+      if (!canContinue) {
+        await new Promise<void>(resolve => {
+          fileStream.once('drain', resolve)
+        })
+      }
       downloaded += value.length
 
       if (onProgress !== undefined && total > 0) {
@@ -76,7 +81,11 @@ export async function downloadFile(
       }
     }
   } finally {
-    fileStream.end()
+    await new Promise<void>((resolve, reject) => {
+      fileStream.on('finish', resolve)
+      fileStream.on('error', reject)
+      fileStream.end()
+    })
   }
 }
 
