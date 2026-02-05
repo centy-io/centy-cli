@@ -1,4 +1,4 @@
-/* eslint-disable ddd/require-spec-file, single-export/single-export, error/no-generic-error, error/require-custom-error, max-lines, no-restricted-syntax, @typescript-eslint/no-require-imports */
+/* eslint-disable ddd/require-spec-file, single-export/single-export, error/no-generic-error, error/require-custom-error, max-lines */
 import {
   createWriteStream,
   existsSync,
@@ -6,6 +6,8 @@ import {
   chmodSync,
   copyFileSync,
   rmSync,
+  readdirSync,
+  statSync,
 } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
 import { tmpdir } from 'node:os'
@@ -215,14 +217,14 @@ function findBinaryInDir(dir: string, binaryName: string): string {
 
 function findFilesRecursive(dir: string, fileName: string): string[] {
   const results: string[] = []
-  const { readdirSync, statSync } =
-    require('node:fs') as typeof import('node:fs')
 
   try {
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     const entries = readdirSync(dir)
     for (const entry of entries) {
       const fullPath = join(dir, entry)
 
+      // eslint-disable-next-line security/detect-non-literal-fs-filename
       const stat = statSync(fullPath)
       if (stat.isDirectory()) {
         results.push(...findFilesRecursive(fullPath, fileName))
