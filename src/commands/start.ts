@@ -12,8 +12,10 @@ import { getPermissionDeniedMsg } from '../utils/get-permission-denied-msg.js'
 import { closePromptInterface } from '../utils/close-prompt-interface.js'
 import { createPromptInterface } from '../utils/create-prompt-interface.js'
 
+const INSTALL_CMD = `curl -fsSL ${getInstallScriptUrl()} | sh`
+
 const getMissingDaemonMsg = (p: string) =>
-  `Daemon not found at: ${p}\n\nFix:\n  1. centy install daemon\n  2. centy start\n  3. centy info\n\nOr set CENTY_DAEMON_PATH.`
+  `Daemon not found at: ${p}\n\nFix:\n  1. Install using: ${INSTALL_CMD}\n  2. centy start\n  3. centy info\n\nOr set CENTY_DAEMON_PATH.`
 
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Start extends Command {
@@ -83,7 +85,9 @@ export default class Start extends Command {
       // Check if running in interactive mode (TTY)
       if (!process.stdin.isTTY) {
         this.log('Daemon not found and running in non-interactive mode.')
-        this.log('Use --yes flag to auto-install, or run: centy install daemon')
+        this.log(
+          `Use --yes flag to auto-install, or install using: ${INSTALL_CMD}`
+        )
         return false
       }
 
@@ -106,7 +110,7 @@ export default class Start extends Command {
     this.log('\nInstalling daemon...\n')
 
     try {
-      execSync(`curl -fsSL ${getInstallScriptUrl()} | sh`, {
+      execSync(INSTALL_CMD, {
         stdio: 'inherit',
         env: { ...process.env, BINARIES: 'centy-daemon' },
       })

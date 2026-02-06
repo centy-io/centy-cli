@@ -6,8 +6,6 @@ const EXCLUDED_COMMANDS = [
   'shutdown',
   'restart',
   'start',
-  'install',
-  'install:daemon',
   'daemon',
   'cockpit',
 ]
