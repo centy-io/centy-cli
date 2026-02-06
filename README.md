@@ -4,9 +4,28 @@ CLI for managing project issues and docs via code in the `.centy` folder. Local-
 
 ## Installation
 
+### Install via Shell Script (recommended)
+
+Install the daemon and CLI in one go:
+
 ```bash
-# Using pnpm (recommended)
+curl -fsSL https://github.com/centy-io/installer/releases/latest/download/install.sh | sh
+```
+
+Then install the CLI:
+
+```bash
 pnpm add -g centy
+```
+
+### Install via pnpm
+
+```bash
+# Install the CLI globally
+pnpm add -g centy
+
+# Install the daemon
+centy install daemon
 
 # Or run directly without installing
 pnpm dlx centy
@@ -14,10 +33,13 @@ pnpm dlx centy
 
 ### Install the Daemon
 
-The CLI requires the centy daemon to be running. Install it with:
+The CLI requires the centy daemon to be running. You can install it with either method:
 
 ```bash
-# Install latest version
+# Via shell script (no Node.js required)
+curl -fsSL https://github.com/centy-io/installer/releases/latest/download/install.sh | sh
+
+# Via the CLI
 centy install daemon
 
 # Install specific version

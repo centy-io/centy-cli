@@ -1,6 +1,6 @@
 /* eslint-disable default/no-hardcoded-urls */
 const DEFAULT_INSTALL_SCRIPT_URL =
-  'https://github.com/centy-io/centy-installer/releases/latest/download/install.sh'
+  'https://github.com/centy-io/installer/releases/latest/download/install.sh'
 /* eslint-enable default/no-hardcoded-urls */
 
 export function getInstallScriptUrl(): string {

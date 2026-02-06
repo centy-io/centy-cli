@@ -11,13 +11,13 @@ Complete reference for all Centy CLI commands.
 ## Installation
 
 ```bash
-# Using npm
-npm install -g centy
+# Install the daemon via shell script
+curl -fsSL https://github.com/centy-io/installer/releases/latest/download/install.sh | sh
 
-# Using pnpm
+# Install the CLI (pnpm recommended)
 pnpm add -g centy
 
-# Run directly
+# Or run directly without installing
 pnpm dlx centy
 ```
 

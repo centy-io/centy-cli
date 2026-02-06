@@ -15,7 +15,11 @@ Centy is a CLI tool for managing project issues and documentation as code. All d
 ## Installation
 
 ```bash
-npm install -g centy
+# Install the daemon
+curl -fsSL https://github.com/centy-io/installer/releases/latest/download/install.sh | sh
+
+# Install the CLI
+pnpm add -g centy
 ```
 
 ## Quick Start

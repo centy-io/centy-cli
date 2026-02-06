@@ -16,7 +16,7 @@ describe('getInstallScriptUrl', () => {
     delete process.env['CENTY_INSTALL_SCRIPT_URL']
     const { getInstallScriptUrl } = await import('./install-script-url.js')
 
-    expect(getInstallScriptUrl()).toContain('centy-installer')
+    expect(getInstallScriptUrl()).toContain('centy-io/installer')
     expect(getInstallScriptUrl()).toContain('install.sh')
   })
 
