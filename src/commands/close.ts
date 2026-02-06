@@ -4,10 +4,8 @@
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetIssueByDisplayNumber } from '../daemon/daemon-get-issue-by-display-number.js'
-import { daemonGetOrgIssueByDisplayNumber } from '../daemon/daemon-get-org-issue-by-display-number.js'
 import { daemonGetPrByDisplayNumber } from '../daemon/daemon-get-pr-by-display-number.js'
 import { daemonUpdateIssue } from '../daemon/daemon-update-issue.js'
-import { daemonUpdateOrgIssue } from '../daemon/daemon-update-org-issue.js'
 import { daemonUpdatePr } from '../daemon/daemon-update-pr.js'
 import { projectFlag } from '../flags/project-flag.js'
 import {
@@ -16,7 +14,7 @@ import {
 } from '../utils/ensure-initialized.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
 
-type EntityType = 'issue' | 'pr' | 'org-issue'
+type EntityType = 'issue' | 'pr'
 
 interface FoundEntity {
   type: EntityType
@@ -38,8 +36,7 @@ export default class Close extends Command {
   }
 
   // eslint-disable-next-line no-restricted-syntax
-  static override description =
-    'Close an issue, PR, or org-issue by display number'
+  static override description = 'Close an issue or PR by display number'
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
@@ -47,7 +44,6 @@ export default class Close extends Command {
     '<%= config.bin %> close #1',
     '<%= config.bin %> close 1 --type issue',
     '<%= config.bin %> close 1 --type pr',
-    '<%= config.bin %> close 1 --org my-org',
     '<%= config.bin %> close 1 --project centy-daemon',
   ]
 
@@ -55,12 +51,8 @@ export default class Close extends Command {
   static override flags = {
     type: Flags.string({
       char: 't',
-      description: 'Entity type (issue, pr, org-issue)',
-      options: ['issue', 'pr', 'org-issue'],
-    }),
-    org: Flags.string({
-      char: 'o',
-      description: 'Organization slug (for org-issues)',
+      description: 'Entity type (issue, pr)',
+      options: ['issue', 'pr'],
     }),
     project: projectFlag,
     json: Flags.boolean({
@@ -69,7 +61,6 @@ export default class Close extends Command {
     }),
   }
 
-  // eslint-disable-next-line max-lines-per-function
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Close)
 
@@ -81,17 +72,6 @@ export default class Close extends Command {
       )
     }
     const displayNumber = Number.parseInt(displayNumberMatch[1], 10)
-
-    // Handle org-issue case
-    if (flags.org !== undefined || flags.type === 'org-issue') {
-      if (flags.org === undefined) {
-        this.error(
-          'Organization slug is required for org-issues. Use --org <slug>'
-        )
-      }
-      await this.closeOrgIssue(flags.org, displayNumber, flags.json)
-      return
-    }
 
     // Resolve project path for local entities
     const cwd = await resolveProjectPath(flags.project)
@@ -223,35 +203,5 @@ export default class Close extends Command {
     }
 
     this.log(`Closed PR #${response.pr.displayNumber}`)
-  }
-
-  private async closeOrgIssue(
-    orgSlug: string,
-    displayNumber: number,
-    jsonOutput: boolean
-  ): Promise<void> {
-    const issue = await daemonGetOrgIssueByDisplayNumber({
-      orgSlug,
-      displayNumber,
-    })
-
-    const response = await daemonUpdateOrgIssue({
-      orgSlug,
-      issueId: issue.id,
-      status: 'closed',
-    })
-
-    if (!response.success) {
-      this.error(response.error)
-    }
-
-    if (jsonOutput) {
-      this.log(
-        JSON.stringify({ type: 'org-issue', ...response.issue }, null, 2)
-      )
-      return
-    }
-
-    this.log(`Closed organization issue #${response.issue.displayNumber}`)
   }
 }

@@ -1,10 +1,15 @@
 import type { GetPrRequest, PullRequest } from './types.js'
 import { getDaemonClient, callWithDeadline } from './load-proto.js'
+import { DaemonResponseError } from './daemon-response-error.js'
 
 /**
  * Get a PR by ID via daemon
  */
-export function daemonGetPr(request: GetPrRequest): Promise<PullRequest> {
+export async function daemonGetPr(request: GetPrRequest): Promise<PullRequest> {
   const client = getDaemonClient()
-  return callWithDeadline(client.getPr.bind(client), request)
+  const response = await callWithDeadline(client.getPr.bind(client), request)
+  if (!response.pr) {
+    throw new DaemonResponseError(response.error || 'PR not found')
+  }
+  return response.pr
 }

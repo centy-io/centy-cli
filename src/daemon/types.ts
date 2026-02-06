@@ -1,13 +1,12 @@
 /* eslint-disable max-lines , single-export/single-export */
 /**
- * Types for daemon gRPC communication
+ * Types for daemon gRPC communication (centy.v1)
  */
 
 export interface InitRequest {
   projectPath: string
   force: boolean
   decisions?: ReconciliationDecisions
-  config?: Config
 }
 
 export interface InitResponse {
@@ -18,6 +17,7 @@ export interface InitResponse {
   reset: string[]
   skipped: string[]
   manifest?: Manifest
+  orgInference?: OrgInferenceResult
 }
 
 export interface GetReconciliationPlanRequest {
@@ -36,7 +36,6 @@ export interface ReconciliationPlan {
 export interface ExecuteReconciliationRequest {
   projectPath: string
   decisions?: ReconciliationDecisions
-  config?: Config
 }
 
 export interface ReconciliationDecisions {
@@ -78,6 +77,7 @@ export interface CreateIssueRequest {
   customFields: Record<string, string>
   template?: string
   draft?: boolean
+  isOrgIssue?: boolean
 }
 
 export interface CreateIssueResponse {
@@ -88,6 +88,8 @@ export interface CreateIssueResponse {
   issueNumber: string
   createdFiles: string[]
   manifest?: Manifest
+  orgDisplayNumber?: number
+  syncResults?: OrgDocSyncResult[]
 }
 
 export interface GetNextIssueNumberRequest {
@@ -104,22 +106,43 @@ export interface GetManifestRequest {
   projectPath: string
 }
 
+export interface GetManifestResponse {
+  success: boolean
+  error: string
+  manifest?: Manifest
+}
+
 // ============ Config Types ============
 
 export interface GetConfigRequest {
   projectPath: string
 }
 
+export interface GetConfigResponse {
+  success: boolean
+  error: string
+  config?: Config
+}
+
 export interface LlmConfig {
   autoCloseOnComplete: boolean
-  updateStatusOnStart: boolean
+  updateStatusOnStart?: boolean
   allowDirectEdits: boolean
+  defaultWorkspaceMode?: string
 }
 
 export interface LinkTypeDefinition {
   name: string
   inverse: string
   description: string
+}
+
+export interface HookDefinition {
+  pattern: string
+  command: string
+  runAsync: boolean
+  timeout: number
+  enabled: boolean
 }
 
 export interface Config {
@@ -133,6 +156,8 @@ export interface Config {
   priorityColors: Record<string, string>
   llm: LlmConfig
   customLinkTypes: LinkTypeDefinition[]
+  defaultEditor: string
+  hooks: HookDefinition[]
 }
 
 export interface UpdateConfigRequest {
@@ -173,10 +198,11 @@ export interface IssueMetadata {
   updatedAt: string
   customFields: Record<string, string>
   priorityLabel: string
-  compacted: boolean
-  compactedAt: string
-  assignees: string[]
   draft: boolean
+  deletedAt: string
+  isOrgIssue: boolean
+  orgSlug: string
+  orgDisplayNumber: number
 }
 
 export interface GetIssueRequest {
@@ -189,6 +215,12 @@ export interface GetIssueByDisplayNumberRequest {
   displayNumber: number
 }
 
+export interface GetIssueResponse {
+  success: boolean
+  error: string
+  issue?: Issue
+}
+
 // ============ Global Issue Search Types ============
 
 export interface GetIssuesByUuidRequest {
@@ -199,6 +231,7 @@ export interface IssueWithProject {
   issue: Issue
   projectPath: string
   projectName: string
+  displayPath: string
 }
 
 export interface GetIssuesByUuidResponse {
@@ -212,11 +245,37 @@ export interface ListIssuesRequest {
   status?: string
   priority?: number
   draft?: boolean
+  includeDeleted?: boolean
 }
 
 export interface ListIssuesResponse {
   issues: Issue[]
   totalCount: number
+}
+
+// ============ Advanced Search Types ============
+
+export interface AdvancedSearchRequest {
+  query: string
+  sortBy?: string
+  sortDescending?: boolean
+  multiProject?: boolean
+  projectPath?: string
+}
+
+export interface SearchResultIssue {
+  issue: Issue
+  projectPath: string
+  projectName: string
+  displayPath: string
+}
+
+export interface AdvancedSearchResponse {
+  success: boolean
+  error: string
+  results: SearchResultIssue[]
+  totalCount: number
+  parsedQuery: string
 }
 
 export interface UpdateIssueRequest {
@@ -235,6 +294,7 @@ export interface UpdateIssueResponse {
   error: string
   issue: Issue
   manifest?: Manifest
+  syncResults?: OrgDocSyncResult[]
 }
 
 export interface DeleteIssueRequest {
@@ -245,6 +305,32 @@ export interface DeleteIssueRequest {
 export interface DeleteIssueResponse {
   success: boolean
   error: string
+  manifest?: Manifest
+}
+
+// ============ Soft Delete/Restore Issue Types ============
+
+export interface SoftDeleteIssueRequest {
+  projectPath: string
+  issueId: string
+}
+
+export interface SoftDeleteIssueResponse {
+  success: boolean
+  error: string
+  issue?: Issue
+  manifest?: Manifest
+}
+
+export interface RestoreIssueRequest {
+  projectPath: string
+  issueId: string
+}
+
+export interface RestoreIssueResponse {
+  success: boolean
+  error: string
+  issue?: Issue
   manifest?: Manifest
 }
 
@@ -292,6 +378,9 @@ export interface Doc {
 export interface DocMetadata {
   createdAt: string
   updatedAt: string
+  deletedAt: string
+  isOrgDoc: boolean
+  orgSlug: string
 }
 
 export interface CreateDocRequest {
@@ -300,6 +389,13 @@ export interface CreateDocRequest {
   content: string
   slug?: string
   template?: string
+  isOrgDoc?: boolean
+}
+
+export interface OrgDocSyncResult {
+  projectPath: string
+  success: boolean
+  error: string
 }
 
 export interface CreateDocResponse {
@@ -308,11 +404,18 @@ export interface CreateDocResponse {
   slug: string
   createdFile: string
   manifest?: Manifest
+  syncResults?: OrgDocSyncResult[]
 }
 
 export interface GetDocRequest {
   projectPath: string
   slug: string
+}
+
+export interface GetDocResponse {
+  success: boolean
+  error: string
+  doc?: Doc
 }
 
 // ============ Global Doc Search Types ============
@@ -325,6 +428,7 @@ export interface DocWithProject {
   doc: Doc
   projectPath: string
   projectName: string
+  displayPath: string
 }
 
 export interface GetDocsBySlugResponse {
@@ -335,6 +439,7 @@ export interface GetDocsBySlugResponse {
 
 export interface ListDocsRequest {
   projectPath: string
+  includeDeleted?: boolean
 }
 
 export interface ListDocsResponse {
@@ -355,6 +460,7 @@ export interface UpdateDocResponse {
   error: string
   doc: Doc
   manifest?: Manifest
+  syncResults?: OrgDocSyncResult[]
 }
 
 export interface DeleteDocRequest {
@@ -365,6 +471,32 @@ export interface DeleteDocRequest {
 export interface DeleteDocResponse {
   success: boolean
   error: string
+  manifest?: Manifest
+}
+
+// ============ Soft Delete/Restore Doc Types ============
+
+export interface SoftDeleteDocRequest {
+  projectPath: string
+  slug: string
+}
+
+export interface SoftDeleteDocResponse {
+  success: boolean
+  error: string
+  doc?: Doc
+  manifest?: Manifest
+}
+
+export interface RestoreDocRequest {
+  projectPath: string
+  slug: string
+}
+
+export interface RestoreDocResponse {
+  success: boolean
+  error: string
+  doc?: Doc
   manifest?: Manifest
 }
 
@@ -416,7 +548,6 @@ export interface Asset {
 export interface AddAssetRequest {
   projectPath: string
   issueId?: string
-  prId?: string
   filename: string
   data: Buffer
   isShared?: boolean
@@ -474,42 +605,6 @@ export interface ListSharedAssetsRequest {
   projectPath: string
 }
 
-// ============ Plan Types ============
-
-export interface GetPlanRequest {
-  projectPath: string
-  issueId: string
-}
-
-export interface GetPlanResponse {
-  exists: boolean
-  content: string
-  updatedAt: string
-}
-
-export interface UpdatePlanRequest {
-  projectPath: string
-  issueId: string
-  content: string
-}
-
-export interface UpdatePlanResponse {
-  success: boolean
-  error: string
-  manifest?: Manifest
-}
-
-export interface DeletePlanRequest {
-  projectPath: string
-  issueId: string
-}
-
-export interface DeletePlanResponse {
-  success: boolean
-  error: string
-  manifest?: Manifest
-}
-
 // ============ Project Registry Types ============
 
 export interface ProjectInfo {
@@ -522,6 +617,7 @@ export interface ProjectInfo {
   name: string
   isFavorite: boolean
   isArchived: boolean
+  displayPath: string
   organizationSlug: string
   organizationName: string
   userTitle: string
@@ -550,6 +646,7 @@ export interface RegisterProjectResponse {
   success: boolean
   error: string
   project: ProjectInfo
+  orgInference?: OrgInferenceResult
 }
 
 export interface UntrackProjectRequest {
@@ -634,6 +731,15 @@ export interface Organization {
   createdAt: string
   updatedAt: string
   projectCount: number
+}
+
+export interface OrgInferenceResult {
+  inferredOrgSlug: string
+  inferredOrgName: string
+  orgCreated: boolean
+  existingOrgSlug: string
+  hasMismatch: boolean
+  message: string
 }
 
 export interface CreateOrganizationRequest {
@@ -727,7 +833,6 @@ export interface CreatePrRequest {
   description: string
   sourceBranch?: string
   targetBranch?: string
-  linkedIssues: string[]
   reviewers: string[]
   priority: number // 1 = highest priority, 0 = use default
   status: string
@@ -766,7 +871,6 @@ export interface PrMetadata {
   status: string
   sourceBranch: string
   targetBranch: string
-  linkedIssues: string[]
   reviewers: string[]
   priority: number
   priorityLabel: string
@@ -775,6 +879,7 @@ export interface PrMetadata {
   mergedAt: string
   closedAt: string
   customFields: Record<string, string>
+  deletedAt: string
 }
 
 export interface GetPrRequest {
@@ -787,6 +892,12 @@ export interface GetPrByDisplayNumberRequest {
   displayNumber: number
 }
 
+export interface GetPrResponse {
+  success: boolean
+  error: string
+  pr?: PullRequest
+}
+
 // ============ Global PR Search Types ============
 
 export interface GetPrsByUuidRequest {
@@ -797,6 +908,7 @@ export interface PrWithProject {
   pr: PullRequest
   projectPath: string
   projectName: string
+  displayPath: string
 }
 
 export interface GetPrsByUuidResponse {
@@ -811,6 +923,7 @@ export interface ListPrsRequest {
   sourceBranch?: string
   targetBranch?: string
   priority?: number
+  includeDeleted?: boolean
 }
 
 export interface ListPrsResponse {
@@ -826,7 +939,6 @@ export interface UpdatePrRequest {
   status?: string
   sourceBranch?: string
   targetBranch?: string
-  linkedIssues?: string[]
   reviewers?: string[]
   priority?: number
   customFields?: Record<string, string>
@@ -850,7 +962,475 @@ export interface DeletePrResponse {
   manifest?: Manifest
 }
 
-// ============ Features Types ============
+// ============ Soft Delete/Restore PR Types ============
+
+export interface SoftDeletePrRequest {
+  projectPath: string
+  prId: string
+}
+
+export interface SoftDeletePrResponse {
+  success: boolean
+  error: string
+  pr?: PullRequest
+  manifest?: Manifest
+}
+
+export interface RestorePrRequest {
+  projectPath: string
+  prId: string
+}
+
+export interface RestorePrResponse {
+  success: boolean
+  error: string
+  pr?: PullRequest
+  manifest?: Manifest
+}
+
+// ============ Temp Workspace Types ============
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface GetSupportedEditorsRequest {}
+
+export interface EditorInfo {
+  editorType: string
+  name: string
+  description: string
+  available: boolean
+  editorId: string
+  terminalWrapper: boolean
+}
+
+export interface GetSupportedEditorsResponse {
+  editors: EditorInfo[]
+}
+
+export interface OpenInTempWorkspaceWithEditorRequest {
+  projectPath: string
+  issueId: string
+  action: string
+  agentName?: string
+  ttlHours?: number
+  editorId?: string
+}
+
+export interface OpenStandaloneWorkspaceWithEditorRequest {
+  projectPath: string
+  name?: string
+  description?: string
+  ttlHours?: number
+  agentName?: string
+  editorId?: string
+}
+
+export interface OpenInTempWorkspaceRequest {
+  projectPath: string
+  issueId: string
+  action: string
+  agentName?: string
+  ttlHours?: number
+}
+
+export interface OpenInTempWorkspaceResponse {
+  success: boolean
+  error: string
+  workspacePath: string
+  issueId: string
+  displayNumber: number
+  expiresAt: string
+  editorOpened: boolean
+  requiresStatusConfig: boolean
+  workspaceReused: boolean
+  originalCreatedAt: string
+}
+
+export interface OpenAgentInTerminalRequest {
+  projectPath: string
+  issueId: string
+  agentName?: string
+  workspaceMode?: string
+  ttlHours?: number
+}
+
+export interface OpenAgentInTerminalResponse {
+  success: boolean
+  error: string
+  workingDirectory: string
+  issueId: string
+  displayNumber: number
+  agentCommand: string
+  terminalOpened: boolean
+  expiresAt: string
+  requiresStatusConfig: boolean
+}
+
+export interface OpenStandaloneWorkspaceRequest {
+  projectPath: string
+  name?: string
+  description?: string
+  ttlHours?: number
+  agentName?: string
+}
+
+export interface OpenStandaloneWorkspaceResponse {
+  success: boolean
+  error: string
+  workspacePath: string
+  workspaceId: string
+  name: string
+  expiresAt: string
+  editorOpened: boolean
+  workspaceReused: boolean
+  originalCreatedAt: string
+}
+
+export interface TempWorkspace {
+  workspacePath: string
+  sourceProjectPath: string
+  issueId: string
+  issueDisplayNumber: number
+  issueTitle: string
+  agentName: string
+  action: string
+  createdAt: string
+  expiresAt: string
+  isStandalone: boolean
+  workspaceId: string
+  workspaceName: string
+  workspaceDescription: string
+}
+
+export interface ListTempWorkspacesRequest {
+  includeExpired?: boolean
+  sourceProjectPath?: string
+}
+
+export interface ListTempWorkspacesResponse {
+  workspaces: TempWorkspace[]
+  totalCount: number
+  expiredCount: number
+}
+
+export interface CloseTempWorkspaceRequest {
+  workspacePath: string
+  force?: boolean
+}
+
+export interface CloseTempWorkspaceResponse {
+  success: boolean
+  error: string
+  worktreeRemoved: boolean
+  directoryRemoved: boolean
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface CleanupExpiredWorkspacesRequest {}
+
+export interface CleanupExpiredWorkspacesResponse {
+  success: boolean
+  error: string
+  cleanedCount: number
+  cleanedPaths: string[]
+  failedPaths: string[]
+}
+
+// ============ Link Types ============
+
+export interface Link {
+  targetId: string
+  targetType: string
+  linkType: string
+  createdAt: string
+}
+
+export interface CreateLinkRequest {
+  projectPath: string
+  sourceId: string
+  sourceType: string
+  targetId: string
+  targetType: string
+  linkType: string
+}
+
+export interface CreateLinkResponse {
+  success: boolean
+  error: string
+  createdLink?: Link
+  inverseLink?: Link
+}
+
+export interface DeleteLinkRequest {
+  projectPath: string
+  sourceId: string
+  sourceType: string
+  targetId: string
+  targetType: string
+  linkType?: string
+}
+
+export interface DeleteLinkResponse {
+  success: boolean
+  error: string
+  deletedCount: number
+}
+
+export interface ListLinksRequest {
+  projectPath: string
+  entityId: string
+  entityType: string
+}
+
+export interface ListLinksResponse {
+  links: Link[]
+  totalCount: number
+}
+
+export interface GetAvailableLinkTypesRequest {
+  projectPath: string
+}
+
+export interface LinkTypeInfo {
+  name: string
+  inverse: string
+  description: string
+  isBuiltin: boolean
+}
+
+export interface GetAvailableLinkTypesResponse {
+  linkTypes: LinkTypeInfo[]
+}
+
+// ============ User Types ============
+
+export interface User {
+  id: string
+  name: string
+  email: string
+  gitUsernames: string[]
+  createdAt: string
+  updatedAt: string
+  deletedAt: string
+}
+
+export interface CreateUserRequest {
+  projectPath: string
+  id: string
+  name: string
+  email?: string
+  gitUsernames?: string[]
+}
+
+export interface CreateUserResponse {
+  success: boolean
+  error: string
+  user?: User
+  manifest?: Manifest
+}
+
+export interface GetUserRequest {
+  projectPath: string
+  userId: string
+}
+
+export interface GetUserResponse {
+  success: boolean
+  error: string
+  user?: User
+}
+
+export interface ListUsersRequest {
+  projectPath: string
+  gitUsername?: string
+  includeDeleted?: boolean
+}
+
+export interface ListUsersResponse {
+  users: User[]
+  totalCount: number
+}
+
+export interface UpdateUserRequest {
+  projectPath: string
+  userId: string
+  name?: string
+  email?: string
+  gitUsernames?: string[]
+}
+
+export interface UpdateUserResponse {
+  success: boolean
+  error: string
+  user?: User
+  manifest?: Manifest
+}
+
+export interface DeleteUserRequest {
+  projectPath: string
+  userId: string
+}
+
+export interface DeleteUserResponse {
+  success: boolean
+  error: string
+  manifest?: Manifest
+}
+
+// ============ Soft Delete/Restore User Types ============
+
+export interface SoftDeleteUserRequest {
+  projectPath: string
+  userId: string
+}
+
+export interface SoftDeleteUserResponse {
+  success: boolean
+  error: string
+  user?: User
+  manifest?: Manifest
+}
+
+export interface RestoreUserRequest {
+  projectPath: string
+  userId: string
+}
+
+export interface RestoreUserResponse {
+  success: boolean
+  error: string
+  user?: User
+  manifest?: Manifest
+}
+
+export interface GitContributor {
+  name: string
+  email: string
+}
+
+export interface SyncUsersRequest {
+  projectPath: string
+  dryRun: boolean
+}
+
+export interface SyncUsersResponse {
+  success: boolean
+  error: string
+  created: string[]
+  skipped: string[]
+  errors: string[]
+  wouldCreate: GitContributor[]
+  wouldSkip: GitContributor[]
+  manifest?: Manifest
+}
+
+// ============ Entity Actions Types ============
+
+export interface EntityAction {
+  id: string
+  label: string
+  category: string
+  enabled: boolean
+  disabledReason: string
+  destructive: boolean
+  keyboardShortcut: string
+}
+
+export interface GetEntityActionsRequest {
+  projectPath: string
+  entityType: string
+  entityId?: string
+}
+
+export interface GetEntityActionsResponse {
+  actions: EntityAction[]
+  success: boolean
+  error: string
+}
+
+// ============ Sync Types ============
+
+export interface SyncConflict {
+  id: string
+  itemType: string
+  itemId: string
+  filePath: string
+  createdAt: string
+  description: string
+  baseContent: string
+  oursContent: string
+  theirsContent: string
+}
+
+export interface ListSyncConflictsRequest {
+  projectPath: string
+}
+
+export interface ListSyncConflictsResponse {
+  conflicts: SyncConflict[]
+  success: boolean
+  error: string
+}
+
+export interface GetSyncConflictRequest {
+  projectPath: string
+  conflictId: string
+}
+
+export interface GetSyncConflictResponse {
+  conflict?: SyncConflict
+  success: boolean
+  error: string
+}
+
+export interface ResolveSyncConflictRequest {
+  projectPath: string
+  conflictId: string
+  resolution: string
+  mergedContent?: string
+}
+
+export interface ResolveSyncConflictResponse {
+  success: boolean
+  error: string
+}
+
+export interface GetSyncStatusRequest {
+  projectPath: string
+}
+
+export interface GetSyncStatusResponse {
+  mode: string
+  hasPendingChanges: boolean
+  hasPendingPush: boolean
+  conflictCount: number
+  lastSyncTime: string
+  success: boolean
+  error: string
+}
+
+export interface SyncPullRequest {
+  projectPath: string
+}
+
+export interface SyncPullResponse {
+  success: boolean
+  error: string
+  hadChanges: boolean
+  conflictFiles: string[]
+}
+
+export interface SyncPushRequest {
+  projectPath: string
+  commitMessage?: string
+}
+
+export interface SyncPushResponse {
+  success: boolean
+  error: string
+  hadChanges: boolean
+}
+
+// ============ Features Types (CLI-side only, not in daemon) ============
 
 export interface GetFeatureStatusRequest {
   projectPath: string
@@ -920,316 +1500,4 @@ export interface MarkIssuesCompactedResponse {
   success: boolean
   error: string
   markedCount: number
-}
-
-// ============ Organization Issue Types ============
-
-export interface OrgIssue {
-  id: string
-  displayNumber: number
-  issueNumber: string
-  title: string
-  description: string
-  metadata: OrgIssueMetadata
-}
-
-export interface OrgIssueMetadata {
-  displayNumber: number
-  status: string
-  priority: number
-  createdAt: string
-  updatedAt: string
-  customFields: Record<string, string>
-  priorityLabel: string
-  referencedProjects: string[]
-}
-
-export interface CreateOrgIssueRequest {
-  orgSlug: string
-  title: string
-  description: string
-  priority: number
-  status: string
-  customFields: Record<string, string>
-  referencedProjects: string[]
-}
-
-export interface CreateOrgIssueResponse {
-  success: boolean
-  error: string
-  id: string
-  displayNumber: number
-  issueNumber: string
-  createdFiles: string[]
-}
-
-export interface GetOrgIssueRequest {
-  orgSlug: string
-  issueId: string
-}
-
-export interface GetOrgIssueByDisplayNumberRequest {
-  orgSlug: string
-  displayNumber: number
-}
-
-export interface ListOrgIssuesRequest {
-  orgSlug: string
-  status?: string
-  priority?: number
-}
-
-export interface ListOrgIssuesResponse {
-  issues: OrgIssue[]
-  totalCount: number
-}
-
-export interface UpdateOrgIssueRequest {
-  orgSlug: string
-  issueId: string
-  title?: string
-  description?: string
-  status?: string
-  priority?: number
-  customFields?: Record<string, string>
-  referencedProjects?: string[]
-}
-
-export interface UpdateOrgIssueResponse {
-  success: boolean
-  error: string
-  issue: OrgIssue
-}
-
-export interface DeleteOrgIssueRequest {
-  orgSlug: string
-  issueId: string
-}
-
-export interface DeleteOrgIssueResponse {
-  success: boolean
-  error: string
-}
-
-export interface GetOrgConfigRequest {
-  orgSlug: string
-}
-
-export interface OrgConfig {
-  priorityLevels: number
-  allowedStates: string[]
-  defaultState: string
-  customFields: CustomFieldDefinition[]
-}
-
-export interface UpdateOrgConfigRequest {
-  orgSlug: string
-  config: OrgConfig
-}
-
-export interface UpdateOrgConfigResponse {
-  success: boolean
-  error: string
-  config: OrgConfig
-}
-
-// ============ User Types ============
-
-export interface User {
-  id: string
-  name: string
-  email: string
-  gitUsernames: string[]
-  createdAt: string
-  updatedAt: string
-}
-
-export interface CreateUserRequest {
-  projectPath: string
-  id: string
-  name: string
-  email?: string
-  gitUsernames?: string[]
-}
-
-export interface CreateUserResponse {
-  success: boolean
-  error: string
-  user?: User
-  manifest?: Manifest
-}
-
-export interface GetUserRequest {
-  projectPath: string
-  userId: string
-}
-
-export interface ListUsersRequest {
-  projectPath: string
-  gitUsername?: string
-}
-
-export interface ListUsersResponse {
-  users: User[]
-  totalCount: number
-}
-
-export interface UpdateUserRequest {
-  projectPath: string
-  userId: string
-  name?: string
-  email?: string
-  gitUsernames?: string[]
-}
-
-export interface UpdateUserResponse {
-  success: boolean
-  error: string
-  user?: User
-  manifest?: Manifest
-}
-
-export interface DeleteUserRequest {
-  projectPath: string
-  userId: string
-}
-
-export interface DeleteUserResponse {
-  success: boolean
-  error: string
-  manifest?: Manifest
-}
-
-export interface GitContributor {
-  name: string
-  email: string
-}
-
-export interface SyncUsersRequest {
-  projectPath: string
-  dryRun: boolean
-}
-
-export interface SyncUsersResponse {
-  success: boolean
-  error: string
-  created: string[]
-  skipped: string[]
-  errors: string[]
-  wouldCreate: GitContributor[]
-  wouldSkip: GitContributor[]
-  manifest?: Manifest
-}
-
-// ============ Issue Assignee Types ============
-
-export interface AssignIssueRequest {
-  projectPath: string
-  issueId: string
-  userIds: string[]
-}
-
-export interface AssignIssueResponse {
-  success: boolean
-  error: string
-  issue?: Issue
-  manifest?: Manifest
-}
-
-export interface UnassignIssueRequest {
-  projectPath: string
-  issueId: string
-  userIds: string[]
-}
-
-export interface UnassignIssueResponse {
-  success: boolean
-  error: string
-  issue?: Issue
-  manifest?: Manifest
-}
-
-// ============ LLM Agent Types ============
-
-export interface SpawnAgentRequest {
-  projectPath: string
-  issueId: string
-  action: number // 1 = plan, 2 = implement
-  agentName?: string
-  extraArgs?: string[]
-}
-
-export interface SpawnAgentResponse {
-  success: boolean
-  error: string
-  agentName: string
-  issueId: string
-  displayNumber: number
-  promptPreview: string
-}
-
-// ============ Temp Workspace Types ============
-
-export interface OpenInTempVscodeRequest {
-  projectPath: string
-  issueId: string
-  action: 'PLAN' | 'IMPLEMENT'
-  agentName?: string
-  ttlHours?: number
-}
-
-export interface OpenInTempVscodeResponse {
-  success: boolean
-  error: string
-  workspacePath: string
-  expiresAt: string
-  issueDisplayNumber: number
-  issueTitle: string
-  vscodeOpened: boolean
-  workspaceReused: boolean
-  originalCreatedAt: string
-}
-
-export interface TempWorkspace {
-  workspacePath: string
-  sourceProjectPath: string
-  issueId: string
-  issueDisplayNumber: number
-  issueTitle: string
-  agentName: string
-  action: 'PLAN' | 'IMPLEMENT'
-  createdAt: string
-  expiresAt: string
-}
-
-export interface ListTempWorkspacesRequest {
-  includeExpired?: boolean
-  sourceProjectPath?: string
-}
-
-export interface ListTempWorkspacesResponse {
-  workspaces: TempWorkspace[]
-  totalCount: number
-  expiredCount: number
-}
-
-export interface CloseTempWorkspaceRequest {
-  workspacePath: string
-  force?: boolean
-}
-
-export interface CloseTempWorkspaceResponse {
-  success: boolean
-  error: string
-  worktreeRemoved: boolean
-  registryRemoved: boolean
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface CleanupExpiredWorkspacesRequest {}
-
-export interface CleanupExpiredWorkspacesResponse {
-  success: boolean
-  cleanedCount: number
-  failedPaths: string[]
 }

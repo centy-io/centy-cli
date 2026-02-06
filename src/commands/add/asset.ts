@@ -97,8 +97,7 @@ export default class AddAsset extends Command {
 
     const response = await daemonAddAsset({
       projectPath: cwd,
-      issueId: flags.issue,
-      prId: flags.pr,
+      issueId: flags.issue !== undefined ? flags.issue : flags.pr,
       filename,
       data: fileData,
       isShared: flags.shared,
