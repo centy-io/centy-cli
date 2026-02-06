@@ -4,13 +4,13 @@ import {
   runCommandSafely,
 } from '../../testing/command-test-utils.js'
 
-const mockDaemonOpenInTempVscode = vi.fn()
+const mockDaemonOpenInTempWorkspace = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
-vi.mock('../../daemon/daemon-open-in-temp-vscode.js', () => ({
-  daemonOpenInTempVscode: (...args: unknown[]) =>
-    mockDaemonOpenInTempVscode(...args),
+vi.mock('../../daemon/daemon-open-in-temp-workspace.js', () => ({
+  daemonOpenInTempWorkspace: (...args: unknown[]) =>
+    mockDaemonOpenInTempWorkspace(...args),
 }))
 
 vi.mock('../../utils/resolve-project-path.js', () => ({
@@ -50,13 +50,12 @@ describe('WorkspaceOpen command', () => {
 
   it('should open workspace successfully', async () => {
     const { default: Command } = await import('./open.js')
-    mockDaemonOpenInTempVscode.mockResolvedValue({
+    mockDaemonOpenInTempWorkspace.mockResolvedValue({
       success: true,
       workspacePath: '/tmp/centy-workspace-123',
-      issueDisplayNumber: 1,
-      issueTitle: 'Test Issue',
+      displayNumber: 1,
       expiresAt: '2024-12-15T00:00:00Z',
-      vscodeOpened: true,
+      editorOpened: true,
     })
 
     const cmd = createMockCommand(Command, {
@@ -66,7 +65,7 @@ describe('WorkspaceOpen command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonOpenInTempVscode).toHaveBeenCalledWith(
+    expect(mockDaemonOpenInTempWorkspace).toHaveBeenCalledWith(
       expect.objectContaining({
         projectPath: '/test/project',
         issueId: '1',
@@ -78,7 +77,7 @@ describe('WorkspaceOpen command', () => {
 
   it('should handle open error', async () => {
     const { default: Command } = await import('./open.js')
-    mockDaemonOpenInTempVscode.mockResolvedValue({
+    mockDaemonOpenInTempWorkspace.mockResolvedValue({
       success: false,
       error: 'Issue not found',
     })
@@ -96,13 +95,12 @@ describe('WorkspaceOpen command', () => {
 
   it('should warn when VS Code could not be opened', async () => {
     const { default: Command } = await import('./open.js')
-    mockDaemonOpenInTempVscode.mockResolvedValue({
+    mockDaemonOpenInTempWorkspace.mockResolvedValue({
       success: true,
       workspacePath: '/tmp/workspace',
-      issueDisplayNumber: 1,
-      issueTitle: 'Test',
+      displayNumber: 1,
       expiresAt: '2024-12-15T00:00:00Z',
-      vscodeOpened: false,
+      editorOpened: false,
     })
 
     const cmd = createMockCommand(Command, {
@@ -112,6 +110,6 @@ describe('WorkspaceOpen command', () => {
 
     await cmd.run()
 
-    expect(cmd.warnings.some(w => w.includes('VS Code'))).toBe(true)
+    expect(cmd.warnings.some(w => w.includes('Editor'))).toBe(true)
   })
 })

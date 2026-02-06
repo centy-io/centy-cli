@@ -28,7 +28,8 @@ describe('daemonGetConfig', () => {
   })
 
   it('should resolve with response on success', async () => {
-    const mockResponse = { success: true }
+    const mockConfig = { priorityLevels: 3, defaultState: 'open' }
+    const mockResponse = { success: true, config: mockConfig }
     const mockClient = {
       getConfig: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
@@ -41,7 +42,7 @@ describe('daemonGetConfig', () => {
 
     const result = await daemonGetConfig({} as never)
 
-    expect(result).toEqual(mockResponse)
+    expect(result).toEqual(mockConfig)
     expect(mockClient.getConfig).toHaveBeenCalledWith(
       {},
       {},

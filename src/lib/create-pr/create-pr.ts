@@ -104,7 +104,6 @@ export async function createPr(
       description: input.description,
       sourceBranch: input.sourceBranch || undefined,
       targetBranch: input.targetBranch || undefined,
-      linkedIssues: input.linkedIssues,
       reviewers: input.reviewers,
       priority: convertPriority(input.priority),
       status: input.status,

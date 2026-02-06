@@ -96,7 +96,7 @@ describe('GetPr command', () => {
         priorityLabel: 'P2',
         sourceBranch: 'feature/new',
         targetBranch: 'main',
-        linkedIssues: [],
+
         reviewers: [],
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-02T00:00:00Z',
@@ -167,7 +167,7 @@ describe('GetPr command', () => {
         priorityLabel: '',
         sourceBranch: 'test',
         targetBranch: 'main',
-        linkedIssues: [],
+
         reviewers: [],
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
@@ -271,7 +271,7 @@ describe('GetPr command', () => {
         priorityLabel: 'P2',
         sourceBranch: 'test',
         targetBranch: 'main',
-        linkedIssues: ['issue-1', 'issue-2'],
+
         reviewers: ['user-1', 'user-2'],
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
@@ -287,7 +287,6 @@ describe('GetPr command', () => {
 
     await cmd.run()
 
-    expect(cmd.logs.some(log => log.includes('Linked Issues:'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('Reviewers:'))).toBe(true)
   })
 
@@ -304,7 +303,7 @@ describe('GetPr command', () => {
         priorityLabel: '',
         sourceBranch: 'test',
         targetBranch: 'main',
-        linkedIssues: [],
+
         reviewers: [],
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',

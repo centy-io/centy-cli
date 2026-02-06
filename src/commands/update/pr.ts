@@ -89,9 +89,6 @@ export default class UpdatePr extends Command {
     }
 
     const priority = flags.priority ? PRIORITY_MAP[flags.priority] : undefined
-    const linkedIssues = flags.issues
-      ? flags.issues.split(',').map(s => s.trim())
-      : undefined
     const reviewers = flags.reviewers
       ? flags.reviewers.split(',').map(s => s.trim())
       : undefined
@@ -116,7 +113,6 @@ export default class UpdatePr extends Command {
       status: flags.status,
       sourceBranch: flags.source,
       targetBranch: flags.target,
-      linkedIssues,
       reviewers,
       priority,
       customFields: {},

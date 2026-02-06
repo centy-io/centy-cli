@@ -192,9 +192,6 @@ export default class GetPr extends Command {
       this.log(
         `Branch: ${meta !== undefined ? `${meta.sourceBranch} -> ${meta.targetBranch}` : '? -> ?'}`
       )
-      if (meta !== undefined && meta.linkedIssues.length > 0) {
-        this.log(`Linked Issues: ${meta.linkedIssues.join(', ')}`)
-      }
       if (meta !== undefined && meta.reviewers.length > 0) {
         this.log(`Reviewers: ${meta.reviewers.join(', ')}`)
       }

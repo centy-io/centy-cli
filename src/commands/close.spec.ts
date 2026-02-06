@@ -6,10 +6,8 @@ import {
 
 const mockDaemonGetIssueByDisplayNumber = vi.fn()
 const mockDaemonGetPrByDisplayNumber = vi.fn()
-const mockDaemonGetOrgIssueByDisplayNumber = vi.fn()
 const mockDaemonUpdateIssue = vi.fn()
 const mockDaemonUpdatePr = vi.fn()
-const mockDaemonUpdateOrgIssue = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
@@ -23,22 +21,12 @@ vi.mock('../daemon/daemon-get-pr-by-display-number.js', () => ({
     mockDaemonGetPrByDisplayNumber(...args),
 }))
 
-vi.mock('../daemon/daemon-get-org-issue-by-display-number.js', () => ({
-  daemonGetOrgIssueByDisplayNumber: (...args: unknown[]) =>
-    mockDaemonGetOrgIssueByDisplayNumber(...args),
-}))
-
 vi.mock('../daemon/daemon-update-issue.js', () => ({
   daemonUpdateIssue: (...args: unknown[]) => mockDaemonUpdateIssue(...args),
 }))
 
 vi.mock('../daemon/daemon-update-pr.js', () => ({
   daemonUpdatePr: (...args: unknown[]) => mockDaemonUpdatePr(...args),
-}))
-
-vi.mock('../daemon/daemon-update-org-issue.js', () => ({
-  daemonUpdateOrgIssue: (...args: unknown[]) =>
-    mockDaemonUpdateOrgIssue(...args),
 }))
 
 vi.mock('../utils/resolve-project-path.js', () => ({
@@ -206,56 +194,6 @@ describe('Close command', () => {
 
       expect(mockDaemonGetIssueByDisplayNumber).not.toHaveBeenCalled()
       expect(mockDaemonUpdatePr).toHaveBeenCalled()
-    })
-  })
-
-  describe('closing org-issues', () => {
-    it('should close org-issue with --org flag', async () => {
-      const { default: Command } = await import('./close.js')
-      mockDaemonGetOrgIssueByDisplayNumber.mockResolvedValue({
-        id: 'org-issue-uuid',
-        displayNumber: 1,
-      })
-      mockDaemonUpdateOrgIssue.mockResolvedValue({
-        success: true,
-        issue: { displayNumber: 1 },
-      })
-
-      const cmd = createMockCommand(Command, {
-        flags: { org: 'my-org' },
-        args: { identifier: '1' },
-      })
-
-      await cmd.run()
-
-      expect(mockDaemonGetOrgIssueByDisplayNumber).toHaveBeenCalledWith(
-        expect.objectContaining({
-          orgSlug: 'my-org',
-          displayNumber: 1,
-        })
-      )
-      expect(mockDaemonUpdateOrgIssue).toHaveBeenCalledWith(
-        expect.objectContaining({
-          orgSlug: 'my-org',
-          issueId: 'org-issue-uuid',
-          status: 'closed',
-        })
-      )
-      expect(cmd.logs[0]).toContain('Closed organization issue #1')
-    })
-
-    it('should error when --type org-issue without --org', async () => {
-      const { default: Command } = await import('./close.js')
-
-      const cmd = createMockCommand(Command, {
-        flags: { type: 'org-issue' },
-        args: { identifier: '1' },
-      })
-
-      const { error } = await runCommandSafely(cmd)
-
-      expect(error).toBeDefined()
-      expect(cmd.errors[0]).toContain('Organization slug is required')
     })
   })
 

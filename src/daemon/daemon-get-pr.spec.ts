@@ -28,7 +28,8 @@ describe('daemonGetPr', () => {
   })
 
   it('should resolve with response on success', async () => {
-    const mockResponse = { success: true }
+    const mockPr = { id: 'pr-1', title: 'Test PR' }
+    const mockResponse = { success: true, pr: mockPr }
     const mockClient = {
       getPr: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
@@ -41,7 +42,7 @@ describe('daemonGetPr', () => {
 
     const result = await daemonGetPr({} as never)
 
-    expect(result).toEqual(mockResponse)
+    expect(result).toEqual(mockPr)
     expect(mockClient.getPr).toHaveBeenCalledWith({}, {}, expect.any(Function))
   })
 

@@ -31,7 +31,7 @@ describeOrSkip('load-proto', () => {
     const MockClient = vi.fn()
     // eslint-disable-next-line no-restricted-syntax
     ;(loadPackageDefinition as ReturnType<typeof vi.fn>).mockReturnValue({
-      centy: { CentyDaemon: MockClient },
+      centy: { v1: { CentyDaemon: MockClient } },
     } as never)
 
     const { getDaemonClient } = await import('./load-proto.js')
@@ -52,7 +52,7 @@ describeOrSkip('load-proto', () => {
     const MockClient = vi.fn()
     // eslint-disable-next-line no-restricted-syntax
     ;(loadPackageDefinition as ReturnType<typeof vi.fn>).mockReturnValue({
-      centy: { CentyDaemon: MockClient },
+      centy: { v1: { CentyDaemon: MockClient } },
     } as never)
 
     const { getDaemonClient } = await import('./load-proto.js')
@@ -77,7 +77,7 @@ describeOrSkip('load-proto', () => {
     }
     // eslint-disable-next-line no-restricted-syntax
     ;(loadPackageDefinition as ReturnType<typeof vi.fn>).mockReturnValue({
-      centy: { CentyDaemon: MockClient },
+      centy: { v1: { CentyDaemon: MockClient } },
     } as never)
 
     const { getDaemonClient } = await import('./load-proto.js')

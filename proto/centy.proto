@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package centy;
+package centy.v1;
 
 // CentyDaemon service - manages .centy folder operations
 service CentyDaemon {
@@ -204,47 +204,30 @@ service CentyDaemon {
   // Restart the daemon
   rpc Restart(RestartRequest) returns (RestartResponse);
 
-  // ============ Features RPCs ============
-
-  // Get the status of the features system
-  rpc GetFeatureStatus(GetFeatureStatusRequest) returns (GetFeatureStatusResponse);
-
-  // List all uncompacted issues
-  rpc ListUncompactedIssues(ListUncompactedIssuesRequest) returns (ListUncompactedIssuesResponse);
-
-  // Get the instruction.md content
-  rpc GetInstruction(GetInstructionRequest) returns (GetInstructionResponse);
-
-  // Get the current compact.md content
-  rpc GetCompact(GetCompactRequest) returns (GetCompactResponse);
-
-  // Update the compact.md content
-  rpc UpdateCompact(UpdateCompactRequest) returns (UpdateCompactResponse);
-
-  // Save a new migration file
-  rpc SaveMigration(SaveMigrationRequest) returns (SaveMigrationResponse);
-
-  // Mark multiple issues as compacted
-  rpc MarkIssuesCompacted(MarkIssuesCompactedRequest) returns (MarkIssuesCompactedResponse);
-
   // ============ Temp Workspace RPCs ============
 
   // Get list of supported workspace editors
   rpc GetSupportedEditors(GetSupportedEditorsRequest) returns (GetSupportedEditorsResponse);
 
-  // Open a project in a temporary VS Code workspace
+  // Open a project in a temporary workspace with a configurable editor
+  rpc OpenInTempWorkspace(OpenInTempWorkspaceWithEditorRequest) returns (OpenInTempWorkspaceResponse);
+
+  // Open a standalone workspace with a configurable editor (not tied to an issue)
+  rpc OpenStandaloneWorkspace(OpenStandaloneWorkspaceWithEditorRequest) returns (OpenStandaloneWorkspaceResponse);
+
+  // Open a project in a temporary VS Code workspace (deprecated: use OpenInTempWorkspace)
   rpc OpenInTempVscode(OpenInTempWorkspaceRequest) returns (OpenInTempWorkspaceResponse);
 
-  // Open a project in a temporary terminal workspace
+  // Open a project in a temporary terminal workspace (deprecated: use OpenInTempWorkspace)
   rpc OpenInTempTerminal(OpenInTempWorkspaceRequest) returns (OpenInTempWorkspaceResponse);
 
   // Open an agent in a terminal for working on an issue
   rpc OpenAgentInTerminal(OpenAgentInTerminalRequest) returns (OpenAgentInTerminalResponse);
 
-  // Open a standalone workspace in VS Code (not tied to an issue)
+  // Open a standalone workspace in VS Code (deprecated: use OpenStandaloneWorkspace)
   rpc OpenStandaloneWorkspaceVscode(OpenStandaloneWorkspaceRequest) returns (OpenStandaloneWorkspaceResponse);
 
-  // Open a standalone workspace in terminal (not tied to an issue)
+  // Open a standalone workspace in terminal (deprecated: use OpenStandaloneWorkspace)
   rpc OpenStandaloneWorkspaceTerminal(OpenStandaloneWorkspaceRequest) returns (OpenStandaloneWorkspaceResponse);
 
   // List all temp workspaces
@@ -462,8 +445,7 @@ message IssueMetadata {
   string updated_at = 5;          // ISO timestamp
   map<string, string> custom_fields = 6;
   string priority_label = 7;      // Human-readable label (e.g., "high", "P1")
-  bool compacted = 8;             // Whether issue has been compacted into features
-  string compacted_at = 9;        // ISO timestamp when compacted (empty if not)
+  reserved 8, 9;                   // Removed: compacted, compacted_at (moved to CLI)
   bool draft = 10;                // Whether this issue is a draft
   string deleted_at = 11;         // ISO timestamp when soft-deleted (empty if not deleted)
   bool is_org_issue = 12;         // Whether this is an organization-level issue
@@ -696,6 +678,8 @@ message Config {
   map<string, string> priority_colors = 8;  // Priority level → hex color (e.g., "1" → "#ef4444")
   LlmConfig llm = 9;                        // LLM-related settings
   repeated LinkTypeDefinition custom_link_types = 10;  // Custom link types (in addition to built-in)
+  string default_editor = 11;                // Default editor ID for this project (e.g., "vscode", "terminal", "zed")
+  repeated HookDefinition hooks = 12;                  // Lifecycle hooks
 }
 
 message CustomFieldDefinition {
@@ -711,6 +695,15 @@ message LlmConfig {
   optional bool update_status_on_start = 2;    // Update status to in-progress when LLM starts work (null = prompt user)
   bool allow_direct_edits = 3;        // Allow LLM to directly edit issue files
   WorkspaceMode default_workspace_mode = 4;  // Default workspace mode for agent operations
+}
+
+// Lifecycle hook definition (bash scripts to run before/after operations)
+message HookDefinition {
+  string pattern = 1;                   // Pattern like "pre:issue:create" or "*:*:delete"
+  string command = 2;                   // Bash command to execute
+  bool run_async = 3;                   // If true, run in background (post-hooks only)
+  uint64 timeout = 4;                   // Timeout in seconds (default: 30)
+  bool enabled = 5;                     // Whether hook is enabled (default: true)
 }
 
 // Custom link type definition (for custom relationship types)
@@ -1398,78 +1391,6 @@ message RestorePrResponse {
   Manifest manifest = 4;
 }
 
-// ============ Features Messages ============
-
-message GetFeatureStatusRequest {
-  string project_path = 1;
-}
-
-message GetFeatureStatusResponse {
-  bool initialized = 1;               // features/ folder exists
-  bool has_compact = 2;               // compact.md exists
-  bool has_instruction = 3;           // instruction.md exists
-  uint32 uncompacted_count = 5;       // Number of uncompacted issues
-}
-
-message ListUncompactedIssuesRequest {
-  string project_path = 1;
-}
-
-message ListUncompactedIssuesResponse {
-  repeated Issue issues = 1;
-  int32 total_count = 2;
-}
-
-message GetInstructionRequest {
-  string project_path = 1;
-}
-
-message GetInstructionResponse {
-  string content = 1;                 // instruction.md content
-}
-
-message GetCompactRequest {
-  string project_path = 1;
-}
-
-message GetCompactResponse {
-  bool exists = 1;                    // Whether compact.md exists
-  string content = 2;                 // compact.md content (empty if not exists)
-}
-
-message UpdateCompactRequest {
-  string project_path = 1;
-  string content = 2;                 // New compact.md content
-}
-
-message UpdateCompactResponse {
-  bool success = 1;
-  string error = 2;
-}
-
-message SaveMigrationRequest {
-  string project_path = 1;
-  string content = 2;                 // Migration file content (markdown with YAML frontmatter)
-}
-
-message SaveMigrationResponse {
-  bool success = 1;
-  string error = 2;
-  string filename = 3;                // Created migration filename (e.g., "2025-12-06T19-30-00.md")
-  string path = 4;                    // Full relative path to migration file
-}
-
-message MarkIssuesCompactedRequest {
-  string project_path = 1;
-  repeated string issue_ids = 2;      // UUIDs of issues to mark as compacted
-}
-
-message MarkIssuesCompactedResponse {
-  bool success = 1;
-  string error = 2;
-  uint32 marked_count = 3;            // Number of issues successfully marked
-}
-
 // ============ Temp Workspace Messages ============
 
 // Action types for workspace operations
@@ -1499,10 +1420,12 @@ message GetSupportedEditorsRequest {}
 
 // Information about a supported editor
 message EditorInfo {
-  EditorType editor_type = 1;         // Editor type enum value
+  EditorType editor_type = 1;         // Editor type enum value (deprecated: use editor_id)
   string name = 2;                    // Display name (e.g., "VS Code", "Terminal")
   string description = 3;             // Brief description
   bool available = 4;                 // Whether this editor is available on the current system
+  string editor_id = 5;              // String-based editor identifier (e.g., "vscode", "terminal", "zed")
+  bool terminal_wrapper = 6;         // Whether this editor runs inside a terminal
 }
 
 // Response with list of supported editors
@@ -1510,7 +1433,27 @@ message GetSupportedEditorsResponse {
   repeated EditorInfo editors = 1;    // List of supported editors
 }
 
-// Shared request for OpenInTempVscode and OpenInTempTerminal
+// Request for unified OpenInTempWorkspace (new, configurable editor)
+message OpenInTempWorkspaceWithEditorRequest {
+  string project_path = 1;              // Source project path
+  string issue_id = 2;                  // Issue UUID or display number
+  LlmAction action = 3;                 // Plan or Implement
+  string agent_name = 4;                // Agent to use (empty = default)
+  uint32 ttl_hours = 5;                 // Custom TTL in hours (0 = use default 12h)
+  string editor_id = 6;                 // Editor ID (e.g., "vscode", "terminal", "zed"). Empty = use project/user default.
+}
+
+// Request for unified OpenStandaloneWorkspace (new, configurable editor)
+message OpenStandaloneWorkspaceWithEditorRequest {
+  string project_path = 1;              // Source project path
+  string name = 2;                      // Optional custom name for the workspace
+  string description = 3;               // Optional description/goals for this workspace
+  uint32 ttl_hours = 4;                 // Custom TTL in hours (0 = use default 12h)
+  string agent_name = 5;                // Agent to use (empty = default)
+  string editor_id = 6;                 // Editor ID (e.g., "vscode", "terminal", "zed"). Empty = use project/user default.
+}
+
+// Shared request for OpenInTempVscode and OpenInTempTerminal (deprecated: use OpenInTempWorkspaceWithEditorRequest)
 message OpenInTempWorkspaceRequest {
   string project_path = 1;              // Source project path
   string issue_id = 2;                  // Issue UUID or display number

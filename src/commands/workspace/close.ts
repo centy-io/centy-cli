@@ -50,8 +50,8 @@ export default class WorkspaceClose extends Command {
     if (response.worktreeRemoved) {
       this.log('Git worktree removed')
     }
-    if (response.registryRemoved) {
-      this.log('Registry entry removed')
+    if (response.directoryRemoved) {
+      this.log('Directory removed')
     }
   }
 }

@@ -95,7 +95,7 @@ describe('AddAsset command', () => {
 
     expect(mockDaemonAddAsset).toHaveBeenCalledWith(
       expect.objectContaining({
-        prId: '5',
+        issueId: '5',
         filename: 'diagram.svg',
       })
     )

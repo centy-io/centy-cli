@@ -35,7 +35,7 @@ describe('WorkspaceClose command', () => {
     mockDaemonCloseTempWorkspace.mockResolvedValue({
       success: true,
       worktreeRemoved: true,
-      registryRemoved: true,
+      directoryRemoved: true,
     })
 
     const cmd = createMockCommand(Command, {
@@ -76,7 +76,7 @@ describe('WorkspaceClose command', () => {
     mockDaemonCloseTempWorkspace.mockResolvedValue({
       success: true,
       worktreeRemoved: true,
-      registryRemoved: true,
+      directoryRemoved: true,
     })
 
     const cmd = createMockCommand(Command, {
@@ -98,7 +98,7 @@ describe('WorkspaceClose command', () => {
     mockDaemonCloseTempWorkspace.mockResolvedValue({
       success: true,
       worktreeRemoved: true,
-      registryRemoved: true,
+      directoryRemoved: true,
     })
 
     const cmd = createMockCommand(Command, {
@@ -109,6 +109,6 @@ describe('WorkspaceClose command', () => {
     await cmd.run()
 
     expect(cmd.logs.some(l => l.includes('worktree'))).toBe(true)
-    expect(cmd.logs.some(l => l.includes('Registry'))).toBe(true)
+    expect(cmd.logs.some(l => l.includes('Directory'))).toBe(true)
   })
 })

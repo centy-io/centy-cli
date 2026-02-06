@@ -64,15 +64,11 @@ export async function init(options?: InitOptions): Promise<InitResult> {
       reset: decisions.reset,
     }
 
-    // Build config from options if any config flags were provided
-    const config = buildConfigFromOptions(opts)
-
     // Execute reconciliation via daemon
     output.write('Initializing .centy folder...\n')
     const response = await daemonExecuteReconciliation({
       projectPath: cwd,
       decisions: daemonDecisions,
-      config,
     })
 
     if (!response.success) {
@@ -235,5 +231,7 @@ export function buildConfigFromOptions(opts: InitOptions): Config | undefined {
     stateColors: {},
     priorityColors: {},
     customLinkTypes: [],
+    defaultEditor: '',
+    hooks: [],
   }
 }

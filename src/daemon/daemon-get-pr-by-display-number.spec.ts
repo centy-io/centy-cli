@@ -28,7 +28,8 @@ describe('daemonGetPrByDisplayNumber', () => {
   })
 
   it('should resolve with response on success', async () => {
-    const mockResponse = { success: true }
+    const mockPr = { id: 'pr-1', displayNumber: 1 }
+    const mockResponse = { success: true, pr: mockPr }
     const mockClient = {
       getPrByDisplayNumber: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
@@ -41,7 +42,7 @@ describe('daemonGetPrByDisplayNumber', () => {
 
     const result = await daemonGetPrByDisplayNumber({} as never)
 
-    expect(result).toEqual(mockResponse)
+    expect(result).toEqual(mockPr)
     expect(mockClient.getPrByDisplayNumber).toHaveBeenCalledWith(
       {},
       {},

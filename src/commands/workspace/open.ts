@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
-import { daemonOpenInTempVscode } from '../../daemon/daemon-open-in-temp-vscode.js'
+import { daemonOpenInTempWorkspace } from '../../daemon/daemon-open-in-temp-workspace.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
@@ -55,7 +55,7 @@ export default class WorkspaceOpen extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    const response = await daemonOpenInTempVscode({
+    const response = await daemonOpenInTempWorkspace({
       projectPath: cwd,
       issueId: args.issueId,
       action: 'PLAN',
@@ -76,13 +76,13 @@ export default class WorkspaceOpen extends Command {
       this.log(`Created workspace at: ${response.workspacePath}`)
     }
 
-    this.log(`Issue: #${response.issueDisplayNumber} - ${response.issueTitle}`)
+    this.log(`Issue: #${response.displayNumber}`)
     this.log(`Expires: ${response.expiresAt}`)
 
-    if (response.vscodeOpened) {
-      this.log('VS Code opened successfully')
+    if (response.editorOpened) {
+      this.log('Editor opened successfully')
     } else {
-      this.warn('VS Code could not be opened automatically. Open manually.')
+      this.warn('Editor could not be opened automatically. Open manually.')
     }
   }
 }

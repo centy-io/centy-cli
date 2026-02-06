@@ -28,7 +28,8 @@ describe('daemonGetManifest', () => {
   })
 
   it('should resolve with response on success', async () => {
-    const mockResponse = { success: true }
+    const mockManifest = { version: '1.0', files: [] }
+    const mockResponse = { success: true, manifest: mockManifest }
     const mockClient = {
       getManifest: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
@@ -41,7 +42,7 @@ describe('daemonGetManifest', () => {
 
     const result = await daemonGetManifest({} as never)
 
-    expect(result).toEqual(mockResponse)
+    expect(result).toEqual(mockManifest)
     expect(mockClient.getManifest).toHaveBeenCalledWith(
       {},
       {},

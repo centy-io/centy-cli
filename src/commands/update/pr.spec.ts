@@ -139,27 +139,6 @@ describe('UpdatePr command', () => {
     )
   })
 
-  it('should update linked issues', async () => {
-    const { default: Command } = await import('./pr.js')
-    mockDaemonGetPrByDisplayNumber.mockResolvedValue({ id: 'pr-uuid-123' })
-    mockDaemonUpdatePr.mockResolvedValue({
-      success: true,
-      pr: { displayNumber: 1 },
-    })
-
-    const cmd = createMockCommand(Command, {
-      args: { id: '1' },
-      flags: { issues: 'issue-1, issue-2, issue-3' },
-    })
-    await cmd.run()
-
-    expect(mockDaemonUpdatePr).toHaveBeenCalledWith(
-      expect.objectContaining({
-        linkedIssues: ['issue-1', 'issue-2', 'issue-3'],
-      })
-    )
-  })
-
   it('should update reviewers', async () => {
     const { default: Command } = await import('./pr.js')
     mockDaemonGetPrByDisplayNumber.mockResolvedValue({ id: 'pr-uuid-123' })

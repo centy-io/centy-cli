@@ -18,22 +18,26 @@ import type {
   CreateIssueRequest,
   CreateIssueResponse,
   GetManifestRequest,
-  Manifest,
+  GetManifestResponse,
   GetConfigRequest,
-  Config,
+  GetConfigResponse,
   UpdateConfigRequest,
   UpdateConfigResponse,
   GetIssueRequest,
   GetIssueByDisplayNumberRequest,
   GetIssuesByUuidRequest,
   GetIssuesByUuidResponse,
-  Issue,
+  GetIssueResponse,
   ListIssuesRequest,
   ListIssuesResponse,
   UpdateIssueRequest,
   UpdateIssueResponse,
   DeleteIssueRequest,
   DeleteIssueResponse,
+  SoftDeleteIssueRequest,
+  SoftDeleteIssueResponse,
+  RestoreIssueRequest,
+  RestoreIssueResponse,
   MoveIssueRequest,
   MoveIssueResponse,
   DuplicateIssueRequest,
@@ -43,13 +47,17 @@ import type {
   GetDocRequest,
   GetDocsBySlugRequest,
   GetDocsBySlugResponse,
-  Doc,
+  GetDocResponse,
   ListDocsRequest,
   ListDocsResponse,
   UpdateDocRequest,
   UpdateDocResponse,
   DeleteDocRequest,
   DeleteDocResponse,
+  SoftDeleteDocRequest,
+  SoftDeleteDocResponse,
+  RestoreDocRequest,
+  RestoreDocResponse,
   MoveDocRequest,
   MoveDocResponse,
   DuplicateDocRequest,
@@ -63,12 +71,6 @@ import type {
   DeleteAssetRequest,
   DeleteAssetResponse,
   ListSharedAssetsRequest,
-  GetPlanRequest,
-  GetPlanResponse,
-  UpdatePlanRequest,
-  UpdatePlanResponse,
-  DeletePlanRequest,
-  DeletePlanResponse,
   ListProjectsRequest,
   ListProjectsResponse,
   RegisterProjectRequest,
@@ -95,13 +97,17 @@ import type {
   GetPrByDisplayNumberRequest,
   GetPrsByUuidRequest,
   GetPrsByUuidResponse,
-  PullRequest,
+  GetPrResponse,
   ListPrsRequest,
   ListPrsResponse,
   UpdatePrRequest,
   UpdatePrResponse,
   DeletePrRequest,
   DeletePrResponse,
+  SoftDeletePrRequest,
+  SoftDeletePrResponse,
+  RestorePrRequest,
+  RestorePrResponse,
   GetNextPrNumberRequest,
   GetNextPrNumberResponse,
   GetFeatureStatusRequest,
@@ -134,47 +140,54 @@ import type {
   UpdateOrganizationResponse,
   DeleteOrganizationRequest,
   DeleteOrganizationResponse,
-  CreateOrgIssueRequest,
-  CreateOrgIssueResponse,
-  GetOrgIssueRequest,
-  GetOrgIssueByDisplayNumberRequest,
-  OrgIssue,
-  ListOrgIssuesRequest,
-  ListOrgIssuesResponse,
-  UpdateOrgIssueRequest,
-  UpdateOrgIssueResponse,
-  DeleteOrgIssueRequest,
-  DeleteOrgIssueResponse,
-  GetOrgConfigRequest,
-  OrgConfig,
-  UpdateOrgConfigRequest,
-  UpdateOrgConfigResponse,
-  User,
   CreateUserRequest,
   CreateUserResponse,
   GetUserRequest,
+  GetUserResponse,
   ListUsersRequest,
   ListUsersResponse,
   UpdateUserRequest,
   UpdateUserResponse,
   DeleteUserRequest,
   DeleteUserResponse,
+  SoftDeleteUserRequest,
+  SoftDeleteUserResponse,
+  RestoreUserRequest,
+  RestoreUserResponse,
   SyncUsersRequest,
   SyncUsersResponse,
-  AssignIssueRequest,
-  AssignIssueResponse,
-  UnassignIssueRequest,
-  UnassignIssueResponse,
-  SpawnAgentRequest,
-  SpawnAgentResponse,
-  OpenInTempVscodeRequest,
-  OpenInTempVscodeResponse,
+  OpenInTempWorkspaceRequest,
+  OpenInTempWorkspaceResponse,
+  OpenInTempWorkspaceWithEditorRequest,
+  OpenStandaloneWorkspaceWithEditorRequest,
+  OpenAgentInTerminalRequest,
+  OpenAgentInTerminalResponse,
   ListTempWorkspacesRequest,
   ListTempWorkspacesResponse,
   CloseTempWorkspaceRequest,
   CloseTempWorkspaceResponse,
   CleanupExpiredWorkspacesRequest,
   CleanupExpiredWorkspacesResponse,
+  GetEntityActionsRequest,
+  GetEntityActionsResponse,
+  CreateLinkRequest,
+  CreateLinkResponse,
+  DeleteLinkRequest,
+  DeleteLinkResponse,
+  ListLinksRequest,
+  ListLinksResponse,
+  ListSyncConflictsRequest,
+  ListSyncConflictsResponse,
+  GetSyncConflictRequest,
+  GetSyncConflictResponse,
+  ResolveSyncConflictRequest,
+  ResolveSyncConflictResponse,
+  GetSyncStatusRequest,
+  GetSyncStatusResponse,
+  SyncPullRequest,
+  SyncPullResponse,
+  SyncPushRequest,
+  SyncPushResponse,
 } from './types.js'
 
 /**
@@ -299,27 +312,34 @@ interface CentyDaemonClient {
 
   // Issue operations
   createIssue: GrpcMethod<CreateIssueRequest, CreateIssueResponse>
-  getIssue: GrpcMethod<GetIssueRequest, Issue>
-  getIssueByDisplayNumber: GrpcMethod<GetIssueByDisplayNumberRequest, Issue>
+  getIssue: GrpcMethod<GetIssueRequest, GetIssueResponse>
+  getIssueByDisplayNumber: GrpcMethod<
+    GetIssueByDisplayNumberRequest,
+    GetIssueResponse
+  >
   getIssuesByUuid: GrpcMethod<GetIssuesByUuidRequest, GetIssuesByUuidResponse>
   listIssues: GrpcMethod<ListIssuesRequest, ListIssuesResponse>
   updateIssue: GrpcMethod<UpdateIssueRequest, UpdateIssueResponse>
   deleteIssue: GrpcMethod<DeleteIssueRequest, DeleteIssueResponse>
+  softDeleteIssue: GrpcMethod<SoftDeleteIssueRequest, SoftDeleteIssueResponse>
+  restoreIssue: GrpcMethod<RestoreIssueRequest, RestoreIssueResponse>
   moveIssue: GrpcMethod<MoveIssueRequest, MoveIssueResponse>
   duplicateIssue: GrpcMethod<DuplicateIssueRequest, DuplicateIssueResponse>
 
   // Manifest and Config
-  getManifest: GrpcMethod<GetManifestRequest, Manifest>
-  getConfig: GrpcMethod<GetConfigRequest, Config>
+  getManifest: GrpcMethod<GetManifestRequest, GetManifestResponse>
+  getConfig: GrpcMethod<GetConfigRequest, GetConfigResponse>
   updateConfig: GrpcMethod<UpdateConfigRequest, UpdateConfigResponse>
 
   // Doc operations
   createDoc: GrpcMethod<CreateDocRequest, CreateDocResponse>
-  getDoc: GrpcMethod<GetDocRequest, Doc>
+  getDoc: GrpcMethod<GetDocRequest, GetDocResponse>
   getDocsBySlug: GrpcMethod<GetDocsBySlugRequest, GetDocsBySlugResponse>
   listDocs: GrpcMethod<ListDocsRequest, ListDocsResponse>
   updateDoc: GrpcMethod<UpdateDocRequest, UpdateDocResponse>
   deleteDoc: GrpcMethod<DeleteDocRequest, DeleteDocResponse>
+  softDeleteDoc: GrpcMethod<SoftDeleteDocRequest, SoftDeleteDocResponse>
+  restoreDoc: GrpcMethod<RestoreDocRequest, RestoreDocResponse>
   moveDoc: GrpcMethod<MoveDocRequest, MoveDocResponse>
   duplicateDoc: GrpcMethod<DuplicateDocRequest, DuplicateDocResponse>
 
@@ -329,11 +349,6 @@ interface CentyDaemonClient {
   getAsset: GrpcMethod<GetAssetRequest, GetAssetResponse>
   deleteAsset: GrpcMethod<DeleteAssetRequest, DeleteAssetResponse>
   listSharedAssets: GrpcMethod<ListSharedAssetsRequest, ListAssetsResponse>
-
-  // Plan operations
-  getPlan: GrpcMethod<GetPlanRequest, GetPlanResponse>
-  updatePlan: GrpcMethod<UpdatePlanRequest, UpdatePlanResponse>
-  deletePlan: GrpcMethod<DeletePlanRequest, DeletePlanResponse>
 
   // Project registry operations
   listProjects: GrpcMethod<ListProjectsRequest, ListProjectsResponse>
@@ -377,19 +392,6 @@ interface CentyDaemonClient {
     DeleteOrganizationResponse
   >
 
-  // Org issue operations
-  createOrgIssue: GrpcMethod<CreateOrgIssueRequest, CreateOrgIssueResponse>
-  getOrgIssue: GrpcMethod<GetOrgIssueRequest, OrgIssue>
-  getOrgIssueByDisplayNumber: GrpcMethod<
-    GetOrgIssueByDisplayNumberRequest,
-    OrgIssue
-  >
-  listOrgIssues: GrpcMethod<ListOrgIssuesRequest, ListOrgIssuesResponse>
-  updateOrgIssue: GrpcMethod<UpdateOrgIssueRequest, UpdateOrgIssueResponse>
-  deleteOrgIssue: GrpcMethod<DeleteOrgIssueRequest, DeleteOrgIssueResponse>
-  getOrgConfig: GrpcMethod<GetOrgConfigRequest, OrgConfig>
-  updateOrgConfig: GrpcMethod<UpdateOrgConfigRequest, UpdateOrgConfigResponse>
-
   // Version operations
   getDaemonInfo: GrpcMethod<GetDaemonInfoRequest, DaemonInfo>
 
@@ -405,12 +407,14 @@ interface CentyDaemonClient {
 
   // PR operations
   createPr: GrpcMethod<CreatePrRequest, CreatePrResponse>
-  getPr: GrpcMethod<GetPrRequest, PullRequest>
-  getPrByDisplayNumber: GrpcMethod<GetPrByDisplayNumberRequest, PullRequest>
+  getPr: GrpcMethod<GetPrRequest, GetPrResponse>
+  getPrByDisplayNumber: GrpcMethod<GetPrByDisplayNumberRequest, GetPrResponse>
   getPrsByUuid: GrpcMethod<GetPrsByUuidRequest, GetPrsByUuidResponse>
   listPrs: GrpcMethod<ListPrsRequest, ListPrsResponse>
   updatePr: GrpcMethod<UpdatePrRequest, UpdatePrResponse>
   deletePr: GrpcMethod<DeletePrRequest, DeletePrResponse>
+  softDeletePr: GrpcMethod<SoftDeletePrRequest, SoftDeletePrResponse>
+  restorePr: GrpcMethod<RestorePrRequest, RestorePrResponse>
   getNextPrNumber: GrpcMethod<GetNextPrNumberRequest, GetNextPrNumberResponse>
 
   // Features operations
@@ -433,23 +437,30 @@ interface CentyDaemonClient {
 
   // User operations
   createUser: GrpcMethod<CreateUserRequest, CreateUserResponse>
-  getUser: GrpcMethod<GetUserRequest, User>
+  getUser: GrpcMethod<GetUserRequest, GetUserResponse>
   listUsers: GrpcMethod<ListUsersRequest, ListUsersResponse>
   updateUser: GrpcMethod<UpdateUserRequest, UpdateUserResponse>
   deleteUser: GrpcMethod<DeleteUserRequest, DeleteUserResponse>
+  softDeleteUser: GrpcMethod<SoftDeleteUserRequest, SoftDeleteUserResponse>
+  restoreUser: GrpcMethod<RestoreUserRequest, RestoreUserResponse>
   syncUsers: GrpcMethod<SyncUsersRequest, SyncUsersResponse>
 
-  // Issue assignee operations
-  assignIssue: GrpcMethod<AssignIssueRequest, AssignIssueResponse>
-  unassignIssue: GrpcMethod<UnassignIssueRequest, UnassignIssueResponse>
-
-  // LLM Agent operations
-  spawnAgent: GrpcMethod<SpawnAgentRequest, SpawnAgentResponse>
-
-  // Temp workspace operations
-  openInTempVscode: GrpcMethod<
-    OpenInTempVscodeRequest,
-    OpenInTempVscodeResponse
+  // Workspace operations
+  openInTempWorkspace: GrpcMethod<
+    OpenInTempWorkspaceRequest,
+    OpenInTempWorkspaceResponse
+  >
+  openInTempWorkspaceWithEditor: GrpcMethod<
+    OpenInTempWorkspaceWithEditorRequest,
+    OpenInTempWorkspaceResponse
+  >
+  openStandaloneWorkspaceWithEditor: GrpcMethod<
+    OpenStandaloneWorkspaceWithEditorRequest,
+    OpenInTempWorkspaceResponse
+  >
+  openAgentInTerminal: GrpcMethod<
+    OpenAgentInTerminalRequest,
+    OpenAgentInTerminalResponse
   >
   listTempWorkspaces: GrpcMethod<
     ListTempWorkspacesRequest,
@@ -463,15 +474,42 @@ interface CentyDaemonClient {
     CleanupExpiredWorkspacesRequest,
     CleanupExpiredWorkspacesResponse
   >
+
+  // Entity actions
+  getEntityActions: GrpcMethod<
+    GetEntityActionsRequest,
+    GetEntityActionsResponse
+  >
+
+  // Sync operations
+  listSyncConflicts: GrpcMethod<
+    ListSyncConflictsRequest,
+    ListSyncConflictsResponse
+  >
+  getSyncConflict: GrpcMethod<GetSyncConflictRequest, GetSyncConflictResponse>
+  resolveSyncConflict: GrpcMethod<
+    ResolveSyncConflictRequest,
+    ResolveSyncConflictResponse
+  >
+  getSyncStatus: GrpcMethod<GetSyncStatusRequest, GetSyncStatusResponse>
+  syncPull: GrpcMethod<SyncPullRequest, SyncPullResponse>
+  syncPush: GrpcMethod<SyncPushRequest, SyncPushResponse>
+
+  // Link operations
+  createLink: GrpcMethod<CreateLinkRequest, CreateLinkResponse>
+  deleteLink: GrpcMethod<DeleteLinkRequest, DeleteLinkResponse>
+  listLinks: GrpcMethod<ListLinksRequest, ListLinksResponse>
 }
 
 interface ProtoDescriptor {
   centy: {
-    CentyDaemon: new (
-      address: string,
-      creds: ReturnType<typeof credentials.createInsecure>,
-      options?: ChannelOptions
-    ) => CentyDaemonClient
+    v1: {
+      CentyDaemon: new (
+        address: string,
+        creds: ReturnType<typeof credentials.createInsecure>,
+        options?: ChannelOptions
+      ) => CentyDaemonClient
+    }
   }
 }
 
@@ -516,7 +554,7 @@ export function getDaemonClient(): CentyDaemonClient {
   ) as unknown as ProtoDescriptor
 
   const address = getAddress()
-  clientInstance = new protoDescriptor.centy.CentyDaemon(
+  clientInstance = new protoDescriptor.centy.v1.CentyDaemon(
     address,
     credentials.createInsecure(),
     CHANNEL_OPTIONS

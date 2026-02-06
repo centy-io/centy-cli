@@ -1,0 +1,11 @@
+---
+displayNumber: 39
+status: closed
+priority: 1
+createdAt: 2025-12-10T20:49:36.481479+00:00
+updatedAt: 2025-12-11T09:27:32.547591+00:00
+---
+
+# UUID query
+
+When getting by UUID provide all the issues with this UUID from all projects
