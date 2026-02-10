@@ -103,9 +103,13 @@
       "Bash(pnpm --version:*)",
       "Bash(code:*)",
       "WebFetch(domain:www.npmjs.com)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(./bin/run.js:*)",
+      "Bash(pnpm format:check:*)",
+      "Bash(pnpm spell:*)",
+      "Bash(pnpm knip:*)"
     ],
-    "deny": ["Bash(npm install)"]
+    "deny": ["Bash(npm install)", "Bash(pnpm release)"]
   },
   "hooks": {
     "PreToolUse": [
