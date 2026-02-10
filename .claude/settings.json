@@ -96,7 +96,8 @@
       "Bash(gh pr merge:*)",
       "Bash(git rebase:*)",
       "Bash(gh issue list:*)",
-      "Bash(gh issue view:*)"
+      "Bash(gh issue view:*)",
+      "Bash(gh issue close:*)"
     ],
     "deny": ["Bash(npm install)"]
   },
