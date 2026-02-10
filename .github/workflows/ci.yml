@@ -196,6 +196,10 @@ jobs:
         if: steps.version_check.outputs.should_publish == 'true'
         run: pnpm build
 
+      - name: Update npm
+        if: steps.version_check.outputs.should_publish == 'true'
+        run: npm install -g npm@latest
+
       - name: Publish to npm
         if: steps.version_check.outputs.should_publish == 'true'
         run: npm publish --access public --provenance
