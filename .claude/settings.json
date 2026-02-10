@@ -117,7 +117,11 @@
       "Bash(gh run rerun:*)",
       "WebSearch",
       "WebFetch(domain:docs.npmjs.com)",
-      "WebFetch(domain:philna.sh)"
+      "WebFetch(domain:philna.sh)",
+      "Bash(npx centy:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm test:coverage:*)",
+      "Bash(gh pr merge:*)"
     ],
     "deny": ["Bash(npm install)"]
   },
