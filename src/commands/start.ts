@@ -1,16 +1,12 @@
-/* eslint-disable max-lines */
-
-import { spawn, execSync } from 'node:child_process'
 import { Command, Flags } from '@oclif/core'
 import { checkDaemonConnection } from '../daemon/check-daemon-connection.js'
 import { getInstallScriptUrl } from '../lib/install-script-url.js'
 import { daemonBinaryExists } from '../lib/start/daemon-binary-exists.js'
 import { findDaemonBinary } from '../lib/start/find-daemon-binary.js'
-import { promptForInstall } from '../lib/start/prompt-for-install.js'
-import { waitForDaemon } from '../lib/start/wait-for-daemon.js'
+import { handleMissingDaemon } from '../lib/start/handle-missing-daemon.js'
+import { startBackground } from '../lib/start/start-background.js'
+import { startForeground } from '../lib/start/start-foreground.js'
 import { getPermissionDeniedMsg } from '../utils/get-permission-denied-msg.js'
-import { closePromptInterface } from '../utils/close-prompt-interface.js'
-import { createPromptInterface } from '../utils/create-prompt-interface.js'
 
 const INSTALL_CMD = `curl -fsSL ${getInstallScriptUrl()} | sh`
 
@@ -55,11 +51,20 @@ export default class Start extends Command {
 
     let daemonPath = findDaemonBinary()
     if (!daemonBinaryExists(daemonPath)) {
-      const installed = await this.handleMissingDaemon(daemonPath, flags.yes)
+      let installed = false
+      try {
+        installed = await handleMissingDaemon(
+          daemonPath,
+          flags.yes,
+          INSTALL_CMD,
+          this.log.bind(this)
+        )
+      } catch {
+        this.error('Failed to install daemon')
+      }
       if (!installed) {
         this.error(getMissingDaemonMsg(daemonPath))
       }
-      // Re-find the daemon path after installation
       daemonPath = findDaemonBinary()
       if (!daemonBinaryExists(daemonPath)) {
         this.error(
@@ -68,94 +73,22 @@ export default class Start extends Command {
       }
     }
 
+    const errorHandler = (error: Error) =>
+      this.handleSpawnError(error, daemonPath)
+
     if (flags.foreground) {
-      await this.startForeground(daemonPath)
+      await startForeground(daemonPath, this.log.bind(this), errorHandler)
     } else {
-      await this.startBackground(daemonPath)
-    }
-  }
-
-  private async handleMissingDaemon(
-    daemonPath: string,
-    autoYes: boolean
-  ): Promise<boolean> {
-    let shouldInstall = autoYes
-
-    if (!autoYes) {
-      // Check if running in interactive mode (TTY)
-      if (!process.stdin.isTTY) {
-        this.log('Daemon not found and running in non-interactive mode.')
-        this.log(
-          `Use --yes flag to auto-install, or install using: ${INSTALL_CMD}`
-        )
-        return false
+      const started = await startBackground(
+        daemonPath,
+        this.log.bind(this),
+        errorHandler
+      )
+      if (started) {
+        this.log('Daemon started successfully')
+      } else {
+        this.error('Daemon started but not responding. Check logs.')
       }
-
-      const rl = createPromptInterface()
-      try {
-        shouldInstall = await promptForInstall({
-          rl,
-          output: process.stdout,
-          daemonPath,
-        })
-      } finally {
-        closePromptInterface(rl)
-      }
-    }
-
-    if (!shouldInstall) {
-      return false
-    }
-
-    this.log('\nInstalling daemon...\n')
-
-    try {
-      execSync(INSTALL_CMD, {
-        stdio: 'inherit',
-        env: { ...process.env, BINARIES: 'centy-daemon' },
-      })
-    } catch {
-      this.error('Failed to install daemon')
-    }
-
-    this.log('\nDaemon installed successfully\n')
-    return true
-  }
-
-  private async startForeground(daemonPath: string): Promise<void> {
-    this.log('Starting daemon in foreground mode...')
-    const child = spawn(daemonPath, [], { stdio: 'inherit' })
-    child.on('error', error => this.handleSpawnError(error, daemonPath))
-
-    await new Promise<void>((resolve, reject) => {
-      child.on('exit', code => {
-        if (code === 0) resolve()
-        else reject(new Error(`Daemon exited with code ${code}`))
-      })
-    })
-  }
-
-  private async startBackground(daemonPath: string): Promise<void> {
-    this.log('Starting daemon in background...')
-    const child = spawn(daemonPath, [], { detached: true, stdio: 'ignore' })
-    // Track spawn errors to avoid conflicting error messages
-    let spawnError: Error | null = null
-    child.on('error', error => {
-      spawnError = error
-    })
-
-    child.unref()
-    const started = await waitForDaemon()
-    // Check if spawn failed before reporting success/failure
-    if (spawnError) {
-      this.handleSpawnError(spawnError, daemonPath)
-      return
-    }
-
-    if (started) {
-      this.log('Daemon started successfully')
-    } else {
-      this.error('Daemon started but not responding. Check logs.')
     }
   }
 
