@@ -94,7 +94,9 @@
       "Bash(pnpm test:*)",
       "Bash(pnpm test:coverage:*)",
       "Bash(gh pr merge:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh issue view:*)"
     ],
     "deny": ["Bash(npm install)"]
   },
