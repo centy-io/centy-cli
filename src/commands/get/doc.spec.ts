@@ -250,4 +250,159 @@ describe('GetDoc command', () => {
     expect(mockResolveProjectPath).toHaveBeenCalledWith('other-project')
     expect(mockEnsureInitialized).toHaveBeenCalledWith('/other/project')
   })
+
+  it('should show cross-project hint when local doc not found but found globally', async () => {
+    const { default: Command } = await import('./doc.js')
+    const { isNotFoundError } =
+      await import('../../utils/cross-project-search.js')
+    mockDaemonGetDoc.mockRejectedValue(new Error('Doc not found'))
+    mockDaemonGetDocsBySlug.mockResolvedValue({
+      docs: [
+        {
+          doc: { title: 'Test', slug: 'test', content: '' },
+          projectName: 'other-project',
+          projectPath: '/other/project',
+        },
+      ],
+      totalCount: 1,
+      errors: [],
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { slug: 'test' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(mockDaemonGetDocsBySlug).toHaveBeenCalledWith({ slug: 'test' })
+  })
+
+  it('should output JSON cross-project hint when local doc not found with json flag', async () => {
+    const { default: Command } = await import('./doc.js')
+    mockDaemonGetDoc.mockRejectedValue(new Error('Doc not found'))
+    mockDaemonGetDocsBySlug.mockResolvedValue({
+      docs: [
+        {
+          doc: { title: 'Test', slug: 'test', content: '' },
+          projectName: 'other-project',
+          projectPath: '/other/project',
+        },
+      ],
+      totalCount: 1,
+      errors: [],
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: true, global: false },
+      args: { slug: 'test' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+  })
+
+  it('should show doc with undefined metadata', async () => {
+    const { default: Command } = await import('./doc.js')
+    mockDaemonGetDoc.mockResolvedValue({
+      title: 'Test',
+      slug: 'test',
+      content: '# Test',
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { slug: 'test' },
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('unknown'))).toBe(true)
+  })
+
+  it('should display global docs with content and errors', async () => {
+    const { default: Command } = await import('./doc.js')
+    mockDaemonGetDocsBySlug.mockResolvedValue({
+      docs: [
+        {
+          doc: {
+            title: 'Test',
+            slug: 'test',
+            content: '# Content here',
+            metadata: undefined,
+          },
+          projectName: 'proj-a',
+          projectPath: '/proj/a',
+        },
+      ],
+      totalCount: 1,
+      errors: ['Failed project-b'],
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: true },
+      args: { slug: 'test' },
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('Content here'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('unknown'))).toBe(true)
+    expect(cmd.warnings.some(w => w.includes('Some projects could not'))).toBe(
+      true
+    )
+  })
+
+  it('should handle not initialized error with search result', async () => {
+    const { default: Command } = await import('./doc.js')
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
+    const { handleNotInitializedWithSearch } =
+      await import('../../utils/cross-project-search.js')
+    const mockHandleNotInit = vi.mocked(handleNotInitializedWithSearch)
+    mockEnsureInitialized.mockRejectedValue(
+      new NotInitializedError('Not initialized')
+    )
+    mockHandleNotInit.mockResolvedValue({
+      message: 'doc test found in: other-project',
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { slug: 'test' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(cmd.errors).toContain('doc test found in: other-project')
+  })
+
+  it('should handle not initialized error with json search result', async () => {
+    const { default: Command } = await import('./doc.js')
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
+    const { handleNotInitializedWithSearch } =
+      await import('../../utils/cross-project-search.js')
+    const mockHandleNotInit = vi.mocked(handleNotInitializedWithSearch)
+    mockEnsureInitialized.mockRejectedValue(
+      new NotInitializedError('Not initialized')
+    )
+    mockHandleNotInit.mockResolvedValue({
+      message: 'found elsewhere',
+      jsonOutput: { found: true },
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: true, global: false },
+      args: { slug: 'test' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(cmd.logs.some(log => log.includes('"found"'))).toBe(true)
+  })
 })

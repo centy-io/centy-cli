@@ -296,6 +296,178 @@ describe('GetIssue command', () => {
 
     expect(cmd.logs[0]).toBe(JSON.stringify(result, null, 2))
   })
+
+  it('should show cross-project hint when local UUID not found but found globally', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockDaemonGetIssue.mockRejectedValue(new Error('Issue not found'))
+    mockDaemonGetIssuesByUuid.mockResolvedValue({
+      issues: [
+        {
+          issue: createMockIssue(),
+          projectName: 'other-project',
+          projectPath: '/other/project',
+        },
+      ],
+      totalCount: 1,
+      errors: [],
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(mockDaemonGetIssuesByUuid).toHaveBeenCalledWith({
+      uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+    })
+  })
+
+  it('should output JSON cross-project hint when local UUID not found with json flag', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockDaemonGetIssue.mockRejectedValue(new Error('Issue not found'))
+    mockDaemonGetIssuesByUuid.mockResolvedValue({
+      issues: [
+        {
+          issue: createMockIssue(),
+          projectName: 'other-project',
+          projectPath: '/other/project',
+        },
+      ],
+      totalCount: 1,
+      errors: [],
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: true, global: false },
+      args: { id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+  })
+
+  it('should show issue with undefined metadata', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockDaemonGetIssueByDisplayNumber.mockResolvedValue(
+      createMockIssue({ metadata: undefined })
+    )
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { id: '1' },
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('unknown'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('P?'))).toBe(true)
+  })
+
+  it('should show priority label when priorityLabel is empty', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockDaemonGetIssueByDisplayNumber.mockResolvedValue(
+      createMockIssue({
+        metadata: {
+          status: 'open',
+          priority: 3,
+          priorityLabel: '',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-02T00:00:00Z',
+        },
+      })
+    )
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { id: '1' },
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('P3'))).toBe(true)
+  })
+
+  it('should handle not initialized error with search result', async () => {
+    const { default: Command } = await import('./issue.js')
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
+    const { handleNotInitializedWithSearch } =
+      await import('../../utils/cross-project-search.js')
+    const mockHandleNotInit = vi.mocked(handleNotInitializedWithSearch)
+    mockEnsureInitialized.mockRejectedValue(
+      new NotInitializedError('Not initialized')
+    )
+    mockHandleNotInit.mockResolvedValue({
+      message: 'issue a1b2c3d4 found in: other-project',
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(cmd.errors.some(e => e.includes('found in'))).toBe(true)
+  })
+
+  it('should handle not initialized error with json search result', async () => {
+    const { default: Command } = await import('./issue.js')
+    const { NotInitializedError } =
+      await import('../../utils/ensure-initialized.js')
+    const { handleNotInitializedWithSearch } =
+      await import('../../utils/cross-project-search.js')
+    const mockHandleNotInit = vi.mocked(handleNotInitializedWithSearch)
+    mockEnsureInitialized.mockRejectedValue(
+      new NotInitializedError('Not initialized')
+    )
+    mockHandleNotInit.mockResolvedValue({
+      message: 'found elsewhere',
+      jsonOutput: { found: true },
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: true, global: false },
+      args: { id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(cmd.logs.some(log => log.includes('"found"'))).toBe(true)
+  })
+
+  it('should show global issues with undefined metadata', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockDaemonGetIssuesByUuid.mockResolvedValue({
+      issues: [
+        {
+          issue: createMockIssue({ metadata: undefined, description: '' }),
+          projectName: 'proj-a',
+          projectPath: '/proj/a',
+        },
+      ],
+      totalCount: 1,
+      errors: ['Failed project-b'],
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: true },
+      args: { id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('unknown'))).toBe(true)
+    expect(cmd.warnings.some(w => w.includes('Some projects could not'))).toBe(
+      true
+    )
+  })
 })
 
 describe('get issue command - ID parsing', () => {

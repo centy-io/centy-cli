@@ -35,4 +35,11 @@ pnpm test --run || {
   exit 1
 }
 
+# Run coverage check
+echo "Checking test coverage..."
+pnpm test:coverage --run || {
+  echo "Coverage check failed. Coverage must be at least 80% for lines, functions, branches, and statements."
+  exit 1
+}
+
 echo "All pre-push checks passed!"
