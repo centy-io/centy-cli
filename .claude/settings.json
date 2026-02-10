@@ -100,7 +100,10 @@
       "Bash(gh issue close:*)",
       "Bash(pnpm run:*)",
       "Bash(node --version:*)",
-      "Bash(pnpm --version:*)"
+      "Bash(pnpm --version:*)",
+      "Bash(code:*)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(ls:*)"
     ],
     "deny": ["Bash(npm install)"]
   },
