@@ -115,7 +115,9 @@
       "Bash(pnpm dev)",
       "WebFetch(domain:github.blog)",
       "Bash(gh run rerun:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:docs.npmjs.com)",
+      "WebFetch(domain:philna.sh)"
     ],
     "deny": ["Bash(npm install)"]
   },
