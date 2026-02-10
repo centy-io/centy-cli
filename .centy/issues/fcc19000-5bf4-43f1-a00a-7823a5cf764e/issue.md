@@ -1,6 +1,0 @@
-# Get Issue without get
-
-We want to support the option to get issues like that:
-
-centy issue 951d7832-e170-4ca6-a8e6-24f20e815739  
-Its should be like an alias, the logic should be exactly the same function

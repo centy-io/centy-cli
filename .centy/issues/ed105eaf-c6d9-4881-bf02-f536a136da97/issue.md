@@ -1,3 +1,0 @@
-# Smarter error messages when issue not found
-
-When an issue is not found in the current project, check other registered projects and provide a helpful suggestion. For example: "Issue found in project 'centy-daemon'. Run from that directory or use --project centy-daemon"

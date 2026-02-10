@@ -1,9 +1,9 @@
 ---
-displayNumber: 101
+displayNumber: 132
 status: open
 priority: 2
 createdAt: 2026-01-14T23:06:59.587289+00:00
-updatedAt: 2026-01-14T23:06:59.587289+00:00
+updatedAt: 2026-02-10T13:01:14.431228+00:00
 ---
 
 # Add CLI support for standalone workspaces (no issue required)
