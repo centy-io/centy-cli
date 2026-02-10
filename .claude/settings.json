@@ -113,7 +113,9 @@
       "Bash(git pull:*)",
       "Bash(git stash:*)",
       "Bash(pnpm dev)",
-      "WebFetch(domain:github.blog)"
+      "WebFetch(domain:github.blog)",
+      "Bash(gh run rerun:*)",
+      "WebSearch"
     ],
     "deny": ["Bash(npm install)"]
   },
