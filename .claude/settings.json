@@ -97,7 +97,10 @@
       "Bash(git rebase:*)",
       "Bash(gh issue list:*)",
       "Bash(gh issue view:*)",
-      "Bash(gh issue close:*)"
+      "Bash(gh issue close:*)",
+      "Bash(pnpm run:*)",
+      "Bash(node --version:*)",
+      "Bash(pnpm --version:*)"
     ],
     "deny": ["Bash(npm install)"]
   },
