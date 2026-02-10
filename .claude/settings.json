@@ -121,7 +121,8 @@
       "Bash(npx centy:*)",
       "Bash(pnpm test:*)",
       "Bash(pnpm test:coverage:*)",
-      "Bash(gh pr merge:*)"
+      "Bash(gh pr merge:*)",
+      "Bash(git rebase:*)"
     ],
     "deny": ["Bash(npm install)"]
   },
