@@ -98,7 +98,9 @@
       "Bash(pkill:*)",
       "Bash(centy version:*)",
       "Bash(centy update:*)",
-      "Bash(pnpm dlx:*)"
+      "Bash(pnpm dlx:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx vitest:*)"
     ],
     "deny": ["Bash(npm install)"]
   },
