@@ -24,11 +24,10 @@ export default defineConfig({
         'src/index.ts',
       ],
       thresholds: {
-        // Temporarily lowered from 80% - see issue for improvement plan
-        lines: 40,
-        functions: 45,
-        branches: 25,
-        statements: 40,
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
       },
     },
   },
