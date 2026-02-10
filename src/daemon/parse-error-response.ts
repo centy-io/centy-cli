@@ -12,9 +12,9 @@ function isDaemonErrorResponse(value: unknown): value is DaemonErrorResponse {
   if (value === null || typeof value !== 'object') {
     return false
   }
-  // eslint-disable-next-line no-restricted-syntax
   return (
     'messages' in value &&
+    // eslint-disable-next-line no-restricted-syntax
     Array.isArray((value as Record<string, unknown>).messages)
   )
 }
