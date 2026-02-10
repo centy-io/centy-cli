@@ -327,6 +327,39 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "restart.js"]
     },
+    "show": {
+      "aliases": [],
+      "args": {
+        "uuid": {
+          "description": "Entity UUID to look up",
+          "name": "uuid",
+          "required": true
+        }
+      },
+      "description": "Show an entity by UUID, searching across all tracked projects",
+      "examples": [
+        "<%= config.bin %> show 9f38fb44-55df-424d-a61f-a3432cfa83d2",
+        "<%= config.bin %> show 9f38fb44-55df-424d-a61f-a3432cfa83d2 --json"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "show",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "show.js"]
+    },
     "shutdown": {
       "aliases": [],
       "args": {},
@@ -1163,116 +1196,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "create", "user.js"]
     },
-    "duplicate:doc": {
-      "aliases": [],
-      "args": {
-        "slug": {
-          "description": "Doc slug",
-          "name": "slug",
-          "required": true
-        }
-      },
-      "description": "Duplicate a doc (same project or different project)",
-      "examples": [
-        "<%= config.bin %> duplicate doc my-doc",
-        "<%= config.bin %> duplicate doc readme --new-slug readme-v2",
-        "<%= config.bin %> duplicate doc api-guide --to /path/to/other/project",
-        "<%= config.bin %> duplicate doc spec --to ../other --new-slug spec-copy --title \"Spec Copy\""
-      ],
-      "flags": {
-        "to": {
-          "char": "t",
-          "description": "Target project path (defaults to same project if not specified)",
-          "name": "to",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "new-slug": {
-          "char": "s",
-          "description": "Slug for the duplicate (defaults to \"{slug}-copy\")",
-          "name": "new-slug",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "title": {
-          "description": "Title for the duplicate (defaults to \"Copy of {original}\")",
-          "name": "title",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "duplicate:doc",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "duplicate", "doc.js"]
-    },
-    "duplicate:issue": {
-      "aliases": [],
-      "args": {
-        "id": {
-          "description": "Issue ID (UUID) or display number",
-          "name": "id",
-          "required": true
-        }
-      },
-      "description": "Duplicate an issue (same project or different project)",
-      "examples": [
-        "<%= config.bin %> duplicate issue 1",
-        "<%= config.bin %> duplicate issue 1 --title \"New feature branch\"",
-        "<%= config.bin %> duplicate issue abc123-uuid --to /path/to/other/project",
-        "<%= config.bin %> duplicate issue 5 --to ../other --title \"Copy for testing\""
-      ],
-      "flags": {
-        "to": {
-          "char": "t",
-          "description": "Target project path (defaults to same project if not specified)",
-          "name": "to",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "title": {
-          "description": "Title for the duplicate (defaults to \"Copy of {original}\")",
-          "name": "title",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "duplicate:issue",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "duplicate", "issue.js"]
-    },
     "delete:asset": {
       "aliases": [],
       "args": {
@@ -2035,115 +1958,101 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "get", "user.js"]
     },
-    "install:all": {
+    "move:doc": {
       "aliases": [],
-      "args": {},
-      "description": "Download and install all centy binaries (daemon and tui)",
+      "args": {
+        "slug": {
+          "description": "Doc slug",
+          "name": "slug",
+          "required": true
+        }
+      },
+      "description": "Move a doc to a different project",
       "examples": [
-        "<%= config.bin %> install all",
-        "<%= config.bin %> install all --prerelease"
+        "<%= config.bin %> move doc my-doc --to /path/to/target/project",
+        "<%= config.bin %> move doc readme --to ../other-project --new-slug new-readme",
+        "<%= config.bin %> move doc api-guide --to ~/projects/target --project ./source"
       ],
       "flags": {
-        "version": {
-          "char": "v",
-          "description": "Specific version to install (default: latest)",
-          "name": "version",
+        "to": {
+          "char": "t",
+          "description": "Target project path",
+          "name": "to",
+          "required": true,
           "hasDynamicHelp": false,
           "multiple": false,
           "type": "option"
         },
-        "prerelease": {
-          "char": "p",
-          "description": "Include prerelease versions when fetching latest",
-          "name": "prerelease",
-          "allowNo": false,
-          "type": "boolean"
+        "new-slug": {
+          "char": "s",
+          "description": "New slug for the doc (if slug already exists in target)",
+          "name": "new-slug",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
         }
       },
       "hasDynamicHelp": false,
       "hiddenAliases": [],
-      "id": "install:all",
+      "id": "move:doc",
       "pluginAlias": "centy",
       "pluginName": "centy",
       "pluginType": "core",
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "install", "all.js"]
+      "relativePath": ["dist", "commands", "move", "doc.js"]
     },
-    "install:daemon": {
+    "move:issue": {
       "aliases": [],
-      "args": {},
-      "description": "Download and install the centy daemon binary",
+      "args": {
+        "id": {
+          "description": "Issue ID (UUID) or display number",
+          "name": "id",
+          "required": true
+        }
+      },
+      "description": "Move an issue to a different project",
       "examples": [
-        "<%= config.bin %> install daemon",
-        "<%= config.bin %> install daemon --prerelease",
-        "<%= config.bin %> install daemon --version 0.2.0-alpha.9"
+        "<%= config.bin %> move issue 1 --to /path/to/target/project",
+        "<%= config.bin %> move issue abc123-uuid --to ../other-project",
+        "<%= config.bin %> move issue 5 --to ~/projects/target --project ./source"
       ],
       "flags": {
-        "version": {
-          "char": "v",
-          "description": "Specific version to install (default: latest)",
-          "name": "version",
+        "to": {
+          "char": "t",
+          "description": "Target project path",
+          "name": "to",
+          "required": true,
           "hasDynamicHelp": false,
           "multiple": false,
           "type": "option"
         },
-        "prerelease": {
-          "char": "p",
-          "description": "Include prerelease versions when fetching latest",
-          "name": "prerelease",
-          "allowNo": false,
-          "type": "boolean"
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
         }
       },
       "hasDynamicHelp": false,
       "hiddenAliases": [],
-      "id": "install:daemon",
+      "id": "move:issue",
       "pluginAlias": "centy",
       "pluginName": "centy",
       "pluginType": "core",
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "install", "daemon.js"]
-    },
-    "install:tui": {
-      "aliases": [],
-      "args": {},
-      "description": "Download and install the centy TUI binary",
-      "examples": [
-        "<%= config.bin %> install tui",
-        "<%= config.bin %> install tui --prerelease",
-        "<%= config.bin %> install tui --version 0.1.0"
-      ],
-      "flags": {
-        "version": {
-          "char": "v",
-          "description": "Specific version to install (default: latest)",
-          "name": "version",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "prerelease": {
-          "char": "p",
-          "description": "Include prerelease versions when fetching latest",
-          "name": "prerelease",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "install:tui",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "install", "tui.js"]
+      "relativePath": ["dist", "commands", "move", "issue.js"]
     },
     "list:assets": {
       "aliases": ["asset:list"],
@@ -2558,102 +2467,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "list", "users.js"]
     },
-    "move:doc": {
-      "aliases": [],
-      "args": {
-        "slug": {
-          "description": "Doc slug",
-          "name": "slug",
-          "required": true
-        }
-      },
-      "description": "Move a doc to a different project",
-      "examples": [
-        "<%= config.bin %> move doc my-doc --to /path/to/target/project",
-        "<%= config.bin %> move doc readme --to ../other-project --new-slug new-readme",
-        "<%= config.bin %> move doc api-guide --to ~/projects/target --project ./source"
-      ],
-      "flags": {
-        "to": {
-          "char": "t",
-          "description": "Target project path",
-          "name": "to",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "new-slug": {
-          "char": "s",
-          "description": "New slug for the doc (if slug already exists in target)",
-          "name": "new-slug",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "move:doc",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "move", "doc.js"]
-    },
-    "move:issue": {
-      "aliases": [],
-      "args": {
-        "id": {
-          "description": "Issue ID (UUID) or display number",
-          "name": "id",
-          "required": true
-        }
-      },
-      "description": "Move an issue to a different project",
-      "examples": [
-        "<%= config.bin %> move issue 1 --to /path/to/target/project",
-        "<%= config.bin %> move issue abc123-uuid --to ../other-project",
-        "<%= config.bin %> move issue 5 --to ~/projects/target --project ./source"
-      ],
-      "flags": {
-        "to": {
-          "char": "t",
-          "description": "Target project path",
-          "name": "to",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "move:issue",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "move", "issue.js"]
-    },
     "project:archive": {
       "aliases": [],
       "args": {
@@ -2865,6 +2678,116 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "register", "project.js"]
     },
+    "duplicate:doc": {
+      "aliases": [],
+      "args": {
+        "slug": {
+          "description": "Doc slug",
+          "name": "slug",
+          "required": true
+        }
+      },
+      "description": "Duplicate a doc (same project or different project)",
+      "examples": [
+        "<%= config.bin %> duplicate doc my-doc",
+        "<%= config.bin %> duplicate doc readme --new-slug readme-v2",
+        "<%= config.bin %> duplicate doc api-guide --to /path/to/other/project",
+        "<%= config.bin %> duplicate doc spec --to ../other --new-slug spec-copy --title \"Spec Copy\""
+      ],
+      "flags": {
+        "to": {
+          "char": "t",
+          "description": "Target project path (defaults to same project if not specified)",
+          "name": "to",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "new-slug": {
+          "char": "s",
+          "description": "Slug for the duplicate (defaults to \"{slug}-copy\")",
+          "name": "new-slug",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "title": {
+          "description": "Title for the duplicate (defaults to \"Copy of {original}\")",
+          "name": "title",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "duplicate:doc",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "duplicate", "doc.js"]
+    },
+    "duplicate:issue": {
+      "aliases": [],
+      "args": {
+        "id": {
+          "description": "Issue ID (UUID) or display number",
+          "name": "id",
+          "required": true
+        }
+      },
+      "description": "Duplicate an issue (same project or different project)",
+      "examples": [
+        "<%= config.bin %> duplicate issue 1",
+        "<%= config.bin %> duplicate issue 1 --title \"New feature branch\"",
+        "<%= config.bin %> duplicate issue abc123-uuid --to /path/to/other/project",
+        "<%= config.bin %> duplicate issue 5 --to ../other --title \"Copy for testing\""
+      ],
+      "flags": {
+        "to": {
+          "char": "t",
+          "description": "Target project path (defaults to same project if not specified)",
+          "name": "to",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "title": {
+          "description": "Title for the duplicate (defaults to \"Copy of {original}\")",
+          "name": "title",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "duplicate:issue",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "duplicate", "issue.js"]
+    },
     "sync:users": {
       "aliases": [],
       "args": {},
@@ -2954,40 +2877,115 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "unassign", "issue.js"]
     },
-    "untrack:project": {
+    "install:all": {
       "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Remove a project from tracking",
+      "args": {},
+      "description": "Download and install all centy binaries (daemon and tui)",
       "examples": [
-        "<%= config.bin %> untrack project",
-        "<%= config.bin %> untrack project /path/to/project",
-        "<%= config.bin %> untrack project --force"
+        "<%= config.bin %> install all",
+        "<%= config.bin %> install all --prerelease"
       ],
       "flags": {
-        "force": {
-          "char": "f",
-          "description": "Skip confirmation prompt",
-          "name": "force",
+        "version": {
+          "char": "v",
+          "description": "Specific version to install (default: latest)",
+          "name": "version",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "prerelease": {
+          "char": "p",
+          "description": "Include prerelease versions when fetching latest",
+          "name": "prerelease",
           "allowNo": false,
           "type": "boolean"
         }
       },
       "hasDynamicHelp": false,
       "hiddenAliases": [],
-      "id": "untrack:project",
+      "id": "install:all",
       "pluginAlias": "centy",
       "pluginName": "centy",
       "pluginType": "core",
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "untrack", "project.js"]
+      "relativePath": ["dist", "commands", "install", "all.js"]
+    },
+    "install:daemon": {
+      "aliases": [],
+      "args": {},
+      "description": "Download and install the centy daemon binary",
+      "examples": [
+        "<%= config.bin %> install daemon",
+        "<%= config.bin %> install daemon --prerelease",
+        "<%= config.bin %> install daemon --version 0.2.0-alpha.9"
+      ],
+      "flags": {
+        "version": {
+          "char": "v",
+          "description": "Specific version to install (default: latest)",
+          "name": "version",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "prerelease": {
+          "char": "p",
+          "description": "Include prerelease versions when fetching latest",
+          "name": "prerelease",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "install:daemon",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "install", "daemon.js"]
+    },
+    "install:tui": {
+      "aliases": [],
+      "args": {},
+      "description": "Download and install the centy TUI binary",
+      "examples": [
+        "<%= config.bin %> install tui",
+        "<%= config.bin %> install tui --prerelease",
+        "<%= config.bin %> install tui --version 0.1.0"
+      ],
+      "flags": {
+        "version": {
+          "char": "v",
+          "description": "Specific version to install (default: latest)",
+          "name": "version",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "prerelease": {
+          "char": "p",
+          "description": "Include prerelease versions when fetching latest",
+          "name": "prerelease",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "install:tui",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "install", "tui.js"]
     },
     "update:doc": {
       "aliases": [],
@@ -3436,6 +3434,41 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "update", "user.js"]
     },
+    "untrack:project": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Remove a project from tracking",
+      "examples": [
+        "<%= config.bin %> untrack project",
+        "<%= config.bin %> untrack project /path/to/project",
+        "<%= config.bin %> untrack project --force"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Skip confirmation prompt",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "untrack:project",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "untrack", "project.js"]
+    },
     "workspace:cleanup": {
       "aliases": [],
       "args": {},
@@ -3577,5 +3610,5 @@
       "relativePath": ["dist", "commands", "workspace", "open.js"]
     }
   },
-  "version": "0.2.5"
+  "version": "0.2.8"
 }
