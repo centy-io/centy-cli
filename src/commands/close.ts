@@ -1,26 +1,15 @@
-/* eslint-disable max-lines */
-
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
-import { daemonGetIssueByDisplayNumber } from '../daemon/daemon-get-issue-by-display-number.js'
-import { daemonGetPrByDisplayNumber } from '../daemon/daemon-get-pr-by-display-number.js'
-import { daemonUpdateIssue } from '../daemon/daemon-update-issue.js'
-import { daemonUpdatePr } from '../daemon/daemon-update-pr.js'
 import { projectFlag } from '../flags/project-flag.js'
+import { closeIssue } from '../lib/close/close-issue.js'
+import { closePr } from '../lib/close/close-pr.js'
+import { findEntityByDisplayNumber } from '../lib/close/find-entity.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
-
-type EntityType = 'issue' | 'pr'
-
-interface FoundEntity {
-  type: EntityType
-  id: string
-  displayNumber: number
-}
 
 /**
  * Generic close command for issues, PRs, and org-issues
@@ -64,7 +53,6 @@ export default class Close extends Command {
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Close)
 
-    // Parse display number (supports #1 or 1 format)
     const displayNumberMatch = args.identifier.match(/^#?(\d+)$/)
     if (!displayNumberMatch) {
       this.error(
@@ -73,7 +61,6 @@ export default class Close extends Command {
     }
     const displayNumber = Number.parseInt(displayNumberMatch[1], 10)
 
-    // Resolve project path for local entities
     const cwd = await resolveProjectPath(flags.project)
 
     try {
@@ -85,50 +72,34 @@ export default class Close extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    // If type is specified, close that type directly
     if (flags.type !== undefined) {
-      if (flags.type === 'issue') {
-        await this.closeIssue(cwd, displayNumber, flags.json)
-      } else if (flags.type === 'pr') {
-        await this.closePr(cwd, displayNumber, flags.json)
-      }
+      await this.closeByType(flags.type, cwd, displayNumber, flags.json)
       return
     }
 
-    // Search for entities with this display number
-    const foundEntities: FoundEntity[] = []
+    await this.closeByDiscovery(cwd, displayNumber, flags.json)
+  }
 
-    // Try to find issue
-    try {
-      const issue = await daemonGetIssueByDisplayNumber({
-        projectPath: cwd,
-        displayNumber,
-      })
-      foundEntities.push({
-        type: 'issue',
-        id: issue.id,
-        displayNumber: issue.displayNumber,
-      })
-    } catch {
-      // Issue not found, continue
+  private async closeByType(
+    type: string,
+    cwd: string,
+    displayNumber: number,
+    json: boolean
+  ): Promise<void> {
+    if (type === 'issue') {
+      await closeIssue(cwd, displayNumber, json, this.log.bind(this))
+    } else if (type === 'pr') {
+      await closePr(cwd, displayNumber, json, this.log.bind(this))
     }
+  }
 
-    // Try to find PR
-    try {
-      const pr = await daemonGetPrByDisplayNumber({
-        projectPath: cwd,
-        displayNumber,
-      })
-      foundEntities.push({
-        type: 'pr',
-        id: pr.id,
-        displayNumber: pr.displayNumber,
-      })
-    } catch {
-      // PR not found, continue
-    }
+  private async closeByDiscovery(
+    cwd: string,
+    displayNumber: number,
+    json: boolean
+  ): Promise<void> {
+    const foundEntities = await findEntityByDisplayNumber(cwd, displayNumber)
 
-    // Handle results
     if (foundEntities.length === 0) {
       this.error(`No issue or PR found with display number #${displayNumber}`)
     }
@@ -140,68 +111,11 @@ export default class Close extends Command {
       )
     }
 
-    // Close the single found entity
     const entity = foundEntities[0]
     if (entity.type === 'issue') {
-      await this.closeIssue(cwd, displayNumber, flags.json)
+      await closeIssue(cwd, displayNumber, json, this.log.bind(this))
     } else if (entity.type === 'pr') {
-      await this.closePr(cwd, displayNumber, flags.json)
+      await closePr(cwd, displayNumber, json, this.log.bind(this))
     }
-  }
-
-  private async closeIssue(
-    projectPath: string,
-    displayNumber: number,
-    jsonOutput: boolean
-  ): Promise<void> {
-    const issue = await daemonGetIssueByDisplayNumber({
-      projectPath,
-      displayNumber,
-    })
-
-    const response = await daemonUpdateIssue({
-      projectPath,
-      issueId: issue.id,
-      status: 'closed',
-    })
-
-    if (!response.success) {
-      this.error(response.error)
-    }
-
-    if (jsonOutput) {
-      this.log(JSON.stringify({ type: 'issue', ...response.issue }, null, 2))
-      return
-    }
-
-    this.log(`Closed issue #${response.issue.displayNumber}`)
-  }
-
-  private async closePr(
-    projectPath: string,
-    displayNumber: number,
-    jsonOutput: boolean
-  ): Promise<void> {
-    const pr = await daemonGetPrByDisplayNumber({
-      projectPath,
-      displayNumber,
-    })
-
-    const response = await daemonUpdatePr({
-      projectPath,
-      prId: pr.id,
-      status: 'closed',
-    })
-
-    if (!response.success) {
-      this.error(response.error)
-    }
-
-    if (jsonOutput) {
-      this.log(JSON.stringify({ type: 'pr', ...response.pr }, null, 2))
-      return
-    }
-
-    this.log(`Closed PR #${response.pr.displayNumber}`)
   }
 }

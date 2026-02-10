@@ -1,10 +1,11 @@
-/* eslint-disable max-lines */
-
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
-import { daemonGetIssuesByUuid } from '../daemon/daemon-get-issues-by-uuid.js'
-import { daemonGetPrsByUuid } from '../daemon/daemon-get-prs-by-uuid.js'
+import {
+  formatIssueResults,
+  formatPrResults,
+} from '../lib/show/format-results.js'
+import { searchEntitiesByUuid } from '../lib/show/search-entities.js'
 import { isValidUuid } from '../utils/is-valid-uuid.js'
 
 /**
@@ -38,7 +39,6 @@ export default class Show extends Command {
     }),
   }
 
-  // eslint-disable-next-line max-lines-per-function
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Show)
 
@@ -48,32 +48,10 @@ export default class Show extends Command {
       )
     }
 
-    const [issuesResult, prsResult] = await Promise.all([
-      daemonGetIssuesByUuid({ uuid: args.uuid }),
-      daemonGetPrsByUuid({ uuid: args.uuid }),
-    ])
-
+    const { issuesResult, prsResult } = await searchEntitiesByUuid(args.uuid)
     const hasIssues = issuesResult.issues.length > 0
     const hasPrs = prsResult.prs.length > 0
     const allErrors = [...issuesResult.errors, ...prsResult.errors]
-
-    if (!hasIssues && !hasPrs) {
-      if (flags.json) {
-        this.log(
-          JSON.stringify({ issues: [], prs: [], errors: allErrors }, null, 2)
-        )
-        return
-      }
-
-      this.log(`No entities found with UUID: ${args.uuid}`)
-      if (allErrors.length > 0) {
-        this.warn('Some projects could not be searched:')
-        for (const err of allErrors) {
-          this.warn(`  - ${err}`)
-        }
-      }
-      return
-    }
 
     if (flags.json) {
       this.log(
@@ -90,50 +68,21 @@ export default class Show extends Command {
       return
     }
 
-    for (const iwp of issuesResult.issues) {
-      const issue = iwp.issue
-      const meta = issue.metadata
-      this.log(`--- Project: ${iwp.projectName} (${iwp.projectPath}) ---`)
-      this.log(`Issue #${issue.displayNumber}`)
-      this.log(`ID: ${issue.id}`)
-      this.log(`Title: ${issue.title}`)
-      this.log(`Status: ${meta !== undefined ? meta.status : 'unknown'}`)
-      this.log(
-        `Priority: ${meta !== undefined ? (meta.priorityLabel !== '' ? meta.priorityLabel : `P${meta.priority}`) : 'P?'}`
-      )
-      this.log(`Created: ${meta !== undefined ? meta.createdAt : 'unknown'}`)
-      this.log(`Updated: ${meta !== undefined ? meta.updatedAt : 'unknown'}`)
-      if (issue.description) {
-        this.log(`\nDescription:\n${issue.description}`)
-      }
-      this.log('')
+    if (!hasIssues && !hasPrs) {
+      this.log(`No entities found with UUID: ${args.uuid}`)
+      this.logErrors(allErrors)
+      return
     }
 
-    for (const pwp of prsResult.prs) {
-      const pr = pwp.pr
-      const meta = pr.metadata
-      this.log(`--- Project: ${pwp.projectName} (${pwp.projectPath}) ---`)
-      this.log(`PR #${pr.displayNumber}`)
-      this.log(`ID: ${pr.id}`)
-      this.log(`Title: ${pr.title}`)
-      this.log(`Status: ${meta !== undefined ? meta.status : 'unknown'}`)
-      this.log(
-        `Priority: ${meta !== undefined ? (meta.priorityLabel !== '' ? meta.priorityLabel : `P${meta.priority}`) : 'P?'}`
-      )
-      this.log(
-        `Branch: ${meta !== undefined ? `${meta.sourceBranch} -> ${meta.targetBranch}` : '? -> ?'}`
-      )
-      this.log(`Created: ${meta !== undefined ? meta.createdAt : 'unknown'}`)
-      this.log(`Updated: ${meta !== undefined ? meta.updatedAt : 'unknown'}`)
-      if (pr.description) {
-        this.log(`\nDescription:\n${pr.description}`)
-      }
-      this.log('')
-    }
+    formatIssueResults(issuesResult.issues, this.log.bind(this))
+    formatPrResults(prsResult.prs, this.log.bind(this))
+    this.logErrors(allErrors)
+  }
 
-    if (allErrors.length > 0) {
+  private logErrors(errors: string[]): void {
+    if (errors.length > 0) {
       this.warn('Some projects could not be searched:')
-      for (const err of allErrors) {
+      for (const err of errors) {
         this.warn(`  - ${err}`)
       }
     }

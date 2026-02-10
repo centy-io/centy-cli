@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
@@ -7,12 +5,15 @@ import { daemonGetPrByDisplayNumber } from '../../daemon/daemon-get-pr-by-displa
 import { daemonUpdatePr } from '../../daemon/daemon-update-pr.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
+  PRIORITY_MAP,
+  hasAnyUpdates,
+  parseReviewers,
+} from '../../lib/update-pr/process-fields.js'
+import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
 import { resolveProjectPath } from '../../utils/resolve-project-path.js'
-
-const PRIORITY_MAP: Record<string, number> = { high: 1, medium: 2, low: 3 }
 
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class UpdatePr extends Command {
@@ -74,24 +75,12 @@ export default class UpdatePr extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    const hasUpdates = Boolean(
-      flags.title ||
-      flags.description ||
-      flags.status ||
-      flags.source ||
-      flags.target ||
-      flags.issues ||
-      flags.reviewers ||
-      flags.priority
-    )
-    if (!hasUpdates) {
+    if (!hasAnyUpdates(flags)) {
       this.error('At least one field must be specified to update.')
     }
 
     const priority = flags.priority ? PRIORITY_MAP[flags.priority] : undefined
-    const reviewers = flags.reviewers
-      ? flags.reviewers.split(',').map(s => s.trim())
-      : undefined
+    const reviewers = parseReviewers(flags.reviewers)
 
     const displayNumber = Number.parseInt(args.id, 10)
     const isDisplayNumber = !Number.isNaN(displayNumber) && displayNumber > 0
