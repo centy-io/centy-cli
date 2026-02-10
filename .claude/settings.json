@@ -100,7 +100,19 @@
       "Bash(centy update:*)",
       "Bash(pnpm dlx:*)",
       "Bash(npm run build:*)",
-      "Bash(npx vitest:*)"
+      "Bash(npx vitest:*)",
+      "Bash(npm view:*)",
+      "Bash(npx tsc:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(gh run watch:*)",
+      "Bash(gh api:*)",
+      "Bash(pnpm build:*)",
+      "Bash(npx vitest:*)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(pnpm dev)"
     ],
     "deny": ["Bash(npm install)"]
   },
