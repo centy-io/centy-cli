@@ -107,7 +107,8 @@
       "Bash(./bin/run.js:*)",
       "Bash(pnpm format:check:*)",
       "Bash(pnpm spell:*)",
-      "Bash(pnpm knip:*)"
+      "Bash(pnpm knip:*)",
+      "Bash(uuidgen:*)"
     ],
     "deny": ["Bash(npm install)", "Bash(pnpm release)"]
   },
