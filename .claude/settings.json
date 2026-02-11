@@ -108,9 +108,14 @@
       "Bash(pnpm format:check:*)",
       "Bash(pnpm spell:*)",
       "Bash(pnpm knip:*)",
-      "Bash(uuidgen:*)"
+      "Bash(uuidgen:*)",
+      "Bash(centy list issues:*)"
     ],
-    "deny": ["Bash(npm install)", "Bash(pnpm release)"]
+    "deny": [
+      "Bash(npm install)",
+      "Bash(pnpm release)",
+      "Bash(gh issue create:*)"
+    ]
   },
   "hooks": {
     "PreToolUse": [
