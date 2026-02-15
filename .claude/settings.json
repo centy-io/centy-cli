@@ -112,7 +112,8 @@
       "Bash(centy list issues:*)",
       "Bash(pnpm vitest run:*)",
       "Bash(pnpm build:tsc:*)",
-      "Bash(pnpm eslint:*)"
+      "Bash(pnpm eslint:*)",
+      "Bash(npm test:*)"
     ],
     "deny": [
       "Bash(npm install)",
