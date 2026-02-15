@@ -120,3 +120,58 @@ message RestoreItemResponse {
   string error = 2;
   GenericItem item = 3;                 // The restored item (with deleted_at cleared)
 }
+
+// ============ Item Type Messages ============
+
+// Features that can be enabled for an item type
+enum ItemTypeFeature {
+  ITEM_TYPE_FEATURE_UNSPECIFIED = 0;
+  ITEM_TYPE_FEATURE_DISPLAY_NUMBER = 1;
+  ITEM_TYPE_FEATURE_STATUS = 2;
+  ITEM_TYPE_FEATURE_PRIORITY = 3;
+  ITEM_TYPE_FEATURE_ASSETS = 4;
+  ITEM_TYPE_FEATURE_ORG_SYNC = 5;
+  ITEM_TYPE_FEATURE_MOVE = 6;
+  ITEM_TYPE_FEATURE_DUPLICATE = 7;
+}
+
+// Custom field definition for item types
+message ItemTypeCustomField {
+  string name = 1;                      // Field name
+  string field_type = 2;               // "string", "number", "boolean", "enum"
+  bool required = 3;                    // Whether field is required
+  string default_value = 4;            // Default value
+  repeated string enum_values = 5;     // For enum type
+}
+
+// Request to create a new item type
+message CreateItemTypeRequest {
+  string project_path = 1;
+  string name = 2;                      // Singular display name (e.g., "Bug", "Task")
+  string plural = 3;                    // Folder/type key, lowercase alphanumeric + hyphens (e.g., "bugs")
+  string identifier = 4;               // "uuid" or "slug"
+  repeated ItemTypeFeature features = 5; // Enabled features
+  repeated string statuses = 6;         // Allowed statuses (e.g., ["open", "in-progress", "closed"])
+  string default_status = 7;           // Default status for new items (must be in statuses list)
+  uint32 priority_levels = 8;          // Number of priority levels (0 = none)
+  repeated ItemTypeCustomField custom_fields = 9; // Custom field definitions
+}
+
+// Response from creating an item type
+message CreateItemTypeResponse {
+  bool success = 1;
+  string error = 2;
+  ItemTypeConfig item_type = 3;         // The created item type configuration
+}
+
+// Configuration for an item type (stored in .centy/config.yaml)
+message ItemTypeConfig {
+  string name = 1;                      // Singular display name
+  string plural = 2;                    // Folder/type key
+  string identifier = 3;               // "uuid" or "slug"
+  repeated ItemTypeFeature features = 4; // Enabled features
+  repeated string statuses = 5;         // Allowed statuses
+  string default_status = 6;           // Default status
+  uint32 priority_levels = 7;          // Number of priority levels
+  repeated ItemTypeCustomField custom_fields = 8; // Custom field definitions
+}

@@ -296,6 +296,9 @@ service CentyDaemon {
 
   // Restore a soft-deleted item (clear deleted_at timestamp)
   rpc RestoreItem(RestoreItemRequest) returns (RestoreItemResponse);
+
+  // Create a new custom item type
+  rpc CreateItemType(CreateItemTypeRequest) returns (CreateItemTypeResponse);
 }
 
 // ============ Init Messages ============

@@ -19,6 +19,8 @@ import type {
   GetAvailableLinkTypesResponse,
   GetSupportedEditorsRequest,
   GetSupportedEditorsResponse,
+  CreateItemTypeRequest,
+  CreateItemTypeResponse,
 } from './types.js'
 import type { GrpcMethod } from './grpc-utils.js'
 
@@ -42,4 +44,5 @@ export interface CentyDaemonItemsClient {
     GetSupportedEditorsRequest,
     GetSupportedEditorsResponse
   >
+  createItemType: GrpcMethod<CreateItemTypeRequest, CreateItemTypeResponse>
 }
