@@ -1,23 +1,28 @@
 // eslint-disable-next-line import/order
 import { Args, Command } from '@oclif/core'
 
-import { daemonCreateLink } from '../../daemon/daemon-create-link.js'
-import { projectFlag } from '../../flags/project-flag.js'
+import { daemonCreateLink } from '../daemon/daemon-create-link.js'
+import { projectFlag } from '../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
-} from '../../utils/ensure-initialized.js'
-import { resolveProjectPath } from '../../utils/resolve-project-path.js'
+} from '../utils/ensure-initialized.js'
+import { parseLinkTarget } from '../utils/parse-link-target.js'
+import { resolveProjectPath } from '../utils/resolve-project-path.js'
 
 /**
- * Create a link from a doc to another entity
+ * Create a link between two entities
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class LinkDoc extends Command {
+export default class Link extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override args = {
-    slug: Args.string({
-      description: 'Doc slug',
+    type: Args.string({
+      description: 'Source entity type (e.g., issue, doc)',
+      required: true,
+    }),
+    id: Args.string({
+      description: 'Source entity ID or slug',
       required: true,
     }),
     linkType: Args.string({
@@ -25,19 +30,20 @@ export default class LinkDoc extends Command {
       required: true,
     }),
     target: Args.string({
-      description: 'Target entity as type:id (e.g., issue:2, doc:architecture)',
+      description:
+        'Target entity as type:id (e.g., issue:2, doc:getting-started)',
       required: true,
     }),
   }
 
   // eslint-disable-next-line no-restricted-syntax
-  static override description = 'Create a link from a doc to another entity'
+  static override description = 'Create a link between two entities'
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
+    '<%= config.bin %> link issue 1 blocks issue:2',
     '<%= config.bin %> link doc getting-started relates-to issue:5',
-    '<%= config.bin %> link doc architecture parent-of doc:api-design',
-    '<%= config.bin %> link doc vision relates-to issue:10 --project centy-daemon',
+    '<%= config.bin %> link issue 1 parent-of issue:3 --project my-project',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -46,7 +52,7 @@ export default class LinkDoc extends Command {
   }
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(LinkDoc)
+    const { args, flags } = await this.parse(Link)
     const cwd = await resolveProjectPath(flags.project)
 
     try {
@@ -58,8 +64,8 @@ export default class LinkDoc extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    const [targetType, targetId] = parseTarget(args.target)
-    if (targetType === undefined || targetId === undefined) {
+    const parsed = parseLinkTarget(args.target)
+    if (parsed === undefined) {
       this.error(
         'Invalid target format. Use type:id (e.g., issue:2, doc:getting-started)'
       )
@@ -67,10 +73,10 @@ export default class LinkDoc extends Command {
 
     const response = await daemonCreateLink({
       projectPath: cwd,
-      sourceId: args.slug,
-      sourceType: 'doc',
-      targetId,
-      targetType,
+      sourceId: args.id,
+      sourceType: args.type,
+      targetId: parsed[1],
+      targetType: parsed[0],
       linkType: args.linkType,
     })
 
@@ -79,20 +85,7 @@ export default class LinkDoc extends Command {
     }
 
     this.log(
-      `Created link: doc ${args.slug} --[${args.linkType}]--> ${args.target}`
+      `Created link: ${args.type} ${args.id} --[${args.linkType}]--> ${args.target}`
     )
   }
-}
-
-function parseTarget(target: string): [string | undefined, string | undefined] {
-  const colonIndex = target.indexOf(':')
-  if (colonIndex === -1) {
-    return [undefined, undefined]
-  }
-  const type = target.slice(0, colonIndex)
-  const id = target.slice(colonIndex + 1)
-  if (type === '' || id === '') {
-    return [undefined, undefined]
-  }
-  return [type, id]
 }

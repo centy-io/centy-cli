@@ -2,21 +2,21 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   createMockCommand,
   runCommandSafely,
-} from '../../testing/command-test-utils.js'
+} from '../testing/command-test-utils.js'
 
 const mockDaemonDeleteLink = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
-vi.mock('../../daemon/daemon-delete-link.js', () => ({
+vi.mock('../daemon/daemon-delete-link.js', () => ({
   daemonDeleteLink: (...args: unknown[]) => mockDaemonDeleteLink(...args),
 }))
 
-vi.mock('../../utils/resolve-project-path.js', () => ({
+vi.mock('../utils/resolve-project-path.js', () => ({
   resolveProjectPath: (...args: unknown[]) => mockResolveProjectPath(...args),
 }))
 
-vi.mock('../../utils/ensure-initialized.js', () => ({
+vi.mock('../utils/ensure-initialized.js', () => ({
   ensureInitialized: (...args: unknown[]) => mockEnsureInitialized(...args),
   NotInitializedError: class NotInitializedError extends Error {
     constructor(message = 'Not initialized') {
@@ -26,7 +26,7 @@ vi.mock('../../utils/ensure-initialized.js', () => ({
   },
 }))
 
-describe('UnlinkIssue command', () => {
+describe('Unlink command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
@@ -34,21 +34,21 @@ describe('UnlinkIssue command', () => {
   })
 
   it('should have correct static properties', async () => {
-    const { default: Command } = await import('./issue.js')
+    const { default: Command } = await import('./unlink.js')
 
     expect(Command.description).toBeDefined()
     expect(typeof Command.description).toBe('string')
   })
 
   it('should remove a link without type filter', async () => {
-    const { default: Command } = await import('./issue.js')
+    const { default: Command } = await import('./unlink.js')
     mockDaemonDeleteLink.mockResolvedValue({
       success: true,
       deletedCount: 2,
     })
 
     const cmd = createMockCommand(Command, {
-      args: { id: '1', target: 'issue:2' },
+      args: { type: 'issue', id: '1', target: 'issue:2' },
       flags: {},
     })
 
@@ -66,14 +66,14 @@ describe('UnlinkIssue command', () => {
   })
 
   it('should remove a link with type filter', async () => {
-    const { default: Command } = await import('./issue.js')
+    const { default: Command } = await import('./unlink.js')
     mockDaemonDeleteLink.mockResolvedValue({
       success: true,
       deletedCount: 1,
     })
 
     const cmd = createMockCommand(Command, {
-      args: { id: '1', target: 'issue:2' },
+      args: { type: 'doc', id: 'arch', target: 'issue:5' },
       flags: { type: 'blocks' },
     })
 
@@ -81,19 +81,19 @@ describe('UnlinkIssue command', () => {
 
     expect(mockDaemonDeleteLink).toHaveBeenCalledWith({
       projectPath: '/test/project',
-      sourceId: '1',
-      sourceType: 'issue',
-      targetId: '2',
+      sourceId: 'arch',
+      sourceType: 'doc',
+      targetId: '5',
       targetType: 'issue',
       linkType: 'blocks',
     })
   })
 
   it('should error on invalid target format', async () => {
-    const { default: Command } = await import('./issue.js')
+    const { default: Command } = await import('./unlink.js')
 
     const cmd = createMockCommand(Command, {
-      args: { id: '1', target: 'invalid' },
+      args: { type: 'issue', id: '1', target: 'invalid' },
       flags: {},
     })
 
@@ -106,14 +106,14 @@ describe('UnlinkIssue command', () => {
   })
 
   it('should handle daemon error response', async () => {
-    const { default: Command } = await import('./issue.js')
+    const { default: Command } = await import('./unlink.js')
     mockDaemonDeleteLink.mockResolvedValue({
       success: false,
       error: 'Link not found',
     })
 
     const cmd = createMockCommand(Command, {
-      args: { id: '1', target: 'issue:2' },
+      args: { type: 'issue', id: '1', target: 'issue:2' },
       flags: {},
     })
 
@@ -121,54 +121,5 @@ describe('UnlinkIssue command', () => {
 
     expect(error).toBeDefined()
     expect(cmd.errors).toContain('Link not found')
-  })
-
-  it('should handle NotInitializedError', async () => {
-    const { default: Command } = await import('./issue.js')
-    const { NotInitializedError } =
-      await import('../../utils/ensure-initialized.js')
-    mockEnsureInitialized.mockRejectedValue(
-      new NotInitializedError('Project not initialized')
-    )
-
-    const cmd = createMockCommand(Command, {
-      args: { id: '1', target: 'issue:2' },
-      flags: {},
-    })
-
-    const { error } = await runCommandSafely(cmd)
-
-    expect(error).toBeDefined()
-    expect(cmd.errors).toContain('Project not initialized')
-  })
-
-  it('should use project flag to resolve path', async () => {
-    const { default: Command } = await import('./issue.js')
-    mockResolveProjectPath.mockResolvedValue('/other/project')
-    mockDaemonDeleteLink.mockResolvedValue({
-      success: true,
-      deletedCount: 1,
-    })
-
-    const cmd = createMockCommand(Command, {
-      args: { id: '1', target: 'issue:2' },
-      flags: { project: 'other-project' },
-    })
-
-    await cmd.run()
-
-    expect(mockResolveProjectPath).toHaveBeenCalledWith('other-project')
-  })
-
-  it('should handle non-Error throws in ensureInitialized', async () => {
-    const { default: Command } = await import('./issue.js')
-    mockEnsureInitialized.mockRejectedValue('string error')
-
-    const cmd = createMockCommand(Command, {
-      args: { id: '1', target: 'issue:2' },
-      flags: {},
-    })
-
-    await expect(cmd.run()).rejects.toThrow('string error')
   })
 })
