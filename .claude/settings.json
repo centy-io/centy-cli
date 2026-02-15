@@ -109,7 +109,10 @@
       "Bash(pnpm spell:*)",
       "Bash(pnpm knip:*)",
       "Bash(uuidgen:*)",
-      "Bash(centy list issues:*)"
+      "Bash(centy list issues:*)",
+      "Bash(pnpm vitest run:*)",
+      "Bash(pnpm build:tsc:*)",
+      "Bash(pnpm eslint:*)"
     ],
     "deny": [
       "Bash(npm install)",
