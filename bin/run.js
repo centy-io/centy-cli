@@ -6,8 +6,8 @@ import { execute } from '@oclif/core'
 if (typeof Bun === 'undefined') {
   const { execSync, spawnSync } = await import('child_process')
   try {
-    // Check if bun is installed
-    execSync('bun --version', { stdio: 'ignore' })
+    // Check if bun is installed (5s timeout to avoid hanging)
+    execSync('bun --version', { stdio: 'ignore', timeout: 5000 })
     // Re-exec with bun and exit with its exit code
     const result = spawnSync(
       'bun',
@@ -20,7 +20,7 @@ if (typeof Bun === 'undefined') {
       result.status !== null && result.status !== undefined ? result.status : 0
     )
   } catch {
-    // Bun not installed, continue with Node
+    // Bun not installed or version check timed out, continue with Node
     // eslint-disable-next-line default/no-hardcoded-urls
     console.error('Tip: Install Bun for faster CLI performance: https://bun.sh')
   }
