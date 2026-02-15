@@ -8,6 +8,7 @@ import type { CentyDaemonDataClient } from './grpc-client-data.js'
 import type { CentyDaemonExtendedClient } from './grpc-client-extended.js'
 import type { CentyDaemonInitClient } from './grpc-client-init.js'
 import type { CentyDaemonItemsClient } from './grpc-client-items.js'
+import type { CentyDaemonLinkClient } from './grpc-client-link.js'
 import type { CentyDaemonOpsClient } from './grpc-client-ops.js'
 import type { CentyDaemonProjectClient } from './grpc-client-project.js'
 import { CHANNEL_OPTIONS } from './grpc-config.js'
@@ -29,7 +30,8 @@ interface CentyDaemonClient
     CentyDaemonProjectClient,
     CentyDaemonOpsClient,
     CentyDaemonExtendedClient,
-    CentyDaemonItemsClient {}
+    CentyDaemonItemsClient,
+    CentyDaemonLinkClient {}
 
 interface ProtoDescriptor {
   centy: {
