@@ -164,38 +164,6 @@ service CentyDaemon {
   // Get daemon version info
   rpc GetDaemonInfo(GetDaemonInfoRequest) returns (DaemonInfo);
 
-  // ============ PR RPCs ============
-
-  // Create a new pull request
-  rpc CreatePr(CreatePrRequest) returns (CreatePrResponse);
-
-  // Get a single PR by ID (UUID)
-  rpc GetPr(GetPrRequest) returns (GetPrResponse);
-
-  // Get a single PR by display number (human-readable number like 1, 2, 3)
-  rpc GetPrByDisplayNumber(GetPrByDisplayNumberRequest) returns (GetPrResponse);
-
-  // Get PRs by UUID across all tracked projects (global search)
-  rpc GetPrsByUuid(GetPrsByUuidRequest) returns (GetPrsByUuidResponse);
-
-  // List all PRs with optional filtering
-  rpc ListPrs(ListPrsRequest) returns (ListPrsResponse);
-
-  // Update an existing PR
-  rpc UpdatePr(UpdatePrRequest) returns (UpdatePrResponse);
-
-  // Delete a PR (hard delete - permanent removal)
-  rpc DeletePr(DeletePrRequest) returns (DeletePrResponse);
-
-  // Soft-delete a PR (set deleted_at timestamp - recoverable)
-  rpc SoftDeletePr(SoftDeletePrRequest) returns (SoftDeletePrResponse);
-
-  // Restore a soft-deleted PR (clear deleted_at timestamp)
-  rpc RestorePr(RestorePrRequest) returns (RestorePrResponse);
-
-  // Get the next PR number
-  rpc GetNextPrNumber(GetNextPrNumberRequest) returns (GetNextPrNumberResponse);
-
   // ============ Daemon Control RPCs ============
 
   // Shutdown the daemon gracefully
@@ -357,6 +325,9 @@ message ReconciliationPlan {
 
   // Whether user decisions are needed
   bool needs_decisions = 6;
+
+  bool success = 7;
+  string error = 8;
 }
 
 message ExecuteReconciliationRequest {
@@ -418,6 +389,8 @@ message GetNextIssueNumberRequest {
 
 message GetNextIssueNumberResponse {
   string issue_number = 1;
+  bool success = 2;
+  string error = 3;
 }
 
 // Issue represents a full issue with all its data
@@ -488,6 +461,8 @@ message GetIssuesByUuidResponse {
   repeated IssueWithProject issues = 1;
   int32 total_count = 2;
   repeated string errors = 3;     // Non-fatal errors (e.g., projects that couldn't be accessed)
+  bool success = 4;
+  string error = 5;
 }
 
 message ListIssuesRequest {
@@ -503,6 +478,8 @@ message ListIssuesRequest {
 message ListIssuesResponse {
   repeated Issue issues = 1;
   int32 total_count = 2;
+  bool success = 3;
+  string error = 4;
 }
 
 // Advanced search request
@@ -676,10 +653,16 @@ message Config {
   string version = 6;                  // Project version (semver, empty = daemon default)
   map<string, string> state_colors = 7;     // State name → hex color (e.g., "open" → "#10b981")
   map<string, string> priority_colors = 8;  // Priority level → hex color (e.g., "1" → "#ef4444")
-  LlmConfig llm = 9;                        // LLM-related settings
+  reserved 9;  // Previously: LlmConfig llm (removed)
   repeated LinkTypeDefinition custom_link_types = 10;  // Custom link types (in addition to built-in)
   string default_editor = 11;                // Default editor ID for this project (e.g., "vscode", "terminal", "zed")
   repeated HookDefinition hooks = 12;                  // Lifecycle hooks
+  WorkspaceConfig workspace = 13;            // Workspace settings
+}
+
+// Workspace configuration section
+message WorkspaceConfig {
+  optional bool update_status_on_open = 1;   // Auto-update issue status to "in-progress" when opening a temp workspace
 }
 
 message CustomFieldDefinition {
@@ -688,13 +671,6 @@ message CustomFieldDefinition {
   bool required = 3;
   string default_value = 4;
   repeated string enum_values = 5;  // For enum type
-}
-
-message LlmConfig {
-  bool auto_close_on_complete = 1;    // Auto-close issues when marked complete by LLM
-  optional bool update_status_on_start = 2;    // Update status to in-progress when LLM starts work (null = prompt user)
-  bool allow_direct_edits = 3;        // Allow LLM to directly edit issue files
-  WorkspaceMode default_workspace_mode = 4;  // Default workspace mode for agent operations
 }
 
 // Lifecycle hook definition (bash scripts to run before/after operations)
@@ -792,6 +768,8 @@ message GetDocsBySlugResponse {
   repeated DocWithProject docs = 1;
   int32 total_count = 2;
   repeated string errors = 3;         // Non-fatal errors (e.g., projects that couldn't be accessed)
+  bool success = 4;
+  string error = 5;
 }
 
 message ListDocsRequest {
@@ -802,6 +780,8 @@ message ListDocsRequest {
 message ListDocsResponse {
   repeated Doc docs = 1;
   int32 total_count = 2;
+  bool success = 3;
+  string error = 4;
 }
 
 // Doc represents a documentation file
@@ -946,6 +926,8 @@ message ListAssetsRequest {
 message ListAssetsResponse {
   repeated Asset assets = 1;
   int32 total_count = 2;
+  bool success = 3;
+  string error = 4;
 }
 
 message GetAssetRequest {
@@ -1013,6 +995,8 @@ message ListProjectsRequest {
 message ListProjectsResponse {
   repeated ProjectInfo projects = 1;
   int32 total_count = 2;
+  bool success = 3;
+  string error = 4;
 }
 
 message RegisterProjectRequest {
@@ -1042,6 +1026,8 @@ message GetProjectInfoRequest {
 message GetProjectInfoResponse {
   bool found = 1;
   ProjectInfo project = 2;
+  bool success = 3;
+  string error = 4;
 }
 
 message SetProjectFavoriteRequest {
@@ -1137,6 +1123,8 @@ message ListOrganizationsRequest {}
 message ListOrganizationsResponse {
   repeated Organization organizations = 1;
   int32 total_count = 2;
+  bool success = 3;
+  string error = 4;
 }
 
 message GetOrganizationRequest {
@@ -1146,6 +1134,8 @@ message GetOrganizationRequest {
 message GetOrganizationResponse {
   bool found = 1;
   Organization organization = 2;
+  bool success = 3;
+  string error = 4;
 }
 
 message UpdateOrganizationRequest {
@@ -1177,6 +1167,7 @@ message GetDaemonInfoRequest {}
 
 message DaemonInfo {
   string version = 1;                    // Current daemon version (e.g., "0.1.0")
+  reserved 2;                            // was: repeated string available_versions (removed)
   string binary_path = 3;                // Absolute path to the running daemon binary
   bool vscode_available = 4;             // Whether VS Code is installed and accessible
 }
@@ -1201,194 +1192,6 @@ message RestartRequest {
 message RestartResponse {
   bool success = 1;
   string message = 2;
-}
-
-// ============ PR Messages ============
-
-message CreatePrRequest {
-  string project_path = 1;
-  string title = 2;
-  string description = 3;
-  string source_branch = 4;         // Source branch name (auto-detected if empty)
-  string target_branch = 5;         // Target branch name (default: "main")
-  reserved 6;                       // Removed: linked_issues (use Link system instead)
-  repeated string reviewers = 7;     // Reviewer usernames/identifiers
-  int32 priority = 8;               // 1 = highest priority, 0 = use default
-  string status = 9;                // default: "draft"
-  map<string, string> custom_fields = 10;
-  string template = 11;             // Optional template name (without .md extension)
-}
-
-message CreatePrResponse {
-  bool success = 1;
-  string error = 2;
-
-  // The created PR ID (UUID)
-  string id = 3;
-
-  // Human-readable display number (1, 2, 3...)
-  uint32 display_number = 4;
-
-  // Paths to created files
-  repeated string created_files = 5;
-
-  // The updated manifest
-  Manifest manifest = 6;
-
-  // Git info
-  string detected_source_branch = 7;  // The source branch that was used
-}
-
-message GetNextPrNumberRequest {
-  string project_path = 1;
-}
-
-message GetNextPrNumberResponse {
-  uint32 next_number = 1;
-}
-
-// PullRequest represents a full PR with all its data
-message PullRequest {
-  // UUID-based PR ID (folder name)
-  string id = 1;
-
-  // Human-readable display number (1, 2, 3...)
-  uint32 display_number = 2;
-
-  string title = 3;
-  string description = 4;
-  PrMetadata metadata = 5;
-}
-
-message PrMetadata {
-  // Human-readable display number (1, 2, 3...)
-  uint32 display_number = 1;
-  string status = 2;                  // e.g., "draft", "open", "merged", "closed"
-  string source_branch = 3;
-  string target_branch = 4;
-  reserved 5;                         // Removed: linked_issues (use Link system instead)
-  repeated string reviewers = 6;
-  int32 priority = 7;                 // 1 = highest priority, N = lowest
-  string priority_label = 8;          // Human-readable label (e.g., "high", "P1")
-  string created_at = 9;              // ISO timestamp
-  string updated_at = 10;             // ISO timestamp
-  string merged_at = 11;              // ISO timestamp (empty if not merged)
-  string closed_at = 12;              // ISO timestamp (empty if not closed)
-  map<string, string> custom_fields = 13;
-  string deleted_at = 14;             // ISO timestamp when soft-deleted (empty if not deleted)
-}
-
-message GetPrRequest {
-  string project_path = 1;
-  string pr_id = 2;                   // UUID
-}
-
-message GetPrByDisplayNumberRequest {
-  string project_path = 1;
-  uint32 display_number = 2;          // Human-readable number (1, 2, 3...)
-}
-
-// Wrapper response for GetPr and GetPrByDisplayNumber RPCs
-message GetPrResponse {
-  bool success = 1;
-  string error = 2;
-  PullRequest pr = 3;
-}
-
-// ============ Global PR Search Messages ============
-
-message GetPrsByUuidRequest {
-  string uuid = 1;                    // The UUID to search for (must be valid UUID format)
-}
-
-// A PR with its source project path
-message PrWithProject {
-  PullRequest pr = 1;
-  string project_path = 2;            // Absolute path to the project where this PR was found
-  string project_name = 3;            // Human-readable project name (directory name)
-  string display_path = 4;            // Human-readable path with ~/ for home dir (use for display only)
-}
-
-message GetPrsByUuidResponse {
-  repeated PrWithProject prs = 1;
-  int32 total_count = 2;
-  repeated string errors = 3;         // Non-fatal errors (e.g., projects that couldn't be accessed)
-}
-
-message ListPrsRequest {
-  string project_path = 1;
-
-  // Optional filters
-  string status = 2;                  // Filter by status (empty = all)
-  string source_branch = 3;           // Filter by source branch (empty = all)
-  string target_branch = 4;           // Filter by target branch (empty = all)
-  int32 priority = 5;                 // Filter by priority (0 = all)
-  bool include_deleted = 6;           // Include soft-deleted PRs (default: false)
-}
-
-message ListPrsResponse {
-  repeated PullRequest prs = 1;
-  int32 total_count = 2;
-}
-
-message UpdatePrRequest {
-  string project_path = 1;
-  string pr_id = 2;                   // UUID or display number
-
-  // Fields to update (empty string = don't update, 0 = don't update priority)
-  string title = 3;
-  string description = 4;
-  string status = 5;
-  string source_branch = 6;
-  string target_branch = 7;
-  reserved 8;                         // Removed: linked_issues (use Link system instead)
-  repeated string reviewers = 9;
-  int32 priority = 10;                // 0 = don't update, otherwise 1-N
-  map<string, string> custom_fields = 11;
-}
-
-message UpdatePrResponse {
-  bool success = 1;
-  string error = 2;
-  PullRequest pr = 3;                 // The updated PR
-  Manifest manifest = 4;
-}
-
-message DeletePrRequest {
-  string project_path = 1;
-  string pr_id = 2;                   // UUID or display number
-}
-
-message DeletePrResponse {
-  bool success = 1;
-  string error = 2;
-  Manifest manifest = 3;              // Updated manifest after deletion
-}
-
-// Soft-delete a PR (set deleted_at timestamp)
-message SoftDeletePrRequest {
-  string project_path = 1;
-  string pr_id = 2;                   // UUID or display number
-}
-
-message SoftDeletePrResponse {
-  bool success = 1;
-  string error = 2;
-  PullRequest pr = 3;                 // The soft-deleted PR (with deleted_at set)
-  Manifest manifest = 4;
-}
-
-// Restore a soft-deleted PR (clear deleted_at timestamp)
-message RestorePrRequest {
-  string project_path = 1;
-  string pr_id = 2;                   // UUID or display number
-}
-
-message RestorePrResponse {
-  bool success = 1;
-  string error = 2;
-  PullRequest pr = 3;                 // The restored PR (with deleted_at cleared)
-  Manifest manifest = 4;
 }
 
 // ============ Temp Workspace Messages ============
@@ -1545,6 +1348,8 @@ message ListTempWorkspacesResponse {
   repeated TempWorkspace workspaces = 1;
   uint32 total_count = 2;
   uint32 expired_count = 3;             // Number of expired workspaces (not included unless include_expired)
+  bool success = 4;
+  string error = 5;
 }
 
 message CloseTempWorkspaceRequest {
@@ -1576,12 +1381,12 @@ enum LinkTargetType {
   LINK_TARGET_TYPE_UNSPECIFIED = 0;
   LINK_TARGET_TYPE_ISSUE = 1;
   LINK_TARGET_TYPE_DOC = 2;
-  LINK_TARGET_TYPE_PR = 3;
+  reserved 3;                         // Removed: LINK_TARGET_TYPE_PR
 }
 
 // A link between two entities
 message Link {
-  string target_id = 1;               // Target entity ID (UUID for issues/PRs, slug for docs)
+  string target_id = 1;               // Target entity ID (UUID for issues, slug for docs)
   LinkTargetType target_type = 2;     // Type of the target entity
   string link_type = 3;               // Relationship type (e.g., "blocks", "parent-of")
   string created_at = 4;              // ISO timestamp when link was created
@@ -1630,6 +1435,8 @@ message ListLinksRequest {
 message ListLinksResponse {
   repeated Link links = 1;
   int32 total_count = 2;
+  bool success = 3;
+  string error = 4;
 }
 
 // Get all available link types (builtin + custom)
@@ -1698,6 +1505,8 @@ message ListUsersRequest {
 message ListUsersResponse {
   repeated User users = 1;
   int32 total_count = 2;
+  bool success = 3;
+  string error = 4;
 }
 
 message UpdateUserRequest {
@@ -1780,7 +1589,7 @@ message SyncUsersResponse {
 enum EntityType {
   ENTITY_TYPE_UNSPECIFIED = 0;
   ENTITY_TYPE_ISSUE = 1;
-  ENTITY_TYPE_PR = 2;
+  reserved 2;                         // Removed: ENTITY_TYPE_PR
   ENTITY_TYPE_DOC = 3;
 }
 
@@ -1807,7 +1616,7 @@ message EntityAction {
 // Request to get available actions for an entity
 message GetEntityActionsRequest {
   string project_path = 1;              // Project path for config/state lookup
-  EntityType entity_type = 2;           // Type of entity (issue, PR, doc)
+  EntityType entity_type = 2;           // Type of entity (issue, doc)
   string entity_id = 3;                 // Optional: entity ID for contextual actions (empty = general actions like "create")
 }
 
@@ -1823,7 +1632,7 @@ message GetEntityActionsResponse {
 // Sync conflict information
 message SyncConflict {
   string id = 1;                        // Unique conflict ID
-  string item_type = 2;                 // Type of item (issue, doc, pr)
+  string item_type = 2;                 // Type of item (issue, doc)
   string item_id = 3;                   // ID of the item with conflict
   string file_path = 4;                 // Relative file path within .centy
   string created_at = 5;                // When the conflict was detected

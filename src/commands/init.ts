@@ -40,19 +40,6 @@ export default class Init extends Command {
     version: Flags.string({
       description: 'Project version (semver)',
     }),
-    // LLM flags
-    'llm-auto-close': Flags.boolean({
-      description: 'Auto-close issues when LLM completes work',
-      allowNo: true,
-    }),
-    'llm-update-status': Flags.boolean({
-      description: 'Update status to in-progress when LLM starts',
-      allowNo: true,
-    }),
-    'llm-allow-direct-edits': Flags.boolean({
-      description: 'Allow LLM to directly edit issue files',
-      allowNo: true,
-    }),
   }
 
   public async run(): Promise<void> {
@@ -74,9 +61,6 @@ export default class Init extends Command {
       defaultState: flags['default-state'],
       allowedStates,
       version: flags.version,
-      llmAutoClose: flags['llm-auto-close'],
-      llmUpdateStatus: flags['llm-update-status'],
-      llmAllowDirectEdits: flags['llm-allow-direct-edits'],
     })
 
     if (!result.success) {

@@ -5,16 +5,11 @@ import {
 } from '../testing/command-test-utils.js'
 
 const mockDaemonGetIssuesByUuid = vi.fn()
-const mockDaemonGetPrsByUuid = vi.fn()
 const mockIsValidUuid = vi.fn()
 
 vi.mock('../daemon/daemon-get-issues-by-uuid.js', () => ({
   daemonGetIssuesByUuid: (...args: unknown[]) =>
     mockDaemonGetIssuesByUuid(...args),
-}))
-
-vi.mock('../daemon/daemon-get-prs-by-uuid.js', () => ({
-  daemonGetPrsByUuid: (...args: unknown[]) => mockDaemonGetPrsByUuid(...args),
 }))
 
 vi.mock('../utils/is-valid-uuid.js', () => ({
@@ -38,37 +33,13 @@ function createMockIssue(overrides: Record<string, unknown> = {}) {
   }
 }
 
-function createMockPr(overrides: Record<string, unknown> = {}) {
-  return {
-    id: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
-    displayNumber: 10,
-    title: 'Test PR',
-    description: 'PR description',
-    metadata: {
-      status: 'open',
-      priority: 2,
-      priorityLabel: 'P2',
-      sourceBranch: 'feature',
-      targetBranch: 'main',
-      reviewers: [],
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-02T00:00:00Z',
-      mergedAt: '',
-      closedAt: '',
-    },
-    ...overrides,
-  }
-}
-
 const emptyIssuesResult = { issues: [], totalCount: 0, errors: [] }
-const emptyPrsResult = { prs: [], totalCount: 0, errors: [] }
 
 describe('Show command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockIsValidUuid.mockReturnValue(true)
     mockDaemonGetIssuesByUuid.mockResolvedValue(emptyIssuesResult)
-    mockDaemonGetPrsByUuid.mockResolvedValue(emptyPrsResult)
   })
 
   it('should error on invalid UUID', async () => {
@@ -110,79 +81,11 @@ describe('Show command', () => {
     expect(mockDaemonGetIssuesByUuid).toHaveBeenCalledWith({
       uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
     })
-    expect(mockDaemonGetPrsByUuid).toHaveBeenCalledWith({
-      uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-    })
     expect(cmd.logs.some(log => log.includes('Issue #1'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('Test Issue'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('--- Project: project-a'))).toBe(
       true
     )
-  })
-
-  it('should display single PR match', async () => {
-    const { default: Command } = await import('./show.js')
-    mockDaemonGetPrsByUuid.mockResolvedValue({
-      prs: [
-        {
-          pr: createMockPr(),
-          projectName: 'project-b',
-          projectPath: '/path/to/project-b',
-        },
-      ],
-      totalCount: 1,
-      errors: [],
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: false },
-      args: { uuid: 'b2c3d4e5-f6a7-8901-bcde-f12345678901' },
-    })
-
-    await cmd.run()
-
-    expect(cmd.logs.some(log => log.includes('PR #10'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('Test PR'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('feature -> main'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('--- Project: project-b'))).toBe(
-      true
-    )
-  })
-
-  it('should display multiple matches across types', async () => {
-    const { default: Command } = await import('./show.js')
-    mockDaemonGetIssuesByUuid.mockResolvedValue({
-      issues: [
-        {
-          issue: createMockIssue(),
-          projectName: 'project-a',
-          projectPath: '/path/to/project-a',
-        },
-      ],
-      totalCount: 1,
-      errors: [],
-    })
-    mockDaemonGetPrsByUuid.mockResolvedValue({
-      prs: [
-        {
-          pr: createMockPr(),
-          projectName: 'project-b',
-          projectPath: '/path/to/project-b',
-        },
-      ],
-      totalCount: 1,
-      errors: [],
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: false },
-      args: { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
-    })
-
-    await cmd.run()
-
-    expect(cmd.logs.some(log => log.includes('Issue #1'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('PR #10'))).toBe(true)
   })
 
   it('should show no results message when nothing found', async () => {
@@ -220,7 +123,6 @@ describe('Show command', () => {
 
     const output = JSON.parse(cmd.logs[0])
     expect(output.issues).toHaveLength(1)
-    expect(output.prs).toHaveLength(0)
     expect(output.errors).toHaveLength(0)
   })
 
@@ -236,7 +138,6 @@ describe('Show command', () => {
 
     const output = JSON.parse(cmd.logs[0])
     expect(output.issues).toHaveLength(0)
-    expect(output.prs).toHaveLength(0)
   })
 
   it('should show errors from search', async () => {
@@ -303,30 +204,6 @@ describe('Show command', () => {
     const cmd = createMockCommand(Command, {
       flags: { json: false },
       args: { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
-    })
-
-    await cmd.run()
-
-    expect(cmd.logs.some(log => log.includes('Description:'))).toBe(true)
-  })
-
-  it('should display PR description', async () => {
-    const { default: Command } = await import('./show.js')
-    mockDaemonGetPrsByUuid.mockResolvedValue({
-      prs: [
-        {
-          pr: createMockPr({ description: 'PR details' }),
-          projectName: 'project-b',
-          projectPath: '/path/to/project-b',
-        },
-      ],
-      totalCount: 1,
-      errors: [],
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: false },
-      args: { uuid: 'b2c3d4e5-f6a7-8901-bcde-f12345678901' },
     })
 
     await cmd.run()

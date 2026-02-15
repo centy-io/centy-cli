@@ -13,11 +13,8 @@ export interface GetConfigResponse {
   config?: Config
 }
 
-export interface LlmConfig {
-  autoCloseOnComplete: boolean
-  updateStatusOnStart?: boolean
-  allowDirectEdits: boolean
-  defaultWorkspaceMode?: string
+export interface WorkspaceConfig {
+  updateStatusOnOpen?: boolean
 }
 
 export interface LinkTypeDefinition {
@@ -43,10 +40,10 @@ export interface Config {
   version: string
   stateColors: Record<string, string>
   priorityColors: Record<string, string>
-  llm: LlmConfig
   customLinkTypes: LinkTypeDefinition[]
   defaultEditor: string
   hooks: HookDefinition[]
+  workspace?: WorkspaceConfig
 }
 
 export interface UpdateConfigRequest {

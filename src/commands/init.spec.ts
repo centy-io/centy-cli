@@ -86,29 +86,6 @@ describe('Init command', () => {
     )
   })
 
-  it('should pass LLM flags', async () => {
-    const { default: Command } = await import('./init.js')
-    mockInit.mockResolvedValue({ success: true })
-
-    const cmd = createMockCommand(Command, {
-      flags: {
-        'llm-auto-close': true,
-        'llm-update-status': false,
-        'llm-allow-direct-edits': true,
-      },
-    })
-
-    await cmd.run()
-
-    expect(mockInit).toHaveBeenCalledWith(
-      expect.objectContaining({
-        llmAutoClose: true,
-        llmUpdateStatus: false,
-        llmAllowDirectEdits: true,
-      })
-    )
-  })
-
   it('should parse allowed-states as comma-separated list', async () => {
     const { default: Command } = await import('./init.js')
     mockInit.mockResolvedValue({ success: true })

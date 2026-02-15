@@ -3,7 +3,7 @@
  * but not in the current project
  */
 export function formatCrossProjectHint(
-  entityType: 'issue' | 'pr' | 'doc',
+  entityType: 'issue' | 'doc',
   id: string,
   matches: Array<{ projectName: string; projectPath: string }>
 ): string {

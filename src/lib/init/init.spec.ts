@@ -65,60 +65,18 @@ describe('buildConfigFromOptions', () => {
     expect(result!.version).toBe('1.0.0')
   })
 
-  it('should build config with llmAutoClose', () => {
-    const result = buildConfigFromOptions({ llmAutoClose: true })
-    expect(result).toBeDefined()
-    expect(result!.llm.autoCloseOnComplete).toBe(true)
-    expect(result!.llm.updateStatusOnStart).toBe(false)
-    expect(result!.llm.allowDirectEdits).toBe(false)
-  })
-
-  it('should build config with llmUpdateStatus', () => {
-    const result = buildConfigFromOptions({ llmUpdateStatus: true })
-    expect(result).toBeDefined()
-    expect(result!.llm.updateStatusOnStart).toBe(true)
-    expect(result!.llm.autoCloseOnComplete).toBe(false)
-    expect(result!.llm.allowDirectEdits).toBe(false)
-  })
-
-  it('should build config with llmAllowDirectEdits', () => {
-    const result = buildConfigFromOptions({ llmAllowDirectEdits: true })
-    expect(result).toBeDefined()
-    expect(result!.llm.allowDirectEdits).toBe(true)
-    expect(result!.llm.autoCloseOnComplete).toBe(false)
-    expect(result!.llm.updateStatusOnStart).toBe(false)
-  })
-
-  it('should build config with all LLM options', () => {
-    const result = buildConfigFromOptions({
-      llmAutoClose: true,
-      llmUpdateStatus: true,
-      llmAllowDirectEdits: true,
-    })
-    expect(result).toBeDefined()
-    expect(result!.llm.autoCloseOnComplete).toBe(true)
-    expect(result!.llm.updateStatusOnStart).toBe(true)
-    expect(result!.llm.allowDirectEdits).toBe(true)
-  })
-
   it('should build config with all options combined', () => {
     const result = buildConfigFromOptions({
       priorityLevels: 5,
       defaultState: 'todo',
       allowedStates: ['todo', 'doing', 'done'],
       version: '2.0.0',
-      llmAutoClose: true,
-      llmUpdateStatus: false,
-      llmAllowDirectEdits: true,
     })
     expect(result).toBeDefined()
     expect(result!.priorityLevels).toBe(5)
     expect(result!.defaultState).toBe('todo')
     expect(result!.allowedStates).toEqual(['todo', 'doing', 'done'])
     expect(result!.version).toBe('2.0.0')
-    expect(result!.llm.autoCloseOnComplete).toBe(true)
-    expect(result!.llm.updateStatusOnStart).toBe(false)
-    expect(result!.llm.allowDirectEdits).toBe(true)
     // Non-configurable fields should have defaults
     expect(result!.customFields).toEqual([])
     expect(result!.defaults).toEqual({})
@@ -135,9 +93,5 @@ describe('buildConfigFromOptions', () => {
     expect(result!.defaultState).toBe('')
     expect(result!.allowedStates).toEqual([])
     expect(result!.version).toBe('')
-    // LLM defaults when no LLM options set
-    expect(result!.llm.autoCloseOnComplete).toBe(false)
-    expect(result!.llm.updateStatusOnStart).toBe(false)
-    expect(result!.llm.allowDirectEdits).toBe(false)
   })
 })

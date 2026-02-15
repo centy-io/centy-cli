@@ -1,23 +1,4 @@
 import type {
-  CreatePrRequest,
-  CreatePrResponse,
-  GetPrRequest,
-  GetPrByDisplayNumberRequest,
-  GetPrsByUuidRequest,
-  GetPrsByUuidResponse,
-  GetPrResponse,
-  ListPrsRequest,
-  ListPrsResponse,
-  UpdatePrRequest,
-  UpdatePrResponse,
-  DeletePrRequest,
-  DeletePrResponse,
-  SoftDeletePrRequest,
-  SoftDeletePrResponse,
-  RestorePrRequest,
-  RestorePrResponse,
-  GetNextPrNumberRequest,
-  GetNextPrNumberResponse,
   GetFeatureStatusRequest,
   GetFeatureStatusResponse,
   ListUncompactedIssuesRequest,
@@ -52,19 +33,9 @@ import type {
 import type { GrpcMethod } from './grpc-utils.js'
 
 /**
- * Daemon client methods for PR, features, and user operations
+ * Daemon client methods for features and user operations
  */
 export interface CentyDaemonOpsClient {
-  createPr: GrpcMethod<CreatePrRequest, CreatePrResponse>
-  getPr: GrpcMethod<GetPrRequest, GetPrResponse>
-  getPrByDisplayNumber: GrpcMethod<GetPrByDisplayNumberRequest, GetPrResponse>
-  getPrsByUuid: GrpcMethod<GetPrsByUuidRequest, GetPrsByUuidResponse>
-  listPrs: GrpcMethod<ListPrsRequest, ListPrsResponse>
-  updatePr: GrpcMethod<UpdatePrRequest, UpdatePrResponse>
-  deletePr: GrpcMethod<DeletePrRequest, DeletePrResponse>
-  softDeletePr: GrpcMethod<SoftDeletePrRequest, SoftDeletePrResponse>
-  restorePr: GrpcMethod<RestorePrRequest, RestorePrResponse>
-  getNextPrNumber: GrpcMethod<GetNextPrNumberRequest, GetNextPrNumberResponse>
   getFeatureStatus: GrpcMethod<
     GetFeatureStatusRequest,
     GetFeatureStatusResponse

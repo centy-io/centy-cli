@@ -11,44 +11,17 @@ export function buildConfigFromOptions(opts: InitOptions): Config | undefined {
     opts.priorityLevels !== undefined ||
     opts.defaultState !== undefined ||
     opts.allowedStates !== undefined ||
-    opts.version !== undefined ||
-    opts.llmAutoClose !== undefined ||
-    opts.llmUpdateStatus !== undefined ||
-    opts.llmAllowDirectEdits !== undefined
+    opts.version !== undefined
 
   if (!hasConfigOptions) {
     return undefined
   }
-
-  // Build LLM config if any LLM options were provided
-  const hasLlmOptions =
-    opts.llmAutoClose !== undefined ||
-    opts.llmUpdateStatus !== undefined ||
-    opts.llmAllowDirectEdits !== undefined
-
-  const llmConfig = hasLlmOptions
-    ? {
-        autoCloseOnComplete:
-          opts.llmAutoClose !== undefined ? opts.llmAutoClose : false,
-        updateStatusOnStart:
-          opts.llmUpdateStatus !== undefined ? opts.llmUpdateStatus : false,
-        allowDirectEdits:
-          opts.llmAllowDirectEdits !== undefined
-            ? opts.llmAllowDirectEdits
-            : false,
-      }
-    : {
-        autoCloseOnComplete: false,
-        updateStatusOnStart: false,
-        allowDirectEdits: false,
-      }
 
   return {
     priorityLevels: opts.priorityLevels !== undefined ? opts.priorityLevels : 0, // 0 = use default
     defaultState: opts.defaultState !== undefined ? opts.defaultState : '', // '' = use default
     allowedStates: opts.allowedStates !== undefined ? opts.allowedStates : [], // [] = use default
     version: opts.version !== undefined ? opts.version : '',
-    llm: llmConfig,
     // These are not configurable via CLI flags, use defaults
     customFields: [],
     defaults: {},

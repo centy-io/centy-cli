@@ -13,7 +13,7 @@ interface SearchResult {
 }
 
 interface HandleNotInitializedOptions {
-  entityType: 'issue' | 'pr' | 'doc'
+  entityType: 'issue' | 'doc'
   identifier: string
   jsonMode: boolean
   globalSearchFn: () => Promise<SearchResult>

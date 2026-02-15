@@ -1,10 +1,7 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
-import {
-  formatIssueResults,
-  formatPrResults,
-} from '../lib/show/format-results.js'
+import { formatIssueResults } from '../lib/show/format-results.js'
 import { searchEntitiesByUuid } from '../lib/show/search-entities.js'
 import { isValidUuid } from '../utils/is-valid-uuid.js'
 
@@ -44,21 +41,19 @@ export default class Show extends Command {
 
     if (!isValidUuid(args.uuid)) {
       this.error(
-        'A valid UUID is required. Use `centy get issue <id>` or `centy get pr <id>` for display numbers.'
+        'A valid UUID is required. Use `centy get issue <id>` for display numbers.'
       )
     }
 
-    const { issuesResult, prsResult } = await searchEntitiesByUuid(args.uuid)
+    const { issuesResult } = await searchEntitiesByUuid(args.uuid)
     const hasIssues = issuesResult.issues.length > 0
-    const hasPrs = prsResult.prs.length > 0
-    const allErrors = [...issuesResult.errors, ...prsResult.errors]
+    const allErrors = [...issuesResult.errors]
 
     if (flags.json) {
       this.log(
         JSON.stringify(
           {
             issues: issuesResult.issues,
-            prs: prsResult.prs,
             errors: allErrors,
           },
           null,
@@ -68,14 +63,13 @@ export default class Show extends Command {
       return
     }
 
-    if (!hasIssues && !hasPrs) {
+    if (!hasIssues) {
       this.log(`No entities found with UUID: ${args.uuid}`)
       this.logErrors(allErrors)
       return
     }
 
     formatIssueResults(issuesResult.issues, this.log.bind(this))
-    formatPrResults(prsResult.prs, this.log.bind(this))
     this.logErrors(allErrors)
   }
 
