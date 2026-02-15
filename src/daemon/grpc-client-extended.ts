@@ -33,17 +33,11 @@ import type {
   SyncPullResponse,
   SyncPushRequest,
   SyncPushResponse,
-  CreateLinkRequest,
-  CreateLinkResponse,
-  DeleteLinkRequest,
-  DeleteLinkResponse,
-  ListLinksRequest,
-  ListLinksResponse,
 } from './types.js'
 import type { GrpcMethod } from './grpc-utils.js'
 
 /**
- * Daemon client methods for daemon info, workspace, entity, sync, and link operations
+ * Daemon client methods for daemon info, workspace, entity, and sync operations
  */
 export interface CentyDaemonExtendedClient {
   getDaemonInfo: GrpcMethod<GetDaemonInfoRequest, DaemonInfo>
@@ -93,7 +87,4 @@ export interface CentyDaemonExtendedClient {
   getSyncStatus: GrpcMethod<GetSyncStatusRequest, GetSyncStatusResponse>
   syncPull: GrpcMethod<SyncPullRequest, SyncPullResponse>
   syncPush: GrpcMethod<SyncPushRequest, SyncPushResponse>
-  createLink: GrpcMethod<CreateLinkRequest, CreateLinkResponse>
-  deleteLink: GrpcMethod<DeleteLinkRequest, DeleteLinkResponse>
-  listLinks: GrpcMethod<ListLinksRequest, ListLinksResponse>
 }
