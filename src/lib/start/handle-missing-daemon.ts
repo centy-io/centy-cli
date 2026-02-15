@@ -1,6 +1,11 @@
 import { execSync } from 'node:child_process'
 import { closePromptInterface } from '../../utils/close-prompt-interface.js'
 import { createPromptInterface } from '../../utils/create-prompt-interface.js'
+import {
+  INSTALL_TIMEOUT_MS,
+  PROMPT_TIMEOUT_MS,
+} from '../../utils/process-timeout-config.js'
+import { ProcessTimeoutError } from '../../utils/process-timeout-error.js'
 import { promptForInstall } from './prompt-for-install.js'
 
 export async function handleMissingDaemon(
@@ -20,11 +25,18 @@ export async function handleMissingDaemon(
 
     const rl = createPromptInterface()
     try {
-      shouldInstall = await promptForInstall({
+      const promptPromise = promptForInstall({
         rl,
         output: process.stdout,
         daemonPath,
       })
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          rl.close()
+          reject(new ProcessTimeoutError('install prompt', PROMPT_TIMEOUT_MS))
+        }, PROMPT_TIMEOUT_MS)
+      })
+      shouldInstall = await Promise.race([promptPromise, timeoutPromise])
     } finally {
       closePromptInterface(rl)
     }
@@ -38,6 +50,7 @@ export async function handleMissingDaemon(
 
   execSync(installCmd, {
     stdio: 'inherit',
+    timeout: INSTALL_TIMEOUT_MS,
     env: { ...process.env, BINARIES: 'centy-daemon' },
   })
 

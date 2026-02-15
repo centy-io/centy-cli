@@ -8,9 +8,14 @@ import {
 import { join } from 'node:path'
 import { homedir } from 'node:os'
 import { execSync } from 'node:child_process'
+import { SERVICE_COMMAND_TIMEOUT_MS } from '../../utils/process-timeout-config.js'
 
 const LAUNCHD_LABEL = 'io.centy.daemon'
 const PLIST_FILENAME = `${LAUNCHD_LABEL}.plist`
+const LAUNCHCTL_UNLOAD_OPTS = {
+  stdio: 'ignore' as const,
+  timeout: SERVICE_COMMAND_TIMEOUT_MS,
+}
 
 function getLaunchAgentsDir(): string {
   return join(homedir(), 'Library', 'LaunchAgents')
@@ -64,7 +69,7 @@ function enableAutostart(daemonPath: string): void {
   // eslint-disable-next-line security/detect-non-literal-fs-filename
   if (existsSync(plistPath)) {
     try {
-      execSync(`launchctl unload "${plistPath}"`, { stdio: 'ignore' })
+      execSync(`launchctl unload "${plistPath}"`, LAUNCHCTL_UNLOAD_OPTS)
     } catch {
       // Ignore errors if service wasn't loaded
     }
@@ -73,7 +78,9 @@ function enableAutostart(daemonPath: string): void {
   const plistContent = generatePlist(daemonPath)
   // eslint-disable-next-line security/detect-non-literal-fs-filename
   writeFileSync(plistPath, plistContent, 'utf-8')
-  execSync(`launchctl load "${plistPath}"`)
+  execSync(`launchctl load "${plistPath}"`, {
+    timeout: SERVICE_COMMAND_TIMEOUT_MS,
+  })
 }
 
 function disableAutostart(): void {
@@ -85,7 +92,7 @@ function disableAutostart(): void {
   }
 
   try {
-    execSync(`launchctl unload "${plistPath}"`, { stdio: 'ignore' })
+    execSync(`launchctl unload "${plistPath}"`, LAUNCHCTL_UNLOAD_OPTS)
   } catch {
     // Ignore errors if service wasn't loaded
   }
