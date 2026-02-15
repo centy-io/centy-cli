@@ -70,7 +70,6 @@ describe('Init command', () => {
     const cmd = createMockCommand(Command, {
       flags: {
         'priority-levels': 5,
-        'default-state': 'backlog',
         version: '1.0.0',
       },
     })
@@ -80,7 +79,6 @@ describe('Init command', () => {
     expect(mockInit).toHaveBeenCalledWith(
       expect.objectContaining({
         priorityLevels: 5,
-        defaultState: 'backlog',
         version: '1.0.0',
       })
     )

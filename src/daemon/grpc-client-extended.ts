@@ -7,10 +7,10 @@ import type {
   ShutdownResponse,
   RestartRequest,
   RestartResponse,
-  OpenInTempWorkspaceRequest,
   OpenInTempWorkspaceResponse,
   OpenInTempWorkspaceWithEditorRequest,
   OpenStandaloneWorkspaceWithEditorRequest,
+  OpenStandaloneWorkspaceResponse,
   OpenAgentInTerminalRequest,
   OpenAgentInTerminalResponse,
   ListTempWorkspacesRequest,
@@ -54,16 +54,12 @@ export interface CentyDaemonExtendedClient {
   shutdown: GrpcMethod<ShutdownRequest, ShutdownResponse>
   restart: GrpcMethod<RestartRequest, RestartResponse>
   openInTempWorkspace: GrpcMethod<
-    OpenInTempWorkspaceRequest,
-    OpenInTempWorkspaceResponse
-  >
-  openInTempWorkspaceWithEditor: GrpcMethod<
     OpenInTempWorkspaceWithEditorRequest,
     OpenInTempWorkspaceResponse
   >
-  openStandaloneWorkspaceWithEditor: GrpcMethod<
+  openStandaloneWorkspace: GrpcMethod<
     OpenStandaloneWorkspaceWithEditorRequest,
-    OpenInTempWorkspaceResponse
+    OpenStandaloneWorkspaceResponse
   >
   openAgentInTerminal: GrpcMethod<
     OpenAgentInTerminalRequest,

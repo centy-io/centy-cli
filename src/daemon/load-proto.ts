@@ -7,6 +7,7 @@ import { loadSync } from '@grpc/proto-loader'
 import type { CentyDaemonDataClient } from './grpc-client-data.js'
 import type { CentyDaemonExtendedClient } from './grpc-client-extended.js'
 import type { CentyDaemonInitClient } from './grpc-client-init.js'
+import type { CentyDaemonItemsClient } from './grpc-client-items.js'
 import type { CentyDaemonOpsClient } from './grpc-client-ops.js'
 import type { CentyDaemonProjectClient } from './grpc-client-project.js'
 import { CHANNEL_OPTIONS } from './grpc-config.js'
@@ -27,7 +28,8 @@ interface CentyDaemonClient
     CentyDaemonDataClient,
     CentyDaemonProjectClient,
     CentyDaemonOpsClient,
-    CentyDaemonExtendedClient {}
+    CentyDaemonExtendedClient,
+    CentyDaemonItemsClient {}
 
 interface ProtoDescriptor {
   centy: {
@@ -42,7 +44,8 @@ interface ProtoDescriptor {
 }
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
-const PROTO_PATH = join(currentDir, '../../proto/centy.proto')
+const PROTO_PATH = join(currentDir, '../../proto/centy/v1/centy.proto')
+const PROTO_INCLUDE_DIR = join(currentDir, '../../proto')
 const DEFAULT_DAEMON_ADDRESS = '127.0.0.1:50051'
 
 let clientInstance: CentyDaemonClient | null = null
@@ -78,6 +81,7 @@ export function getDaemonClient(): CentyDaemonClient {
     enums: String,
     defaults: true,
     oneofs: true,
+    includeDirs: [PROTO_INCLUDE_DIR],
   })
 
   // eslint-disable-next-line no-restricted-syntax

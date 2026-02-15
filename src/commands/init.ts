@@ -31,9 +31,6 @@ export default class Init extends Command {
       min: 1,
       max: 10,
     }),
-    'default-state': Flags.string({
-      description: 'Default state for new issues (default: "open")',
-    }),
     'allowed-states': Flags.string({
       description: 'Comma-separated list of allowed states',
     }),
@@ -58,7 +55,6 @@ export default class Init extends Command {
       force: flags.force,
       cwd,
       priorityLevels: flags['priority-levels'],
-      defaultState: flags['default-state'],
       allowedStates,
       version: flags.version,
     })

@@ -28,7 +28,7 @@ describe('daemonGetConfig', () => {
   })
 
   it('should resolve with response on success', async () => {
-    const mockConfig = { priorityLevels: 3, defaultState: 'open' }
+    const mockConfig = { priorityLevels: 3 }
     const mockResponse = { success: true, config: mockConfig }
     const mockClient = {
       getConfig: vi.fn((_req, _options, callback) => {

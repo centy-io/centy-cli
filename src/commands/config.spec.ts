@@ -46,7 +46,6 @@ describe('Config command', () => {
     mockDaemonGetConfig.mockResolvedValue({
       defaults: {
         priorityLevels: 3,
-        defaultState: 'open',
       },
       customFields: [],
     })
@@ -67,7 +66,6 @@ describe('Config command', () => {
     const config = {
       defaults: {
         priorityLevels: 3,
-        defaultState: 'open',
       },
       customFields: [],
     }

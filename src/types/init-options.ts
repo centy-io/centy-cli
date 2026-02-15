@@ -14,8 +14,6 @@ export interface InitOptions {
   // Config options - if any are provided, config.json will be created
   /** Number of priority levels (1-10, default: 3) */
   priorityLevels?: number
-  /** Default state for new issues (default: "open") */
-  defaultState?: string
   /** Allowed states for issues */
   allowedStates?: string[]
   /** Project version (semver) */
