@@ -122,7 +122,9 @@
       "Bash(pnpm config set:*)",
       "Bash(npx buf:*)",
       "Bash(npx protoc-gen-ts_proto:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(npm run knip:*)",
+      "WebFetch(domain:registry.npmjs.org)"
     ],
     "deny": [
       "Bash(npm install)",
