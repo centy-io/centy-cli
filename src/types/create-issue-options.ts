@@ -20,4 +20,6 @@ export interface CreateIssueOptions {
   output?: NodeJS.WritableStream
   /** Whether to create the issue as a draft */
   draft?: boolean
+  /** Whether to create as an org-wide issue */
+  org?: boolean
 }
