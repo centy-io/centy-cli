@@ -4,13 +4,13 @@ import {
   runCommandSafely,
 } from '../../testing/command-test-utils.js'
 
-const mockDaemonDeleteUser = vi.fn()
+const mockDaemonDeleteItem = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 const mockCreateInterface = vi.fn()
 
-vi.mock('../../daemon/daemon-delete-user.js', () => ({
-  daemonDeleteUser: (...args: unknown[]) => mockDaemonDeleteUser(...args),
+vi.mock('../../daemon/daemon-delete-item.js', () => ({
+  daemonDeleteItem: (...args: unknown[]) => mockDaemonDeleteItem(...args),
 }))
 
 vi.mock('../../utils/resolve-project-path.js', () => ({
@@ -56,7 +56,7 @@ describe('DeleteUser command', () => {
 
   it('should delete user with force flag', async () => {
     const { default: Command } = await import('./user.js')
-    mockDaemonDeleteUser.mockResolvedValue({ success: true })
+    mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
     const cmd = createMockCommand(Command, {
       flags: { force: true },
@@ -65,9 +65,11 @@ describe('DeleteUser command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonDeleteUser).toHaveBeenCalledWith({
+    expect(mockDaemonDeleteItem).toHaveBeenCalledWith({
       projectPath: '/test/project',
-      userId: 'john-doe',
+      itemType: 'users',
+      itemId: 'john-doe',
+      force: false,
     })
     expect(cmd.logs.some(log => log.includes('Deleted user'))).toBe(true)
   })
@@ -75,7 +77,7 @@ describe('DeleteUser command', () => {
   it('should delete user after confirmation', async () => {
     const { default: Command } = await import('./user.js')
     setupReadlineMock('y')
-    mockDaemonDeleteUser.mockResolvedValue({ success: true })
+    mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
     const cmd = createMockCommand(Command, {
       flags: { force: false },
@@ -84,7 +86,7 @@ describe('DeleteUser command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonDeleteUser).toHaveBeenCalled()
+    expect(mockDaemonDeleteItem).toHaveBeenCalled()
   })
 
   it('should cancel when user answers no', async () => {
@@ -98,7 +100,7 @@ describe('DeleteUser command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonDeleteUser).not.toHaveBeenCalled()
+    expect(mockDaemonDeleteItem).not.toHaveBeenCalled()
     expect(cmd.logs.some(log => log.includes('Cancelled'))).toBe(true)
   })
 
@@ -123,7 +125,7 @@ describe('DeleteUser command', () => {
 
   it('should handle daemon delete failure', async () => {
     const { default: Command } = await import('./user.js')
-    mockDaemonDeleteUser.mockResolvedValue({
+    mockDaemonDeleteItem.mockResolvedValue({
       success: false,
       error: 'User not found',
     })

@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 // eslint-disable-next-line import/order
-import { daemonDeleteIssue } from './daemon-delete-issue.js'
+import { daemonDeleteItem } from './daemon-delete-item.js'
 
 vi.mock('./load-proto.js', () => {
   const mockCallWithDeadline = vi.fn(async (method, request, _timeout) => {
@@ -22,7 +22,7 @@ vi.mock('./load-proto.js', () => {
 // eslint-disable-next-line import/first
 import { getDaemonClient } from './load-proto.js'
 
-describe('daemonDeleteIssue', () => {
+describe('daemonDeleteItem', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -30,7 +30,7 @@ describe('daemonDeleteIssue', () => {
   it('should resolve with response on success', async () => {
     const mockResponse = { success: true }
     const mockClient = {
-      deleteIssue: vi.fn((_req, _options, callback) => {
+      deleteItem: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
       }),
     }
@@ -39,10 +39,10 @@ describe('daemonDeleteIssue', () => {
       mockClient as never
     )
 
-    const result = await daemonDeleteIssue({} as never)
+    const result = await daemonDeleteItem({} as never)
 
     expect(result).toEqual(mockResponse)
-    expect(mockClient.deleteIssue).toHaveBeenCalledWith(
+    expect(mockClient.deleteItem).toHaveBeenCalledWith(
       {},
       {},
       expect.any(Function)
@@ -52,7 +52,7 @@ describe('daemonDeleteIssue', () => {
   it('should reject with error on failure', async () => {
     const mockError = new Error('gRPC error')
     const mockClient = {
-      deleteIssue: vi.fn((_req, _options, callback) => {
+      deleteItem: vi.fn((_req, _options, callback) => {
         callback(mockError, null)
       }),
     }
@@ -61,6 +61,6 @@ describe('daemonDeleteIssue', () => {
       mockClient as never
     )
 
-    await expect(daemonDeleteIssue({} as never)).rejects.toThrow('gRPC error')
+    await expect(daemonDeleteItem({} as never)).rejects.toThrow('gRPC error')
   })
 })

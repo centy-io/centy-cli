@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
-import { daemonDeleteDoc } from '../../daemon/daemon-delete-doc.js'
+import { daemonDeleteItem } from '../../daemon/daemon-delete-item.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
@@ -74,9 +74,11 @@ export default class DeleteDoc extends Command {
       }
     }
 
-    const response = await daemonDeleteDoc({
+    const response = await daemonDeleteItem({
       projectPath: cwd,
-      slug: args.slug,
+      itemType: 'docs',
+      itemId: args.slug,
+      force: false,
     })
 
     if (!response.success) {
