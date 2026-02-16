@@ -185,7 +185,7 @@ async function runBatchFile(
 // Tests
 // =============================================================================
 
-describe('runtime detection wrapper', () => {
+describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
   const bunAvailable = checkBunAvailable()
 
   // Note: The following tests are skipped on Node 20 in CI due to a flaky oclif/ESM module resolution
