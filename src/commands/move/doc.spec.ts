@@ -62,7 +62,7 @@ describe('MoveDoc command', () => {
       sourceProjectPath: '/source/project',
       slug: 'my-doc',
       targetProjectPath: '/target/project',
-      newSlug: undefined,
+      newSlug: '',
     })
     expect(cmd.logs.some(log => log.includes('Moved doc'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('/target/project'))).toBe(true)

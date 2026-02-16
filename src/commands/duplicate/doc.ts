@@ -84,8 +84,8 @@ export default class DuplicateDoc extends Command {
       sourceProjectPath,
       slug: args.slug,
       targetProjectPath,
-      newSlug: flags['new-slug'],
-      newTitle: flags.title,
+      newSlug: flags['new-slug'] !== undefined ? flags['new-slug'] : '',
+      newTitle: flags.title !== undefined ? flags.title : '',
     })
 
     if (!response.success) {
@@ -98,7 +98,7 @@ export default class DuplicateDoc extends Command {
         : ' in current project'
 
     this.log(
-      `Duplicated doc → "${response.doc.slug}" "${response.doc.title}"${locationInfo}`
+      `Duplicated doc → "${response.doc!.slug}" "${response.doc!.title}"${locationInfo}`
     )
   }
 }

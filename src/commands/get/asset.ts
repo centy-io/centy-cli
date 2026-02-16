@@ -73,7 +73,7 @@ export default class GetAsset extends Command {
 
     const response = await daemonGetAsset({
       projectPath: cwd,
-      issueId: flags.issue,
+      issueId: flags.issue !== undefined ? flags.issue : '',
       filename: args.filename,
       isShared: flags.shared,
     })
@@ -88,7 +88,7 @@ export default class GetAsset extends Command {
     await writeFile(outputPath, response.data)
 
     this.log(`Saved asset to ${outputPath}`)
-    this.log(`  Size: ${response.asset.size} bytes`)
-    this.log(`  Type: ${response.asset.mimeType}`)
+    this.log(`  Size: ${response.asset!.size} bytes`)
+    this.log(`  Type: ${response.asset!.mimeType}`)
   }
 }

@@ -95,7 +95,7 @@ describe('DeleteAsset command', () => {
 
     expect(mockDaemonDeleteAsset).toHaveBeenCalledWith({
       projectPath: '/test/project',
-      issueId: undefined,
+      issueId: '',
       filename: 'logo.svg',
       isShared: true,
     })

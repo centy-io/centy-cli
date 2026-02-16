@@ -97,6 +97,7 @@ describe('createIssue integration tests', () => {
         status: 'open',
         customFields: {},
         draft: false,
+        template: '',
         isOrgIssue: false,
       })
     })
@@ -124,6 +125,7 @@ describe('createIssue integration tests', () => {
         status: 'in-progress',
         customFields: {},
         draft: false,
+        template: '',
         isOrgIssue: false,
       })
     })

@@ -69,15 +69,15 @@ export default class UpdateDoc extends Command {
     const response = await daemonUpdateDoc({
       projectPath: cwd,
       slug: args.slug,
-      title: flags.title,
-      content: flags.content,
-      newSlug: flags['new-slug'],
+      title: flags.title !== undefined ? flags.title : '',
+      content: flags.content !== undefined ? flags.content : '',
+      newSlug: flags['new-slug'] !== undefined ? flags['new-slug'] : '',
     })
 
     if (!response.success) {
       this.error(response.error)
     }
 
-    this.log(`Updated doc "${response.doc.title}" (${response.doc.slug})`)
+    this.log(`Updated doc "${response.doc!.title}" (${response.doc!.slug})`)
   }
 }

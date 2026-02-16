@@ -72,9 +72,10 @@ export default class UpdateUser extends Command {
     const response = await daemonUpdateUser({
       projectPath: cwd,
       userId: args.id,
-      name: flags.name,
-      email: flags.email,
-      gitUsernames: flags['git-username'],
+      name: flags.name !== undefined ? flags.name : '',
+      email: flags.email !== undefined ? flags.email : '',
+      gitUsernames:
+        flags['git-username'] !== undefined ? flags['git-username'] : [],
     })
 
     if (!response.success) {

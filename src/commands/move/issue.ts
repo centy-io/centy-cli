@@ -82,7 +82,7 @@ export default class MoveIssue extends Command {
     }
 
     this.log(
-      `Moved issue #${response.oldDisplayNumber} → #${response.issue.displayNumber} in ${targetProjectPath}`
+      `Moved issue #${response.oldDisplayNumber} → #${response.issue!.displayNumber} in ${targetProjectPath}`
     )
   }
 }

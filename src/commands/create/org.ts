@@ -51,8 +51,8 @@ export default class CreateOrg extends Command {
 
     const response = await daemonCreateOrganization({
       name: args.name,
-      slug: flags.slug,
-      description: flags.description,
+      slug: flags.slug !== undefined ? flags.slug : '',
+      description: flags.description !== undefined ? flags.description : '',
     })
 
     if (!response.success) {

@@ -21,7 +21,8 @@
     "oclif.manifest.json"
   ],
   "scripts": {
-    "build": "pnpm run build:tsc && pnpm run manifest",
+    "build": "pnpm run proto:gen && pnpm run build:tsc && pnpm run manifest",
+    "proto:gen": "buf generate",
     "build:tsc": "tsc",
     "dev": "tsc --watch",
     "manifest": "oclif manifest",
@@ -79,6 +80,7 @@
     "helpClass": "./dist/help.js"
   },
   "devDependencies": {
+    "@bufbuild/buf": "^1.65.0",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@cspell/dict-he": "^4.0.5",
@@ -98,6 +100,7 @@
     "oclif": "^4.22.52",
     "prettier": "^3.7.3",
     "release-it": "^19.0.6",
+    "ts-proto": "^2.11.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15"

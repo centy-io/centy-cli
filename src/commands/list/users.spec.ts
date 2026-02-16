@@ -70,7 +70,8 @@ describe('ListUsers command', () => {
 
     expect(mockDaemonListUsers).toHaveBeenCalledWith({
       projectPath: '/test/project',
-      gitUsername: undefined,
+      gitUsername: '',
+      includeDeleted: false,
     })
     expect(cmd.logs.some(log => log.includes('john-doe'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('John Doe'))).toBe(true)
@@ -129,6 +130,7 @@ describe('ListUsers command', () => {
     expect(mockDaemonListUsers).toHaveBeenCalledWith({
       projectPath: '/test/project',
       gitUsername: 'johnd',
+      includeDeleted: false,
     })
   })
 

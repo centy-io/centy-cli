@@ -79,7 +79,7 @@ export default class MoveDoc extends Command {
       sourceProjectPath,
       slug: args.slug,
       targetProjectPath,
-      newSlug: flags['new-slug'],
+      newSlug: flags['new-slug'] !== undefined ? flags['new-slug'] : '',
     })
 
     if (!response.success) {
@@ -87,9 +87,9 @@ export default class MoveDoc extends Command {
     }
 
     const slugInfo =
-      response.oldSlug !== response.doc.slug
-        ? `${response.oldSlug} → ${response.doc.slug}`
-        : response.doc.slug
+      response.oldSlug !== response.doc!.slug
+        ? `${response.oldSlug} → ${response.doc!.slug}`
+        : response.doc!.slug
 
     this.log(`Moved doc "${slugInfo}" to ${targetProjectPath}`)
   }

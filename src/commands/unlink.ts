@@ -2,6 +2,7 @@
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeleteLink } from '../daemon/daemon-delete-link.js'
+import { LinkTargetType } from '../daemon/types.js'
 import { projectFlag } from '../flags/project-flag.js'
 import {
   ensureInitialized,
@@ -74,10 +75,12 @@ export default class Unlink extends Command {
     const response = await daemonDeleteLink({
       projectPath: cwd,
       sourceId: args.id,
-      sourceType: args.type,
+      // eslint-disable-next-line no-restricted-syntax
+      sourceType: args.type as LinkTargetType,
       targetId: parsed[1],
-      targetType: parsed[0],
-      linkType: flags.type,
+      // eslint-disable-next-line no-restricted-syntax
+      targetType: parsed[0] as LinkTargetType,
+      linkType: flags.type !== undefined ? flags.type : '',
     })
 
     if (!response.success) {

@@ -20,7 +20,7 @@ export function handleGlobalDocSearch(
   log(`Found ${result.totalCount} doc(s) matching slug: ${slug}\n`)
 
   for (const dwp of result.docs) {
-    const doc = dwp.doc
+    const doc = dwp.doc!
     log(`--- Project: ${dwp.projectName} (${dwp.projectPath}) ---`)
     log(`Title: ${doc.title}`)
     log(`Slug: ${doc.slug}`)

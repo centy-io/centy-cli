@@ -66,8 +66,9 @@ describe('CreateDoc command', () => {
       projectPath: '/test/project',
       title: 'Getting Started',
       content: '# Hello',
-      slug: undefined,
-      template: undefined,
+      slug: '',
+      template: '',
+      isOrgDoc: false,
     })
     expect(cmd.logs.some(log => log.includes('Created doc'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('getting-started'))).toBe(true)

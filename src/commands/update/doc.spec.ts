@@ -62,8 +62,8 @@ describe('UpdateDoc command', () => {
       projectPath: '/test/project',
       slug: 'getting-started',
       title: 'New Title',
-      content: undefined,
-      newSlug: undefined,
+      content: '',
+      newSlug: '',
     })
     expect(cmd.logs.some(log => log.includes('Updated doc'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('New Title'))).toBe(true)
@@ -85,9 +85,9 @@ describe('UpdateDoc command', () => {
     expect(mockDaemonUpdateDoc).toHaveBeenCalledWith({
       projectPath: '/test/project',
       slug: 'api-reference',
-      title: undefined,
+      title: '',
       content: '# New Content',
-      newSlug: undefined,
+      newSlug: '',
     })
   })
 
@@ -107,8 +107,8 @@ describe('UpdateDoc command', () => {
     expect(mockDaemonUpdateDoc).toHaveBeenCalledWith({
       projectPath: '/test/project',
       slug: 'old-slug',
-      title: undefined,
-      content: undefined,
+      title: '',
+      content: '',
       newSlug: 'new-slug',
     })
   })

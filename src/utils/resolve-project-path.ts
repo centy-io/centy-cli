@@ -73,6 +73,10 @@ export async function resolveProjectPath(
   const { projects } = await daemonListProjects({
     includeUninitialized: true,
     includeStale: false,
+    includeArchived: false,
+    organizationSlug: '',
+    ungroupedOnly: false,
+    includeTemp: false,
   })
 
   const match = projects.find(p => p.name.toLowerCase() === input.toLowerCase())

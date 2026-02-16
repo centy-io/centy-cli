@@ -54,12 +54,16 @@ export default class CloseIssue extends Command {
       projectPath: cwd,
       issueId: args.id,
       status: 'closed',
+      title: '',
+      description: '',
+      priority: 0,
+      customFields: {},
     })
 
     if (!response.success) {
       this.error(response.error)
     }
 
-    this.log(`Closed issue #${response.issue.displayNumber}`)
+    this.log(`Closed issue #${response.issue!.displayNumber}`)
   }
 }

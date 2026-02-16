@@ -49,8 +49,8 @@ describe('CreateOrg command', () => {
 
     expect(mockDaemonCreateOrganization).toHaveBeenCalledWith({
       name: 'My Organization',
-      slug: undefined,
-      description: undefined,
+      slug: '',
+      description: '',
     })
     expect(cmd.logs.some(log => log.includes('Created organization'))).toBe(
       true
@@ -78,7 +78,7 @@ describe('CreateOrg command', () => {
     expect(mockDaemonCreateOrganization).toHaveBeenCalledWith({
       name: 'My Organization',
       slug: 'my-org',
-      description: undefined,
+      description: '',
     })
     expect(cmd.logs.some(log => log.includes('my-org'))).toBe(true)
   })
@@ -103,7 +103,7 @@ describe('CreateOrg command', () => {
 
     expect(mockDaemonCreateOrganization).toHaveBeenCalledWith({
       name: 'My Organization',
-      slug: undefined,
+      slug: '',
       description: 'A great org',
     })
     expect(cmd.logs.some(log => log.includes('A great org'))).toBe(true)

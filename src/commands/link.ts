@@ -2,6 +2,7 @@
 import { Args, Command } from '@oclif/core'
 
 import { daemonCreateLink } from '../daemon/daemon-create-link.js'
+import { LinkTargetType } from '../daemon/types.js'
 import { projectFlag } from '../flags/project-flag.js'
 import {
   ensureInitialized,
@@ -74,9 +75,11 @@ export default class Link extends Command {
     const response = await daemonCreateLink({
       projectPath: cwd,
       sourceId: args.id,
-      sourceType: args.type,
+      // eslint-disable-next-line no-restricted-syntax
+      sourceType: args.type as LinkTargetType,
       targetId: parsed[1],
-      targetType: parsed[0],
+      // eslint-disable-next-line no-restricted-syntax
+      targetType: parsed[0] as LinkTargetType,
       linkType: args.linkType,
     })
 

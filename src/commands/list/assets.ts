@@ -72,7 +72,7 @@ export default class ListAssets extends Command {
       ? await daemonListSharedAssets({ projectPath: cwd })
       : await daemonListAssets({
           projectPath: cwd,
-          issueId: flags.issue,
+          issueId: flags.issue !== undefined ? flags.issue : '',
           includeShared: flags['include-shared'],
         })
 

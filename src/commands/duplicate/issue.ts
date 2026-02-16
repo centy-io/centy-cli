@@ -80,7 +80,7 @@ export default class DuplicateIssue extends Command {
       sourceProjectPath,
       issueId: args.id,
       targetProjectPath,
-      newTitle: flags.title,
+      newTitle: flags.title !== undefined ? flags.title : '',
     })
 
     if (!response.success) {
@@ -93,7 +93,7 @@ export default class DuplicateIssue extends Command {
         : ' in current project'
 
     this.log(
-      `Duplicated issue → #${response.issue.displayNumber} "${response.issue.title}"${locationInfo}`
+      `Duplicated issue → #${response.issue!.displayNumber} "${response.issue!.title}"${locationInfo}`
     )
   }
 }

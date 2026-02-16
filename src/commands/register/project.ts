@@ -50,11 +50,11 @@ export default class RegisterProject extends Command {
       this.error(response.error)
     }
 
-    this.log(`Registered project "${response.project.name}"`)
-    this.log(`  Path: ${response.project.path}`)
+    this.log(`Registered project "${response.project!.name}"`)
+    this.log(`  Path: ${response.project!.path}`)
 
     // Auto-initialize if requested and not already initialized
-    if (flags.init && !response.project.initialized) {
+    if (flags.init && !response.project!.initialized) {
       const initResponse = await daemonInit({
         projectPath,
         force: true,
@@ -67,7 +67,7 @@ export default class RegisterProject extends Command {
         this.log(`  Initialized: yes (just now)`)
       }
     } else {
-      this.log(`  Initialized: ${response.project.initialized ? 'yes' : 'no'}`)
+      this.log(`  Initialized: ${response.project!.initialized ? 'yes' : 'no'}`)
     }
   }
 }

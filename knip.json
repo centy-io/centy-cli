@@ -9,7 +9,7 @@
     "coverage/**",
     "src/daemon/**"
   ],
-  "ignoreDependencies": ["tsx", "@cspell/dict-he", "@types/uuid"],
+  "ignoreDependencies": ["tsx", "@cspell/dict-he", "@types/uuid", "ts-proto"],
   "ignoreExportsUsedInFile": true,
   "ignoreWorkspaces": []
 }

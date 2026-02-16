@@ -90,7 +90,7 @@ export default class DeleteAsset extends Command {
 
     const response = await daemonDeleteAsset({
       projectPath: cwd,
-      issueId: flags.issue,
+      issueId: flags.issue !== undefined ? flags.issue : '',
       filename: args.filename,
       isShared: flags.shared,
     })

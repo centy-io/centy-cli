@@ -71,6 +71,7 @@ describe('ListDocs command', () => {
 
     expect(mockDaemonListDocs).toHaveBeenCalledWith({
       projectPath: '/test/project',
+      includeDeleted: false,
     })
     expect(cmd.logs.some(log => log.includes('Found 2 doc(s)'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('readme: README'))).toBe(true)

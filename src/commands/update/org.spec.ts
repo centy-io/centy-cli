@@ -49,8 +49,8 @@ describe('UpdateOrg command', () => {
     expect(mockDaemonUpdateOrganization).toHaveBeenCalledWith({
       slug: 'my-org',
       name: 'New Name',
-      description: undefined,
-      newSlug: undefined,
+      description: '',
+      newSlug: '',
     })
     expect(cmd.logs.some(log => log.includes('Updated organization'))).toBe(
       true
@@ -77,9 +77,9 @@ describe('UpdateOrg command', () => {
 
     expect(mockDaemonUpdateOrganization).toHaveBeenCalledWith({
       slug: 'my-org',
-      name: undefined,
+      name: '',
       description: 'Updated description',
-      newSlug: undefined,
+      newSlug: '',
     })
     expect(
       cmd.logs.some(log => log.includes('Description: Updated description'))
@@ -101,8 +101,8 @@ describe('UpdateOrg command', () => {
 
     expect(mockDaemonUpdateOrganization).toHaveBeenCalledWith({
       slug: 'old-slug',
-      name: undefined,
-      description: undefined,
+      name: '',
+      description: '',
       newSlug: 'new-slug',
     })
     expect(cmd.logs.some(log => log.includes('Slug: new-slug'))).toBe(true)

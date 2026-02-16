@@ -111,7 +111,7 @@ describe('GetAsset command', () => {
 
     expect(mockDaemonGetAsset).toHaveBeenCalledWith({
       projectPath: '/test/project',
-      issueId: undefined,
+      issueId: '',
       filename: 'logo.svg',
       isShared: true,
     })

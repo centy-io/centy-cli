@@ -67,9 +67,10 @@ export default class ListIssues extends Command {
 
     const response = await daemonListIssues({
       projectPath: cwd,
-      status: flags.status,
-      priority: flags.priority,
+      status: flags.status !== undefined ? flags.status : '',
+      priority: flags.priority !== undefined ? flags.priority : 0,
       draft: flags.draft,
+      includeDeleted: false,
     })
 
     if (flags.json) {

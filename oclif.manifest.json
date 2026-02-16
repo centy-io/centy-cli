@@ -1298,6 +1298,328 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "daemon", "status.js"]
     },
+    "list:assets": {
+      "aliases": ["asset:list"],
+      "args": {},
+      "description": "List assets for an issue or shared assets",
+      "examples": [
+        "<%= config.bin %> list assets --issue 1",
+        "<%= config.bin %> list assets --shared",
+        "<%= config.bin %> list assets --issue 1 --include-shared",
+        "<%= config.bin %> list assets --issue 1 --project centy-daemon"
+      ],
+      "flags": {
+        "issue": {
+          "char": "i",
+          "description": "Issue ID or display number",
+          "name": "issue",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "shared": {
+          "char": "s",
+          "description": "List only shared assets",
+          "name": "shared",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "include-shared": {
+          "description": "Include shared assets when listing issue assets",
+          "name": "include-shared",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:assets",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "list", "assets.js"]
+    },
+    "list:docs": {
+      "aliases": ["doc:list"],
+      "args": {},
+      "description": "List all documentation files",
+      "examples": [
+        "<%= config.bin %> list docs",
+        "<%= config.bin %> list docs --json",
+        "<%= config.bin %> list docs --project centy-daemon"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:docs",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "list", "docs.js"]
+    },
+    "list:issues": {
+      "aliases": ["issue:list"],
+      "args": {},
+      "description": "List all issues",
+      "examples": [
+        "<%= config.bin %> list issues",
+        "<%= config.bin %> list issues --status open",
+        "<%= config.bin %> list issues --priority 1",
+        "<%= config.bin %> list issues --project centy-daemon",
+        "<%= config.bin %> list issues --draft",
+        "<%= config.bin %> list issues --no-draft"
+      ],
+      "flags": {
+        "status": {
+          "char": "s",
+          "description": "Filter by status (e.g., open, in-progress, closed)",
+          "name": "status",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "priority": {
+          "char": "p",
+          "description": "Filter by priority level (1 = highest)",
+          "name": "priority",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "draft": {
+          "description": "Filter by draft status (--draft for drafts only, --no-draft for non-drafts)",
+          "name": "draft",
+          "allowNo": true,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:issues",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "list", "issues.js"]
+    },
+    "list:link-types": {
+      "aliases": [],
+      "args": {},
+      "description": "List all available link types",
+      "examples": [
+        "<%= config.bin %> list link-types",
+        "<%= config.bin %> list link-types --json",
+        "<%= config.bin %> list link-types --project centy-daemon"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:link-types",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "list", "link-types.js"]
+    },
+    "list:orgs": {
+      "aliases": ["list:organizations", "org:list"],
+      "args": {},
+      "description": "List all organizations",
+      "examples": [
+        "<%= config.bin %> list orgs",
+        "<%= config.bin %> list organizations",
+        "<%= config.bin %> list orgs --json"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:orgs",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "list", "orgs.js"]
+    },
+    "list:projects": {
+      "aliases": ["project:list"],
+      "args": {},
+      "description": "List all tracked centy projects",
+      "examples": [
+        "<%= config.bin %> list projects",
+        "<%= config.bin %> list projects --include-stale",
+        "<%= config.bin %> list projects --include-uninitialized",
+        "<%= config.bin %> list projects --include-temp",
+        "<%= config.bin %> list projects --org centy-io",
+        "<%= config.bin %> list projects --ungrouped",
+        "<%= config.bin %> list projects --json"
+      ],
+      "flags": {
+        "include-stale": {
+          "description": "Include projects where path no longer exists",
+          "name": "include-stale",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "include-uninitialized": {
+          "description": "Include projects that are not initialized",
+          "name": "include-uninitialized",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "include-temp": {
+          "description": "Include projects in system temp directory",
+          "name": "include-temp",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "org": {
+          "description": "Filter by organization slug",
+          "name": "org",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "ungrouped": {
+          "description": "Only show projects without an organization",
+          "name": "ungrouped",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:projects",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "list", "projects.js"]
+    },
+    "list:users": {
+      "aliases": ["user:list"],
+      "args": {},
+      "description": "List all users in the project",
+      "examples": [
+        "<%= config.bin %> list users",
+        "<%= config.bin %> list users --json",
+        "<%= config.bin %> list users --git-username johndoe",
+        "<%= config.bin %> list users --project centy-daemon"
+      ],
+      "flags": {
+        "git-username": {
+          "char": "g",
+          "description": "Filter by git username",
+          "name": "git-username",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "list:users",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "list", "users.js"]
+    },
     "duplicate:doc": {
       "aliases": [],
       "args": {
@@ -1772,328 +2094,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "move", "issue.js"]
     },
-    "list:assets": {
-      "aliases": ["asset:list"],
-      "args": {},
-      "description": "List assets for an issue or shared assets",
-      "examples": [
-        "<%= config.bin %> list assets --issue 1",
-        "<%= config.bin %> list assets --shared",
-        "<%= config.bin %> list assets --issue 1 --include-shared",
-        "<%= config.bin %> list assets --issue 1 --project centy-daemon"
-      ],
-      "flags": {
-        "issue": {
-          "char": "i",
-          "description": "Issue ID or display number",
-          "name": "issue",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "shared": {
-          "char": "s",
-          "description": "List only shared assets",
-          "name": "shared",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "include-shared": {
-          "description": "Include shared assets when listing issue assets",
-          "name": "include-shared",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:assets",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "assets.js"]
-    },
-    "list:docs": {
-      "aliases": ["doc:list"],
-      "args": {},
-      "description": "List all documentation files",
-      "examples": [
-        "<%= config.bin %> list docs",
-        "<%= config.bin %> list docs --json",
-        "<%= config.bin %> list docs --project centy-daemon"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:docs",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "docs.js"]
-    },
-    "list:issues": {
-      "aliases": ["issue:list"],
-      "args": {},
-      "description": "List all issues",
-      "examples": [
-        "<%= config.bin %> list issues",
-        "<%= config.bin %> list issues --status open",
-        "<%= config.bin %> list issues --priority 1",
-        "<%= config.bin %> list issues --project centy-daemon",
-        "<%= config.bin %> list issues --draft",
-        "<%= config.bin %> list issues --no-draft"
-      ],
-      "flags": {
-        "status": {
-          "char": "s",
-          "description": "Filter by status (e.g., open, in-progress, closed)",
-          "name": "status",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "priority": {
-          "char": "p",
-          "description": "Filter by priority level (1 = highest)",
-          "name": "priority",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "draft": {
-          "description": "Filter by draft status (--draft for drafts only, --no-draft for non-drafts)",
-          "name": "draft",
-          "allowNo": true,
-          "type": "boolean"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:issues",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "issues.js"]
-    },
-    "list:link-types": {
-      "aliases": [],
-      "args": {},
-      "description": "List all available link types",
-      "examples": [
-        "<%= config.bin %> list link-types",
-        "<%= config.bin %> list link-types --json",
-        "<%= config.bin %> list link-types --project centy-daemon"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:link-types",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "link-types.js"]
-    },
-    "list:orgs": {
-      "aliases": ["list:organizations", "org:list"],
-      "args": {},
-      "description": "List all organizations",
-      "examples": [
-        "<%= config.bin %> list orgs",
-        "<%= config.bin %> list organizations",
-        "<%= config.bin %> list orgs --json"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:orgs",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "orgs.js"]
-    },
-    "list:projects": {
-      "aliases": ["project:list"],
-      "args": {},
-      "description": "List all tracked centy projects",
-      "examples": [
-        "<%= config.bin %> list projects",
-        "<%= config.bin %> list projects --include-stale",
-        "<%= config.bin %> list projects --include-uninitialized",
-        "<%= config.bin %> list projects --include-temp",
-        "<%= config.bin %> list projects --org centy-io",
-        "<%= config.bin %> list projects --ungrouped",
-        "<%= config.bin %> list projects --json"
-      ],
-      "flags": {
-        "include-stale": {
-          "description": "Include projects where path no longer exists",
-          "name": "include-stale",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "include-uninitialized": {
-          "description": "Include projects that are not initialized",
-          "name": "include-uninitialized",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "include-temp": {
-          "description": "Include projects in system temp directory",
-          "name": "include-temp",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "org": {
-          "description": "Filter by organization slug",
-          "name": "org",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "ungrouped": {
-          "description": "Only show projects without an organization",
-          "name": "ungrouped",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:projects",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "projects.js"]
-    },
-    "list:users": {
-      "aliases": ["user:list"],
-      "args": {},
-      "description": "List all users in the project",
-      "examples": [
-        "<%= config.bin %> list users",
-        "<%= config.bin %> list users --json",
-        "<%= config.bin %> list users --git-username johndoe",
-        "<%= config.bin %> list users --project centy-daemon"
-      ],
-      "flags": {
-        "git-username": {
-          "char": "g",
-          "description": "Filter by git username",
-          "name": "git-username",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "list:users",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "list", "users.js"]
-    },
     "project:archive": {
       "aliases": [],
       "args": {
@@ -2304,41 +2304,6 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "register", "project.js"]
-    },
-    "untrack:project": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Remove a project from tracking",
-      "examples": [
-        "<%= config.bin %> untrack project",
-        "<%= config.bin %> untrack project /path/to/project",
-        "<%= config.bin %> untrack project --force"
-      ],
-      "flags": {
-        "force": {
-          "char": "f",
-          "description": "Skip confirmation prompt",
-          "name": "force",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "untrack:project",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "untrack", "project.js"]
     },
     "sync:users": {
       "aliases": [],
@@ -2639,6 +2604,41 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "update", "user.js"]
+    },
+    "untrack:project": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Remove a project from tracking",
+      "examples": [
+        "<%= config.bin %> untrack project",
+        "<%= config.bin %> untrack project /path/to/project",
+        "<%= config.bin %> untrack project --force"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Skip confirmation prompt",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "untrack:project",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "untrack", "project.js"]
     },
     "workspace:cleanup": {
       "aliases": [],

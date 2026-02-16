@@ -63,8 +63,9 @@ export default class CreateDoc extends Command {
       projectPath: cwd,
       title: flags.title,
       content: flags.content,
-      slug: flags.slug,
-      template: flags.template,
+      slug: flags.slug !== undefined ? flags.slug : '',
+      template: flags.template !== undefined ? flags.template : '',
+      isOrgDoc: false,
     })
 
     if (!response.success) {

@@ -60,7 +60,7 @@ describe('Unlink command', () => {
       sourceType: 'issue',
       targetId: '2',
       targetType: 'issue',
-      linkType: undefined,
+      linkType: '',
     })
     expect(cmd.logs.some(log => log.includes('Removed 2 link(s)'))).toBe(true)
   })

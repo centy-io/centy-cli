@@ -1,0 +1,18 @@
+version: v2
+plugins:
+  - local: protoc-gen-ts_proto
+    out: src/daemon/generated
+    opt:
+      - esModuleInterop=true
+      - snakeToCamel=true
+      - onlyTypes=true
+      - stringEnums=true
+      - useOptionals=messages
+      - env=node
+      - outputServices=false
+      - outputEncodeMethods=false
+      - outputJsonMethods=false
+      - outputClientImpl=false
+      - unrecognizedEnum=false
+      - forceLong=string
+      - exportCommonSymbols=false

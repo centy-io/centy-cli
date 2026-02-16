@@ -20,7 +20,7 @@ export function handleGlobalIssueSearch(
   log(`Found ${result.totalCount} issue(s) matching UUID: ${uuid}\n`)
 
   for (const iwp of result.issues) {
-    const issue = iwp.issue
+    const issue = iwp.issue!
     const meta = issue.metadata
     log(`--- Project: ${iwp.projectName} (${iwp.projectPath}) ---`)
     log(`Issue #${issue.displayNumber}`)

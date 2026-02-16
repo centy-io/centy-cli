@@ -49,6 +49,6 @@ export default class ProjectFavorite extends Command {
     }
 
     const action = flags.off ? 'Removed from favorites' : 'Added to favorites'
-    this.log(`${action}: "${response.project.name}"`)
+    this.log(`${action}: "${response.project!.name}"`)
   }
 }

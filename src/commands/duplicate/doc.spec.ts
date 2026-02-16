@@ -62,8 +62,8 @@ describe('DuplicateDoc command', () => {
       sourceProjectPath: '/test/project',
       slug: 'my-doc',
       targetProjectPath: '/test/project',
-      newSlug: undefined,
-      newTitle: undefined,
+      newSlug: '',
+      newTitle: '',
     })
     expect(cmd.logs.some(log => log.includes('Duplicated doc'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('my-doc-copy'))).toBe(true)

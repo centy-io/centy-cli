@@ -70,15 +70,15 @@ export default class ProjectOrg extends Command {
     }
 
     if (flags.json) {
-      this.log(JSON.stringify(response.project, null, 2))
+      this.log(JSON.stringify(response.project!, null, 2))
       return
     }
 
     if (flags.remove || !args.slug) {
-      this.log(`Removed "${response.project.name}" from organization`)
+      this.log(`Removed "${response.project!.name}" from organization`)
     } else {
       this.log(
-        `Assigned "${response.project.name}" to organization: ${args.slug}`
+        `Assigned "${response.project!.name}" to organization: ${args.slug}`
       )
     }
   }
