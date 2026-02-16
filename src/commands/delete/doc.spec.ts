@@ -4,13 +4,13 @@ import {
   runCommandSafely,
 } from '../../testing/command-test-utils.js'
 
-const mockDaemonDeleteDoc = vi.fn()
+const mockDaemonDeleteItem = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 const mockCreateInterface = vi.fn()
 
-vi.mock('../../daemon/daemon-delete-doc.js', () => ({
-  daemonDeleteDoc: (...args: unknown[]) => mockDaemonDeleteDoc(...args),
+vi.mock('../../daemon/daemon-delete-item.js', () => ({
+  daemonDeleteItem: (...args: unknown[]) => mockDaemonDeleteItem(...args),
 }))
 
 vi.mock('../../utils/resolve-project-path.js', () => ({
@@ -56,7 +56,7 @@ describe('DeleteDoc command', () => {
 
   it('should delete doc with force flag', async () => {
     const { default: Command } = await import('./doc.js')
-    mockDaemonDeleteDoc.mockResolvedValue({ success: true })
+    mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
     const cmd = createMockCommand(Command, {
       flags: { force: true },
@@ -65,9 +65,11 @@ describe('DeleteDoc command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonDeleteDoc).toHaveBeenCalledWith({
+    expect(mockDaemonDeleteItem).toHaveBeenCalledWith({
       projectPath: '/test/project',
-      slug: 'my-doc',
+      itemType: 'docs',
+      itemId: 'my-doc',
+      force: false,
     })
     expect(cmd.logs.some(log => log.includes('Deleted doc'))).toBe(true)
   })
@@ -75,7 +77,7 @@ describe('DeleteDoc command', () => {
   it('should delete doc after confirmation', async () => {
     const { default: Command } = await import('./doc.js')
     setupReadlineMock('y')
-    mockDaemonDeleteDoc.mockResolvedValue({ success: true })
+    mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
     const cmd = createMockCommand(Command, {
       flags: { force: false },
@@ -84,7 +86,7 @@ describe('DeleteDoc command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonDeleteDoc).toHaveBeenCalled()
+    expect(mockDaemonDeleteItem).toHaveBeenCalled()
     expect(cmd.logs.some(log => log.includes('Deleted doc'))).toBe(true)
   })
 
@@ -99,7 +101,7 @@ describe('DeleteDoc command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonDeleteDoc).not.toHaveBeenCalled()
+    expect(mockDaemonDeleteItem).not.toHaveBeenCalled()
     expect(cmd.logs.some(log => log.includes('Cancelled'))).toBe(true)
   })
 
@@ -124,7 +126,7 @@ describe('DeleteDoc command', () => {
 
   it('should handle daemon delete failure', async () => {
     const { default: Command } = await import('./doc.js')
-    mockDaemonDeleteDoc.mockResolvedValue({
+    mockDaemonDeleteItem.mockResolvedValue({
       success: false,
       error: 'Doc not found',
     })
@@ -143,7 +145,7 @@ describe('DeleteDoc command', () => {
   it('should use project flag', async () => {
     const { default: Command } = await import('./doc.js')
     mockResolveProjectPath.mockResolvedValue('/other/project')
-    mockDaemonDeleteDoc.mockResolvedValue({ success: true })
+    mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
     const cmd = createMockCommand(Command, {
       flags: { force: true, project: 'other-project' },
