@@ -98,13 +98,15 @@ export default class UpdateIssue extends Command {
       this.error('At least one field must be specified to update.')
     }
 
+    const convertedPriority = this.convertPriority(flags.priority)
     const response = await daemonUpdateIssue({
       projectPath: cwd,
       issueId: args.id,
-      title: flags.title,
-      description: flags.description,
-      status: flags.status,
-      priority: this.convertPriority(flags.priority),
+      title: flags.title !== undefined ? flags.title : '',
+      description: flags.description !== undefined ? flags.description : '',
+      status: flags.status !== undefined ? flags.status : '',
+      priority: convertedPriority !== undefined ? convertedPriority : 0,
+      customFields: {},
       draft: flags.draft,
     })
 
@@ -112,6 +114,6 @@ export default class UpdateIssue extends Command {
       this.error(response.error)
     }
 
-    this.log(`Updated issue #${response.issue.displayNumber}`)
+    this.log(`Updated issue #${response.issue!.displayNumber}`)
   }
 }

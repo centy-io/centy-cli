@@ -85,6 +85,10 @@ async function closeIssue(
     projectPath: cwd,
     issueId,
     status: 'closed',
+    title: '',
+    description: '',
+    priority: 0,
+    customFields: {},
   })
 
   if (!response.success) {
@@ -96,7 +100,7 @@ async function closeIssue(
       JSON.stringify(
         {
           type: 'issue',
-          displayNumber: response.issue.displayNumber,
+          displayNumber: response.issue!.displayNumber,
           status: 'closed',
         },
         null,
@@ -104,6 +108,6 @@ async function closeIssue(
       )
     )
   } else {
-    log(`Closed issue #${response.issue.displayNumber}`)
+    log(`Closed issue #${response.issue!.displayNumber}`)
   }
 }

@@ -70,8 +70,9 @@ export default class CreateUser extends Command {
       projectPath: cwd,
       id: flags.id !== undefined ? flags.id : '',
       name: flags.name,
-      email: flags.email,
-      gitUsernames: flags['git-username'],
+      email: flags.email !== undefined ? flags.email : '',
+      gitUsernames:
+        flags['git-username'] !== undefined ? flags['git-username'] : [],
     })
 
     if (!response.success) {

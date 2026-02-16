@@ -2,6 +2,7 @@
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonListLinks } from '../daemon/daemon-list-links.js'
+import { LinkTargetType } from '../daemon/types.js'
 import { projectFlag } from '../flags/project-flag.js'
 import {
   ensureInitialized,
@@ -61,7 +62,8 @@ export default class Links extends Command {
     const response = await daemonListLinks({
       projectPath: cwd,
       entityId: args.id,
-      entityType: args.type,
+      // eslint-disable-next-line no-restricted-syntax
+      entityType: args.type as LinkTargetType,
     })
 
     if (flags.json) {

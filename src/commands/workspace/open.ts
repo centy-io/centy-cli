@@ -2,6 +2,7 @@
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonOpenInTempWorkspace } from '../../daemon/daemon-open-in-temp-workspace.js'
+import { LlmAction } from '../../daemon/types.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
@@ -58,9 +59,10 @@ export default class WorkspaceOpen extends Command {
     const response = await daemonOpenInTempWorkspace({
       projectPath: cwd,
       issueId: args.issueId,
-      action: 'PLAN',
-      agentName: flags.agent,
-      ttlHours: flags.ttl,
+      action: LlmAction.LLM_ACTION_PLAN,
+      agentName: flags.agent !== undefined ? flags.agent : '',
+      ttlHours: flags.ttl !== undefined ? flags.ttl : 0,
+      editorId: '',
     })
 
     if (!response.success) {

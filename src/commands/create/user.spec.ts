@@ -71,7 +71,7 @@ describe('CreateUser command', () => {
       id: '',
       name: 'John Doe',
       email: 'john@example.com',
-      gitUsernames: undefined,
+      gitUsernames: [],
     })
     expect(cmd.logs.some(log => log.includes('Created user'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('john-doe'))).toBe(true)

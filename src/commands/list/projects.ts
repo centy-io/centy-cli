@@ -59,8 +59,9 @@ export default class ListProjects extends Command {
       includeStale: flags['include-stale'],
       includeUninitialized: flags['include-uninitialized'],
       includeTemp: flags['include-temp'],
-      organizationSlug: flags.org,
+      organizationSlug: flags.org !== undefined ? flags.org : '',
       ungroupedOnly: flags.ungrouped,
+      includeArchived: false,
     })
 
     if (flags.json) {

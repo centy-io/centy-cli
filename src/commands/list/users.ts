@@ -56,7 +56,9 @@ export default class ListUsers extends Command {
 
     const response = await daemonListUsers({
       projectPath: cwd,
-      gitUsername: flags['git-username'],
+      gitUsername:
+        flags['git-username'] !== undefined ? flags['git-username'] : '',
+      includeDeleted: false,
     })
 
     if (flags.json) {

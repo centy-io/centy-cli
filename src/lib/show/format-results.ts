@@ -5,7 +5,7 @@ export function formatIssueResults(
   log: (msg: string) => void
 ): void {
   for (const iwp of issues) {
-    const issue = iwp.issue
+    const issue = iwp.issue!
     const meta = issue.metadata
     log(`--- Project: ${iwp.projectName} (${iwp.projectPath}) ---`)
     log(`Issue #${issue.displayNumber}`)

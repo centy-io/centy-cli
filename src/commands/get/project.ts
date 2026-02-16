@@ -51,11 +51,11 @@ export default class GetProject extends Command {
     }
 
     if (flags.json) {
-      this.log(JSON.stringify(response.project, null, 2))
+      this.log(JSON.stringify(response.project!, null, 2))
       return
     }
 
-    const project = response.project
+    const project = response.project!
     this.log(`Project: ${project.name}`)
     this.log(`  Path: ${project.path}`)
     this.log(`  Initialized: ${project.initialized ? 'yes' : 'no'}`)

@@ -67,8 +67,8 @@ describe('UpdateUser command', () => {
       projectPath: '/test/project',
       userId: 'john-doe',
       name: 'John D.',
-      email: undefined,
-      gitUsernames: undefined,
+      email: '',
+      gitUsernames: [],
     })
     expect(cmd.logs.some(log => log.includes('Updated user: john-doe'))).toBe(
       true

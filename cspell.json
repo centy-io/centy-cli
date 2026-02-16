@@ -5,6 +5,7 @@
   "words": [
     "aarch",
     "ATPF",
+    "bufbuild",
     "centy",
     "centyd",
     "choosealicense",
@@ -71,6 +72,7 @@
     "coverage",
     "pnpm-lock.yaml",
     "*.min.js",
-    "bun.lock"
+    "bun.lock",
+    "src/daemon/generated"
   ]
 }

@@ -51,6 +51,7 @@ export default class ListDocs extends Command {
 
     const response = await daemonListDocs({
       projectPath: cwd,
+      includeDeleted: false,
     })
 
     if (flags.json) {

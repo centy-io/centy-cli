@@ -49,6 +49,6 @@ export default class ProjectArchive extends Command {
     }
 
     const action = flags.off ? 'Unarchived' : 'Archived'
-    this.log(`${action}: "${response.project.name}"`)
+    this.log(`${action}: "${response.project!.name}"`)
   }
 }

@@ -48,6 +48,7 @@ export async function createIssue(
       customFields: convertCustomFields(opts.customFields),
       // eslint-disable-next-line no-restricted-syntax
       draft: opts.draft ?? false,
+      template: '',
       // eslint-disable-next-line no-restricted-syntax
       isOrgIssue: opts.org ?? false,
     })

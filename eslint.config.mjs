@@ -5,7 +5,7 @@ export default [
   ...agentConfig,
   publishablePackageJson,
   {
-    ignores: ['dist/**', 'node_modules/**', '*.config.js', '*.config.mjs', 'package.json'],
+    ignores: ['dist/**', 'node_modules/**', 'src/daemon/generated/**', '*.config.js', '*.config.mjs', 'package.json'],
   },
   {
     settings: {

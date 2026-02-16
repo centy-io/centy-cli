@@ -3,7 +3,7 @@
  * Feature types (CLI-side only, not in daemon) for gRPC communication.
  */
 
-import type { Issue } from './issue.js'
+import type { Issue } from '../generated/centy/v1/centy.js'
 
 export interface GetFeatureStatusRequest {
   projectPath: string

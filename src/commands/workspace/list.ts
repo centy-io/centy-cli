@@ -50,7 +50,8 @@ export default class WorkspaceList extends Command {
 
     const response = await daemonListTempWorkspaces({
       includeExpired: flags['include-expired'],
-      sourceProjectPath,
+      sourceProjectPath:
+        sourceProjectPath !== undefined ? sourceProjectPath : '',
     })
 
     if (response.workspaces.length === 0) {

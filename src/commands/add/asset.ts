@@ -97,7 +97,12 @@ export default class AddAsset extends Command {
 
     const response = await daemonAddAsset({
       projectPath: cwd,
-      issueId: flags.issue !== undefined ? flags.issue : flags.pr,
+      issueId:
+        flags.issue !== undefined
+          ? flags.issue
+          : flags.pr !== undefined
+            ? flags.pr
+            : '',
       filename,
       data: fileData,
       isShared: flags.shared,
@@ -109,7 +114,7 @@ export default class AddAsset extends Command {
 
     this.log(`Added asset "${filename}"`)
     this.log(`  Path: ${response.path}`)
-    this.log(`  Size: ${response.asset.size} bytes`)
-    this.log(`  Type: ${response.asset.mimeType}`)
+    this.log(`  Size: ${response.asset!.size} bytes`)
+    this.log(`  Type: ${response.asset!.mimeType}`)
   }
 }

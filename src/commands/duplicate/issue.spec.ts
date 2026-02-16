@@ -59,7 +59,7 @@ describe('DuplicateIssue command', () => {
       sourceProjectPath: '/test/project',
       issueId: '1',
       targetProjectPath: '/test/project',
-      newTitle: undefined,
+      newTitle: '',
     })
     expect(cmd.logs.some(log => log.includes('Duplicated issue'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('in current project'))).toBe(true)
@@ -86,7 +86,7 @@ describe('DuplicateIssue command', () => {
       sourceProjectPath: '/source/project',
       issueId: '1',
       targetProjectPath: '/target/project',
-      newTitle: undefined,
+      newTitle: '',
     })
     expect(cmd.logs.some(log => log.includes('in /target/project'))).toBe(true)
   })

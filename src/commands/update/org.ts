@@ -60,9 +60,9 @@ export default class UpdateOrg extends Command {
 
     const response = await daemonUpdateOrganization({
       slug: args.slug,
-      name: flags.name,
-      description: flags.description,
-      newSlug: flags['new-slug'],
+      name: flags.name !== undefined ? flags.name : '',
+      description: flags.description !== undefined ? flags.description : '',
+      newSlug: flags['new-slug'] !== undefined ? flags['new-slug'] : '',
     })
 
     if (!response.success) {

@@ -69,7 +69,10 @@ describe('WorkspaceOpen command', () => {
       expect.objectContaining({
         projectPath: '/test/project',
         issueId: '1',
-        action: 'PLAN',
+        action: 'LLM_ACTION_PLAN',
+        agentName: '',
+        ttlHours: 0,
+        editorId: '',
       })
     )
     expect(cmd.logs[0]).toContain('/tmp/centy-workspace-123')

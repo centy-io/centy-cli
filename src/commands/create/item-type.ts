@@ -2,6 +2,7 @@
 import { Command, Flags } from '@oclif/core'
 
 import { daemonCreateItemType } from '../../daemon/daemon-create-item-type.js'
+import type { ItemTypeFeature } from '../../daemon/types.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
   VALID_FEATURES,
@@ -71,7 +72,8 @@ export default class CreateItemType extends Command {
       )
     }
 
-    const features = parseFeatures(flags.features)
+    // eslint-disable-next-line no-restricted-syntax
+    const features = parseFeatures(flags.features) as ItemTypeFeature[]
     const response = await daemonCreateItemType({
       projectPath: cwd,
       name: flags.name,

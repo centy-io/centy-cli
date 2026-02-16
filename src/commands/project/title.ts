@@ -73,13 +73,13 @@ export default class ProjectTitle extends Command {
     }
 
     if (flags.json) {
-      this.log(JSON.stringify(response.project, null, 2))
+      this.log(JSON.stringify(response.project!, null, 2))
       return
     }
 
     const scope = flags.shared ? 'project-scope' : 'user-scope'
     if (flags.clear || !args.title) {
-      this.log(`Cleared ${scope} title for "${response.project.name}"`)
+      this.log(`Cleared ${scope} title for "${response.project!.name}"`)
     } else {
       this.log(`Set ${scope} title: "${args.title}"`)
     }
