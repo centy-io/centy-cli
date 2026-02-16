@@ -72,6 +72,27 @@ describe('CreateIssue command', () => {
     expect(cmd.errors).toContain('Failed to create issue')
   })
 
+  it('should pass org flag to createIssue', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockCreateIssue.mockResolvedValue({
+      success: true,
+      issue: { displayNumber: 1 },
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { title: 'Org Issue', org: true },
+    })
+
+    await cmd.run()
+
+    expect(mockCreateIssue).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Org Issue',
+        org: true,
+      })
+    )
+  })
+
   it('should use project flag to resolve path', async () => {
     const { default: Command } = await import('./issue.js')
     mockResolveProjectPath.mockResolvedValue('/other/project')

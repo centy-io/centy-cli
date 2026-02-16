@@ -97,6 +97,7 @@ describe('createIssue integration tests', () => {
         status: 'open',
         customFields: {},
         draft: false,
+        isOrgIssue: false,
       })
     })
 
@@ -123,7 +124,50 @@ describe('createIssue integration tests', () => {
         status: 'in-progress',
         customFields: {},
         draft: false,
+        isOrgIssue: false,
       })
+    })
+
+    it('should pass org flag as isOrgIssue to daemon', async () => {
+      mockDaemonIsInitialized.mockResolvedValue(createInitializedResponse())
+      mockDaemonCreateIssue.mockResolvedValue(createMockIssueResponse())
+
+      const collector = createOutputCollector()
+      const result = await createIssue({
+        cwd: '/project',
+        title: 'Org Issue',
+        description: 'Cross-org issue',
+        priority: 'medium',
+        org: true,
+        output: collector.stream,
+      })
+
+      expect(result.success).toBe(true)
+      expect(mockDaemonCreateIssue).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isOrgIssue: true,
+        })
+      )
+    })
+
+    it('should default isOrgIssue to false when org not specified', async () => {
+      mockDaemonIsInitialized.mockResolvedValue(createInitializedResponse())
+      mockDaemonCreateIssue.mockResolvedValue(createMockIssueResponse())
+
+      const collector = createOutputCollector()
+      await createIssue({
+        cwd: '/project',
+        title: 'Regular Issue',
+        description: '',
+        priority: 'medium',
+        output: collector.stream,
+      })
+
+      expect(mockDaemonCreateIssue).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isOrgIssue: false,
+        })
+      )
     })
 
     it('should use medium priority when specified', async () => {
