@@ -20,6 +20,7 @@ export default class CreateIssue extends Command {
     '<%= config.bin %> create issue -t "Add feature" -d "Implement dark mode"',
     '<%= config.bin %> create issue -t "Add feature" --project centy-daemon',
     '<%= config.bin %> create issue --title "WIP feature" --draft',
+    '<%= config.bin %> create issue --title "Cross-org bug" --org',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -46,6 +47,10 @@ export default class CreateIssue extends Command {
       description: 'Create as draft',
       default: false,
     }),
+    org: Flags.boolean({
+      description: 'Create as an org-wide issue',
+      default: false,
+    }),
     project: projectFlag,
   }
 
@@ -61,6 +66,7 @@ export default class CreateIssue extends Command {
       priority: flags.priority as 'low' | 'medium' | 'high' | undefined,
       status: flags.status,
       draft: flags.draft,
+      org: flags.org,
     })
 
     if (!result.success) {
