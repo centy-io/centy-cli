@@ -115,7 +115,14 @@
       "Bash(pnpm eslint:*)",
       "Bash(npm test:*)",
       "Bash(gh pr diff:*)",
-      "Bash(./bin/dev.js:*)"
+      "Bash(./bin/dev.js:*)",
+      "Bash(centy issue view:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm approve-builds:*)",
+      "Bash(pnpm config set:*)",
+      "Bash(npx buf:*)",
+      "Bash(npx protoc-gen-ts_proto:*)",
+      "Bash(git reset:*)"
     ],
     "deny": [
       "Bash(npm install)",
