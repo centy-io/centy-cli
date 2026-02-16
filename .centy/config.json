@@ -1,7 +1,6 @@
 {
   "allowedStates": ["open", "in-progress", "closed"],
   "customFields": [],
-  "defaultState": "open",
   "defaults": {},
   "hooks": [],
   "priorityColors": {},
