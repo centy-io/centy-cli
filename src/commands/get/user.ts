@@ -1,8 +1,9 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
-import { daemonGetUser } from '../../daemon/daemon-get-user.js'
+import { daemonGetItem } from '../../daemon/daemon-get-item.js'
 import { projectFlag } from '../../flags/project-flag.js'
+import { formatGenericItem } from '../../lib/get-item/format-generic-item.js'
 import {
   ensureInitialized,
   NotInitializedError,
@@ -54,32 +55,21 @@ export default class GetUser extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    try {
-      const user = await daemonGetUser({
-        projectPath: cwd,
-        userId: args.id,
-      })
+    const response = await daemonGetItem({
+      projectPath: cwd,
+      itemType: 'users',
+      itemId: args.id,
+    })
 
-      if (flags.json) {
-        this.log(JSON.stringify(user, null, 2))
-        return
-      }
-
-      this.log(`User: ${user.id}`)
-      this.log(`  Name: ${user.name}`)
-      if (user.email !== undefined && user.email !== '') {
-        this.log(`  Email: ${user.email}`)
-      }
-      if (user.gitUsernames !== undefined && user.gitUsernames.length > 0) {
-        this.log(`  Git usernames: ${user.gitUsernames.join(', ')}`)
-      }
-      this.log(`  Created: ${user.createdAt}`)
-      this.log(`  Updated: ${user.updatedAt}`)
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('not found')) {
-        this.error(`User "${args.id}" not found`)
-      }
-      throw error instanceof Error ? error : new Error(String(error))
+    if (!response.success) {
+      this.error(response.error)
     }
+
+    if (flags.json) {
+      this.log(JSON.stringify(response.item, null, 2))
+      return
+    }
+
+    formatGenericItem(response.item!, this.log.bind(this))
   }
 }

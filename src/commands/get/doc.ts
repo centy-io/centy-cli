@@ -1,13 +1,12 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
-import { daemonGetDoc } from '../../daemon/daemon-get-doc.js'
+import { daemonGetItem } from '../../daemon/daemon-get-item.js'
 import { daemonGetDocsBySlug } from '../../daemon/daemon-get-docs-by-slug.js'
 import { projectFlag } from '../../flags/project-flag.js'
-import { checkCrossProjectDoc } from '../../lib/get-doc/cross-project-hint.js'
-import { formatDocPlain } from '../../lib/get-doc/format-doc-output.js'
 import { handleGlobalDocSearch } from '../../lib/get-doc/handle-global-search.js'
 import { handleDocNotInitialized } from '../../lib/get-doc/handle-not-initialized.js'
+import { formatGenericItem } from '../../lib/get-item/format-generic-item.js'
 import { ensureInitialized } from '../../utils/ensure-initialized.js'
 import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
@@ -86,31 +85,21 @@ export default class GetDoc extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    await this.fetchAndDisplayDoc(cwd, args.slug, flags.json)
-  }
+    const response = await daemonGetItem({
+      projectPath: cwd,
+      itemType: 'docs',
+      itemId: args.slug,
+    })
 
-  private async fetchAndDisplayDoc(
-    cwd: string,
-    slug: string,
-    jsonMode: boolean
-  ): Promise<void> {
-    try {
-      const doc = await daemonGetDoc({ projectPath: cwd, slug })
-      if (jsonMode) {
-        this.log(JSON.stringify(doc, null, 2))
-        return
-      }
-      formatDocPlain(doc, this.log.bind(this))
-    } catch (error) {
-      const cross = await checkCrossProjectDoc(error, slug, jsonMode)
-      if (cross.jsonOutput !== null) {
-        this.log(JSON.stringify(cross.jsonOutput, null, 2))
-        this.exit(1)
-      }
-      if (cross.hint !== null) {
-        this.error(cross.hint)
-      }
-      throw error instanceof Error ? error : new Error(String(error))
+    if (!response.success) {
+      this.error(response.error)
     }
+
+    if (flags.json) {
+      this.log(JSON.stringify(response.item, null, 2))
+      return
+    }
+
+    formatGenericItem(response.item!, this.log.bind(this))
   }
 }

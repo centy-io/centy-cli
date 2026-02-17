@@ -4,13 +4,13 @@ import {
   runCommandSafely,
 } from '../../testing/command-test-utils.js'
 
-const mockDaemonGetDoc = vi.fn()
+const mockDaemonGetItem = vi.fn()
 const mockDaemonGetDocsBySlug = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
-vi.mock('../../daemon/daemon-get-doc.js', () => ({
-  daemonGetDoc: (...args: unknown[]) => mockDaemonGetDoc(...args),
+vi.mock('../../daemon/daemon-get-item.js', () => ({
+  daemonGetItem: (...args: unknown[]) => mockDaemonGetItem(...args),
 }))
 
 vi.mock('../../daemon/daemon-get-docs-by-slug.js', () => ({
@@ -53,6 +53,25 @@ vi.mock('../../utils/cross-project-search.js', () => ({
   }),
 }))
 
+function createMockGenericDoc(overrides: Record<string, unknown> = {}) {
+  return {
+    id: 'getting-started',
+    itemType: 'docs',
+    title: 'Getting Started',
+    body: '# Getting Started\n\nWelcome!',
+    metadata: {
+      displayNumber: 0,
+      status: '',
+      priority: 0,
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-02T00:00:00Z',
+      deletedAt: '',
+      customFields: {},
+    },
+    ...overrides,
+  }
+}
+
 describe('GetDoc command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -76,15 +95,8 @@ describe('GetDoc command', () => {
 
   it('should get doc by slug', async () => {
     const { default: Command } = await import('./doc.js')
-    mockDaemonGetDoc.mockResolvedValue({
-      title: 'Getting Started',
-      slug: 'getting-started',
-      content: '# Getting Started\n\nWelcome!',
-      metadata: {
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-02T00:00:00Z',
-      },
-    })
+    const item = createMockGenericDoc()
+    mockDaemonGetItem.mockResolvedValue({ success: true, item })
 
     const cmd = createMockCommand(Command, {
       flags: { json: false, global: false },
@@ -93,30 +105,20 @@ describe('GetDoc command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonGetDoc).toHaveBeenCalledWith({
+    expect(mockDaemonGetItem).toHaveBeenCalledWith({
       projectPath: '/test/project',
-      slug: 'getting-started',
+      itemType: 'docs',
+      itemId: 'getting-started',
     })
     expect(cmd.logs.some(log => log.includes('Title: Getting Started'))).toBe(
-      true
-    )
-    expect(cmd.logs.some(log => log.includes('Slug: getting-started'))).toBe(
       true
     )
   })
 
   it('should output JSON when json flag is set', async () => {
     const { default: Command } = await import('./doc.js')
-    const doc = {
-      title: 'API Docs',
-      slug: 'api-docs',
-      content: '# API',
-      metadata: {
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-02T00:00:00Z',
-      },
-    }
-    mockDaemonGetDoc.mockResolvedValue(doc)
+    const item = createMockGenericDoc()
+    mockDaemonGetItem.mockResolvedValue({ success: true, item })
 
     const cmd = createMockCommand(Command, {
       flags: { json: true, global: false },
@@ -125,7 +127,7 @@ describe('GetDoc command', () => {
 
     await cmd.run()
 
-    expect(cmd.logs[0]).toBe(JSON.stringify(doc, null, 2))
+    expect(cmd.logs[0]).toBe(JSON.stringify(item, null, 2))
   })
 
   it('should search globally with --global flag', async () => {
@@ -230,15 +232,8 @@ describe('GetDoc command', () => {
   it('should use project flag to resolve path', async () => {
     const { default: Command } = await import('./doc.js')
     mockResolveProjectPath.mockResolvedValue('/other/project')
-    mockDaemonGetDoc.mockResolvedValue({
-      title: 'Test',
-      slug: 'test',
-      content: '',
-      metadata: {
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-02T00:00:00Z',
-      },
-    })
+    const item = createMockGenericDoc()
+    mockDaemonGetItem.mockResolvedValue({ success: true, item })
 
     const cmd = createMockCommand(Command, {
       flags: { json: false, global: false, project: 'other-project' },
@@ -251,66 +246,28 @@ describe('GetDoc command', () => {
     expect(mockEnsureInitialized).toHaveBeenCalledWith('/other/project')
   })
 
-  it('should show cross-project hint when local doc not found but found globally', async () => {
+  it('should handle daemon get item failure', async () => {
     const { default: Command } = await import('./doc.js')
-    const { isNotFoundError } =
-      await import('../../utils/cross-project-search.js')
-    mockDaemonGetDoc.mockRejectedValue(new Error('Doc not found'))
-    mockDaemonGetDocsBySlug.mockResolvedValue({
-      docs: [
-        {
-          doc: { title: 'Test', slug: 'test', content: '' },
-          projectName: 'other-project',
-          projectPath: '/other/project',
-        },
-      ],
-      totalCount: 1,
-      errors: [],
+    mockDaemonGetItem.mockResolvedValue({
+      success: false,
+      error: 'Doc not found',
     })
 
     const cmd = createMockCommand(Command, {
       flags: { json: false, global: false },
-      args: { slug: 'test' },
+      args: { slug: 'nonexistent' },
     })
 
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(mockDaemonGetDocsBySlug).toHaveBeenCalledWith({ slug: 'test' })
-  })
-
-  it('should output JSON cross-project hint when local doc not found with json flag', async () => {
-    const { default: Command } = await import('./doc.js')
-    mockDaemonGetDoc.mockRejectedValue(new Error('Doc not found'))
-    mockDaemonGetDocsBySlug.mockResolvedValue({
-      docs: [
-        {
-          doc: { title: 'Test', slug: 'test', content: '' },
-          projectName: 'other-project',
-          projectPath: '/other/project',
-        },
-      ],
-      totalCount: 1,
-      errors: [],
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: true, global: false },
-      args: { slug: 'test' },
-    })
-
-    const { error } = await runCommandSafely(cmd)
-
-    expect(error).toBeDefined()
+    expect(cmd.errors).toContain('Doc not found')
   })
 
   it('should show doc with undefined metadata', async () => {
     const { default: Command } = await import('./doc.js')
-    mockDaemonGetDoc.mockResolvedValue({
-      title: 'Test',
-      slug: 'test',
-      content: '# Test',
-    })
+    const item = createMockGenericDoc({ metadata: undefined })
+    mockDaemonGetItem.mockResolvedValue({ success: true, item })
 
     const cmd = createMockCommand(Command, {
       flags: { json: false, global: false },

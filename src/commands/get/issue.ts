@@ -1,9 +1,10 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
+import { daemonGetItem } from '../../daemon/daemon-get-item.js'
 import { daemonGetIssuesByUuid } from '../../daemon/daemon-get-issues-by-uuid.js'
 import { projectFlag } from '../../flags/project-flag.js'
-import { fetchAndDisplayIssue } from '../../lib/get-issue/fetch-and-display.js'
+import { formatGenericItem } from '../../lib/get-item/format-generic-item.js'
 import { handleGlobalIssueSearch } from '../../lib/get-issue/handle-global-search.js'
 import { handleIssueNotInitialized } from '../../lib/get-issue/handle-not-initialized.js'
 import { isValidUuid } from '../../utils/cross-project-search.js'
@@ -92,11 +93,21 @@ export default class GetIssue extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    const ctx = {
-      log: this.log.bind(this),
-      error: this.error.bind(this),
-      exit: this.exit.bind(this),
+    const response = await daemonGetItem({
+      projectPath: cwd,
+      itemType: 'issues',
+      itemId: args.id,
+    })
+
+    if (!response.success) {
+      this.error(response.error)
     }
-    await fetchAndDisplayIssue(cwd, args.id, flags.json, ctx)
+
+    if (flags.json) {
+      this.log(JSON.stringify(response.item, null, 2))
+      return
+    }
+
+    formatGenericItem(response.item!, this.log.bind(this))
   }
 }

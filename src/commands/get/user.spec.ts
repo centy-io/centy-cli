@@ -4,12 +4,12 @@ import {
   runCommandSafely,
 } from '../../testing/command-test-utils.js'
 
-const mockDaemonGetUser = vi.fn()
+const mockDaemonGetItem = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
-vi.mock('../../daemon/daemon-get-user.js', () => ({
-  daemonGetUser: (...args: unknown[]) => mockDaemonGetUser(...args),
+vi.mock('../../daemon/daemon-get-item.js', () => ({
+  daemonGetItem: (...args: unknown[]) => mockDaemonGetItem(...args),
 }))
 
 vi.mock('../../utils/resolve-project-path.js', () => ({
@@ -25,6 +25,25 @@ vi.mock('../../utils/ensure-initialized.js', () => ({
     }
   },
 }))
+
+function createMockGenericUser(overrides: Record<string, unknown> = {}) {
+  return {
+    id: 'john-doe',
+    itemType: 'users',
+    title: 'John Doe',
+    body: '',
+    metadata: {
+      displayNumber: 0,
+      status: '',
+      priority: 0,
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-02T00:00:00Z',
+      deletedAt: '',
+      customFields: {},
+    },
+    ...overrides,
+  }
+}
 
 describe('GetUser command', () => {
   beforeEach(() => {
@@ -49,14 +68,8 @@ describe('GetUser command', () => {
 
   it('should get user details successfully', async () => {
     const { default: Command } = await import('./user.js')
-    mockDaemonGetUser.mockResolvedValue({
-      id: 'john-doe',
-      name: 'John Doe',
-      email: 'john@example.com',
-      gitUsernames: ['johnd'],
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-02',
-    })
+    const item = createMockGenericUser()
+    mockDaemonGetItem.mockResolvedValue({ success: true, item })
 
     const cmd = createMockCommand(Command, {
       flags: { json: false },
@@ -65,23 +78,19 @@ describe('GetUser command', () => {
 
     await cmd.run()
 
-    expect(mockDaemonGetUser).toHaveBeenCalledWith({
+    expect(mockDaemonGetItem).toHaveBeenCalledWith({
       projectPath: '/test/project',
-      userId: 'john-doe',
+      itemType: 'users',
+      itemId: 'john-doe',
     })
     expect(cmd.logs.some(log => log.includes('john-doe'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('John Doe'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('john@example.com'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('johnd'))).toBe(true)
   })
 
   it('should output JSON when json flag is set', async () => {
     const { default: Command } = await import('./user.js')
-    mockDaemonGetUser.mockResolvedValue({
-      id: 'john-doe',
-      name: 'John Doe',
-      gitUsernames: [],
-    })
+    const item = createMockGenericUser()
+    mockDaemonGetItem.mockResolvedValue({ success: true, item })
 
     const cmd = createMockCommand(Command, {
       flags: { json: true },
@@ -95,7 +104,10 @@ describe('GetUser command', () => {
 
   it('should error when user not found', async () => {
     const { default: Command } = await import('./user.js')
-    mockDaemonGetUser.mockRejectedValue(new Error('User not found'))
+    mockDaemonGetItem.mockResolvedValue({
+      success: false,
+      error: 'User "nonexistent" not found',
+    })
 
     const cmd = createMockCommand(Command, {
       flags: { json: false },
@@ -128,13 +140,8 @@ describe('GetUser command', () => {
 
   it('should display timestamps', async () => {
     const { default: Command } = await import('./user.js')
-    mockDaemonGetUser.mockResolvedValue({
-      id: 'john-doe',
-      name: 'John Doe',
-      gitUsernames: [],
-      createdAt: '2024-01-15',
-      updatedAt: '2024-02-20',
-    })
+    const item = createMockGenericUser()
+    mockDaemonGetItem.mockResolvedValue({ success: true, item })
 
     const cmd = createMockCommand(Command, {
       flags: { json: false },
