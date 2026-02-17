@@ -4,12 +4,12 @@ import {
   runCommandSafely,
 } from '../../testing/command-test-utils.js'
 
-const mockDaemonCreateDoc = vi.fn()
+const mockDaemonCreateItem = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
-vi.mock('../../daemon/daemon-create-doc.js', () => ({
-  daemonCreateDoc: (...args: unknown[]) => mockDaemonCreateDoc(...args),
+vi.mock('../../daemon/daemon-create-item.js', () => ({
+  daemonCreateItem: (...args: unknown[]) => mockDaemonCreateItem(...args),
 }))
 
 vi.mock('../../utils/resolve-project-path.js', () => ({
@@ -47,82 +47,48 @@ describe('CreateDoc command', () => {
     expect(Command.prototype.run).toBeDefined()
   })
 
-  it('should create doc successfully', async () => {
+  it('should create doc via generic createItem', async () => {
     const { default: Command } = await import('./doc.js')
-    mockDaemonCreateDoc.mockResolvedValue({
+    mockDaemonCreateItem.mockResolvedValue({
       success: true,
-      slug: 'getting-started',
-      createdFile: '.centy/docs/getting-started.md',
+      item: {
+        id: 'getting-started',
+        itemType: 'docs',
+        title: 'Getting Started',
+        body: '# Hello',
+        metadata: {},
+      },
     })
 
     const cmd = createMockCommand(Command, {
-      flags: { title: 'Getting Started', content: '# Hello', json: false },
+      flags: { title: 'Getting Started', body: '# Hello' },
       args: {},
     })
 
     await cmd.run()
 
-    expect(mockDaemonCreateDoc).toHaveBeenCalledWith({
+    expect(mockDaemonCreateItem).toHaveBeenCalledWith({
       projectPath: '/test/project',
+      itemType: 'docs',
       title: 'Getting Started',
-      content: '# Hello',
-      slug: '',
-      template: '',
-      isOrgDoc: false,
+      body: '# Hello',
+      status: '',
+      priority: 0,
+      customFields: {},
     })
     expect(cmd.logs.some(log => log.includes('Created doc'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('getting-started'))).toBe(true)
   })
 
-  it('should create doc with custom slug', async () => {
-    const { default: Command } = await import('./doc.js')
-    mockDaemonCreateDoc.mockResolvedValue({
-      success: true,
-      slug: 'my-custom-slug',
-      createdFile: '.centy/docs/my-custom-slug.md',
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { title: 'My Doc', slug: 'my-custom-slug' },
-      args: {},
-    })
-
-    await cmd.run()
-
-    expect(mockDaemonCreateDoc).toHaveBeenCalledWith(
-      expect.objectContaining({ slug: 'my-custom-slug' })
-    )
-  })
-
-  it('should create doc with template', async () => {
-    const { default: Command } = await import('./doc.js')
-    mockDaemonCreateDoc.mockResolvedValue({
-      success: true,
-      slug: 'api-doc',
-      createdFile: '.centy/docs/api-doc.md',
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { title: 'API Doc', template: 'api' },
-      args: {},
-    })
-
-    await cmd.run()
-
-    expect(mockDaemonCreateDoc).toHaveBeenCalledWith(
-      expect.objectContaining({ template: 'api' })
-    )
-  })
-
   it('should handle daemon error', async () => {
     const { default: Command } = await import('./doc.js')
-    mockDaemonCreateDoc.mockResolvedValue({
+    mockDaemonCreateItem.mockResolvedValue({
       success: false,
       error: 'Doc already exists',
     })
 
     const cmd = createMockCommand(Command, {
-      flags: { title: 'My Doc' },
+      flags: { title: 'My Doc', body: '' },
       args: {},
     })
     const { error } = await runCommandSafely(cmd)
@@ -140,7 +106,7 @@ describe('CreateDoc command', () => {
     )
 
     const cmd = createMockCommand(Command, {
-      flags: { title: 'My Doc' },
+      flags: { title: 'My Doc', body: '' },
       args: {},
     })
     const { error } = await runCommandSafely(cmd)
@@ -152,42 +118,52 @@ describe('CreateDoc command', () => {
   it('should use project flag to resolve path', async () => {
     const { default: Command } = await import('./doc.js')
     mockResolveProjectPath.mockResolvedValue('/other/project')
-    mockDaemonCreateDoc.mockResolvedValue({
+    mockDaemonCreateItem.mockResolvedValue({
       success: true,
-      slug: 'test',
-      createdFile: '.centy/docs/test.md',
+      item: {
+        id: 'test',
+        itemType: 'docs',
+        title: 'My Doc',
+        body: '',
+        metadata: {},
+      },
     })
 
     const cmd = createMockCommand(Command, {
-      flags: { title: 'My Doc', project: 'other-project' },
+      flags: { title: 'My Doc', body: '', project: 'other-project' },
       args: {},
     })
 
     await cmd.run()
 
     expect(mockResolveProjectPath).toHaveBeenCalledWith('other-project')
-    expect(mockDaemonCreateDoc).toHaveBeenCalledWith(
+    expect(mockDaemonCreateItem).toHaveBeenCalledWith(
       expect.objectContaining({ projectPath: '/other/project' })
     )
   })
 
-  it('should use default empty content when not provided', async () => {
+  it('should use default empty body when not provided', async () => {
     const { default: Command } = await import('./doc.js')
-    mockDaemonCreateDoc.mockResolvedValue({
+    mockDaemonCreateItem.mockResolvedValue({
       success: true,
-      slug: 'test',
-      createdFile: '.centy/docs/test.md',
+      item: {
+        id: 'test',
+        itemType: 'docs',
+        title: 'My Doc',
+        body: '',
+        metadata: {},
+      },
     })
 
     const cmd = createMockCommand(Command, {
-      flags: { title: 'My Doc', content: '' },
+      flags: { title: 'My Doc', body: '' },
       args: {},
     })
 
     await cmd.run()
 
-    expect(mockDaemonCreateDoc).toHaveBeenCalledWith(
-      expect.objectContaining({ content: '' })
+    expect(mockDaemonCreateItem).toHaveBeenCalledWith(
+      expect.objectContaining({ body: '' })
     )
   })
 })

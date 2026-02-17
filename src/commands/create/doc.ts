@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
-import { daemonCreateDoc } from '../../daemon/daemon-create-doc.js'
+import { daemonCreateItem } from '../../daemon/daemon-create-item.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
@@ -10,7 +10,7 @@ import {
 import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
- * Create a new documentation file
+ * Create a new documentation file — thin alias over the generic CreateItem RPC
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class CreateDoc extends Command {
@@ -20,8 +20,7 @@ export default class CreateDoc extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> create doc --title "Getting Started"',
-    '<%= config.bin %> create doc -t "API Reference" -c "# API\n\nDocumentation here"',
-    '<%= config.bin %> create doc --title "Guide" --slug my-guide',
+    '<%= config.bin %> create doc -t "API Reference" -b "# API\\nDocumentation here"',
     '<%= config.bin %> create doc --title "Guide" --project centy-daemon',
   ]
 
@@ -32,16 +31,10 @@ export default class CreateDoc extends Command {
       description: 'Doc title',
       required: true,
     }),
-    content: Flags.string({
-      char: 'c',
+    body: Flags.string({
+      char: 'b',
       description: 'Doc content (markdown)',
       default: '',
-    }),
-    slug: Flags.string({
-      description: 'Custom slug (auto-generated from title if not provided)',
-    }),
-    template: Flags.string({
-      description: 'Template name to use',
     }),
     project: projectFlag,
   }
@@ -59,21 +52,24 @@ export default class CreateDoc extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    const response = await daemonCreateDoc({
+    const response = await daemonCreateItem({
       projectPath: cwd,
+      itemType: 'docs',
       title: flags.title,
-      content: flags.content,
-      slug: flags.slug !== undefined ? flags.slug : '',
-      template: flags.template !== undefined ? flags.template : '',
-      isOrgDoc: false,
+      body: flags.body,
+      status: '',
+      priority: 0,
+      customFields: {},
     })
 
     if (!response.success) {
-      this.error(response.error)
+      const errorMsg =
+        response.error !== '' ? response.error : 'Failed to create doc'
+      this.error(errorMsg)
     }
 
-    this.log(`Created doc "${flags.title}"`)
-    this.log(`  Slug: ${response.slug}`)
-    this.log(`  File: ${response.createdFile}`)
+    const item = response.item!
+    this.log(`Created doc: "${item.title}"`)
+    this.log(`  ID: ${item.id}`)
   }
 }
