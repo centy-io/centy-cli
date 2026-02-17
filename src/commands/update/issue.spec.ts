@@ -40,6 +40,12 @@ describe('UpdateIssue command', () => {
     expect(typeof Command.description).toBe('string')
   })
 
+  it('should have edit:issue alias', async () => {
+    const { default: Command } = await import('./issue.js')
+
+    expect(Command.aliases).toContain('edit:issue')
+  })
+
   it('should export a valid oclif command class', async () => {
     const { default: Command } = await import('./issue.js')
 
