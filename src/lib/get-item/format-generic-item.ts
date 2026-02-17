@@ -27,10 +27,12 @@ export function formatGenericItem(
   log(`Created: ${meta !== undefined ? meta.createdAt : 'unknown'}`)
   log(`Updated: ${meta !== undefined ? meta.updatedAt : 'unknown'}`)
 
-  if (item.body) {
-    const label = item.itemType === 'docs' ? 'Content' : 'Description'
-    log(`\n${label}:\n${item.body}`)
+  if (!item.body) {
+    return
   }
+
+  const label = item.itemType === 'docs' ? 'Content' : 'Description'
+  log(`\n${label}:\n${item.body}`)
 }
 
 function capitalize(str: string): string {
