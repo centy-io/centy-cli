@@ -1,4 +1,3 @@
-
 /* eslint-disable security/detect-non-literal-fs-filename -- Test file uses controlled path constants */
 import fs from 'node:fs'
 import { spawn, spawnSync } from 'node:child_process'

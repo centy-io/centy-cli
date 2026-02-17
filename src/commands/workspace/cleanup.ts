@@ -32,9 +32,7 @@ export default class WorkspaceCleanup extends Command {
       return
     }
 
-    this.warn(
-      `Failed to clean up ${response.failedPaths.length} workspace(s):`
-    )
+    this.warn(`Failed to clean up ${response.failedPaths.length} workspace(s):`)
     for (const path of response.failedPaths) {
       this.warn(`  - ${path}`)
     }
