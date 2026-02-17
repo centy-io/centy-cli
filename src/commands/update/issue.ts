@@ -15,6 +15,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class UpdateIssue extends Command {
   // eslint-disable-next-line no-restricted-syntax
+  static override aliases = ['edit:issue']
+
+  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     id: Args.string({
       description: 'Issue ID (UUID) or display number',
