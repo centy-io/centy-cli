@@ -28,9 +28,7 @@ export function parseLlmResponse(content: string): ParsedLlmResponse {
   const altCompactMatch = content.match(/### COMPACT_CONTENT\s*\n([\s\S]*?)$/i)
 
   if (altMigrationMatch === null && altCompactMatch === null) {
-    throw new CompactParseError(
-      'Could not parse LLM response. Expected MIGRATION_CONTENT and COMPACT_CONTENT sections.'
-    )
+    throw new CompactParseError()
   }
 
   return {

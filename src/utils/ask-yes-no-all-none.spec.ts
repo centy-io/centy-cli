@@ -26,10 +26,12 @@ describe('askYesNoAllNone', () => {
   let cleanup: (() => void) | undefined
 
   afterEach(() => {
-    if (cleanup) {
-      cleanup()
-      cleanup = undefined
+    if (!cleanup) {
+      return
     }
+
+    cleanup()
+    cleanup = undefined
   })
 
   it('should return "yes" for "y" input', async () => {

@@ -28,10 +28,12 @@ describe('promptForInstall', () => {
   let cleanup: (() => void) | undefined
 
   afterEach(() => {
-    if (cleanup) {
-      cleanup()
-      cleanup = undefined
+    if (!cleanup) {
+      return
     }
+
+    cleanup()
+    cleanup = undefined
   })
 
   it('should return true when user answers yes', async () => {

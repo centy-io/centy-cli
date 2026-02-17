@@ -33,7 +33,8 @@ export async function handleMissingDaemon(
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => {
           rl.close()
-          reject(new ProcessTimeoutError('install prompt', PROMPT_TIMEOUT_MS))
+          const operation = 'install prompt'
+          reject(new ProcessTimeoutError(operation, PROMPT_TIMEOUT_MS))
         }, PROMPT_TIMEOUT_MS)
       })
       shouldInstall = await Promise.race([promptPromise, timeoutPromise])

@@ -58,17 +58,19 @@ export default class Config extends Command {
       this.log(`  ${key}: ${value}`)
     }
 
-    if (config.customFields.length > 0) {
-      this.log(`\nCustom Fields:`)
-      for (const field of config.customFields) {
-        const required = field.required ? ' (required)' : ''
-        this.log(`  ${field.name}: ${field.fieldType}${required}`)
-        if (field.defaultValue) {
-          this.log(`    Default: ${field.defaultValue}`)
-        }
-        if (field.enumValues.length > 0) {
-          this.log(`    Values: ${field.enumValues.join(', ')}`)
-        }
+    if (config.customFields.length === 0) {
+      return
+    }
+
+    this.log(`\nCustom Fields:`)
+    for (const field of config.customFields) {
+      const required = field.required ? ' (required)' : ''
+      this.log(`  ${field.name}: ${field.fieldType}${required}`)
+      if (field.defaultValue) {
+        this.log(`    Default: ${field.defaultValue}`)
+      }
+      if (field.enumValues.length > 0) {
+        this.log(`    Values: ${field.enumValues.join(', ')}`)
       }
     }
   }

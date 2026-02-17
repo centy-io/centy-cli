@@ -13,12 +13,14 @@ export default class Cockpit extends Command {
   public async run(): Promise<void> {
     const result = await launchTuiManager()
 
-    if (!result.success) {
-      const errorMessage =
-        result.error !== null && result.error !== undefined
-          ? result.error
-          : 'Failed to launch TUI Manager'
-      this.error(errorMessage)
+    if (result.success) {
+      return
     }
+
+    const errorMessage =
+      result.error !== null && result.error !== undefined
+        ? result.error
+        : 'Failed to launch TUI Manager'
+    this.error(errorMessage)
   }
 }

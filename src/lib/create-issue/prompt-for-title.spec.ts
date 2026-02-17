@@ -45,10 +45,12 @@ describe('promptForTitle', () => {
   let cleanup: (() => void) | undefined
 
   afterEach(() => {
-    if (cleanup) {
-      cleanup()
-      cleanup = undefined
+    if (!cleanup) {
+      return
     }
+
+    cleanup()
+    cleanup = undefined
   })
 
   it('should return the entered title', async () => {

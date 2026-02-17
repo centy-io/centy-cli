@@ -33,9 +33,8 @@ export async function extractAndMarkIssues(
   })
 
   if (!response.success) {
-    throw new CompactSaveError(
-      `Failed to mark issues as compacted: ${response.error}`
-    )
+    const detail = `Failed to mark issues as compacted: ${response.error}`
+    throw new CompactSaveError(detail)
   }
 
   return { markedCount: response.markedCount, noIdsFound: false }

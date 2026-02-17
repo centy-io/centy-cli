@@ -88,15 +88,17 @@ export default class UpdateUser extends Command {
     }
 
     const user = response.user
-    if (user !== undefined) {
-      this.log(`Updated user: ${user.id}`)
-      this.log(`  Name: ${user.name}`)
-      if (user.email !== undefined && user.email !== '') {
-        this.log(`  Email: ${user.email}`)
-      }
-      if (user.gitUsernames !== undefined && user.gitUsernames.length > 0) {
-        this.log(`  Git usernames: ${user.gitUsernames.join(', ')}`)
-      }
+    if (user === undefined) {
+      return
+    }
+
+    this.log(`Updated user: ${user.id}`)
+    this.log(`  Name: ${user.name}`)
+    if (user.email !== undefined && user.email !== '') {
+      this.log(`  Email: ${user.email}`)
+    }
+    if (user.gitUsernames !== undefined && user.gitUsernames.length > 0) {
+      this.log(`  Git usernames: ${user.gitUsernames.join(', ')}`)
     }
   }
 }
