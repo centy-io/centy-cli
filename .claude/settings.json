@@ -127,7 +127,14 @@
       "WebFetch(domain:registry.npmjs.org)",
       "Bash(npx eslint:*)",
       "Bash(pnpm remove:*)",
-      "Bash(pnpm install:*)"
+      "Bash(pnpm install:*)",
+      "Bash(gh auth status:*)",
+      "Bash(npx oclif manifest:*)",
+      "Bash(gh pr edit:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(npx prettier:*)"
     ],
     "deny": [
       "Bash(npm install)",
