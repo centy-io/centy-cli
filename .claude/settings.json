@@ -125,7 +125,9 @@
       "Bash(git reset:*)",
       "Bash(npm run knip:*)",
       "WebFetch(domain:registry.npmjs.org)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(pnpm remove:*)",
+      "Bash(pnpm install:*)"
     ],
     "deny": [
       "Bash(npm install)",
