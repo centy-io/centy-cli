@@ -44,6 +44,11 @@ describe('UpdateUser command', () => {
     expect(typeof UpdateUser.description).toBe('string')
   })
 
+  it('should have edit:user alias', async () => {
+    const { default: UpdateUser } = await import('./user.js')
+    expect(UpdateUser.aliases).toContain('edit:user')
+  })
+
   it('should update user name', async () => {
     const { default: Command } = await import('./user.js')
     mockDaemonUpdateUser.mockResolvedValue({
