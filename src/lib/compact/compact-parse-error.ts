@@ -1,6 +1,8 @@
 export class CompactParseError extends Error {
-  constructor(message: string) {
-    super(message)
+  constructor() {
+    super(
+      'Could not parse LLM response. Expected MIGRATION_CONTENT and COMPACT_CONTENT sections.'
+    )
     this.name = 'CompactParseError'
   }
 }

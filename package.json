@@ -90,7 +90,7 @@
     "@vitest/coverage-v8": "^4.0.15",
     "cspell": "^9.4.0",
     "eslint": "^9.39.1",
-    "eslint-config-agent": "^1.8.9",
+    "eslint-config-agent": "^2.0.0",
     "eslint-config-publishable-package-json": "^1.0.0",
     "eslint-import-resolver-typescript": "^4.4.4",
     "husky": "^9.1.7",

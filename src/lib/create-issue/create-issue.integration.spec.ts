@@ -1,4 +1,4 @@
-/* eslint-disable ddd/require-spec-file -- Integration test */
+
 import { join } from 'node:path'
 import { Writable } from 'node:stream'
 import { beforeEach, describe, expect, it, vi } from 'vitest'

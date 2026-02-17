@@ -28,13 +28,15 @@ export default class WorkspaceCleanup extends Command {
 
     this.log(`Cleaned up ${response.cleanedCount} expired workspace(s)`)
 
-    if (response.failedPaths.length > 0) {
-      this.warn(
-        `Failed to clean up ${response.failedPaths.length} workspace(s):`
-      )
-      for (const path of response.failedPaths) {
-        this.warn(`  - ${path}`)
-      }
+    if (response.failedPaths.length === 0) {
+      return
+    }
+
+    this.warn(
+      `Failed to clean up ${response.failedPaths.length} workspace(s):`
+    )
+    for (const path of response.failedPaths) {
+      this.warn(`  - ${path}`)
     }
   }
 }

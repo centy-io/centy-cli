@@ -17,6 +17,13 @@ export default [
       },
     },
   },
+  // Test files - allow test-specific patterns
+  {
+    files: ['**/*.spec.ts'],
+    rules: {
+      'error/no-literal-error-message': 'off',
+    },
+  },
   // Test utility files - allow test-specific patterns
   {
     files: ['**/testing/**/*.ts', '**/command-test-utils.ts'],
@@ -24,6 +31,7 @@ export default [
       'single-export/single-export': 'off',
       'error/no-generic-error': 'off',
       'error/require-custom-error': 'off',
+      'error/no-literal-error-message': 'off',
       'no-restricted-syntax': 'off',
     },
   },

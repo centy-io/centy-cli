@@ -14,7 +14,8 @@ export async function saveMigration(
   })
 
   if (!response.success) {
-    throw new CompactSaveError(`Failed to save migration: ${response.error}`)
+    const detail = `Failed to save migration: ${response.error}`
+    throw new CompactSaveError(detail)
   }
 
   return { filename: response.filename }
@@ -29,7 +30,10 @@ export async function saveCompact(
     content,
   })
 
-  if (!response.success) {
-    throw new CompactSaveError(`Failed to update compact.md: ${response.error}`)
+  if (response.success) {
+    return
   }
+
+  const detail = `Failed to update compact.md: ${response.error}`
+  throw new CompactSaveError(detail)
 }

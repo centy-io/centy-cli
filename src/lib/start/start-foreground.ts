@@ -17,14 +17,18 @@ export async function startForeground(
     if (timeoutMs !== undefined) {
       timeoutId = setTimeout(() => {
         child.kill()
-        reject(new ProcessTimeoutError('foreground daemon', timeoutMs))
+        const operation = 'foreground daemon'
+        reject(new ProcessTimeoutError(operation, timeoutMs))
       }, timeoutMs)
     }
 
     child.on('exit', code => {
       if (timeoutId !== undefined) clearTimeout(timeoutId)
       if (code === 0) resolve()
-      else reject(new Error(`Daemon exited with code ${code}`))
+      else {
+        const exitMessage = `Daemon exited with code ${code}`
+        reject(new Error(exitMessage))
+      }
     })
   })
 }

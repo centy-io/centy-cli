@@ -20,13 +20,15 @@ const hook: Hook<'prerun'> = async function (options) {
   }
 
   const connectionStatus = await checkDaemonConnection()
-  if (!connectionStatus.connected) {
-    const errorMessage =
-      connectionStatus.error !== null && connectionStatus.error !== undefined
-        ? connectionStatus.error
-        : 'Centy daemon is not running. Please start the daemon first.'
-    this.error(errorMessage)
+  if (connectionStatus.connected) {
+    return
   }
+
+  const errorMessage =
+    connectionStatus.error !== null && connectionStatus.error !== undefined
+      ? connectionStatus.error
+      : 'Centy daemon is not running. Please start the daemon first.'
+  this.error(errorMessage)
 }
 
 export default hook

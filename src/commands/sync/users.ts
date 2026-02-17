@@ -87,13 +87,15 @@ export default class SyncUsers extends Command {
       }
     }
 
-    if (response.wouldSkip.length > 0) {
-      this.log(
-        `\nWould skip ${response.wouldSkip.length} user(s) (already exist):`
-      )
-      for (const contributor of response.wouldSkip) {
-        this.log(`  ${contributor.name} <${contributor.email}>`)
-      }
+    if (response.wouldSkip.length === 0) {
+      return
+    }
+
+    this.log(
+      `\nWould skip ${response.wouldSkip.length} user(s) (already exist):`
+    )
+    for (const contributor of response.wouldSkip) {
+      this.log(`  ${contributor.name} <${contributor.email}>`)
     }
   }
 

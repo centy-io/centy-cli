@@ -74,11 +74,13 @@ export default class Show extends Command {
   }
 
   private logErrors(errors: string[]): void {
-    if (errors.length > 0) {
-      this.warn('Some projects could not be searched:')
-      for (const err of errors) {
-        this.warn(`  - ${err}`)
-      }
+    if (errors.length === 0) {
+      return
+    }
+
+    this.warn('Some projects could not be searched:')
+    for (const err of errors) {
+      this.warn(`  - ${err}`)
     }
   }
 }

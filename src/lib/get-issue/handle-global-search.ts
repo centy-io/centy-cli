@@ -38,10 +38,12 @@ export function handleGlobalIssueSearch(
     log('')
   }
 
-  if (result.errors.length > 0) {
-    warn('Some projects could not be searched:')
-    for (const err of result.errors) {
-      warn(`  - ${err}`)
-    }
+  if (result.errors.length === 0) {
+    return
+  }
+
+  warn('Some projects could not be searched:')
+  for (const err of result.errors) {
+    warn(`  - ${err}`)
   }
 }
