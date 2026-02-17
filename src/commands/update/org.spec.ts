@@ -33,6 +33,16 @@ describe('UpdateOrg command', () => {
     expect(Command.aliases).toContain('update:organization')
   })
 
+  it('should have edit:org alias', async () => {
+    const { default: Command } = await import('./org.js')
+    expect(Command.aliases).toContain('edit:org')
+  })
+
+  it('should have edit:organization alias', async () => {
+    const { default: Command } = await import('./org.js')
+    expect(Command.aliases).toContain('edit:organization')
+  })
+
   it('should update organization name', async () => {
     const { default: Command } = await import('./org.js')
     mockDaemonUpdateOrganization.mockResolvedValue({

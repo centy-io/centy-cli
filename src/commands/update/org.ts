@@ -9,7 +9,11 @@ import { daemonUpdateOrganization } from '../../daemon/daemon-update-organizatio
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class UpdateOrg extends Command {
   // eslint-disable-next-line no-restricted-syntax
-  static override aliases = ['update:organization']
+  static override aliases = [
+    'update:organization',
+    'edit:org',
+    'edit:organization',
+  ]
 
   // eslint-disable-next-line no-restricted-syntax
   static override args = {

@@ -39,6 +39,11 @@ describe('UpdateDoc command', () => {
     expect(typeof Command.description).toBe('string')
   })
 
+  it('should have edit:doc alias', async () => {
+    const { default: Command } = await import('./doc.js')
+    expect(Command.aliases).toContain('edit:doc')
+  })
+
   it('should export a valid oclif command class', async () => {
     const { default: Command } = await import('./doc.js')
     expect(Command).toBeDefined()
