@@ -10,6 +10,7 @@ import {
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
+import { toPlural } from '../utils/to-plural.js'
 
 /**
  * Get any item by type and identifier
@@ -101,10 +102,4 @@ export default class Get extends Command {
 
     formatGenericItem(response.item!, this.log.bind(this))
   }
-}
-
-function toPlural(type: string): string {
-  if (type.endsWith('s')) return type
-  if (type.endsWith('y')) return type.slice(0, -1) + 'ies'
-  return type + 's'
 }
