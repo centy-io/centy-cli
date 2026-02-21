@@ -1,7 +1,6 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
-import { daemonGetItem } from '../daemon/daemon-get-item.js'
 import { daemonMoveItem } from '../daemon/daemon-move-item.js'
 import {
   ensureInitialized,
@@ -10,6 +9,7 @@ import {
 import { projectFlag } from '../flags/project-flag.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
 import { toPlural } from '../utils/to-plural.js'
+import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
 
 /**
  * Move an item of any type to a different project
@@ -80,25 +80,12 @@ export default class Move extends Command {
       this.error('Source and target project cannot be the same.')
     }
 
-    // Resolve display number to UUID
-    const displayNumber = /^\d+$/.test(args.id) ? Number(args.id) : undefined
-    let itemId: string
-
-    if (displayNumber !== undefined) {
-      const getResponse = await daemonGetItem({
-        projectPath: sourceProjectPath,
-        itemType,
-        itemId: '',
-        displayNumber,
-      })
-      if (!getResponse.success) {
-        this.error(`Item not found: ${args.id}`)
-      }
-      itemId = getResponse.item!.id
-    } else {
-      itemId = args.id
-    }
-
+    const itemId = await resolveItemId(
+      args.id,
+      itemType,
+      sourceProjectPath,
+      msg => this.error(msg)
+    )
     const response = await daemonMoveItem({
       sourceProjectPath,
       targetProjectPath,
@@ -117,7 +104,6 @@ export default class Move extends Command {
       meta !== undefined && meta.displayNumber > 0
         ? `#${meta.displayNumber}`
         : newItem.id
-
     this.log(
       `Moved ${args.type} → ${displayNum} "${newItem.title}" in ${targetProjectPath}`
     )

@@ -1,7 +1,6 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
-import { daemonGetItem } from '../daemon/daemon-get-item.js'
 import { daemonUpdateItem } from '../daemon/daemon-update-item.js'
 import { projectFlag } from '../flags/project-flag.js'
 import {
@@ -11,6 +10,7 @@ import {
 import { parseCustomFields } from '../utils/parse-custom-fields.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
 import { toPlural } from '../utils/to-plural.js'
+import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
 
 /**
  * Update an item of any type by type and identifier
@@ -87,24 +87,9 @@ export default class Update extends Command {
       this.error('At least one field must be specified to update.')
     }
 
-    const displayNumber = /^\d+$/.test(args.id) ? Number(args.id) : undefined
-    let itemId: string
-
-    if (displayNumber !== undefined) {
-      const getResponse = await daemonGetItem({
-        projectPath: cwd,
-        itemType,
-        itemId: '',
-        displayNumber,
-      })
-      if (!getResponse.success) {
-        this.error(`Item not found: ${args.id}`)
-      }
-      itemId = getResponse.item!.id
-    } else {
-      itemId = args.id
-    }
-
+    const itemId = await resolveItemId(args.id, itemType, cwd, msg =>
+      this.error(msg)
+    )
     const customFields = parseCustomFields(flags['custom-field'])
     const response = await daemonUpdateItem({
       projectPath: cwd,

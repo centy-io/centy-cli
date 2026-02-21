@@ -2,7 +2,6 @@
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDuplicateItem } from '../daemon/daemon-duplicate-item.js'
-import { daemonGetItem } from '../daemon/daemon-get-item.js'
 import {
   ensureInitialized,
   NotInitializedError,
@@ -10,6 +9,7 @@ import {
 import { projectFlag } from '../flags/project-flag.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
 import { toPlural } from '../utils/to-plural.js'
+import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
 
 /**
  * Duplicate an item of any type to the same or a different project
@@ -84,24 +84,12 @@ export default class Duplicate extends Command {
       }
     }
 
-    const displayNumber = /^\d+$/.test(args.id) ? Number(args.id) : undefined
-    let itemId: string
-
-    if (displayNumber !== undefined) {
-      const getResponse = await daemonGetItem({
-        projectPath: sourceProjectPath,
-        itemType,
-        itemId: '',
-        displayNumber,
-      })
-      if (!getResponse.success) {
-        this.error(`Item not found: ${args.id}`)
-      }
-      itemId = getResponse.item!.id
-    } else {
-      itemId = args.id
-    }
-
+    const itemId = await resolveItemId(
+      args.id,
+      itemType,
+      sourceProjectPath,
+      msg => this.error(msg)
+    )
     const response = await daemonDuplicateItem({
       sourceProjectPath,
       itemType,
