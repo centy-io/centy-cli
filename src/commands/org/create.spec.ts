@@ -11,27 +11,27 @@ vi.mock('../../daemon/daemon-create-organization.js', () => ({
     mockDaemonCreateOrganization(...args),
 }))
 
-describe('CreateOrg command', () => {
+describe('OrgCreate command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('should have correct static properties', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./create.js')
 
     expect(Command.description).toBeDefined()
     expect(typeof Command.description).toBe('string')
   })
 
   it('should export a valid oclif command class', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./create.js')
 
     expect(Command).toBeDefined()
     expect(Command.prototype.run).toBeDefined()
   })
 
   it('should create organization successfully', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateOrganization.mockResolvedValue({
       success: true,
       organization: {
@@ -59,7 +59,7 @@ describe('CreateOrg command', () => {
   })
 
   it('should create organization with custom slug', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateOrganization.mockResolvedValue({
       success: true,
       organization: {
@@ -84,7 +84,7 @@ describe('CreateOrg command', () => {
   })
 
   it('should create organization with description', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateOrganization.mockResolvedValue({
       success: true,
       organization: {
@@ -110,7 +110,7 @@ describe('CreateOrg command', () => {
   })
 
   it('should output JSON when json flag is set', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./create.js')
     const mockOrg = { name: 'My Org', slug: 'my-org' }
     mockDaemonCreateOrganization.mockResolvedValue({
       success: true,
@@ -128,7 +128,7 @@ describe('CreateOrg command', () => {
   })
 
   it('should handle daemon error', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateOrganization.mockResolvedValue({
       success: false,
       error: 'Organization already exists',

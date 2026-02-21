@@ -26,7 +26,7 @@ vi.mock('../../utils/ensure-initialized.js', () => ({
   },
 }))
 
-describe('CreateUser command', () => {
+describe('UserCreate command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
@@ -34,21 +34,21 @@ describe('CreateUser command', () => {
   })
 
   it('should have correct static properties', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./create.js')
 
     expect(Command.description).toBeDefined()
     expect(typeof Command.description).toBe('string')
   })
 
   it('should export a valid oclif command class', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./create.js')
 
     expect(Command).toBeDefined()
     expect(Command.prototype.run).toBeDefined()
   })
 
   it('should create user successfully', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateUser.mockResolvedValue({
       success: true,
       user: {
@@ -78,7 +78,7 @@ describe('CreateUser command', () => {
   })
 
   it('should create user with custom ID', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateUser.mockResolvedValue({
       success: true,
       user: { id: 'custom-id', name: 'John', gitUsernames: [] },
@@ -97,7 +97,7 @@ describe('CreateUser command', () => {
   })
 
   it('should create user with git usernames', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateUser.mockResolvedValue({
       success: true,
       user: { id: 'john', name: 'John', gitUsernames: ['johnd', 'john-work'] },
@@ -123,7 +123,7 @@ describe('CreateUser command', () => {
   })
 
   it('should output JSON when json flag is set', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateUser.mockResolvedValue({
       success: true,
       user: { id: 'john', name: 'John', gitUsernames: [] },
@@ -140,7 +140,7 @@ describe('CreateUser command', () => {
   })
 
   it('should handle daemon error', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateUser.mockResolvedValue({
       success: false,
       error: 'User already exists',
@@ -157,7 +157,7 @@ describe('CreateUser command', () => {
   })
 
   it('should handle NotInitializedError', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./create.js')
     const { NotInitializedError } =
       await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(

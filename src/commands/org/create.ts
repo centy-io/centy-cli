@@ -7,10 +7,7 @@ import { daemonCreateOrganization } from '../../daemon/daemon-create-organizatio
  * Create a new organization
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class CreateOrg extends Command {
-  // eslint-disable-next-line no-restricted-syntax
-  static override aliases = ['create:organization']
-
+export default class OrgCreate extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override args = {
     name: Args.string({
@@ -24,10 +21,9 @@ export default class CreateOrg extends Command {
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
-    '<%= config.bin %> create org "My Company"',
-    '<%= config.bin %> create org "Centy.io" --slug centy-io',
-    '<%= config.bin %> create org "My Org" --description "Official projects"',
-    '<%= config.bin %> create organization "Work Projects"',
+    '<%= config.bin %> org create "My Company"',
+    '<%= config.bin %> org create "Centy.io" --slug centy-io',
+    '<%= config.bin %> org create "My Org" --description "Official projects"',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -47,7 +43,7 @@ export default class CreateOrg extends Command {
   }
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(CreateOrg)
+    const { args, flags } = await this.parse(OrgCreate)
 
     const response = await daemonCreateOrganization({
       name: args.name,

@@ -16,28 +16,28 @@ vi.mock('../../utils/resolve-project-path.js', () => ({
   resolveProjectPath: (...args: unknown[]) => mockResolveProjectPath(...args),
 }))
 
-describe('CreateItemType command', () => {
+describe('ItemTypeCreate command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
   })
 
   it('should have correct static properties', async () => {
-    const { default: Command } = await import('./item-type.js')
+    const { default: Command } = await import('./create.js')
 
     expect(Command.description).toBeDefined()
     expect(typeof Command.description).toBe('string')
   })
 
   it('should export a valid oclif command class', async () => {
-    const { default: Command } = await import('./item-type.js')
+    const { default: Command } = await import('./create.js')
 
     expect(Command).toBeDefined()
     expect(Command.prototype.run).toBeDefined()
   })
 
   it('should create item type with required flags', async () => {
-    const { default: Command } = await import('./item-type.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateItemType.mockResolvedValue({ success: true })
 
     const cmd = createMockCommand(Command, {
@@ -67,7 +67,7 @@ describe('CreateItemType command', () => {
   })
 
   it('should error if default status not in statuses', async () => {
-    const { default: Command } = await import('./item-type.js')
+    const { default: Command } = await import('./create.js')
 
     const cmd = createMockCommand(Command, {
       flags: {
@@ -87,7 +87,7 @@ describe('CreateItemType command', () => {
   })
 
   it('should handle daemon error response', async () => {
-    const { default: Command } = await import('./item-type.js')
+    const { default: Command } = await import('./create.js')
     mockDaemonCreateItemType.mockResolvedValue({
       success: false,
       error: 'Item type already exists',

@@ -14,14 +14,14 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  * Create a new custom item type in the .centy folder
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class CreateItemType extends Command {
+export default class ItemTypeCreate extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override description = 'Create a new custom item type'
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
-    '<%= config.bin %> create item-type --name "Bug" --plural "bugs" --identifier uuid --statuses open,in-progress,closed --default-status open --priority-levels 3 --features display-number,status,priority,move,duplicate',
-    '<%= config.bin %> create item-type --name "Task" --plural "tasks" --identifier slug --statuses todo,doing,done --default-status todo --features status,priority',
+    '<%= config.bin %> item-type create --name "Bug" --plural "bugs" --identifier uuid --statuses open,in-progress,closed --default-status open --priority-levels 3 --features display-number,status,priority,move,duplicate',
+    '<%= config.bin %> item-type create --name "Task" --plural "tasks" --identifier slug --statuses todo,doing,done --default-status todo --features status,priority',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -61,7 +61,7 @@ export default class CreateItemType extends Command {
   }
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(CreateItemType)
+    const { flags } = await this.parse(ItemTypeCreate)
     const cwd = await resolveProjectPath(flags.project)
     const statuses = flags.statuses.split(',').map(s => s.trim())
     const defaultStatus = flags['default-status']

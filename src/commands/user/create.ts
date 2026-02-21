@@ -13,16 +13,16 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  * Create a new user in the project
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class CreateUser extends Command {
+export default class UserCreate extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override description = 'Create a new user in the project'
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
-    '<%= config.bin %> create user --name "John Doe"',
-    '<%= config.bin %> create user --id john-doe --name "John Doe" --email john@example.com',
-    '<%= config.bin %> create user -n "Alice" -g alice-dev -g alice-work',
-    '<%= config.bin %> create user --name "Bob" --project centy-daemon',
+    '<%= config.bin %> user create --name "John Doe"',
+    '<%= config.bin %> user create --id john-doe --name "John Doe" --email john@example.com',
+    '<%= config.bin %> user create -n "Alice" -g alice-dev -g alice-work',
+    '<%= config.bin %> user create --name "Bob" --project centy-daemon',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -54,7 +54,7 @@ export default class CreateUser extends Command {
   }
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(CreateUser)
+    const { flags } = await this.parse(UserCreate)
     const cwd = await resolveProjectPath(flags.project)
 
     try {
