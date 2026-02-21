@@ -85,10 +85,12 @@ export default class Get extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
+    const displayNumber = /^\d+$/.test(args.id) ? Number(args.id) : undefined
     const response = await daemonGetItem({
       projectPath: cwd,
       itemType,
-      itemId: args.id,
+      itemId: displayNumber !== undefined ? '' : args.id,
+      displayNumber,
     })
 
     if (!response.success) {

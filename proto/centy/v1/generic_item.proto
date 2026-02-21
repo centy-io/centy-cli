@@ -43,6 +43,7 @@ message GetItemRequest {
   string project_path = 1;
   string item_type = 2;
   string item_id = 3;                   // Item identifier (UUID or slug)
+  optional uint32 display_number = 4;   // Look up by display number instead of item_id (1-based, 0 = not specified)
 }
 
 message GetItemResponse {

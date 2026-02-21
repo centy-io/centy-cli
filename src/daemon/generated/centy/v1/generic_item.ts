@@ -83,6 +83,8 @@ export interface GetItemRequest {
   itemType: string
   /** Item identifier (UUID or slug) */
   itemId: string
+  /** Look up by display number instead of item_id (1-based, 0 = not specified) */
+  displayNumber?: number | undefined
 }
 
 export interface GetItemResponse {
