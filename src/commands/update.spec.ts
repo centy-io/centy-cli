@@ -4,17 +4,17 @@ import {
   runCommandSafely,
 } from '../testing/command-test-utils.js'
 
-const mockDaemonGetItem = vi.fn()
 const mockDaemonUpdateItem = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
-
-vi.mock('../daemon/daemon-get-item.js', () => ({
-  daemonGetItem: (...args: unknown[]) => mockDaemonGetItem(...args),
-}))
+const mockResolveItemId = vi.fn()
 
 vi.mock('../daemon/daemon-update-item.js', () => ({
   daemonUpdateItem: (...args: unknown[]) => mockDaemonUpdateItem(...args),
+}))
+
+vi.mock('../lib/resolve-item-id/resolve-item-id.js', () => ({
+  resolveItemId: (...args: unknown[]) => mockResolveItemId(...args),
 }))
 
 vi.mock('../utils/resolve-project-path.js', () => ({
@@ -36,6 +36,7 @@ describe('Update command', () => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
     mockEnsureInitialized.mockResolvedValue('/test/project/.centy')
+    mockResolveItemId.mockResolvedValue('item-uuid')
   })
 
   it('should have correct static properties', async () => {
@@ -53,12 +54,8 @@ describe('Update command', () => {
   })
 
   describe('updating items', () => {
-    it('should update item by display number', async () => {
+    it('should update item status', async () => {
       const { default: Command } = await import('./update.js')
-      mockDaemonGetItem.mockResolvedValue({
-        success: true,
-        item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
-      })
       mockDaemonUpdateItem.mockResolvedValue({
         success: true,
         item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
@@ -66,7 +63,7 @@ describe('Update command', () => {
 
       const cmd = createMockCommand(Command, {
         flags: { status: 'closed' },
-        args: { type: 'issue', id: '1' },
+        args: { type: 'issue', id: 'item-uuid' },
       })
 
       await cmd.run()
@@ -82,11 +79,11 @@ describe('Update command', () => {
       expect(cmd.logs[0]).toContain('Updated issue')
     })
 
-    it('should update item by UUID (no GetItem call)', async () => {
+    it('should show item UUID when metadata has no displayNumber', async () => {
       const { default: Command } = await import('./update.js')
       mockDaemonUpdateItem.mockResolvedValue({
         success: true,
-        item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
+        item: { id: 'item-uuid', metadata: undefined },
       })
 
       const cmd = createMockCommand(Command, {
@@ -96,10 +93,25 @@ describe('Update command', () => {
 
       await cmd.run()
 
-      expect(mockDaemonGetItem).not.toHaveBeenCalled()
-      expect(mockDaemonUpdateItem).toHaveBeenCalledWith(
-        expect.objectContaining({ itemId: 'item-uuid', title: 'New title' })
-      )
+      expect(cmd.logs[0]).toContain('item-uuid')
+    })
+
+    it('should use project flag to resolve path', async () => {
+      const { default: Command } = await import('./update.js')
+      mockResolveProjectPath.mockResolvedValue('/other/project')
+      mockDaemonUpdateItem.mockResolvedValue({
+        success: true,
+        item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { status: 'open', project: 'other-project' },
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      await cmd.run()
+
+      expect(mockResolveProjectPath).toHaveBeenCalledWith('other-project')
     })
   })
 
@@ -137,12 +149,22 @@ describe('Update command', () => {
       expect(cmd.errors).toContain('Project not initialized')
     })
 
+    it('should re-throw non-NotInitializedError', async () => {
+      const { default: Command } = await import('./update.js')
+      mockEnsureInitialized.mockRejectedValue(new Error('Generic error'))
+
+      const cmd = createMockCommand(Command, {
+        flags: { status: 'closed' },
+        args: { type: 'issue', id: '1' },
+      })
+
+      const { error } = await runCommandSafely(cmd)
+
+      expect(error).toBeDefined()
+    })
+
     it('should handle daemon update error', async () => {
       const { default: Command } = await import('./update.js')
-      mockDaemonGetItem.mockResolvedValue({
-        success: true,
-        item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
-      })
       mockDaemonUpdateItem.mockResolvedValue({
         success: false,
         error: 'Update failed',
@@ -150,7 +172,7 @@ describe('Update command', () => {
 
       const cmd = createMockCommand(Command, {
         flags: { status: 'open' },
-        args: { type: 'issue', id: '1' },
+        args: { type: 'issue', id: 'item-uuid' },
       })
 
       const { error } = await runCommandSafely(cmd)

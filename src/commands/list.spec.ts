@@ -48,7 +48,7 @@ describe('List command', () => {
   })
 
   describe('listing items', () => {
-    it('should list items of a given type', async () => {
+    it('should list items and show count', async () => {
       const { default: Command } = await import('./list.js')
       mockDaemonListItems.mockResolvedValue({
         success: true,
@@ -76,6 +76,24 @@ describe('List command', () => {
         })
       )
       expect(cmd.logs[0]).toContain('1')
+    })
+
+    it('should show item without display number', async () => {
+      const { default: Command } = await import('./list.js')
+      mockDaemonListItems.mockResolvedValue({
+        success: true,
+        items: [{ id: 'item-1', title: 'No number item', metadata: undefined }],
+        totalCount: 1,
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: {},
+        args: { type: 'issue' },
+      })
+
+      await cmd.run()
+
+      expect(cmd.logs.join('')).toContain('No number item')
     })
 
     it('should show message when no items found', async () => {
@@ -115,6 +133,20 @@ describe('List command', () => {
 
       expect(error).toBeDefined()
       expect(cmd.errors).toContain('Project not initialized')
+    })
+
+    it('should re-throw non-NotInitializedError', async () => {
+      const { default: Command } = await import('./list.js')
+      mockEnsureInitialized.mockRejectedValue(new Error('Generic error'))
+
+      const cmd = createMockCommand(Command, {
+        flags: {},
+        args: { type: 'issue' },
+      })
+
+      const { error } = await runCommandSafely(cmd)
+
+      expect(error).toBeDefined()
     })
 
     it('should handle daemon error', async () => {

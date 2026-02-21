@@ -5,16 +5,16 @@ import {
 } from '../testing/command-test-utils.js'
 
 const mockDaemonDuplicateItem = vi.fn()
-const mockDaemonGetItem = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
+const mockResolveItemId = vi.fn()
 
 vi.mock('../daemon/daemon-duplicate-item.js', () => ({
   daemonDuplicateItem: (...args: unknown[]) => mockDaemonDuplicateItem(...args),
 }))
 
-vi.mock('../daemon/daemon-get-item.js', () => ({
-  daemonGetItem: (...args: unknown[]) => mockDaemonGetItem(...args),
+vi.mock('../lib/resolve-item-id/resolve-item-id.js', () => ({
+  resolveItemId: (...args: unknown[]) => mockResolveItemId(...args),
 }))
 
 vi.mock('../utils/resolve-project-path.js', () => ({
@@ -35,7 +35,8 @@ describe('Duplicate command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
-    mockEnsureInitialized.mockResolvedValue('/test/project/.centy')
+    mockEnsureInitialized.mockResolvedValue(undefined)
+    mockResolveItemId.mockResolvedValue('item-uuid')
   })
 
   it('should have correct static properties', async () => {
@@ -53,39 +54,7 @@ describe('Duplicate command', () => {
   })
 
   describe('duplicating items', () => {
-    it('should duplicate item by display number', async () => {
-      const { default: Command } = await import('./duplicate.js')
-      mockDaemonGetItem.mockResolvedValue({
-        success: true,
-        item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
-      })
-      mockDaemonDuplicateItem.mockResolvedValue({
-        success: true,
-        item: {
-          id: 'new-item-uuid',
-          title: 'Copy',
-          metadata: { displayNumber: 2 },
-        },
-      })
-
-      const cmd = createMockCommand(Command, {
-        flags: {},
-        args: { type: 'issue', id: '1' },
-      })
-
-      await cmd.run()
-
-      expect(mockDaemonDuplicateItem).toHaveBeenCalledWith(
-        expect.objectContaining({
-          sourceProjectPath: '/test/project',
-          itemType: 'issues',
-          itemId: 'item-uuid',
-        })
-      )
-      expect(cmd.logs[0]).toContain('Duplicated issue')
-    })
-
-    it('should duplicate item by UUID (no GetItem call)', async () => {
+    it('should duplicate item within same project', async () => {
       const { default: Command } = await import('./duplicate.js')
       mockDaemonDuplicateItem.mockResolvedValue({
         success: true,
@@ -103,12 +72,62 @@ describe('Duplicate command', () => {
 
       await cmd.run()
 
-      expect(mockDaemonGetItem).not.toHaveBeenCalled()
+      expect(mockDaemonDuplicateItem).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sourceProjectPath: '/test/project',
+          targetProjectPath: '/test/project',
+          itemType: 'issues',
+          itemId: 'item-uuid',
+        })
+      )
+      expect(cmd.logs[0]).toContain('Duplicated issue')
+      expect(cmd.logs[0]).not.toContain(' in ')
+    })
+
+    it('should duplicate item to a different target project', async () => {
+      const { default: Command } = await import('./duplicate.js')
+      mockResolveProjectPath.mockImplementation((p: unknown) =>
+        p === '/other/project' ? '/other/project' : '/test/project'
+      )
+      mockDaemonDuplicateItem.mockResolvedValue({
+        success: true,
+        item: {
+          id: 'new-item-uuid',
+          title: 'Copy',
+          metadata: { displayNumber: 2 },
+        },
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { to: '/other/project' },
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      await cmd.run()
+
+      expect(cmd.logs[0]).toContain(' in /other/project')
+    })
+
+    it('should output item ID when no displayNumber in metadata', async () => {
+      const { default: Command } = await import('./duplicate.js')
+      mockDaemonDuplicateItem.mockResolvedValue({
+        success: true,
+        item: { id: 'new-item-uuid', title: 'Copy', metadata: undefined },
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: {},
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      await cmd.run()
+
+      expect(cmd.logs[0]).toContain('new-item-uuid')
     })
   })
 
   describe('error handling', () => {
-    it('should handle NotInitializedError', async () => {
+    it('should handle source NotInitializedError', async () => {
       const { default: Command } = await import('./duplicate.js')
       const { NotInitializedError } =
         await import('../utils/ensure-initialized.js')
@@ -118,7 +137,7 @@ describe('Duplicate command', () => {
 
       const cmd = createMockCommand(Command, {
         flags: {},
-        args: { type: 'issue', id: '1' },
+        args: { type: 'issue', id: 'item-uuid' },
       })
 
       const { error } = await runCommandSafely(cmd)
@@ -127,12 +146,46 @@ describe('Duplicate command', () => {
       expect(cmd.errors).toContain('Source project: Project not initialized')
     })
 
+    it('should handle target NotInitializedError when --to is different', async () => {
+      const { default: Command } = await import('./duplicate.js')
+      const { NotInitializedError } =
+        await import('../utils/ensure-initialized.js')
+      mockResolveProjectPath.mockImplementation((p: unknown) =>
+        p === '/other' ? '/other' : '/test/project'
+      )
+      mockEnsureInitialized.mockImplementation(async (path: unknown) => {
+        if (path === '/other') {
+          throw new NotInitializedError('Target not initialized')
+        }
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { to: '/other' },
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      const { error } = await runCommandSafely(cmd)
+
+      expect(error).toBeDefined()
+      expect(cmd.errors).toContain('Target project: Target not initialized')
+    })
+
+    it('should re-throw non-NotInitializedError', async () => {
+      const { default: Command } = await import('./duplicate.js')
+      mockEnsureInitialized.mockRejectedValue(new Error('Generic error'))
+
+      const cmd = createMockCommand(Command, {
+        flags: {},
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      const { error } = await runCommandSafely(cmd)
+
+      expect(error).toBeDefined()
+    })
+
     it('should handle daemon duplicate error', async () => {
       const { default: Command } = await import('./duplicate.js')
-      mockDaemonGetItem.mockResolvedValue({
-        success: true,
-        item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
-      })
       mockDaemonDuplicateItem.mockResolvedValue({
         success: false,
         error: 'Duplicate failed',
@@ -140,7 +193,7 @@ describe('Duplicate command', () => {
 
       const cmd = createMockCommand(Command, {
         flags: {},
-        args: { type: 'issue', id: '1' },
+        args: { type: 'issue', id: 'item-uuid' },
       })
 
       const { error } = await runCommandSafely(cmd)

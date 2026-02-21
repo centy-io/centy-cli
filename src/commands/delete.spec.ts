@@ -5,16 +5,18 @@ import {
 } from '../testing/command-test-utils.js'
 
 const mockDaemonDeleteItem = vi.fn()
-const mockDaemonGetItem = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
+const mockResolveItemId = vi.fn()
+const mockRlQuestion = vi.fn()
+const mockRlClose = vi.fn()
 
 vi.mock('../daemon/daemon-delete-item.js', () => ({
   daemonDeleteItem: (...args: unknown[]) => mockDaemonDeleteItem(...args),
 }))
 
-vi.mock('../daemon/daemon-get-item.js', () => ({
-  daemonGetItem: (...args: unknown[]) => mockDaemonGetItem(...args),
+vi.mock('../lib/resolve-item-id/resolve-item-id.js', () => ({
+  resolveItemId: (...args: unknown[]) => mockResolveItemId(...args),
 }))
 
 vi.mock('../utils/resolve-project-path.js', () => ({
@@ -31,11 +33,19 @@ vi.mock('../utils/ensure-initialized.js', () => ({
   },
 }))
 
+vi.mock('node:readline', () => ({
+  createInterface: vi.fn(() => ({
+    question: (...args: unknown[]) => mockRlQuestion(...args),
+    close: (...args: unknown[]) => mockRlClose(...args),
+  })),
+}))
+
 describe('Delete command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
     mockEnsureInitialized.mockResolvedValue('/test/project/.centy')
+    mockResolveItemId.mockResolvedValue('item-uuid')
   })
 
   it('should have correct static properties', async () => {
@@ -53,17 +63,13 @@ describe('Delete command', () => {
   })
 
   describe('deleting items with --force', () => {
-    it('should delete item by display number with force flag', async () => {
+    it('should delete item with force flag', async () => {
       const { default: Command } = await import('./delete.js')
-      mockDaemonGetItem.mockResolvedValue({
-        success: true,
-        item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
-      })
       mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
       const cmd = createMockCommand(Command, {
         flags: { force: true },
-        args: { type: 'issue', id: '1' },
+        args: { type: 'issue', id: 'item-uuid' },
       })
 
       await cmd.run()
@@ -78,21 +84,64 @@ describe('Delete command', () => {
       expect(cmd.logs[0]).toContain('Deleted issue')
     })
 
-    it('should delete item by UUID with force flag', async () => {
+    it('should use resolveItemId to resolve the item UUID', async () => {
       const { default: Command } = await import('./delete.js')
+      mockResolveItemId.mockResolvedValue('resolved-uuid')
       mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
       const cmd = createMockCommand(Command, {
         flags: { force: true },
+        args: { type: 'issue', id: '1' },
+      })
+
+      await cmd.run()
+
+      expect(mockResolveItemId).toHaveBeenCalledWith(
+        '1',
+        'issues',
+        '/test/project',
+        expect.any(Function)
+      )
+      expect(mockDaemonDeleteItem).toHaveBeenCalledWith(
+        expect.objectContaining({ itemId: 'resolved-uuid' })
+      )
+    })
+  })
+
+  describe('confirmation prompt (no --force)', () => {
+    it('should cancel when user answers N', async () => {
+      const { default: Command } = await import('./delete.js')
+      mockRlQuestion.mockImplementation(
+        (_q: unknown, cb: (a: string) => void) => cb('N')
+      )
+
+      const cmd = createMockCommand(Command, {
+        flags: { force: false },
         args: { type: 'issue', id: 'item-uuid' },
       })
 
       await cmd.run()
 
-      expect(mockDaemonGetItem).not.toHaveBeenCalled()
-      expect(mockDaemonDeleteItem).toHaveBeenCalledWith(
-        expect.objectContaining({ itemId: 'item-uuid' })
+      expect(mockDaemonDeleteItem).not.toHaveBeenCalled()
+      expect(cmd.logs[0]).toContain('Cancelled')
+    })
+
+    it('should proceed when user answers y', async () => {
+      const { default: Command } = await import('./delete.js')
+      mockRlQuestion.mockImplementation(
+        (_q: unknown, cb: (a: string) => void) => cb('y')
       )
+      mockDaemonDeleteItem.mockResolvedValue({ success: true })
+
+      const cmd = createMockCommand(Command, {
+        flags: { force: false },
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      await cmd.run()
+
+      expect(mockDaemonDeleteItem).toHaveBeenCalled()
+      expect(cmd.logs[0]).toContain('Deleted issue')
     })
   })
 
@@ -116,12 +165,23 @@ describe('Delete command', () => {
       expect(cmd.errors).toContain('Project not initialized')
     })
 
+    it('should re-throw non-NotInitializedError errors', async () => {
+      const { default: Command } = await import('./delete.js')
+      const genericError = new Error('Generic error')
+      mockEnsureInitialized.mockRejectedValue(genericError)
+
+      const cmd = createMockCommand(Command, {
+        flags: { force: true },
+        args: { type: 'issue', id: '1' },
+      })
+
+      const { error } = await runCommandSafely(cmd)
+
+      expect(error).toBeDefined()
+    })
+
     it('should handle daemon delete error', async () => {
       const { default: Command } = await import('./delete.js')
-      mockDaemonGetItem.mockResolvedValue({
-        success: true,
-        item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
-      })
       mockDaemonDeleteItem.mockResolvedValue({
         success: false,
         error: 'Delete failed',
@@ -129,7 +189,7 @@ describe('Delete command', () => {
 
       const cmd = createMockCommand(Command, {
         flags: { force: true },
-        args: { type: 'issue', id: '1' },
+        args: { type: 'issue', id: 'item-uuid' },
       })
 
       const { error } = await runCommandSafely(cmd)

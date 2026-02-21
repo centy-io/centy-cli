@@ -5,16 +5,16 @@ import {
 } from '../testing/command-test-utils.js'
 
 const mockDaemonMoveItem = vi.fn()
-const mockDaemonGetItem = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
+const mockResolveItemId = vi.fn()
 
 vi.mock('../daemon/daemon-move-item.js', () => ({
   daemonMoveItem: (...args: unknown[]) => mockDaemonMoveItem(...args),
 }))
 
-vi.mock('../daemon/daemon-get-item.js', () => ({
-  daemonGetItem: (...args: unknown[]) => mockDaemonGetItem(...args),
+vi.mock('../lib/resolve-item-id/resolve-item-id.js', () => ({
+  resolveItemId: (...args: unknown[]) => mockResolveItemId(...args),
 }))
 
 vi.mock('../utils/resolve-project-path.js', () => ({
@@ -35,9 +35,10 @@ describe('Move command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockImplementation((p: unknown) =>
-      p === 'other-project' ? '/other/project' : '/test/project'
+      p === undefined ? '/test/project' : '/other/project'
     )
     mockEnsureInitialized.mockResolvedValue(undefined)
+    mockResolveItemId.mockResolvedValue('item-uuid')
   })
 
   it('should have correct static properties', async () => {
@@ -55,24 +56,20 @@ describe('Move command', () => {
   })
 
   describe('moving items', () => {
-    it('should move item by display number to target project', async () => {
+    it('should move item to target project', async () => {
       const { default: Command } = await import('./move.js')
-      mockDaemonGetItem.mockResolvedValue({
-        success: true,
-        item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
-      })
       mockDaemonMoveItem.mockResolvedValue({
         success: true,
         item: {
-          id: 'moved-item-uuid',
+          id: 'moved-uuid',
           title: 'Moved item',
           metadata: { displayNumber: 1 },
         },
       })
 
       const cmd = createMockCommand(Command, {
-        flags: { to: 'other-project' },
-        args: { type: 'issue', id: '1' },
+        flags: { to: '/other/project' },
+        args: { type: 'issue', id: 'item-uuid' },
       })
 
       await cmd.run()
@@ -86,27 +83,24 @@ describe('Move command', () => {
         })
       )
       expect(cmd.logs[0]).toContain('Moved issue')
+      expect(cmd.logs[0]).toContain('/other/project')
     })
 
-    it('should move item by UUID (no GetItem call)', async () => {
+    it('should show item ID when metadata has no displayNumber', async () => {
       const { default: Command } = await import('./move.js')
       mockDaemonMoveItem.mockResolvedValue({
         success: true,
-        item: {
-          id: 'moved-item-uuid',
-          title: 'Moved item',
-          metadata: { displayNumber: 1 },
-        },
+        item: { id: 'moved-uuid', title: 'Moved item', metadata: undefined },
       })
 
       const cmd = createMockCommand(Command, {
-        flags: { to: 'other-project' },
+        flags: { to: '/other/project' },
         args: { type: 'issue', id: 'item-uuid' },
       })
 
       await cmd.run()
 
-      expect(mockDaemonGetItem).not.toHaveBeenCalled()
+      expect(cmd.logs[0]).toContain('moved-uuid')
     })
   })
 
@@ -117,7 +111,7 @@ describe('Move command', () => {
 
       const cmd = createMockCommand(Command, {
         flags: { to: '/test/project' },
-        args: { type: 'issue', id: '1' },
+        args: { type: 'issue', id: 'item-uuid' },
       })
 
       const { error } = await runCommandSafely(cmd)
@@ -126,20 +120,92 @@ describe('Move command', () => {
       expect(cmd.errors[0]).toContain('same')
     })
 
+    it('should handle source NotInitializedError', async () => {
+      const { default: Command } = await import('./move.js')
+      const { NotInitializedError } =
+        await import('../utils/ensure-initialized.js')
+      mockEnsureInitialized.mockRejectedValue(
+        new NotInitializedError('Source not initialized')
+      )
+
+      const cmd = createMockCommand(Command, {
+        flags: { to: '/other/project' },
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      const { error } = await runCommandSafely(cmd)
+
+      expect(error).toBeDefined()
+      expect(cmd.errors).toContain('Source project: Source not initialized')
+    })
+
+    it('should handle target NotInitializedError', async () => {
+      const { default: Command } = await import('./move.js')
+      const { NotInitializedError } =
+        await import('../utils/ensure-initialized.js')
+      let callCount = 0
+      mockEnsureInitialized.mockImplementation(async () => {
+        callCount++
+        if (callCount === 2) {
+          throw new NotInitializedError('Target not initialized')
+        }
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { to: '/other/project' },
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      const { error } = await runCommandSafely(cmd)
+
+      expect(error).toBeDefined()
+      expect(cmd.errors).toContain('Target project: Target not initialized')
+    })
+
+    it('should re-throw non-NotInitializedError from source', async () => {
+      const { default: Command } = await import('./move.js')
+      mockEnsureInitialized.mockRejectedValue(new Error('Generic source error'))
+
+      const cmd = createMockCommand(Command, {
+        flags: { to: '/other/project' },
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      const { error } = await runCommandSafely(cmd)
+
+      expect(error).toBeDefined()
+    })
+
+    it('should re-throw non-NotInitializedError from target', async () => {
+      const { default: Command } = await import('./move.js')
+      let callCount = 0
+      mockEnsureInitialized.mockImplementation(async () => {
+        callCount++
+        if (callCount === 2) {
+          throw new Error('Generic target error')
+        }
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { to: '/other/project' },
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      const { error } = await runCommandSafely(cmd)
+
+      expect(error).toBeDefined()
+    })
+
     it('should handle daemon move error', async () => {
       const { default: Command } = await import('./move.js')
-      mockDaemonGetItem.mockResolvedValue({
-        success: true,
-        item: { id: 'item-uuid', metadata: { displayNumber: 1 } },
-      })
       mockDaemonMoveItem.mockResolvedValue({
         success: false,
         error: 'Move failed',
       })
 
       const cmd = createMockCommand(Command, {
-        flags: { to: 'other-project' },
-        args: { type: 'issue', id: '1' },
+        flags: { to: '/other/project' },
+        args: { type: 'issue', id: 'item-uuid' },
       })
 
       const { error } = await runCommandSafely(cmd)
