@@ -1,35 +1,42 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
-import { daemonDeleteItem } from '../../daemon/daemon-delete-item.js'
-import { projectFlag } from '../../flags/project-flag.js'
+import { daemonDeleteItem } from '../daemon/daemon-delete-item.js'
+import { daemonGetItem } from '../daemon/daemon-get-item.js'
+import { projectFlag } from '../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
-} from '../../utils/ensure-initialized.js'
-import { resolveProjectPath } from '../../utils/resolve-project-path.js'
+} from '../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../utils/resolve-project-path.js'
+import { toPlural } from '../utils/to-plural.js'
 
 /**
- * Delete a doc
+ * Delete an item by type and identifier
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class DeleteDoc extends Command {
+export default class Delete extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override args = {
-    slug: Args.string({
-      description: 'Doc slug',
+    type: Args.string({
+      description: 'Item type (e.g., issue, epic, or custom type)',
+      required: true,
+    }),
+    id: Args.string({
+      description: 'Item ID (UUID, display number, or slug)',
       required: true,
     }),
   }
 
   // eslint-disable-next-line no-restricted-syntax
-  static override description = 'Delete a documentation file'
+  static override description = 'Delete an item by type and identifier'
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
-    '<%= config.bin %> delete doc getting-started',
-    '<%= config.bin %> delete doc api-reference --force',
-    '<%= config.bin %> delete doc api-reference --project centy-daemon',
+    '<%= config.bin %> delete issue 1',
+    '<%= config.bin %> delete epic 1 --force',
+    '<%= config.bin %> delete bug abc123-uuid',
+    '<%= config.bin %> delete epic 1 --project centy-daemon',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -43,7 +50,8 @@ export default class DeleteDoc extends Command {
   }
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(DeleteDoc)
+    const { args, flags } = await this.parse(Delete)
+    const itemType = toPlural(args.type)
     const cwd = await resolveProjectPath(flags.project)
 
     try {
@@ -63,7 +71,7 @@ export default class DeleteDoc extends Command {
       })
       const answer = await new Promise<string>(resolve => {
         rl.question(
-          `Are you sure you want to delete doc "${args.slug}"? (y/N) `,
+          `Are you sure you want to delete ${args.type} ${args.id}? (y/N) `,
           resolve
         )
       })
@@ -74,10 +82,29 @@ export default class DeleteDoc extends Command {
       }
     }
 
+    // Resolve display number to UUID
+    const displayNumber = /^\d+$/.test(args.id) ? Number(args.id) : undefined
+    let itemId: string
+
+    if (displayNumber !== undefined) {
+      const getResponse = await daemonGetItem({
+        projectPath: cwd,
+        itemType,
+        itemId: '',
+        displayNumber,
+      })
+      if (!getResponse.success) {
+        this.error(`Item not found: ${args.id}`)
+      }
+      itemId = getResponse.item!.id
+    } else {
+      itemId = args.id
+    }
+
     const response = await daemonDeleteItem({
       projectPath: cwd,
-      itemType: 'docs',
-      itemId: args.slug,
+      itemType,
+      itemId,
       force: false,
     })
 
@@ -85,6 +112,6 @@ export default class DeleteDoc extends Command {
       this.error(response.error)
     }
 
-    this.log(`Deleted doc "${args.slug}"`)
+    this.log(`Deleted ${args.type} ${args.id}`)
   }
 }

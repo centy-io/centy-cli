@@ -181,6 +181,46 @@ export interface RestoreItemResponse {
   item?: GenericItem | undefined
 }
 
+export interface DuplicateItemRequest {
+  /** Project containing the original item */
+  sourceProjectPath: string
+  /** e.g., "issues", "docs", or custom type */
+  itemType: string
+  /** ID of the item to duplicate (UUID or slug) */
+  itemId: string
+  /** Target project (can be same as source) */
+  targetProjectPath: string
+  /** Optional: override ID for the copy (for slug-identified types) */
+  newId: string
+  /** Optional: override title (default: "Copy of {original}") */
+  newTitle: string
+}
+
+export interface DuplicateItemResponse {
+  success: boolean
+  error: string
+  /** The new duplicate item */
+  item?: GenericItem | undefined
+  /** ID of the original item */
+  originalId: string
+}
+
+export interface MoveItemRequest {
+  sourceProjectPath: string
+  targetProjectPath: string
+  itemType: string
+  itemId: string
+  /** Optional: for slug renames */
+  newId: string
+}
+
+export interface MoveItemResponse {
+  success: boolean
+  error: string
+  item?: GenericItem | undefined
+  oldId: string
+}
+
 /** Custom field definition for item types */
 export interface ItemTypeCustomField {
   /** Field name */

@@ -8,14 +8,15 @@ import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
+import { parseCustomFields } from '../utils/parse-custom-fields.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
 import { toPlural } from '../utils/to-plural.js'
 
 /**
- * Close an item by setting its status to closed
+ * Update an item of any type by type and identifier
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class Close extends Command {
+export default class Update extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override args = {
     type: Args.string({
@@ -23,33 +24,46 @@ export default class Close extends Command {
       required: true,
     }),
     id: Args.string({
-      description: 'Item ID (UUID or display number)',
+      description: 'Item ID (UUID, display number, or slug)',
       required: true,
     }),
   }
 
   // eslint-disable-next-line no-restricted-syntax
-  static override description = 'Close an item by setting its status to closed'
+  static override description = 'Update an item by type and identifier'
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
-    '<%= config.bin %> close issue 1',
-    '<%= config.bin %> close epic 1',
-    '<%= config.bin %> close issue abc123-uuid',
-    '<%= config.bin %> close epic 1 --project centy-daemon',
+    '<%= config.bin %> update issue 1 --status closed',
+    '<%= config.bin %> update epic 1 --title "New title"',
+    '<%= config.bin %> update bug abc123-uuid --status in-progress --priority 1',
+    '<%= config.bin %> update epic 1 --project centy-daemon',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
   static override flags = {
-    project: projectFlag,
-    json: Flags.boolean({
-      description: 'Output as JSON',
-      default: false,
+    title: Flags.string({ char: 't', description: 'New title' }),
+    body: Flags.string({
+      char: 'b',
+      description: 'New body (markdown content)',
     }),
+    status: Flags.string({
+      char: 's',
+      description: 'New status (e.g., open, in-progress, closed)',
+    }),
+    priority: Flags.integer({
+      char: 'p',
+      description: 'New priority level (1 = highest)',
+    }),
+    'custom-field': Flags.string({
+      multiple: true,
+      description: 'Custom field in key=value format (repeatable)',
+    }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(Close)
+    const { args, flags } = await this.parse(Update)
     const itemType = toPlural(args.type)
     const cwd = await resolveProjectPath(flags.project)
 
@@ -62,7 +76,17 @@ export default class Close extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    // Resolve display number to UUID
+    const noFields =
+      !flags.title &&
+      !flags.body &&
+      !flags.status &&
+      !flags.priority &&
+      (flags['custom-field'] === undefined ||
+        flags['custom-field'].length === 0)
+    if (noFields) {
+      this.error('At least one field must be specified to update.')
+    }
+
     const displayNumber = /^\d+$/.test(args.id) ? Number(args.id) : undefined
     let itemId: string
 
@@ -81,15 +105,16 @@ export default class Close extends Command {
       itemId = args.id
     }
 
+    const customFields = parseCustomFields(flags['custom-field'])
     const response = await daemonUpdateItem({
       projectPath: cwd,
       itemType,
       itemId,
-      status: 'closed',
-      title: '',
-      body: '',
-      priority: 0,
-      customFields: {},
+      title: flags.title !== undefined ? flags.title : '',
+      body: flags.body !== undefined ? flags.body : '',
+      status: flags.status !== undefined ? flags.status : '',
+      priority: flags.priority !== undefined ? flags.priority : 0,
+      customFields,
     })
 
     if (!response.success) {
@@ -100,24 +125,8 @@ export default class Close extends Command {
     const meta = item.metadata
     const displayNum =
       meta !== undefined && meta.displayNumber > 0
-        ? `#${meta.displayNumber}`
-        : itemId
-
-    if (flags.json) {
-      this.log(
-        JSON.stringify(
-          {
-            type: args.type,
-            id: item.id,
-            displayNumber: meta !== undefined ? meta.displayNumber : undefined,
-            status: 'closed',
-          },
-          null,
-          2
-        )
-      )
-    } else {
-      this.log(`Closed ${args.type} ${displayNum}`)
-    }
+        ? ` #${meta.displayNumber}`
+        : ` ${item.id}`
+    this.log(`Updated ${args.type}${displayNum}`)
   }
 }
