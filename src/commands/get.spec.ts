@@ -79,7 +79,8 @@ describe('Get command', () => {
     expect(mockDaemonGetItem).toHaveBeenCalledWith({
       projectPath: '/test/project',
       itemType: 'issues',
-      itemId: '1',
+      itemId: '',
+      displayNumber: 1,
     })
     expect(cmd.logs.some(log => log.includes('Issue #1'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('Test Issue'))).toBe(true)
@@ -180,7 +181,8 @@ describe('Get command', () => {
     expect(mockDaemonGetItem).toHaveBeenCalledWith({
       projectPath: '/test/project',
       itemType: 'bugs',
-      itemId: '1',
+      itemId: '',
+      displayNumber: 1,
     })
   })
 
@@ -199,7 +201,8 @@ describe('Get command', () => {
     expect(mockDaemonGetItem).toHaveBeenCalledWith({
       projectPath: '/test/project',
       itemType: 'issues',
-      itemId: '1',
+      itemId: '',
+      displayNumber: 1,
     })
   })
 
@@ -354,7 +357,8 @@ describe('Get command', () => {
     expect(mockDaemonGetItem).toHaveBeenCalledWith({
       projectPath: '/test/project',
       itemType: 'categories',
-      itemId: '1',
+      itemId: '',
+      displayNumber: 1,
     })
   })
 })
