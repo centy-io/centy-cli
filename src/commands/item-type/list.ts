@@ -64,10 +64,21 @@ export default class ItemTypeList extends Command {
 
     this.log(`Found ${response.totalCount} item type(s):\n`)
     for (const itemType of response.itemTypes) {
+      const f = itemType.features
+      const enabledFeatures =
+        f === undefined
+          ? []
+          : [
+              f.displayNumber && 'display_number',
+              f.status && 'status',
+              f.priority && 'priority',
+              f.assets && 'assets',
+              f.orgSync && 'org_sync',
+              f.move && 'move',
+              f.duplicate && 'duplicate',
+            ].filter(Boolean)
       const features =
-        itemType.features.length > 0
-          ? ` [${itemType.features.map(f => String(f).replace('ITEM_TYPE_FEATURE_', '').toLowerCase()).join(', ')}]`
-          : ''
+        enabledFeatures.length > 0 ? ` [${enabledFeatures.join(', ')}]` : ''
       const statuses =
         itemType.statuses.length > 0
           ? ` statuses: ${itemType.statuses.join(', ')}`

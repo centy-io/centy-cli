@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 
-/** Features that can be enabled for an item type */
+/** Features that can be enabled for an item type (legacy enum, kept for CreateItemTypeRequest) */
 export enum ItemTypeFeature {
   ITEM_TYPE_FEATURE_UNSPECIFIED = 'ITEM_TYPE_FEATURE_UNSPECIFIED',
   ITEM_TYPE_FEATURE_DISPLAY_NUMBER = 'ITEM_TYPE_FEATURE_DISPLAY_NUMBER',
@@ -232,6 +232,17 @@ export interface MoveItemResponse {
   oldId: string
 }
 
+/** Toggle-able features for an item type */
+export interface ItemTypeFeatures {
+  displayNumber: boolean
+  status: boolean
+  priority: boolean
+  assets: boolean
+  orgSync: boolean
+  move: boolean
+  duplicate: boolean
+}
+
 /** Custom field definition for item types */
 export interface ItemTypeCustomField {
   /** Field name */
@@ -284,7 +295,7 @@ export interface ItemTypeConfig {
   /** "uuid" or "slug" */
   identifier: string
   /** Enabled features */
-  features: ItemTypeFeature[]
+  features?: ItemTypeFeatures | undefined
   /** Allowed statuses */
   statuses: string[]
   /** Default status */

@@ -166,7 +166,18 @@ message MoveItemResponse {
 
 // ============ Item Type Messages ============
 
-// Features that can be enabled for an item type
+// Toggle-able features for an item type
+message ItemTypeFeatures {
+  bool display_number = 1;
+  bool status = 2;
+  bool priority = 3;
+  bool assets = 4;
+  bool org_sync = 5;
+  bool move = 6;
+  bool duplicate = 7;
+}
+
+// Features that can be enabled for an item type (legacy enum, kept for CreateItemTypeRequest)
 enum ItemTypeFeature {
   ITEM_TYPE_FEATURE_UNSPECIFIED = 0;
   ITEM_TYPE_FEATURE_DISPLAY_NUMBER = 1;
@@ -212,7 +223,7 @@ message ItemTypeConfig {
   string name = 1;                      // Singular display name
   string plural = 2;                    // Folder/type key
   string identifier = 3;               // "uuid" or "slug"
-  repeated ItemTypeFeature features = 4; // Enabled features
+  ItemTypeFeatures features = 4;        // Enabled features
   repeated string statuses = 5;         // Allowed statuses
   string default_status = 6;           // Default status
   uint32 priority_levels = 7;          // Number of priority levels
