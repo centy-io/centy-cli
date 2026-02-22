@@ -66,7 +66,7 @@ export default class ItemTypeList extends Command {
     for (const itemType of response.itemTypes) {
       const features =
         itemType.features.length > 0
-          ? ` [${itemType.features.map(f => f.replace('ITEM_TYPE_FEATURE_', '').toLowerCase()).join(', ')}]`
+          ? ` [${itemType.features.map(f => String(f).replace('ITEM_TYPE_FEATURE_', '').toLowerCase()).join(', ')}]`
           : ''
       const statuses =
         itemType.statuses.length > 0
