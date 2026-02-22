@@ -16,4 +16,10 @@ describe('toPlural', () => {
     expect(toPlural('docs')).toBe('docs')
     expect(toPlural('issues')).toBe('issues')
   })
+
+  it('should handle irregular plurals', () => {
+    expect(toPlural('person')).toBe('people')
+    expect(toPlural('child')).toBe('children')
+    expect(toPlural('status')).toBe('statuses')
+  })
 })
