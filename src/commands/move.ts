@@ -8,7 +8,7 @@ import {
 } from '../utils/ensure-initialized.js'
 import { projectFlag } from '../flags/project-flag.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
-import { toPlural } from '../utils/to-plural.js'
+import pluralize from 'pluralize'
 import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
 
 /**
@@ -54,7 +54,7 @@ export default class Move extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Move)
-    const itemType = toPlural(args.type)
+    const itemType = pluralize(args.type)
     const sourceProjectPath = await resolveProjectPath(flags.project)
     const targetProjectPath = await resolveProjectPath(flags.to)
 

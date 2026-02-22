@@ -9,7 +9,7 @@ import {
 } from '../utils/ensure-initialized.js'
 import { parseCustomFields } from '../utils/parse-custom-fields.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
-import { toPlural } from '../utils/to-plural.js'
+import pluralize from 'pluralize'
 
 /**
  * Create a new item of any registered type via the generic CreateItem RPC
@@ -67,7 +67,7 @@ export default class Create extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Create)
-    const itemType = toPlural(args.type)
+    const itemType = pluralize(args.type)
     const cwd = await resolveProjectPath(flags.project)
 
     try {

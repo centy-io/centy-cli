@@ -10,7 +10,7 @@ import {
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
-import { toPlural } from '../utils/to-plural.js'
+import pluralize from 'pluralize'
 
 /**
  * Get any item by type and identifier
@@ -60,7 +60,7 @@ export default class Get extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Get)
-    const itemType = toPlural(args.type)
+    const itemType = pluralize(args.type)
     const cwd = await resolveProjectPath(flags.project)
 
     if (flags.global) {

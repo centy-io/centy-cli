@@ -9,7 +9,7 @@ import {
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
-import { toPlural } from '../utils/to-plural.js'
+import pluralize from 'pluralize'
 
 /**
  * Restore a soft-deleted item by type and identifier
@@ -45,7 +45,7 @@ export default class Restore extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Restore)
-    const itemType = toPlural(args.type)
+    const itemType = pluralize(args.type)
     const cwd = await resolveProjectPath(flags.project)
 
     try {
