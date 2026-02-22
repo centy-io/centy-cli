@@ -2048,92 +2048,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "get", "user.js"]
     },
-    "item-type:create": {
-      "aliases": [],
-      "args": {},
-      "description": "Create a new custom item type",
-      "examples": [
-        "<%= config.bin %> item-type create --name \"Bug\" --plural \"bugs\" --identifier uuid --statuses open,in-progress,closed --default-status open --priority-levels 3 --features display-number,status,priority,move,duplicate",
-        "<%= config.bin %> item-type create --name \"Task\" --plural \"tasks\" --identifier slug --statuses todo,doing,done --default-status todo --features status,priority"
-      ],
-      "flags": {
-        "name": {
-          "char": "n",
-          "description": "Singular display name (e.g., \"Bug\", \"Task\", \"Epic\")",
-          "name": "name",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "plural": {
-          "description": "Folder/type key, lowercase alphanumeric + hyphens (e.g., \"bugs\")",
-          "name": "plural",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "identifier": {
-          "description": "Identifier type for items",
-          "name": "identifier",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "options": ["uuid", "slug"],
-          "type": "option"
-        },
-        "statuses": {
-          "description": "Comma-separated list of allowed statuses",
-          "name": "statuses",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "default-status": {
-          "description": "Default status for new items (must be in statuses list)",
-          "name": "default-status",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "priority-levels": {
-          "description": "Number of priority levels (0 = none)",
-          "name": "priority-levels",
-          "default": 0,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "features": {
-          "char": "f",
-          "description": "Comma-separated features (display-number, status, priority, assets, org-sync, move, duplicate)",
-          "name": "features",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "item-type:create",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "item-type", "create.js"]
-    },
     "install:all": {
       "aliases": [],
       "args": {},
@@ -2243,6 +2157,127 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "install", "tui.js"]
+    },
+    "item-type:create": {
+      "aliases": [],
+      "args": {},
+      "description": "Create a new custom item type",
+      "examples": [
+        "<%= config.bin %> item-type create --name \"Bug\" --plural \"bugs\" --identifier uuid --statuses open,in-progress,closed --default-status open --priority-levels 3 --features display-number,status,priority,move,duplicate",
+        "<%= config.bin %> item-type create --name \"Task\" --plural \"tasks\" --identifier slug --statuses todo,doing,done --default-status todo --features status,priority"
+      ],
+      "flags": {
+        "name": {
+          "char": "n",
+          "description": "Singular display name (e.g., \"Bug\", \"Task\", \"Epic\")",
+          "name": "name",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "plural": {
+          "description": "Folder/type key, lowercase alphanumeric + hyphens (e.g., \"bugs\")",
+          "name": "plural",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "identifier": {
+          "description": "Identifier type for items",
+          "name": "identifier",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": ["uuid", "slug"],
+          "type": "option"
+        },
+        "statuses": {
+          "description": "Comma-separated list of allowed statuses",
+          "name": "statuses",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "default-status": {
+          "description": "Default status for new items (must be in statuses list)",
+          "name": "default-status",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "priority-levels": {
+          "description": "Number of priority levels (0 = none)",
+          "name": "priority-levels",
+          "default": 0,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "features": {
+          "char": "f",
+          "description": "Comma-separated features (display-number, status, priority, assets, org-sync, move, duplicate)",
+          "name": "features",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "item-type:create",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "item-type", "create.js"]
+    },
+    "item-type:list": {
+      "aliases": [],
+      "args": {},
+      "description": "List all item types for a project",
+      "examples": [
+        "<%= config.bin %> item-type list",
+        "<%= config.bin %> item-type list --json",
+        "<%= config.bin %> item-type list --project centy-daemon"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "item-type:list",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "item-type", "list.js"]
     },
     "org:create": {
       "aliases": [],
@@ -2742,6 +2777,217 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "list", "users.js"]
     },
+    "project:archive": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Archive or unarchive a project",
+      "examples": [
+        "<%= config.bin %> project archive",
+        "<%= config.bin %> project archive /path/to/project",
+        "<%= config.bin %> project archive --off"
+      ],
+      "flags": {
+        "off": {
+          "description": "Unarchive the project",
+          "name": "off",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "project:archive",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "project", "archive.js"]
+    },
+    "project:favorite": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Mark a project as favorite or unfavorite",
+      "examples": [
+        "<%= config.bin %> project favorite",
+        "<%= config.bin %> project favorite /path/to/project",
+        "<%= config.bin %> project favorite --off"
+      ],
+      "flags": {
+        "off": {
+          "description": "Remove from favorites",
+          "name": "off",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "project:favorite",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "project", "favorite.js"]
+    },
+    "project:org": {
+      "aliases": ["project:organization"],
+      "args": {
+        "slug": {
+          "description": "Organization slug (omit to remove from organization)",
+          "name": "slug",
+          "required": false
+        }
+      },
+      "description": "Assign or remove a project from an organization",
+      "examples": [
+        "<%= config.bin %> project org centy-io",
+        "<%= config.bin %> project org my-org --path /path/to/project",
+        "<%= config.bin %> project org --remove",
+        "<%= config.bin %> project organization centy-io"
+      ],
+      "flags": {
+        "path": {
+          "char": "p",
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "remove": {
+          "char": "r",
+          "description": "Remove project from its organization",
+          "name": "remove",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "project:org",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "project", "org.js"]
+    },
+    "project:title": {
+      "aliases": [],
+      "args": {
+        "title": {
+          "description": "Custom title for the project (omit to clear)",
+          "name": "title",
+          "required": false
+        }
+      },
+      "description": "Set a custom title for a project",
+      "examples": [
+        "<%= config.bin %> project title \"My Awesome Project\"",
+        "<%= config.bin %> project title \"Work Project\" --shared",
+        "<%= config.bin %> project title --clear",
+        "<%= config.bin %> project title --clear --shared",
+        "<%= config.bin %> project title \"Custom Name\" --path /path/to/project"
+      ],
+      "flags": {
+        "path": {
+          "char": "p",
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "shared": {
+          "char": "s",
+          "description": "Set project-scope title (visible to all, stored in .centy/project.json)",
+          "name": "shared",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "clear": {
+          "char": "c",
+          "description": "Clear the custom title",
+          "name": "clear",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "project:title",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "project", "title.js"]
+    },
+    "register:project": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Register a project for tracking",
+      "examples": [
+        "<%= config.bin %> register project",
+        "<%= config.bin %> register project /path/to/project",
+        "<%= config.bin %> register project --no-init"
+      ],
+      "flags": {
+        "init": {
+          "char": "i",
+          "description": "Initialize .centy folder if not already initialized",
+          "name": "init",
+          "allowNo": true,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "register:project",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "register", "project.js"]
+    },
     "unassign:issue": {
       "aliases": [],
       "args": {
@@ -2865,6 +3111,75 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "untrack", "project.js"]
+    },
+    "user:create": {
+      "aliases": [],
+      "args": {},
+      "description": "Create a new user in the project",
+      "examples": [
+        "<%= config.bin %> user create --name \"John Doe\"",
+        "<%= config.bin %> user create --id john-doe --name \"John Doe\" --email john@example.com",
+        "<%= config.bin %> user create -n \"Alice\" -g alice-dev -g alice-work",
+        "<%= config.bin %> user create --name \"Bob\" --project centy-daemon"
+      ],
+      "flags": {
+        "id": {
+          "char": "i",
+          "description": "User ID (slug format, auto-generated from name if not provided)",
+          "name": "id",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "name": {
+          "char": "n",
+          "description": "Display name (required)",
+          "name": "name",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "email": {
+          "char": "e",
+          "description": "Email address",
+          "name": "email",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "git-username": {
+          "char": "g",
+          "description": "Git username (can be specified multiple times)",
+          "name": "git-username",
+          "hasDynamicHelp": false,
+          "multiple": true,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "user:create",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "user", "create.js"]
     },
     "update:doc": {
       "aliases": ["edit:doc"],
@@ -3313,251 +3628,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "update", "user.js"]
     },
-    "project:archive": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Archive or unarchive a project",
-      "examples": [
-        "<%= config.bin %> project archive",
-        "<%= config.bin %> project archive /path/to/project",
-        "<%= config.bin %> project archive --off"
-      ],
-      "flags": {
-        "off": {
-          "description": "Unarchive the project",
-          "name": "off",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "project:archive",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "project", "archive.js"]
-    },
-    "project:favorite": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Mark a project as favorite or unfavorite",
-      "examples": [
-        "<%= config.bin %> project favorite",
-        "<%= config.bin %> project favorite /path/to/project",
-        "<%= config.bin %> project favorite --off"
-      ],
-      "flags": {
-        "off": {
-          "description": "Remove from favorites",
-          "name": "off",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "project:favorite",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "project", "favorite.js"]
-    },
-    "project:org": {
-      "aliases": ["project:organization"],
-      "args": {
-        "slug": {
-          "description": "Organization slug (omit to remove from organization)",
-          "name": "slug",
-          "required": false
-        }
-      },
-      "description": "Assign or remove a project from an organization",
-      "examples": [
-        "<%= config.bin %> project org centy-io",
-        "<%= config.bin %> project org my-org --path /path/to/project",
-        "<%= config.bin %> project org --remove",
-        "<%= config.bin %> project organization centy-io"
-      ],
-      "flags": {
-        "path": {
-          "char": "p",
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "remove": {
-          "char": "r",
-          "description": "Remove project from its organization",
-          "name": "remove",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "project:org",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "project", "org.js"]
-    },
-    "project:title": {
-      "aliases": [],
-      "args": {
-        "title": {
-          "description": "Custom title for the project (omit to clear)",
-          "name": "title",
-          "required": false
-        }
-      },
-      "description": "Set a custom title for a project",
-      "examples": [
-        "<%= config.bin %> project title \"My Awesome Project\"",
-        "<%= config.bin %> project title \"Work Project\" --shared",
-        "<%= config.bin %> project title --clear",
-        "<%= config.bin %> project title --clear --shared",
-        "<%= config.bin %> project title \"Custom Name\" --path /path/to/project"
-      ],
-      "flags": {
-        "path": {
-          "char": "p",
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "shared": {
-          "char": "s",
-          "description": "Set project-scope title (visible to all, stored in .centy/project.json)",
-          "name": "shared",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "clear": {
-          "char": "c",
-          "description": "Clear the custom title",
-          "name": "clear",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "project:title",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "project", "title.js"]
-    },
-    "user:create": {
-      "aliases": [],
-      "args": {},
-      "description": "Create a new user in the project",
-      "examples": [
-        "<%= config.bin %> user create --name \"John Doe\"",
-        "<%= config.bin %> user create --id john-doe --name \"John Doe\" --email john@example.com",
-        "<%= config.bin %> user create -n \"Alice\" -g alice-dev -g alice-work",
-        "<%= config.bin %> user create --name \"Bob\" --project centy-daemon"
-      ],
-      "flags": {
-        "id": {
-          "char": "i",
-          "description": "User ID (slug format, auto-generated from name if not provided)",
-          "name": "id",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "name": {
-          "char": "n",
-          "description": "Display name (required)",
-          "name": "name",
-          "required": true,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "email": {
-          "char": "e",
-          "description": "Email address",
-          "name": "email",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "git-username": {
-          "char": "g",
-          "description": "Git username (can be specified multiple times)",
-          "name": "git-username",
-          "hasDynamicHelp": false,
-          "multiple": true,
-          "type": "option"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "user:create",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "user", "create.js"]
-    },
     "workspace:cleanup": {
       "aliases": [],
       "args": {},
@@ -3697,42 +3767,7 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "workspace", "open.js"]
-    },
-    "register:project": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Register a project for tracking",
-      "examples": [
-        "<%= config.bin %> register project",
-        "<%= config.bin %> register project /path/to/project",
-        "<%= config.bin %> register project --no-init"
-      ],
-      "flags": {
-        "init": {
-          "char": "i",
-          "description": "Initialize .centy folder if not already initialized",
-          "name": "init",
-          "allowNo": true,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "register:project",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "register", "project.js"]
     }
   },
-  "version": "0.7.4"
+  "version": "0.7.5"
 }

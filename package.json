@@ -1,6 +1,6 @@
 {
   "name": "centy",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "CLI for managing project issues and docs via code in the .centy folder",
   "type": "module",
   "main": "./dist/index.js",

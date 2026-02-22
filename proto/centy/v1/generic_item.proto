@@ -122,6 +122,17 @@ message RestoreItemResponse {
   GenericItem item = 3;                 // The restored item (with deleted_at cleared)
 }
 
+message ListItemTypesRequest {
+  string project_path = 1;
+}
+
+message ListItemTypesResponse {
+  bool success = 1;
+  string error = 2;
+  repeated ItemTypeConfig item_types = 3;
+  int32 total_count = 4;
+}
+
 message DuplicateItemRequest {
   string source_project_path = 1;       // Project containing the original item
   string item_type = 2;                 // e.g., "issues", "docs", or custom type

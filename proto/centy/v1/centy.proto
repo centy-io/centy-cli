@@ -305,6 +305,9 @@ service CentyDaemon {
 
   // Create a new custom item type
   rpc CreateItemType(CreateItemTypeRequest) returns (CreateItemTypeResponse);
+
+  // List all item types for a project
+  rpc ListItemTypes(ListItemTypesRequest) returns (ListItemTypesResponse);
 }
 
 // ============ Init Messages ============

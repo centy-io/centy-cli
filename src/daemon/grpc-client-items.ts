@@ -25,6 +25,8 @@ import type {
   GetSupportedEditorsResponse,
   CreateItemTypeRequest,
   CreateItemTypeResponse,
+  ListItemTypesRequest,
+  ListItemTypesResponse,
 } from './types.js'
 import type { GrpcMethod } from './grpc-utils.js'
 
@@ -51,4 +53,5 @@ export interface CentyDaemonItemsClient {
   duplicateItem: GrpcMethod<DuplicateItemRequest, DuplicateItemResponse>
   moveItem: GrpcMethod<MoveItemRequest, MoveItemResponse>
   createItemType: GrpcMethod<CreateItemTypeRequest, CreateItemTypeResponse>
+  listItemTypes: GrpcMethod<ListItemTypesRequest, ListItemTypesResponse>
 }

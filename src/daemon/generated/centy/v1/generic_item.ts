@@ -181,6 +181,17 @@ export interface RestoreItemResponse {
   item?: GenericItem | undefined
 }
 
+export interface ListItemTypesRequest {
+  projectPath: string
+}
+
+export interface ListItemTypesResponse {
+  success: boolean
+  error: string
+  itemTypes: ItemTypeConfig[]
+  totalCount: number
+}
+
 export interface DuplicateItemRequest {
   /** Project containing the original item */
   sourceProjectPath: string
