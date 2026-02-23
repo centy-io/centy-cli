@@ -108,15 +108,14 @@ export default class List extends Command {
     this.log(`Found ${response.totalCount} ${itemType}:\n`)
     for (const item of response.items) {
       const meta = item.metadata
-      const displayNum =
-        meta !== undefined && meta.displayNumber > 0
-          ? `#${meta.displayNumber} `
-          : ''
-      const status =
-        meta !== undefined && meta.status !== '' ? ` [${meta.status}]` : ''
-      const priority =
-        meta !== undefined && meta.priority > 0 ? ` [P${meta.priority}]` : ''
-      this.log(`${displayNum}${item.title}${status}${priority}`)
+      if (meta === undefined) {
+        this.log(item.title)
+        continue
+      }
+      const dn = meta.displayNumber > 0 ? `#${meta.displayNumber} ` : ''
+      const status = meta.status !== '' ? ` [${meta.status}]` : ''
+      const priority = meta.priority > 0 ? ` [P${meta.priority}]` : ''
+      this.log(`${dn}${item.title}${status}${priority}`)
     }
   }
 }
