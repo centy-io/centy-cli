@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/order
 import { Args, Command } from '@oclif/core'
 
+import pluralize from 'pluralize'
 import { daemonRestoreItem } from '../daemon/daemon-restore-item.js'
 import { projectFlag } from '../flags/project-flag.js'
 import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
@@ -9,7 +10,6 @@ import {
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
-import pluralize from 'pluralize'
 
 /**
  * Restore a soft-deleted item by type and identifier
