@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
+import pluralize from 'pluralize'
 import { daemonMoveItem } from '../daemon/daemon-move-item.js'
 import {
   ensureInitialized,
@@ -8,7 +9,6 @@ import {
 } from '../utils/ensure-initialized.js'
 import { projectFlag } from '../flags/project-flag.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
-import pluralize from 'pluralize'
 import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
 
 /**

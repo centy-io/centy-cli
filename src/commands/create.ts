@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
+import pluralize from 'pluralize'
 import { daemonCreateItem } from '../daemon/daemon-create-item.js'
 import { projectFlag } from '../flags/project-flag.js'
 import {
@@ -9,7 +10,6 @@ import {
 } from '../utils/ensure-initialized.js'
 import { parseCustomFields } from '../utils/parse-custom-fields.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
-import pluralize from 'pluralize'
 
 /**
  * Create a new item of any registered type via the generic CreateItem RPC
