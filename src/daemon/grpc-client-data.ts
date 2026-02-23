@@ -5,8 +5,6 @@ import type {
   GetConfigResponse,
   UpdateConfigRequest,
   UpdateConfigResponse,
-  CreateDocRequest,
-  CreateDocResponse,
   GetDocRequest,
   GetDocsBySlugRequest,
   GetDocsBySlugResponse,
@@ -44,7 +42,6 @@ export interface CentyDaemonDataClient {
   getManifest: GrpcMethod<GetManifestRequest, GetManifestResponse>
   getConfig: GrpcMethod<GetConfigRequest, GetConfigResponse>
   updateConfig: GrpcMethod<UpdateConfigRequest, UpdateConfigResponse>
-  createDoc: GrpcMethod<CreateDocRequest, CreateDocResponse>
   getDoc: GrpcMethod<GetDocRequest, GetDocResponse>
   getDocsBySlug: GrpcMethod<GetDocsBySlugRequest, GetDocsBySlugResponse>
   listDocs: GrpcMethod<ListDocsRequest, ListDocsResponse>
