@@ -11,40 +11,45 @@ vi.mock('../../daemon/daemon-update-organization.js', () => ({
     mockDaemonUpdateOrganization(...args),
 }))
 
-describe('UpdateOrg command', () => {
+describe('OrgUpdate command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('should have correct static properties', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     expect(Command.description).toBeDefined()
     expect(typeof Command.description).toBe('string')
   })
 
   it('should export a valid oclif command class', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     expect(Command).toBeDefined()
     expect(Command.prototype.run).toBeDefined()
   })
 
+  it('should have update:org alias', async () => {
+    const { default: Command } = await import('./update.js')
+    expect(Command.aliases).toContain('update:org')
+  })
+
   it('should have update:organization alias', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     expect(Command.aliases).toContain('update:organization')
   })
 
   it('should have edit:org alias', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     expect(Command.aliases).toContain('edit:org')
   })
 
   it('should have edit:organization alias', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     expect(Command.aliases).toContain('edit:organization')
   })
 
   it('should update organization name', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateOrganization.mockResolvedValue({
       success: true,
       organization: { name: 'New Name', slug: 'my-org', description: '' },
@@ -69,7 +74,7 @@ describe('UpdateOrg command', () => {
   })
 
   it('should update organization description', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateOrganization.mockResolvedValue({
       success: true,
       organization: {
@@ -97,7 +102,7 @@ describe('UpdateOrg command', () => {
   })
 
   it('should rename organization slug', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateOrganization.mockResolvedValue({
       success: true,
       organization: { name: 'My Org', slug: 'new-slug', description: '' },
@@ -119,7 +124,7 @@ describe('UpdateOrg command', () => {
   })
 
   it('should update multiple fields at once', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateOrganization.mockResolvedValue({
       success: true,
       organization: {
@@ -148,7 +153,7 @@ describe('UpdateOrg command', () => {
   })
 
   it('should output JSON when json flag is set', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     const organization = { name: 'My Org', slug: 'my-org', description: 'Desc' }
     mockDaemonUpdateOrganization.mockResolvedValue({
       success: true,
@@ -165,7 +170,7 @@ describe('UpdateOrg command', () => {
   })
 
   it('should error when no fields are specified', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
 
     const cmd = createMockCommand(Command, {
       args: { slug: 'my-org' },
@@ -180,7 +185,7 @@ describe('UpdateOrg command', () => {
   })
 
   it('should handle daemon update failure', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateOrganization.mockResolvedValue({
       success: false,
       error: 'Organization not found',
@@ -197,7 +202,7 @@ describe('UpdateOrg command', () => {
   })
 
   it('should not show description when empty', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateOrganization.mockResolvedValue({
       success: true,
       organization: { name: 'My Org', slug: 'my-org', description: '' },

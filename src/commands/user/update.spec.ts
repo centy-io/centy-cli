@@ -26,31 +26,36 @@ vi.mock('../../utils/ensure-initialized.js', () => ({
   },
 }))
 
-describe('UpdateUser command', () => {
+describe('UserUpdate command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
     mockEnsureInitialized.mockResolvedValue('/test/project/.centy')
   })
 
-  it('should export the UpdateUser class', async () => {
-    const { default: UpdateUser } = await import('./user.js')
-    expect(UpdateUser).toBeDefined()
+  it('should export the UserUpdate class', async () => {
+    const { default: UserUpdate } = await import('./update.js')
+    expect(UserUpdate).toBeDefined()
   })
 
   it('should have a description', async () => {
-    const { default: UpdateUser } = await import('./user.js')
-    expect(UpdateUser.description).toBeDefined()
-    expect(typeof UpdateUser.description).toBe('string')
+    const { default: UserUpdate } = await import('./update.js')
+    expect(UserUpdate.description).toBeDefined()
+    expect(typeof UserUpdate.description).toBe('string')
+  })
+
+  it('should have update:user alias', async () => {
+    const { default: UserUpdate } = await import('./update.js')
+    expect(UserUpdate.aliases).toContain('update:user')
   })
 
   it('should have edit:user alias', async () => {
-    const { default: UpdateUser } = await import('./user.js')
-    expect(UpdateUser.aliases).toContain('edit:user')
+    const { default: UserUpdate } = await import('./update.js')
+    expect(UserUpdate.aliases).toContain('edit:user')
   })
 
   it('should update user name', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateUser.mockResolvedValue({
       success: true,
       user: {
@@ -82,7 +87,7 @@ describe('UpdateUser command', () => {
   })
 
   it('should update user email', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateUser.mockResolvedValue({
       success: true,
       user: {
@@ -111,7 +116,7 @@ describe('UpdateUser command', () => {
   })
 
   it('should update git usernames', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateUser.mockResolvedValue({
       success: true,
       user: {
@@ -140,7 +145,7 @@ describe('UpdateUser command', () => {
   })
 
   it('should output JSON when json flag is set', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./update.js')
     const user = {
       id: 'john-doe',
       name: 'John Doe',
@@ -163,7 +168,7 @@ describe('UpdateUser command', () => {
   })
 
   it('should handle daemon update failure', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateUser.mockResolvedValue({
       success: false,
       error: 'User not found',
@@ -181,7 +186,7 @@ describe('UpdateUser command', () => {
   })
 
   it('should handle NotInitializedError', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./update.js')
     const { NotInitializedError } =
       await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
@@ -200,7 +205,7 @@ describe('UpdateUser command', () => {
   })
 
   it('should use project flag to resolve path', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./update.js')
     mockResolveProjectPath.mockResolvedValue('/other/project')
     mockDaemonUpdateUser.mockResolvedValue({
       success: true,
@@ -219,7 +224,7 @@ describe('UpdateUser command', () => {
   })
 
   it('should not show email when empty', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateUser.mockResolvedValue({
       success: true,
       user: { id: 'test', name: 'Test', email: '', gitUsernames: [] },
@@ -236,7 +241,7 @@ describe('UpdateUser command', () => {
   })
 
   it('should not show git usernames when empty', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./update.js')
     mockDaemonUpdateUser.mockResolvedValue({
       success: true,
       user: {
