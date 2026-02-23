@@ -1,7 +1,10 @@
 import { Hook } from '@oclif/core'
 import { closest, distance } from 'fastest-levenshtein'
 
-function findClosestCommand(id: string, commandIds: string[]): string | undefined {
+function findClosestCommand(
+  id: string,
+  commandIds: string[]
+): string | undefined {
   if (commandIds.length === 0) return undefined
   const suggestion = closest(id, commandIds)
   const threshold = Math.max(3, Math.floor(id.length / 2))
