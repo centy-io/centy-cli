@@ -13,19 +13,21 @@ describe('CentyHelp', () => {
 
   it('should show LLM callout before root help content', async () => {
     const logs: string[] = []
-    const instance = Object.create(CentyHelp.prototype) as {
+    interface HelpInstance {
       showRootHelp: () => Promise<void>
       log: (msg: string) => void
     }
+    const instance: HelpInstance = Object.create(CentyHelp.prototype)
 
     let superCalled = false
     instance.log = (msg: string) => {
       logs.push(msg)
     }
 
-    const proto = Object.getPrototypeOf(CentyHelp.prototype) as {
+    interface HelpProto {
       showRootHelp?: () => Promise<void>
     }
+    const proto: HelpProto = Object.getPrototypeOf(CentyHelp.prototype)
     if (proto.showRootHelp) {
       proto.showRootHelp = async () => {
         superCalled = true

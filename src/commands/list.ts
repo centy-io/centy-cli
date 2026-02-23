@@ -87,8 +87,8 @@ export default class List extends Command {
       status: flags.status !== undefined ? flags.status : '',
       priority: flags.priority !== undefined ? flags.priority : 0,
       includeDeleted: flags['include-deleted'],
-      limit: flags.limit ?? 0,
-      offset: flags.offset ?? 0,
+      limit: flags.limit !== undefined ? flags.limit : 0,
+      offset: flags.offset !== undefined ? flags.offset : 0,
     })
 
     if (!response.success) {

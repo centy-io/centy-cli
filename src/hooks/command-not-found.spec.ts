@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const { default: hook } = await import('./command-not-found.js')
 
 describe('command_not_found hook', () => {
-  const mockError = vi.fn()
+  const mockError = vi.fn<[string, { exit: number }?], void>()
 
   const makeOpts = (id: string, commandIDs: string[] = []) => ({
     id,
@@ -15,75 +15,65 @@ describe('command_not_found hook', () => {
   })
 
   it('should call error with the unknown command name', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError } as never, makeOpts('foobar') as never)
+    await Reflect.apply(hook, { error: mockError }, [makeOpts('foobar')])
 
     expect(mockError).toHaveBeenCalledOnce()
-    const [message] = mockError.mock.calls[0] as [string]
+    const message: string = mockError.mock.calls[0][0]
     expect(message).toContain('foobar')
   })
 
   it('should include syntax reference', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError } as never, makeOpts('foobar') as never)
+    await Reflect.apply(hook, { error: mockError }, [makeOpts('foobar')])
 
-    const [message] = mockError.mock.calls[0] as [string]
+    const message: string = mockError.mock.calls[0][0]
     expect(message).toContain('centy <command> [subcommand] [args] [flags]')
   })
 
   it('should include help pointer', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError } as never, makeOpts('foobar') as never)
+    await Reflect.apply(hook, { error: mockError }, [makeOpts('foobar')])
 
-    const [message] = mockError.mock.calls[0] as [string]
+    const message: string = mockError.mock.calls[0][0]
     expect(message).toContain('centy --help')
   })
 
   it('should include LLM callout', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError } as never, makeOpts('foobar') as never)
+    await Reflect.apply(hook, { error: mockError }, [makeOpts('foobar')])
 
-    const [message] = mockError.mock.calls[0] as [string]
+    const message: string = mockError.mock.calls[0][0]
     expect(message).toContain('centy llm')
   })
 
   it('should include GitHub issue creation hint', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError } as never, makeOpts('foobar') as never)
+    await Reflect.apply(hook, { error: mockError }, [makeOpts('foobar')])
 
-    const [message] = mockError.mock.calls[0] as [string]
+    const message: string = mockError.mock.calls[0][0]
     expect(message).toContain(
       'gh issue create --repo centy-io/centy-cli --title "Missing command: foobar"'
     )
   })
 
   it('should suggest a close command when one exists', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call(
-      { error: mockError } as never,
-      makeOpts('creat', ['create', 'close', 'list']) as never
-    )
+    await Reflect.apply(hook, { error: mockError }, [
+      makeOpts('creat', ['create', 'close', 'list']),
+    ]) // cspell:ignore creat
 
-    const [message] = mockError.mock.calls[0] as [string]
+    const message: string = mockError.mock.calls[0][0]
     expect(message).toContain('Did you mean: create')
   })
 
   it('should not suggest when no close match exists', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call(
-      { error: mockError } as never,
-      makeOpts('xyzqwerty', ['create', 'list', 'get']) as never
-    )
+    await Reflect.apply(hook, { error: mockError }, [
+      makeOpts('xyzqwerty', ['create', 'list', 'get']),
+    ]) // cspell:ignore xyzqwerty
 
-    const [message] = mockError.mock.calls[0] as [string]
+    const message: string = mockError.mock.calls[0][0]
     expect(message).not.toContain('Did you mean')
   })
 
   it('should exit with code 2', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError } as never, makeOpts('foobar') as never)
+    await Reflect.apply(hook, { error: mockError }, [makeOpts('foobar')])
 
-    const [, options] = mockError.mock.calls[0] as [string, { exit: number }]
+    const options: { exit: number } | undefined = mockError.mock.calls[0][1]
     expect(options).toEqual({ exit: 2 })
   })
 })
