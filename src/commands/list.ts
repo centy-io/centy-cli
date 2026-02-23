@@ -33,6 +33,7 @@ export default class List extends Command {
     '<%= config.bin %> list epics --status open',
     '<%= config.bin %> list epics --priority 1',
     '<%= config.bin %> list bugs --json',
+    '<%= config.bin %> list bugs --json --limit 10',
     '<%= config.bin %> list issues --project centy-daemon',
   ]
 
@@ -49,6 +50,15 @@ export default class List extends Command {
     'include-deleted': Flags.boolean({
       description: 'Include soft-deleted items',
       default: false,
+    }),
+    limit: Flags.integer({
+      char: 'l',
+      description: 'Maximum number of items to return (0 = no limit)',
+      default: 0,
+    }),
+    offset: Flags.integer({
+      description: 'Number of items to skip for pagination',
+      default: 0,
     }),
     json: Flags.boolean({
       description: 'Output as JSON',
@@ -77,8 +87,8 @@ export default class List extends Command {
       status: flags.status !== undefined ? flags.status : '',
       priority: flags.priority !== undefined ? flags.priority : 0,
       includeDeleted: flags['include-deleted'],
-      limit: 0,
-      offset: 0,
+      limit: flags.limit ?? 0,
+      offset: flags.offset ?? 0,
     })
 
     if (!response.success) {
