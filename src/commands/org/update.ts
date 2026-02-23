@@ -7,9 +7,10 @@ import { daemonUpdateOrganization } from '../../daemon/daemon-update-organizatio
  * Update an organization
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class UpdateOrg extends Command {
+export default class OrgUpdate extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override aliases = [
+    'update:org',
     'update:organization',
     'edit:org',
     'edit:organization',
@@ -28,10 +29,10 @@ export default class UpdateOrg extends Command {
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
-    '<%= config.bin %> update org my-org --name "New Name"',
-    '<%= config.bin %> update org my-org --description "Updated description"',
-    '<%= config.bin %> update org my-org --new-slug new-slug',
-    '<%= config.bin %> update organization centy-io --name "Centy.io"',
+    '<%= config.bin %> org update my-org --name "New Name"',
+    '<%= config.bin %> org update my-org --description "Updated description"',
+    '<%= config.bin %> org update my-org --new-slug new-slug',
+    '<%= config.bin %> update org centy-io --name "Centy.io"',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -54,7 +55,7 @@ export default class UpdateOrg extends Command {
   }
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(UpdateOrg)
+    const { args, flags } = await this.parse(OrgUpdate)
 
     if (!flags.name && !flags.description && !flags['new-slug']) {
       this.error(

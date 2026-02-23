@@ -13,9 +13,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  * Update a user
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class UpdateUser extends Command {
+export default class UserUpdate extends Command {
   // eslint-disable-next-line no-restricted-syntax
-  static override aliases = ['edit:user']
+  static override aliases = ['update:user', 'edit:user']
 
   // eslint-disable-next-line no-restricted-syntax
   static override args = {
@@ -30,9 +30,9 @@ export default class UpdateUser extends Command {
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
-    '<%= config.bin %> update user john-doe --name "John D."',
-    '<%= config.bin %> update user john-doe --email john.new@example.com',
-    '<%= config.bin %> update user john-doe --git-username johndoe --git-username john-work',
+    '<%= config.bin %> user update john-doe --name "John D."',
+    '<%= config.bin %> user update john-doe --email john.new@example.com',
+    '<%= config.bin %> user update john-doe --git-username johndoe --git-username john-work',
     '<%= config.bin %> update user john-doe --name "John" --project centy-daemon',
   ]
 
@@ -60,7 +60,7 @@ export default class UpdateUser extends Command {
   }
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(UpdateUser)
+    const { args, flags } = await this.parse(UserUpdate)
     const cwd = await resolveProjectPath(flags.project)
 
     try {
