@@ -71,7 +71,8 @@
     },
     "hooks": {
       "prerun": "./dist/hooks/prerun.js",
-      "postrun": "./dist/hooks/postrun.js"
+      "postrun": "./dist/hooks/postrun.js",
+      "command_not_found": "./dist/hooks/command-not-found.js"
     },
     "plugins": [
       "@oclif/plugin-help"
@@ -110,6 +111,7 @@
     "@grpc/proto-loader": "^0.7.13",
     "@oclif/core": "^4.8.0",
     "@oclif/plugin-help": "^6.2.36",
+    "fastest-levenshtein": "^1.0.16",
     "pluralize": "^8.0.0",
     "update-notifier": "^7.3.1",
     "uuid": "^13.0.0"
