@@ -71,7 +71,8 @@
     },
     "hooks": {
       "prerun": "./dist/hooks/prerun.js",
-      "postrun": "./dist/hooks/postrun.js"
+      "postrun": "./dist/hooks/postrun.js",
+      "command_not_found": "./dist/hooks/command-not-found.js"
     },
     "plugins": [
       "@oclif/plugin-help"
