@@ -4,65 +4,133 @@ import {
   runCommandSafely,
 } from '../testing/command-test-utils.js'
 
+const mockDaemonGetItem = vi.fn()
 const mockDaemonGetIssuesByUuid = vi.fn()
-const mockIsValidUuid = vi.fn()
+const mockResolveProjectPath = vi.fn()
+const mockEnsureInitialized = vi.fn()
+
+vi.mock('../daemon/daemon-get-item.js', () => ({
+  daemonGetItem: (...args: unknown[]) => mockDaemonGetItem(...args),
+}))
 
 vi.mock('../daemon/daemon-get-issues-by-uuid.js', () => ({
   daemonGetIssuesByUuid: (...args: unknown[]) =>
     mockDaemonGetIssuesByUuid(...args),
 }))
 
-vi.mock('../utils/is-valid-uuid.js', () => ({
-  isValidUuid: (...args: unknown[]) => mockIsValidUuid(...args),
+vi.mock('../utils/resolve-project-path.js', () => ({
+  resolveProjectPath: (...args: unknown[]) => mockResolveProjectPath(...args),
 }))
 
-function createMockIssue(overrides: Record<string, unknown> = {}) {
+vi.mock('../utils/ensure-initialized.js', () => ({
+  ensureInitialized: (...args: unknown[]) => mockEnsureInitialized(...args),
+  NotInitializedError: class NotInitializedError extends Error {
+    constructor(message = 'Not initialized') {
+      super(message)
+      this.name = 'NotInitializedError'
+    }
+  },
+}))
+
+function createMockGenericItem(overrides: Record<string, unknown> = {}) {
   return {
     id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-    displayNumber: 1,
+    itemType: 'issues',
     title: 'Test Issue',
-    description: 'Test description',
+    body: 'Test description',
     metadata: {
+      displayNumber: 1,
       status: 'open',
       priority: 1,
-      priorityLabel: 'P1',
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-02T00:00:00Z',
+      deletedAt: '',
+      customFields: {},
     },
     ...overrides,
   }
 }
 
-const emptyIssuesResult = { issues: [], totalCount: 0, errors: [] }
-
-describe('Show command', () => {
+describe('Show command (alias for get)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockIsValidUuid.mockReturnValue(true)
-    mockDaemonGetIssuesByUuid.mockResolvedValue(emptyIssuesResult)
+    mockResolveProjectPath.mockResolvedValue('/test/project')
+    mockEnsureInitialized.mockResolvedValue('/test/project/.centy')
   })
 
-  it('should error on invalid UUID', async () => {
+  it('should get issue by display number', async () => {
     const { default: Command } = await import('./show.js')
-    mockIsValidUuid.mockReturnValue(false)
+    const item = createMockGenericItem()
+    mockDaemonGetItem.mockResolvedValue({ success: true, item })
 
     const cmd = createMockCommand(Command, {
-      flags: { json: false },
-      args: { uuid: 'not-a-uuid' },
+      flags: { json: false, global: false },
+      args: { type: 'issue', id: '1' },
     })
 
-    const { error } = await runCommandSafely(cmd)
+    await cmd.run()
 
-    expect(error).toBeDefined()
-    expect(cmd.errors.some(e => e.includes('valid UUID'))).toBe(true)
+    expect(mockDaemonGetItem).toHaveBeenCalledWith({
+      projectPath: '/test/project',
+      itemType: 'issues',
+      itemId: '',
+      displayNumber: 1,
+    })
+    expect(cmd.logs.some(log => log.includes('Issue #1'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('Test Issue'))).toBe(true)
   })
 
-  it('should display single issue match', async () => {
+  it('should get issue by UUID', async () => {
+    const { default: Command } = await import('./show.js')
+    const item = createMockGenericItem()
+    mockDaemonGetItem.mockResolvedValue({ success: true, item })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { type: 'issue', id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+    })
+
+    await cmd.run()
+
+    expect(mockDaemonGetItem).toHaveBeenCalledWith({
+      projectPath: '/test/project',
+      itemType: 'issues',
+      itemId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+    })
+  })
+
+  it('should output JSON when json flag is set', async () => {
+    const { default: Command } = await import('./show.js')
+    const item = createMockGenericItem()
+    mockDaemonGetItem.mockResolvedValue({ success: true, item })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: true, global: false },
+      args: { type: 'issue', id: '1' },
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs[0]).toBe(JSON.stringify(item, null, 2))
+  })
+
+  it('should search globally with --global flag', async () => {
     const { default: Command } = await import('./show.js')
     mockDaemonGetIssuesByUuid.mockResolvedValue({
       issues: [
         {
-          issue: createMockIssue(),
+          issue: {
+            id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+            displayNumber: 1,
+            title: 'Test Issue',
+            metadata: {
+              status: 'open',
+              priority: 1,
+              priorityLabel: 'P1',
+              createdAt: '2024-01-01T00:00:00Z',
+              updatedAt: '2024-01-02T00:00:00Z',
+            },
+          },
           projectName: 'project-a',
           projectPath: '/path/to/project-a',
         },
@@ -72,8 +140,8 @@ describe('Show command', () => {
     })
 
     const cmd = createMockCommand(Command, {
-      flags: { json: false },
-      args: { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+      flags: { json: false, global: true },
+      args: { type: 'issue', id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
     })
 
     await cmd.run()
@@ -81,133 +149,32 @@ describe('Show command', () => {
     expect(mockDaemonGetIssuesByUuid).toHaveBeenCalledWith({
       uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
     })
-    expect(cmd.logs.some(log => log.includes('Issue #1'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('Test Issue'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('--- Project: project-a'))).toBe(
-      true
-    )
+    expect(cmd.logs.some(log => log.includes('Found 1 issue(s)'))).toBe(true)
   })
 
-  it('should show no results message when nothing found', async () => {
+  it('should handle daemon get item failure', async () => {
     const { default: Command } = await import('./show.js')
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: false },
-      args: { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
-    })
-
-    await cmd.run()
-
-    expect(cmd.logs.some(log => log.includes('No entities found'))).toBe(true)
-  })
-
-  it('should output JSON for single issue match', async () => {
-    const { default: Command } = await import('./show.js')
-    const issueData = {
-      issue: createMockIssue(),
-      projectName: 'project-a',
-      projectPath: '/path/to/project-a',
-    }
-    mockDaemonGetIssuesByUuid.mockResolvedValue({
-      issues: [issueData],
-      totalCount: 1,
-      errors: [],
+    mockDaemonGetItem.mockResolvedValue({
+      success: false,
+      error: 'Issue not found',
     })
 
     const cmd = createMockCommand(Command, {
-      flags: { json: true },
-      args: { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+      flags: { json: false, global: false },
+      args: { type: 'issue', id: '999' },
     })
 
-    await cmd.run()
+    const { error } = await runCommandSafely(cmd)
 
-    const output = JSON.parse(cmd.logs[0])
-    expect(output.issues).toHaveLength(1)
-    expect(output.errors).toHaveLength(0)
+    expect(error).toBeDefined()
+    expect(cmd.errors).toContain('Issue not found')
   })
 
-  it('should output JSON when no results found', async () => {
-    const { default: Command } = await import('./show.js')
+  it('should be an alias with the same args and flags as get', async () => {
+    const { default: Show } = await import('./show.js')
+    const { default: Get } = await import('./get.js')
 
-    const cmd = createMockCommand(Command, {
-      flags: { json: true },
-      args: { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
-    })
-
-    await cmd.run()
-
-    const output = JSON.parse(cmd.logs[0])
-    expect(output.issues).toHaveLength(0)
-  })
-
-  it('should show errors from search', async () => {
-    const { default: Command } = await import('./show.js')
-    mockDaemonGetIssuesByUuid.mockResolvedValue({
-      issues: [],
-      totalCount: 0,
-      errors: ['Failed to search project-x'],
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: false },
-      args: { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
-    })
-
-    await cmd.run()
-
-    expect(cmd.warnings.some(w => w.includes('Some projects could not'))).toBe(
-      true
-    )
-  })
-
-  it('should show errors alongside results', async () => {
-    const { default: Command } = await import('./show.js')
-    mockDaemonGetIssuesByUuid.mockResolvedValue({
-      issues: [
-        {
-          issue: createMockIssue(),
-          projectName: 'project-a',
-          projectPath: '/path/to/project-a',
-        },
-      ],
-      totalCount: 1,
-      errors: ['Failed to search project-x'],
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: false },
-      args: { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
-    })
-
-    await cmd.run()
-
-    expect(cmd.logs.some(log => log.includes('Issue #1'))).toBe(true)
-    expect(cmd.warnings.some(w => w.includes('Some projects could not'))).toBe(
-      true
-    )
-  })
-
-  it('should display issue description', async () => {
-    const { default: Command } = await import('./show.js')
-    mockDaemonGetIssuesByUuid.mockResolvedValue({
-      issues: [
-        {
-          issue: createMockIssue({ description: 'A detailed description' }),
-          projectName: 'project-a',
-          projectPath: '/path/to/project-a',
-        },
-      ],
-      totalCount: 1,
-      errors: [],
-    })
-
-    const cmd = createMockCommand(Command, {
-      flags: { json: false },
-      args: { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
-    })
-
-    await cmd.run()
-
-    expect(cmd.logs.some(log => log.includes('Description:'))).toBe(true)
+    expect(Show.args).toEqual(Get.args)
+    expect(Object.keys(Show.flags)).toEqual(Object.keys(Get.flags))
   })
 })
