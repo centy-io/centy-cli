@@ -6,8 +6,6 @@ import type {
   ExecuteReconciliationRequest,
   IsInitializedRequest,
   IsInitializedResponse,
-  CreateIssueRequest,
-  CreateIssueResponse,
   GetIssueRequest,
   GetIssueByDisplayNumberRequest,
   GetIssuesByUuidRequest,
@@ -41,7 +39,6 @@ export interface CentyDaemonInitClient {
   >
   executeReconciliation: GrpcMethod<ExecuteReconciliationRequest, InitResponse>
   isInitialized: GrpcMethod<IsInitializedRequest, IsInitializedResponse>
-  createIssue: GrpcMethod<CreateIssueRequest, CreateIssueResponse>
   getIssue: GrpcMethod<GetIssueRequest, GetIssueResponse>
   getIssueByDisplayNumber: GrpcMethod<
     GetIssueByDisplayNumberRequest,
