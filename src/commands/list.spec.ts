@@ -190,4 +190,66 @@ describe('List command', () => {
       expect(Array.isArray(output)).toBe(true)
     })
   })
+
+  describe('pagination flags', () => {
+    it('should pass limit flag to daemon', async () => {
+      const { default: Command } = await import('./list.js')
+      mockDaemonListItems.mockResolvedValue({
+        success: true,
+        items: [],
+        totalCount: 0,
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { limit: 10 },
+        args: { type: 'issue' },
+      })
+
+      await cmd.run()
+
+      expect(mockDaemonListItems).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 10 })
+      )
+    })
+
+    it('should pass offset flag to daemon', async () => {
+      const { default: Command } = await import('./list.js')
+      mockDaemonListItems.mockResolvedValue({
+        success: true,
+        items: [],
+        totalCount: 0,
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { offset: 20 },
+        args: { type: 'issue' },
+      })
+
+      await cmd.run()
+
+      expect(mockDaemonListItems).toHaveBeenCalledWith(
+        expect.objectContaining({ offset: 20 })
+      )
+    })
+
+    it('should default limit and offset to 0', async () => {
+      const { default: Command } = await import('./list.js')
+      mockDaemonListItems.mockResolvedValue({
+        success: true,
+        items: [],
+        totalCount: 0,
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: {},
+        args: { type: 'issue' },
+      })
+
+      await cmd.run()
+
+      expect(mockDaemonListItems).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 0, offset: 0 })
+      )
+    })
+  })
 })
