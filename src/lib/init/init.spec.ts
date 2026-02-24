@@ -9,7 +9,10 @@ vi.mock('../../utils/is-git-repo.js', () => ({
 
 const { buildConfigFromOptions, init } = await import('./init.js')
 
-function createOutputCollector(): { stream: Writable; getOutput: () => string } {
+function createOutputCollector(): {
+  stream: Writable
+  getOutput: () => string
+} {
   let captured = ''
   const stream = new Writable({
     write(chunk, _encoding, callback) {
