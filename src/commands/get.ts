@@ -4,9 +4,9 @@ import { Args, Command, Flags } from '@oclif/core'
 import pluralize from 'pluralize'
 import { daemonGetItem } from '../daemon/daemon-get-item.js'
 import { projectFlag } from '../flags/project-flag.js'
-import { handleIssueNotInitialized } from '../lib/get-issue/handle-not-initialized.js'
 import { formatGenericItem } from '../lib/get-item/format-generic-item.js'
 import { handleGlobalGet } from '../lib/get-item/handle-global-get.js'
+import { parseDisplayNumber } from '../lib/resolve-item-id/resolve-item-id.js'
 import {
   ensureInitialized,
   NotInitializedError,
@@ -81,26 +81,12 @@ export default class Get extends Command {
       await ensureInitialized(cwd)
     } catch (error) {
       if (error instanceof NotInitializedError) {
-        if (itemType === 'issues') {
-          const result = await handleIssueNotInitialized(
-            error,
-            args.id,
-            flags.json
-          )
-          if (result !== null) {
-            if (result.jsonOutput !== undefined) {
-              this.log(JSON.stringify(result.jsonOutput, null, 2))
-              return
-            }
-            this.error(result.message)
-          }
-        }
         this.error(error.message)
       }
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    const displayNumber = /^\d+$/.test(args.id) ? Number(args.id) : undefined
+    const displayNumber = parseDisplayNumber(args.id)
     const response = await daemonGetItem({
       projectPath: cwd,
       itemType,
