@@ -13,7 +13,9 @@ describe('getDaemonSearchPaths', () => {
 
   it('should include user install path for centy-daemon', () => {
     const result = getDaemonSearchPaths()
-    expect(result.some(p => p.includes('.centy') && p.includes('centy-daemon'))).toBe(true)
+    expect(
+      result.some(p => p.includes('.centy') && p.includes('centy-daemon'))
+    ).toBe(true)
   })
 
   it('should include PATH fallback as last entry', () => {

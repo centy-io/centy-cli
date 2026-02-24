@@ -96,9 +96,7 @@ export default class Start extends Command {
 
   private debugSearchedPaths(): void {
     const paths = getDaemonSearchPaths()
-    this.debug(
-      `Searched paths:\n${paths.map(p => `  - ${p}`).join('\n')}`
-    )
+    this.debug(`Searched paths:\n${paths.map(p => `  - ${p}`).join('\n')}`)
   }
 
   private handleSpawnError(error: Error, daemonPath: string): void {

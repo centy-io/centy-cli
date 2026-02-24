@@ -3,6 +3,11 @@ import { Writable } from 'node:stream'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import type { ReconciliationPlan, InitResponse } from './daemon/types.js'
 
+// Mock isGitRepo to return true for test paths
+vi.mock('./utils/is-git-repo.js', () => ({
+  isGitRepo: vi.fn().mockReturnValue(true),
+}))
+
 // Mock daemon client
 const mockGetReconciliationPlan = vi.fn()
 const mockExecuteReconciliation = vi.fn()
