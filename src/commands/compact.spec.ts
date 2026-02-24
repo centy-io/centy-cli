@@ -5,6 +5,7 @@ import {
 } from '../testing/command-test-utils.js'
 
 const mockEnsureInitialized = vi.fn()
+const mockResolveProjectPath = vi.fn()
 const mockDaemonListUncompactedIssues = vi.fn()
 const mockDaemonGetInstruction = vi.fn()
 const mockDaemonGetCompact = vi.fn()
@@ -22,6 +23,10 @@ vi.mock('../utils/ensure-initialized.js', () => ({
       this.name = 'NotInitializedError'
     }
   },
+}))
+
+vi.mock('../utils/resolve-project-path.js', () => ({
+  resolveProjectPath: (...args: unknown[]) => mockResolveProjectPath(...args),
 }))
 
 vi.mock('../daemon/daemon-list-uncompacted-issues.js', () => ({
@@ -59,6 +64,7 @@ vi.mock('node:fs/promises', () => ({
 describe('Compact command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockResolveProjectPath.mockResolvedValue('/test/project')
     mockEnsureInitialized.mockResolvedValue('/test/project/.centy')
   })
 
@@ -484,5 +490,25 @@ id: c3d4e5f6-a7b8-9012-cdef-123456789012
 
     expect(error).toBeDefined()
     expect(error).toHaveProperty('message', 'Unknown error')
+  })
+
+  it('should use project flag to resolve path', async () => {
+    const { default: Command } = await import('./compact.js')
+    mockResolveProjectPath.mockResolvedValue('/other/project')
+    mockDaemonListUncompactedIssues.mockResolvedValue({
+      issues: [],
+      totalCount: 0,
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { project: 'other-project' },
+    })
+
+    await cmd.run()
+
+    expect(mockResolveProjectPath).toHaveBeenCalledWith('other-project')
+    expect(mockDaemonListUncompactedIssues).toHaveBeenCalledWith({
+      projectPath: '/other/project',
+    })
   })
 })

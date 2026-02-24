@@ -2,10 +2,12 @@
 import { Command, Flags } from '@oclif/core'
 
 import { daemonGetConfig } from '../daemon/daemon-get-config.js'
+import { projectFlag } from '../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../utils/resolve-project-path.js'
 
 /**
  * Get the project configuration
@@ -19,6 +21,7 @@ export default class Config extends Command {
   static override examples = [
     '<%= config.bin %> config',
     '<%= config.bin %> config --json',
+    '<%= config.bin %> config --project centy-daemon',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -27,12 +30,12 @@ export default class Config extends Command {
       description: 'Output as JSON',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Config)
-    // eslint-disable-next-line no-restricted-syntax
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

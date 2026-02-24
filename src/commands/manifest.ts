@@ -2,10 +2,12 @@
 import { Command, Flags } from '@oclif/core'
 
 import { daemonGetManifest } from '../daemon/daemon-get-manifest.js'
+import { projectFlag } from '../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../utils/resolve-project-path.js'
 
 /**
  * Get the project manifest
@@ -19,6 +21,7 @@ export default class Manifest extends Command {
   static override examples = [
     '<%= config.bin %> manifest',
     '<%= config.bin %> manifest --json',
+    '<%= config.bin %> manifest --project centy-daemon',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -27,12 +30,12 @@ export default class Manifest extends Command {
       description: 'Output as JSON',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Manifest)
-    // eslint-disable-next-line no-restricted-syntax
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)

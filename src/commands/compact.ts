@@ -5,6 +5,7 @@ import { writeFile } from 'node:fs/promises'
 import { Command, Flags } from '@oclif/core'
 
 import { daemonListUncompactedIssues } from '../daemon/daemon-list-uncompacted-issues.js'
+import { projectFlag } from '../flags/project-flag.js'
 import { applyLlmResponseFromFile } from '../lib/compact/apply-llm-response.js'
 import { formatDryRun } from '../lib/compact/format-dry-run.js'
 import { generateLlmContext } from '../lib/compact/generate-llm-context.js'
@@ -12,6 +13,7 @@ import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../utils/resolve-project-path.js'
 
 /**
  * Compact uncompacted issues into features
@@ -27,7 +29,7 @@ export default class Compact extends Command {
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> --dry-run',
     '<%= config.bin %> <%= command.id %> --output context.md',
-    '<%= config.bin %> <%= command.id %> --input response.md',
+    '<%= config.bin %> <%= command.id %> --input response.md --project centy-daemon',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -49,12 +51,12 @@ export default class Compact extends Command {
       description: 'Output as JSON (for --dry-run)',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Compact)
-    // eslint-disable-next-line no-restricted-syntax
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)
