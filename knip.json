@@ -12,7 +12,9 @@
     "**/*.test.ts",
     "dist/**",
     "coverage/**",
-    "src/daemon/**"
+    "src/daemon/**",
+    "src/e2e/**",
+    "src/testing/**"
   ],
   "ignoreDependencies": ["tsx", "@cspell/dict-he", "@types/uuid", "ts-proto"],
   "ignoreExportsUsedInFile": true,
