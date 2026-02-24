@@ -180,5 +180,30 @@ describe('command_not_found hook', () => {
 
       expect(mockRunCommand).toHaveBeenCalledWith('get', ['bug', '5'])
     })
+
+    it('should route "centy <type> <uuid>" to get command', async () => {
+      const uuid = '951d7832-e170-4ca6-a8e6-24f20e815739'
+      await Reflect.apply(
+        hook,
+        { error: mockError, config: { runCommand: mockRunCommand } },
+        [makeOpts('issue', [], ['issue', uuid])]
+      )
+
+      expect(mockRunCommand).toHaveBeenCalledWith('get', ['issue', uuid])
+      expect(mockError).not.toHaveBeenCalled()
+    })
+
+    it('should route any item type with uuid generically', async () => {
+      const uuid = '951d7832-e170-4ca6-a8e6-24f20e815739'
+      for (const type of ['bug', 'epic', 'doc', 'task']) {
+        mockRunCommand.mockClear()
+        await Reflect.apply(
+          hook,
+          { error: mockError, config: { runCommand: mockRunCommand } },
+          [makeOpts(type, [], [type, uuid])]
+        )
+        expect(mockRunCommand).toHaveBeenCalledWith('get', [type, uuid])
+      }
+    })
   })
 })
