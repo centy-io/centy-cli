@@ -3,6 +3,7 @@ import { checkDaemonConnection } from '../daemon/check-daemon-connection.js'
 import { getInstallScriptUrl } from '../lib/install-script-url.js'
 import { daemonBinaryExists } from '../lib/start/daemon-binary-exists.js'
 import { findDaemonBinary } from '../lib/start/find-daemon-binary.js'
+import { getDaemonSearchPaths } from '../lib/start/get-daemon-search-paths.js'
 import { handleMissingDaemon } from '../lib/start/handle-missing-daemon.js'
 import { startBackground } from '../lib/start/start-background.js'
 import { startForeground } from '../lib/start/start-foreground.js'
@@ -63,6 +64,7 @@ export default class Start extends Command {
         this.error('Failed to install daemon')
       }
       if (!installed) {
+        this.debugSearchedPaths()
         this.error(getMissingDaemonMsg(daemonPath))
       }
       daemonPath = findDaemonBinary()
@@ -92,10 +94,18 @@ export default class Start extends Command {
     }
   }
 
+  private debugSearchedPaths(): void {
+    const paths = getDaemonSearchPaths()
+    this.debug(
+      `Searched paths:\n${paths.map(p => `  - ${p}`).join('\n')}`
+    )
+  }
+
   private handleSpawnError(error: Error, daemonPath: string): void {
     // eslint-disable-next-line no-restricted-syntax
     const errno = (error as NodeJS.ErrnoException).code
     if (errno === 'ENOENT') {
+      this.debugSearchedPaths()
       this.error(getMissingDaemonMsg(daemonPath))
     } else if (errno === 'EACCES') {
       this.error(getPermissionDeniedMsg(daemonPath))

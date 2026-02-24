@@ -14,7 +14,7 @@ describe('findDaemonBinary', () => {
     expect(result).toBeTruthy()
   })
 
-  it('should respect CENTY_DAEMON_PATH environment variable', () => {
+  it('should respect CENTY_DAEMON_PATH environment variable when file does not exist', () => {
     // eslint-disable-next-line no-restricted-syntax
     const originalEnv = process.env['CENTY_DAEMON_PATH']
 
