@@ -8,6 +8,7 @@ import {
 import { join } from 'node:path'
 import { homedir } from 'node:os'
 import { execSync } from 'node:child_process'
+import plist from 'plist'
 import { SERVICE_COMMAND_TIMEOUT_MS } from '../../utils/process-timeout-config.js'
 
 const LAUNCHD_LABEL = 'io.centy.daemon'
@@ -17,41 +18,24 @@ const LAUNCHCTL_UNLOAD_OPTS = {
   timeout: SERVICE_COMMAND_TIMEOUT_MS,
 }
 
-function getLaunchAgentsDir(): string {
-  return join(homedir(), 'Library', 'LaunchAgents')
-}
-
 function getPlistPath(): string {
-  return join(getLaunchAgentsDir(), PLIST_FILENAME)
+  return join(homedir(), 'Library', 'LaunchAgents', PLIST_FILENAME)
 }
 
 function generatePlist(daemonPath: string): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>${LAUNCHD_LABEL}</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>${daemonPath}</string>
-    </array>
-    <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
-    <false/>
-    <key>StandardOutPath</key>
-    <string>${join(homedir(), '.centy', 'logs', 'daemon.stdout.log')}</string>
-    <key>StandardErrorPath</key>
-    <string>${join(homedir(), '.centy', 'logs', 'daemon.stderr.log')}</string>
-</dict>
-</plist>
-`
+  return plist.build({
+    Label: LAUNCHD_LABEL,
+    ProgramArguments: [daemonPath],
+    RunAtLoad: true,
+    KeepAlive: false,
+    StandardOutPath: join(homedir(), '.centy', 'logs', 'daemon.stdout.log'),
+    StandardErrorPath: join(homedir(), '.centy', 'logs', 'daemon.stderr.log'),
+  })
 }
 
 function enableAutostart(daemonPath: string): void {
   const plistPath = getPlistPath()
-  const launchAgentsDir = getLaunchAgentsDir()
+  const launchAgentsDir = join(homedir(), 'Library', 'LaunchAgents')
 
   // eslint-disable-next-line security/detect-non-literal-fs-filename
   if (!existsSync(launchAgentsDir)) {
@@ -112,10 +96,24 @@ function getAutostartStatus(): { enabled: boolean; daemonPath?: string } {
   try {
     // eslint-disable-next-line security/detect-non-literal-fs-filename
     const content = readFileSync(plistPath, 'utf-8')
-    const match = content.match(
-      /<array>\s*<string>([^<]+)<\/string>\s*<\/array>/
-    )
-    const daemonPath = match ? match[1] : undefined
+    const parsed = plist.parse(content)
+    let daemonPath: string | undefined
+    if (
+      parsed !== null &&
+      typeof parsed === 'object' &&
+      !Array.isArray(parsed) &&
+      !Buffer.isBuffer(parsed) &&
+      !(parsed instanceof Date) &&
+      'ProgramArguments' in parsed
+    ) {
+      const programArgs = parsed['ProgramArguments']
+      if (Array.isArray(programArgs) && programArgs.length > 0) {
+        const firstArg = programArgs[0]
+        if (typeof firstArg === 'string') {
+          daemonPath = firstArg
+        }
+      }
+    }
     return { enabled: true, daemonPath }
   } catch {
     return { enabled: true }

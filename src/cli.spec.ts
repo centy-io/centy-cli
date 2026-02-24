@@ -22,6 +22,10 @@ vi.mock('./daemon/daemon-execute-reconciliation.js', () => ({
     mockExecuteReconciliation(...args),
 }))
 
+vi.mock('./utils/is-git-repo.js', () => ({
+  isGitRepo: () => true,
+}))
+
 const { init } = await import('./lib/init/index.js')
 
 /**
