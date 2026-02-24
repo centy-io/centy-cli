@@ -481,7 +481,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
       it('should handle invalid command gracefully', async () => {
         const pathWithoutBun = createPathWithoutBun()
 
-        const result = await runWrapper(RUN_JS, ['invalid-command-xyz'], {
+        const result = await runWrapper(RUN_JS, ['InvalidCommandXYZ'], {
           ...process.env,
           PATH: pathWithoutBun,
         })
