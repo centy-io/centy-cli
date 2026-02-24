@@ -19,6 +19,10 @@ vi.mock('../lib/start/find-daemon-binary.js', () => ({
   findDaemonBinary: () => mockFindDaemonBinary(),
 }))
 
+vi.mock('../lib/start/get-daemon-search-paths.js', () => ({
+  getDaemonSearchPaths: () => [],
+}))
+
 vi.mock('../lib/start/daemon-binary-exists.js', () => ({
   daemonBinaryExists: (path: string) => mockDaemonBinaryExists(path),
 }))
