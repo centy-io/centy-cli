@@ -190,4 +190,39 @@ describe('Issue command (shorthand for get issue)', () => {
     expect(error).toBeDefined()
     expect(cmd.errors).toContain('Issue not found')
   })
+
+  it('should error when project is not initialized', async () => {
+    const { default: Command, default: IssueCommand } =
+      await import('./issue.js')
+    const { NotInitializedError } =
+      await import('../utils/ensure-initialized.js')
+    mockEnsureInitialized.mockRejectedValue(
+      new NotInitializedError('Not initialized')
+    )
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { id: '1' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(IssueCommand).toBeDefined()
+  })
+
+  it('should rethrow non-NotInitializedError from ensureInitialized', async () => {
+    const { default: Command } = await import('./issue.js')
+    mockEnsureInitialized.mockRejectedValue(new Error('Unexpected error'))
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { id: '1' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(error && error.message).toContain('Unexpected error')
+  })
 })

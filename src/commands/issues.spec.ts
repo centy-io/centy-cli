@@ -210,4 +210,76 @@ describe('Issues command (shorthand for list issues)', () => {
     expect(error).toBeDefined()
     expect(cmd.errors).toContain('Failed to list issues')
   })
+
+  it('should error when project is not initialized', async () => {
+    const { default: Command } = await import('./issues.js')
+    const { NotInitializedError } =
+      await import('../utils/ensure-initialized.js')
+    mockEnsureInitialized.mockRejectedValue(
+      new NotInitializedError('Not initialized')
+    )
+
+    const cmd = createMockCommand(Command, {
+      flags: {
+        json: false,
+        status: undefined,
+        priority: undefined,
+        'include-deleted': false,
+        limit: 0,
+        offset: 0,
+      },
+      args: {},
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+  })
+
+  it('should rethrow non-NotInitializedError from ensureInitialized', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockEnsureInitialized.mockRejectedValue(new Error('Unexpected error'))
+
+    const cmd = createMockCommand(Command, {
+      flags: {
+        json: false,
+        status: undefined,
+        priority: undefined,
+        'include-deleted': false,
+        limit: 0,
+        offset: 0,
+      },
+      args: {},
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(error && error.message).toContain('Unexpected error')
+  })
+
+  it('should handle items without metadata', async () => {
+    const { default: Command } = await import('./issues.js')
+    mockDaemonListItems.mockResolvedValue({
+      success: true,
+      totalCount: 1,
+      items: [{ id: 'item-1', title: 'No Metadata Issue' }],
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: {
+        json: false,
+        status: undefined,
+        priority: undefined,
+        'include-deleted': false,
+        limit: 0,
+        offset: 0,
+      },
+      args: {},
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs.some(log => log.includes('No Metadata Issue'))).toBe(true)
+  })
 })
