@@ -486,8 +486,8 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
           PATH: pathWithoutBun,
         })
 
-        // oclif returns exit code 1 for unknown commands
-        expect(result.exitCode).toBe(1)
+        // command-not-found hook exits with code 2 for unrecognized commands
+        expect(result.exitCode).toBe(2)
       })
 
       it('should preserve non-zero exit codes from commands', async () => {
