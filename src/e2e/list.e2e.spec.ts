@@ -134,14 +134,12 @@ describe('list command (e2e)', () => {
   describe('filtering', () => {
     it('should pass status filter to daemon', async () => {
       let capturedRequest: Record<string, unknown> = {}
-      server.setHandler('listItems', (req: unknown) => {
-        capturedRequest = req as Record<string, unknown>
+      server.setHandler('listItems', (req: Record<string, unknown>) => {
+        capturedRequest = req
         return {
           success: true,
           error: '',
-          items: MOCK_ITEMS.filter(
-            i => i.metadata.status === 'open'
-          ),
+          items: MOCK_ITEMS.filter(i => i.metadata.status === 'open'),
           totalCount: 2,
         }
       })

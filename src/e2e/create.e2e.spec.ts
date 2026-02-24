@@ -61,12 +61,7 @@ describe('create command (e2e)', () => {
 
   describe('creating an issue', () => {
     it('should create issue and display success message', async () => {
-      const result = await run([
-        'create',
-        'issue',
-        '--title',
-        'New Issue',
-      ])
+      const result = await run(['create', 'issue', '--title', 'New Issue'])
 
       expect(result.exitCode).toBe(0)
       expect(result.stdout).toContain('Created issue')
@@ -75,8 +70,8 @@ describe('create command (e2e)', () => {
 
     it('should create issue with body flag', async () => {
       let capturedRequest: Record<string, unknown> = {}
-      server.setHandler('createItem', (req: unknown) => {
-        capturedRequest = req as Record<string, unknown>
+      server.setHandler('createItem', (req: Record<string, unknown>) => {
+        capturedRequest = req
         return defaultHandlers['createItem']!(req)
       })
 
@@ -87,27 +82,20 @@ describe('create command (e2e)', () => {
 
     it('should create issue with priority flag', async () => {
       let capturedRequest: Record<string, unknown> = {}
-      server.setHandler('createItem', (req: unknown) => {
-        capturedRequest = req as Record<string, unknown>
+      server.setHandler('createItem', (req: Record<string, unknown>) => {
+        capturedRequest = req
         return defaultHandlers['createItem']!(req)
       })
 
-      await run([
-        'create',
-        'issue',
-        '--title',
-        'Urgent',
-        '--priority',
-        '1',
-      ])
+      await run(['create', 'issue', '--title', 'Urgent', '--priority', '1'])
 
       expect(capturedRequest['priority']).toBe(1)
     })
 
     it('should create issue with status flag', async () => {
       let capturedRequest: Record<string, unknown> = {}
-      server.setHandler('createItem', (req: unknown) => {
-        capturedRequest = req as Record<string, unknown>
+      server.setHandler('createItem', (req: Record<string, unknown>) => {
+        capturedRequest = req
         return defaultHandlers['createItem']!(req)
       })
 

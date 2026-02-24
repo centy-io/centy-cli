@@ -88,8 +88,8 @@ describe('close command (e2e)', () => {
 
     it('should call updateItem with status=closed', async () => {
       let capturedUpdateRequest: Record<string, unknown> = {}
-      server.setHandler('updateItem', (req: unknown) => {
-        capturedUpdateRequest = req as Record<string, unknown>
+      server.setHandler('updateItem', (req: Record<string, unknown>) => {
+        capturedUpdateRequest = req
         return defaultHandlers['updateItem']!(req)
       })
 
