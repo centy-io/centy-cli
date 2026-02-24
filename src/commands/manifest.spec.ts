@@ -6,6 +6,7 @@ import {
 
 const mockDaemonGetManifest = vi.fn()
 const mockEnsureInitialized = vi.fn()
+const mockResolveProjectPath = vi.fn()
 
 vi.mock('../daemon/daemon-get-manifest.js', () => ({
   daemonGetManifest: (...args: unknown[]) => mockDaemonGetManifest(...args),
@@ -21,9 +22,14 @@ vi.mock('../utils/ensure-initialized.js', () => ({
   },
 }))
 
+vi.mock('../utils/resolve-project-path.js', () => ({
+  resolveProjectPath: (...args: unknown[]) => mockResolveProjectPath(...args),
+}))
+
 describe('Manifest command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockResolveProjectPath.mockResolvedValue('/test/project')
     mockEnsureInitialized.mockResolvedValue(undefined)
   })
 
@@ -117,5 +123,28 @@ describe('Manifest command', () => {
 
     expect(error).toBeDefined()
     expect(error).toHaveProperty('message', 'Unknown error')
+  })
+
+  it('should use project flag to resolve path', async () => {
+    const { default: Command } = await import('./manifest.js')
+    mockResolveProjectPath.mockResolvedValue('/other/project')
+    mockDaemonGetManifest.mockResolvedValue({
+      schemaVersion: '1.0',
+      centyVersion: '0.5.0',
+      createdAt: '2024-01-01',
+      updatedAt: '2024-01-15',
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, project: 'other-project' },
+      args: {},
+    })
+
+    await cmd.run()
+
+    expect(mockResolveProjectPath).toHaveBeenCalledWith('other-project')
+    expect(mockDaemonGetManifest).toHaveBeenCalledWith({
+      projectPath: '/other/project',
+    })
   })
 })

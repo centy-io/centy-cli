@@ -6,6 +6,7 @@ import {
 
 const mockDaemonGetConfig = vi.fn()
 const mockEnsureInitialized = vi.fn()
+const mockResolveProjectPath = vi.fn()
 
 vi.mock('../daemon/daemon-get-config.js', () => ({
   daemonGetConfig: (...args: unknown[]) => mockDaemonGetConfig(...args),
@@ -21,9 +22,14 @@ vi.mock('../utils/ensure-initialized.js', () => ({
   },
 }))
 
+vi.mock('../utils/resolve-project-path.js', () => ({
+  resolveProjectPath: (...args: unknown[]) => mockResolveProjectPath(...args),
+}))
+
 describe('Config command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockResolveProjectPath.mockResolvedValue('/test/project')
     mockEnsureInitialized.mockResolvedValue('/test/project/.centy')
   })
 
@@ -131,5 +137,22 @@ describe('Config command', () => {
 
     expect(error).toBeDefined()
     expect(cmd.errors).toContain('Project not initialized')
+  })
+
+  it('should use project flag to resolve path', async () => {
+    const { default: Command } = await import('./config.js')
+    mockResolveProjectPath.mockResolvedValue('/other/project')
+    mockDaemonGetConfig.mockResolvedValue({ defaults: {}, customFields: [] })
+
+    const cmd = createMockCommand(Command, {
+      flags: { project: 'other-project' },
+    })
+
+    await cmd.run()
+
+    expect(mockResolveProjectPath).toHaveBeenCalledWith('other-project')
+    expect(mockDaemonGetConfig).toHaveBeenCalledWith({
+      projectPath: '/other/project',
+    })
   })
 })
