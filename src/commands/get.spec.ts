@@ -6,6 +6,7 @@ import {
 
 const mockDaemonGetItem = vi.fn()
 const mockDaemonGetIssuesByUuid = vi.fn()
+const mockHandleIssueNotInitialized = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
@@ -38,6 +39,11 @@ vi.mock('../utils/cross-project-search.js', () => ({
   ),
 }))
 
+vi.mock('../lib/get-issue/handle-not-initialized.js', () => ({
+  handleIssueNotInitialized: (...args: unknown[]) =>
+    mockHandleIssueNotInitialized(...args),
+}))
+
 function createMockGenericItem(overrides: Record<string, unknown> = {}) {
   return {
     id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -62,6 +68,7 @@ describe('Get command', () => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
     mockEnsureInitialized.mockResolvedValue('/test/project/.centy')
+    mockHandleIssueNotInitialized.mockResolvedValue(null)
   })
 
   it('should get issue by display number', async () => {
@@ -289,13 +296,17 @@ describe('Get command', () => {
     expect(cmd.errors.some(e => e.includes('requires a valid UUID'))).toBe(true)
   })
 
-  it('should handle NotInitializedError', async () => {
+  it('should handle NotInitializedError for issue with global hint', async () => {
     const { default: Command } = await import('./get.js')
     const { NotInitializedError } =
       await import('../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
       new NotInitializedError('Project not initialized')
     )
+    mockHandleIssueNotInitialized.mockResolvedValue({
+      message:
+        'Project not initialized\n\nTip: Use --global (-g) flag to search across all tracked projects.',
+    })
 
     const cmd = createMockCommand(Command, {
       flags: { json: false, global: false },
@@ -305,6 +316,80 @@ describe('Get command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
+    expect(
+      cmd.errors.some(e => e.includes('Project not initialized'))
+    ).toBe(true)
+    expect(cmd.errors.some(e => e.includes('--global'))).toBe(true)
+  })
+
+  it('should show cross-project hint when issue found in other projects', async () => {
+    const { default: Command } = await import('./get.js')
+    const { NotInitializedError } =
+      await import('../utils/ensure-initialized.js')
+    mockEnsureInitialized.mockRejectedValue(
+      new NotInitializedError('Project not initialized')
+    )
+    mockHandleIssueNotInitialized.mockResolvedValue({
+      message:
+        'Issue not found in current project.\n\nFound in:\n  - project-a (/path/to/a)\n\nRun: centy get issue abc123 --global',
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { type: 'issue', id: 'abc123' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(
+      cmd.errors.some(e => e.includes('Found in:'))
+    ).toBe(true)
+    expect(
+      cmd.errors.some(e => e.includes('--global'))
+    ).toBe(true)
+  })
+
+  it('should output JSON cross-project result when issue found elsewhere in json mode', async () => {
+    const { default: Command } = await import('./get.js')
+    const { NotInitializedError } =
+      await import('../utils/ensure-initialized.js')
+    mockEnsureInitialized.mockRejectedValue(
+      new NotInitializedError('Project not initialized')
+    )
+    const jsonOutput = { foundIn: [{ projectName: 'project-a' }] }
+    mockHandleIssueNotInitialized.mockResolvedValue({
+      message: '',
+      jsonOutput,
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: true, global: false },
+      args: { type: 'issue', id: 'abc123' },
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs[0]).toBe(JSON.stringify(jsonOutput, null, 2))
+  })
+
+  it('should show original error for non-issue types when not initialized', async () => {
+    const { default: Command } = await import('./get.js')
+    const { NotInitializedError } =
+      await import('../utils/ensure-initialized.js')
+    mockEnsureInitialized.mockRejectedValue(
+      new NotInitializedError('Project not initialized')
+    )
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, global: false },
+      args: { type: 'doc', id: 'getting-started' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(mockHandleIssueNotInitialized).not.toHaveBeenCalled()
     expect(cmd.errors).toContain('Project not initialized')
   })
 
