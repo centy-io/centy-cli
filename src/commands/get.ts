@@ -41,6 +41,7 @@ export default class Get extends Command {
     '<%= config.bin %> get user john-doe',
     '<%= config.bin %> get epic 1',
     '<%= config.bin %> get bug abc123-uuid --json',
+    '<%= config.bin %> get issue 42 --global',
     '<%= config.bin %> get issue abc123-uuid --global',
     '<%= config.bin %> get issue 1 --project centy-daemon',
   ]
@@ -53,7 +54,7 @@ export default class Get extends Command {
     }),
     global: Flags.boolean({
       char: 'g',
-      description: 'Search across all tracked projects (UUID only)',
+      description: 'Search across all tracked projects',
       default: false,
     }),
     project: projectFlag,
