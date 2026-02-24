@@ -22,6 +22,7 @@ export default defineConfig({
         'src/flags/**',
         'src/lib/create-pr/**',
         'src/types/**',
+        'src/testing/**',
         'src/index.ts',
       ],
       thresholds: {
