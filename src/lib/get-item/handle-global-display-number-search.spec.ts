@@ -27,9 +27,7 @@ describe('handleGlobalDisplayNumberSearch', () => {
 
     handleGlobalDisplayNumberSearch({ items: [], errors: [] }, 42, log, warn)
 
-    expect(log).toHaveBeenCalledWith(
-      'No issues found with display number: #42'
-    )
+    expect(log).toHaveBeenCalledWith('No issues found with display number: #42')
   })
 
   it('should warn about errors when no items found but errors exist', () => {
