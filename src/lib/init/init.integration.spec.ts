@@ -6,6 +6,7 @@ import type { ReconciliationPlan, InitResponse } from '../../daemon/types.js'
 // Mock daemon client
 const mockGetReconciliationPlan = vi.fn()
 const mockExecuteReconciliation = vi.fn()
+const mockIsGitRepo = vi.fn().mockReturnValue(true)
 
 vi.mock('../../daemon/daemon-get-reconciliation-plan.js', () => ({
   daemonGetReconciliationPlan: (...args: unknown[]) =>
@@ -15,6 +16,10 @@ vi.mock('../../daemon/daemon-get-reconciliation-plan.js', () => ({
 vi.mock('../../daemon/daemon-execute-reconciliation.js', () => ({
   daemonExecuteReconciliation: (...args: unknown[]) =>
     mockExecuteReconciliation(...args),
+}))
+
+vi.mock('../../utils/is-git-repo.js', () => ({
+  isGitRepo: (cwd: unknown) => mockIsGitRepo(cwd),
 }))
 
 // Import after mocking

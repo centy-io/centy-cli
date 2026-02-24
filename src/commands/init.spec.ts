@@ -103,6 +103,23 @@ describe('Init command', () => {
     )
   })
 
+  it('should pass no-git flag as skipGitCheck', async () => {
+    const { default: Command } = await import('./init.js')
+    mockInit.mockResolvedValue({ success: true })
+
+    const cmd = createMockCommand(Command, {
+      flags: { 'no-git': true },
+    })
+
+    await cmd.run()
+
+    expect(mockInit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        skipGitCheck: true,
+      })
+    )
+  })
+
   it('should exit with code 1 on failure', async () => {
     const { default: Command } = await import('./init.js')
     mockInit.mockResolvedValue({ success: false })

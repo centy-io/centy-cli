@@ -4,6 +4,7 @@ import { daemonGetReconciliationPlan } from '../../daemon/daemon-get-reconciliat
 import type { ReconciliationDecisions as DaemonDecisions } from '../../daemon/types.js'
 import type { InitOptions } from '../../types/init-options.js'
 import type { InitResult } from '../../types/init-result.js'
+import { isGitRepo } from '../../utils/is-git-repo.js'
 import { gatherDecisions } from './gather-decisions.js'
 import { outputSummary } from './output-summary.js'
 import {
@@ -36,6 +37,18 @@ export async function init(options?: InitOptions): Promise<InitResult> {
     reset: [],
     skipped: [],
     userFiles: [],
+  }
+
+  if (!isGitRepo(cwd)) {
+    if (opts.skipGitCheck !== true) {
+      output.write(
+        'Error: Not inside a git repository. Run with --no-git to initialize anyway.\n'
+      )
+      return result
+    }
+    output.write(
+      'Warning: Initializing outside a git repository is not recommended.\n'
+    )
   }
 
   try {

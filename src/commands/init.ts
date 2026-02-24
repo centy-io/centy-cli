@@ -16,6 +16,7 @@ export default class Init extends Command {
   static override examples = [
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> --force',
+    '<%= config.bin %> <%= command.id %> --no-git',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -23,6 +24,10 @@ export default class Init extends Command {
     force: Flags.boolean({
       char: 'f',
       description: 'Skip interactive prompts and use defaults',
+      default: false,
+    }),
+    'no-git': Flags.boolean({
+      description: 'Skip git repository check',
       default: false,
     }),
     // Config flags
@@ -53,6 +58,7 @@ export default class Init extends Command {
 
     const result = await init({
       force: flags.force,
+      skipGitCheck: flags['no-git'],
       cwd,
       priorityLevels: flags['priority-levels'],
       allowedStates,
