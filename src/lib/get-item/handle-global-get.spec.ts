@@ -1,10 +1,16 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockDaemonGetIssuesByUuid = vi.fn()
+const mockSearchItemsByDisplayNumberGlobally = vi.fn()
 
 vi.mock('../../daemon/daemon-get-issues-by-uuid.js', () => ({
   daemonGetIssuesByUuid: (...args: unknown[]) =>
     mockDaemonGetIssuesByUuid(...args),
+}))
+
+vi.mock('../../daemon/daemon-search-items-globally.js', () => ({
+  searchItemsByDisplayNumberGlobally: (...args: unknown[]) =>
+    mockSearchItemsByDisplayNumberGlobally(...args),
 }))
 
 vi.mock('../../utils/cross-project-search.js', () => ({
@@ -19,7 +25,15 @@ vi.mock('../get-issue/handle-global-search.js', () => ({
   handleGlobalIssueSearch: vi.fn(),
 }))
 
+vi.mock('./handle-global-display-number-search.js', () => ({
+  handleGlobalDisplayNumberSearch: vi.fn(),
+}))
+
 describe('handleGlobalGet', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('should error for non-issue types', async () => {
     const { handleGlobalGet } = await import('./handle-global-get.js')
     const log = vi.fn()
@@ -33,7 +47,41 @@ describe('handleGlobalGet', () => {
     ).rejects.toThrow('only supported for issues')
   })
 
-  it('should error for non-UUID ids', async () => {
+  it('should call searchItemsByDisplayNumberGlobally for display numbers', async () => {
+    const { handleGlobalGet } = await import('./handle-global-get.js')
+    const log = vi.fn()
+    const warn = vi.fn()
+    const error = vi.fn()
+
+    mockSearchItemsByDisplayNumberGlobally.mockResolvedValue({
+      items: [],
+      errors: [],
+    })
+
+    await handleGlobalGet('issues', '42', false, log, warn, error)
+
+    expect(mockSearchItemsByDisplayNumberGlobally).toHaveBeenCalledWith(
+      'issues',
+      42
+    )
+    expect(mockDaemonGetIssuesByUuid).not.toHaveBeenCalled()
+  })
+
+  it('should output JSON for display number search when jsonMode is true', async () => {
+    const { handleGlobalGet } = await import('./handle-global-get.js')
+    const log = vi.fn()
+    const warn = vi.fn()
+    const error = vi.fn()
+    const result = { items: [], errors: [] }
+
+    mockSearchItemsByDisplayNumberGlobally.mockResolvedValue(result)
+
+    await handleGlobalGet('issues', '1', true, log, warn, error)
+
+    expect(log).toHaveBeenCalledWith(JSON.stringify(result, null, 2))
+  })
+
+  it('should error for non-UUID non-numeric ids', async () => {
     const { handleGlobalGet } = await import('./handle-global-get.js')
     const log = vi.fn()
     const warn = vi.fn()
@@ -42,8 +90,8 @@ describe('handleGlobalGet', () => {
     })
 
     await expect(
-      handleGlobalGet('issues', '1', false, log, warn, error)
-    ).rejects.toThrow('requires a valid UUID')
+      handleGlobalGet('issues', 'not-a-uuid-or-number', false, log, warn, error)
+    ).rejects.toThrow('display number or a valid UUID')
   })
 
   it('should call daemonGetIssuesByUuid with valid UUID', async () => {
@@ -62,9 +110,10 @@ describe('handleGlobalGet', () => {
     await handleGlobalGet('issues', uuid, false, log, warn, error)
 
     expect(mockDaemonGetIssuesByUuid).toHaveBeenCalledWith({ uuid })
+    expect(mockSearchItemsByDisplayNumberGlobally).not.toHaveBeenCalled()
   })
 
-  it('should output JSON when jsonMode is true', async () => {
+  it('should output JSON when jsonMode is true for UUID search', async () => {
     const { handleGlobalGet } = await import('./handle-global-get.js')
     const log = vi.fn()
     const warn = vi.fn()
