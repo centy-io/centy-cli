@@ -24,9 +24,9 @@ export default [
       'error/no-literal-error-message': 'off',
     },
   },
-  // Integration and top-level spec files don't require a 1:1 implementation file
+  // Integration, E2E, and top-level spec files don't require a 1:1 implementation file
   {
-    files: ['**/*.integration.spec.ts', 'src/cli.spec.ts'],
+    files: ['**/*.integration.spec.ts', '**/*.e2e.spec.ts', 'src/cli.spec.ts'],
     rules: {
       'ddd/require-spec-file': 'off',
     },
