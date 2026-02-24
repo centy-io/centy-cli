@@ -486,8 +486,8 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
           PATH: pathWithoutBun,
         })
 
-        // oclif returns exit code 2 for unknown commands
-        expect(result.exitCode).toBe(2)
+        // oclif returns exit code 1 for unknown commands
+        expect(result.exitCode).toBe(1)
       })
 
       it('should preserve non-zero exit codes from commands', async () => {
