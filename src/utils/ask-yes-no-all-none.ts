@@ -1,25 +1,24 @@
-import type { Interface } from 'node:readline'
+import prompts from 'prompts'
 import type { PromptChoice } from './prompt-choice.js'
 
 /**
  * Ask a yes/no/all/none question
  */
-export async function askYesNoAllNone(
-  rl: Interface,
-  question: string
-): Promise<PromptChoice> {
-  return new Promise(resolve => {
-    rl.question(`${question} [y/n/a(ll)/none]: `, answer => {
-      const normalized = answer.toLowerCase().trim()
-      if (normalized === 'y' || normalized === 'yes') {
-        resolve('yes')
-      } else if (normalized === 'a' || normalized === 'all') {
-        resolve('all')
-      } else if (normalized === 'none') {
-        resolve('none')
-      } else {
-        resolve('no')
-      }
-    })
+export async function askYesNoAllNone(question: string): Promise<PromptChoice> {
+  const response = await prompts({
+    type: 'select',
+    name: 'value',
+    message: question,
+    choices: [
+      { title: 'Yes', value: 'yes' },
+      { title: 'No', value: 'no' },
+      { title: 'All', value: 'all' },
+      { title: 'None', value: 'none' },
+    ],
   })
+  const value: PromptChoice | undefined = response.value
+  if (value === undefined) {
+    return 'no'
+  }
+  return value
 }
