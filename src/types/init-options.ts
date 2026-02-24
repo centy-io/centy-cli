@@ -6,6 +6,8 @@ export interface InitOptions {
   cwd?: string
   /** Skip interactive prompts, use defaults */
   force?: boolean
+  /** Skip git repository check */
+  skipGitCheck?: boolean
   /** Input stream for prompts (defaults to process.stdin) */
   input?: NodeJS.ReadableStream
   /** Output stream for messages (defaults to process.stdout) */
