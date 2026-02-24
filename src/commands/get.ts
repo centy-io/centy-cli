@@ -6,7 +6,7 @@ import { daemonGetItem } from '../daemon/daemon-get-item.js'
 import { projectFlag } from '../flags/project-flag.js'
 import { formatGenericItem } from '../lib/get-item/format-generic-item.js'
 import { handleGlobalGet } from '../lib/get-item/handle-global-get.js'
-import { parseDisplayNumber } from '../lib/resolve-item-id/resolve-item-id.js'
+import { parseDisplayNumber } from '../lib/resolve-item-id/parse-display-number.js'
 import {
   ensureInitialized,
   NotInitializedError,
