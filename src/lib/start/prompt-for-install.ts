@@ -1,8 +1,6 @@
-import type { Interface } from 'node:readline'
 import { askYesNo } from '../../utils/ask-yes-no.js'
 
 interface PromptForInstallOptions {
-  rl: Interface
   output: NodeJS.WritableStream
   daemonPath: string
 }
@@ -14,10 +12,10 @@ interface PromptForInstallOptions {
 export async function promptForInstall(
   options: PromptForInstallOptions
 ): Promise<boolean> {
-  const { rl, output, daemonPath } = options
+  const { output, daemonPath } = options
 
   output.write(`\nDaemon not found at: ${daemonPath}\n`)
   output.write('The daemon binary is required to run centy.\n\n')
 
-  return askYesNo(rl, 'Install daemon now?', false)
+  return askYesNo('Install daemon now?', false)
 }

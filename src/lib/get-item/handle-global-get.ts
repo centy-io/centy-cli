@@ -19,7 +19,10 @@ export async function handleGlobalGet(
   const displayNumber = /^\d+$/.test(id) ? Number(id) : undefined
 
   if (displayNumber !== undefined) {
-    const result = await searchItemsByDisplayNumberGlobally(itemType, displayNumber)
+    const result = await searchItemsByDisplayNumberGlobally(
+      itemType,
+      displayNumber
+    )
     if (jsonMode) {
       log(JSON.stringify(result, null, 2))
       return
@@ -29,9 +32,7 @@ export async function handleGlobalGet(
   }
 
   if (!isValidUuid(id)) {
-    error(
-      'Global search requires a display number or a valid UUID.'
-    )
+    error('Global search requires a display number or a valid UUID.')
   }
 
   const result = await daemonGetIssuesByUuid({ uuid: id })

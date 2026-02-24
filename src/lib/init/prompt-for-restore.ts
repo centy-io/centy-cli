@@ -1,4 +1,3 @@
-import type { Interface } from 'node:readline'
 import { askYesNoAllNone } from '../../utils/ask-yes-no-all-none.js'
 
 interface FileToRestore {
@@ -15,7 +14,6 @@ interface RestoreDecision {
  * Prompt user for restore decisions on deleted files
  */
 export async function promptForRestore(
-  rl: Interface,
   output: NodeJS.WritableStream,
   files: FileToRestore[]
 ): Promise<RestoreDecision> {
@@ -35,7 +33,7 @@ export async function promptForRestore(
     }
 
     output.write(`\n${file.path} was deleted.\n`)
-    const choice = await askYesNoAllNone(rl, 'Restore?')
+    const choice = await askYesNoAllNone('Restore?')
 
     if (choice === 'yes') {
       restore.push(file.path)

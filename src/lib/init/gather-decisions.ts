@@ -1,8 +1,6 @@
 /* eslint-disable single-export/single-export */
 
 import type { InitOptions } from '../../types/init-options.js'
-import { closePromptInterface } from '../../utils/close-prompt-interface.js'
-import { createPromptInterface } from '../../utils/create-prompt-interface.js'
 import { promptForReset } from './prompt-for-reset.js'
 import { promptForRestore } from './prompt-for-restore.js'
 import type { FileToRestore, FileToReset } from './type-converters.js'
@@ -33,11 +31,9 @@ export async function gatherDecisions(
     if (opts.force === true) {
       decisions.restore = plan.toRestore.map(f => f.path)
     } else {
-      const rl = createPromptInterface(opts.input, opts.output)
-      const restoreResult = await promptForRestore(rl, output, plan.toRestore)
+      const restoreResult = await promptForRestore(output, plan.toRestore)
       decisions.restore = restoreResult.restore
       decisions.skip.push(...restoreResult.skip)
-      closePromptInterface(rl)
     }
   }
 
@@ -45,11 +41,9 @@ export async function gatherDecisions(
     if (opts.force === true) {
       decisions.skip.push(...plan.toReset.map(f => f.path))
     } else {
-      const rl = createPromptInterface(opts.input, opts.output)
-      const resetResult = await promptForReset(rl, output, plan.toReset)
+      const resetResult = await promptForReset(output, plan.toReset)
       decisions.reset = resetResult.reset
       decisions.skip.push(...resetResult.skip)
-      closePromptInterface(rl)
     }
   }
 

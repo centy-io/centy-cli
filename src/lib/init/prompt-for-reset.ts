@@ -1,4 +1,3 @@
-import type { Interface } from 'node:readline'
 import { askYesNoAllNone } from '../../utils/ask-yes-no-all-none.js'
 
 interface FileToReset {
@@ -16,7 +15,6 @@ interface ResetDecision {
  * Prompt user for reset decisions on modified files
  */
 export async function promptForReset(
-  rl: Interface,
   output: NodeJS.WritableStream,
   files: FileToReset[]
 ): Promise<ResetDecision> {
@@ -36,7 +34,7 @@ export async function promptForReset(
     }
 
     output.write(`\n${file.path} has been modified.\n`)
-    const choice = await askYesNoAllNone(rl, 'Reset to default?')
+    const choice = await askYesNoAllNone('Reset to default?')
 
     if (choice === 'yes') {
       reset.push(file.path)

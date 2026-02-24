@@ -17,9 +17,8 @@ describe('searchItemsByDisplayNumberGlobally', () => {
   })
 
   it('should return items found across initialized projects', async () => {
-    const { searchItemsByDisplayNumberGlobally } = await import(
-      './daemon-search-items-globally.js'
-    )
+    const { searchItemsByDisplayNumberGlobally } =
+      await import('./daemon-search-items-globally.js')
 
     mockDaemonListProjects.mockResolvedValue({
       projects: [
@@ -67,9 +66,8 @@ describe('searchItemsByDisplayNumberGlobally', () => {
   })
 
   it('should skip uninitialized projects', async () => {
-    const { searchItemsByDisplayNumberGlobally } = await import(
-      './daemon-search-items-globally.js'
-    )
+    const { searchItemsByDisplayNumberGlobally } =
+      await import('./daemon-search-items-globally.js')
 
     mockDaemonListProjects.mockResolvedValue({
       projects: [
@@ -89,9 +87,8 @@ describe('searchItemsByDisplayNumberGlobally', () => {
   })
 
   it('should collect errors from failed project lookups', async () => {
-    const { searchItemsByDisplayNumberGlobally } = await import(
-      './daemon-search-items-globally.js'
-    )
+    const { searchItemsByDisplayNumberGlobally } =
+      await import('./daemon-search-items-globally.js')
 
     mockDaemonListProjects.mockResolvedValue({
       projects: [
@@ -114,9 +111,8 @@ describe('searchItemsByDisplayNumberGlobally', () => {
   })
 
   it('should return empty result when no projects are registered', async () => {
-    const { searchItemsByDisplayNumberGlobally } = await import(
-      './daemon-search-items-globally.js'
-    )
+    const { searchItemsByDisplayNumberGlobally } =
+      await import('./daemon-search-items-globally.js')
 
     mockDaemonListProjects.mockResolvedValue({ projects: [] })
 
