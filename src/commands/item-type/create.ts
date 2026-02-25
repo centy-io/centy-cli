@@ -2,7 +2,6 @@
 import { Command, Flags } from '@oclif/core'
 
 import { daemonCreateItemType } from '../../daemon/daemon-create-item-type.js'
-import type { ItemTypeFeature } from '../../daemon/types.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
   VALID_FEATURES,
@@ -72,8 +71,7 @@ export default class ItemTypeCreate extends Command {
       )
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    const features = parseFeatures(flags.features) as ItemTypeFeature[]
+    const features = parseFeatures(flags.features)
     const response = await daemonCreateItemType({
       projectPath: cwd,
       name: flags.name,
@@ -100,7 +98,7 @@ export default class ItemTypeCreate extends Command {
     if (flags['priority-levels'] > 0) {
       this.log(`  Priority levels: ${flags['priority-levels']}`)
     }
-    if (features.length > 0 && flags.features !== undefined) {
+    if (flags.features !== undefined) {
       this.log(`  Features: ${flags.features}`)
     }
   }

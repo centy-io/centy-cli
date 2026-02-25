@@ -267,7 +267,7 @@ export interface CreateItemTypeRequest {
   /** "uuid" or "slug" */
   identifier: string
   /** Enabled features */
-  features: ItemTypeFeature[]
+  features?: ItemTypeFeatures | undefined
   /** Allowed statuses (e.g., ["open", "in-progress", "closed"]) */
   statuses: string[]
   /** Default status for new items (must be in statuses list) */

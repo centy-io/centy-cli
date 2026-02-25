@@ -204,7 +204,7 @@ message CreateItemTypeRequest {
   string name = 2;                      // Singular display name (e.g., "Bug", "Task")
   string plural = 3;                    // Folder/type key, lowercase alphanumeric + hyphens (e.g., "bugs")
   string identifier = 4;               // "uuid" or "slug"
-  repeated ItemTypeFeature features = 5; // Enabled features
+  ItemTypeFeatures features = 5;         // Enabled features
   repeated string statuses = 6;         // Allowed statuses (e.g., ["open", "in-progress", "closed"])
   string default_status = 7;           // Default status for new items (must be in statuses list)
   uint32 priority_levels = 8;          // Number of priority levels (0 = none)
