@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import { spawn, spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { IS_WINDOWS, skipOnUnix } from '../../testing/platform.js'
 
 // =============================================================================
 // Constants
@@ -11,7 +12,6 @@ import { describe, expect, it } from 'vitest'
 const BIN_DIR = path.resolve(__dirname, '../../../bin')
 const RUN_JS = path.join(BIN_DIR, 'run.js')
 const RUN_CMD = path.join(BIN_DIR, 'run.cmd')
-const IS_WINDOWS = process.platform === 'win32'
 const DEFAULT_TIMEOUT = 30000
 
 // =============================================================================
@@ -388,9 +388,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
     })
 
     // Runtime tests only run on Windows
-    const itOnWindows = IS_WINDOWS ? it : it.skip
-
-    itOnWindows(
+    skipOnUnix(
       'should execute successfully when Bun is available',
       async () => {
         if (!bunAvailable) {
@@ -406,7 +404,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
       }
     )
 
-    itOnWindows(
+    skipOnUnix(
       'should show tip and run with Node.js when Bun is not available',
       async () => {
         const pathWithoutBun = createPathWithoutBun()
