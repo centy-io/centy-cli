@@ -11,27 +11,27 @@ vi.mock('../../daemon/daemon-get-organization.js', () => ({
     mockDaemonGetOrganization(...args),
 }))
 
-describe('GetOrg command', () => {
+describe('OrgGet command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('should have correct static properties', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./get.js')
 
     expect(Command.description).toBeDefined()
     expect(typeof Command.description).toBe('string')
   })
 
   it('should export a valid oclif command class', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./get.js')
 
     expect(Command).toBeDefined()
     expect(Command.prototype.run).toBeDefined()
   })
 
   it('should get organization details successfully', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./get.js')
     mockDaemonGetOrganization.mockResolvedValue({
       found: true,
       organization: {
@@ -61,7 +61,7 @@ describe('GetOrg command', () => {
   })
 
   it('should output JSON when json flag is set', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./get.js')
     const mockOrg = {
       name: 'My Org',
       slug: 'my-org',
@@ -84,7 +84,7 @@ describe('GetOrg command', () => {
   })
 
   it('should error when organization not found', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./get.js')
     mockDaemonGetOrganization.mockResolvedValue({
       found: false,
     })
@@ -101,7 +101,7 @@ describe('GetOrg command', () => {
   })
 
   it('should display timestamps', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./get.js')
     mockDaemonGetOrganization.mockResolvedValue({
       found: true,
       organization: {

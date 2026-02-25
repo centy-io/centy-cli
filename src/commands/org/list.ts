@@ -7,18 +7,19 @@ import { daemonListOrganizations } from '../../daemon/daemon-list-organizations.
  * List all organizations
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class ListOrgs extends Command {
+export default class OrgList extends Command {
   // eslint-disable-next-line no-restricted-syntax
-  static override aliases = ['list:organizations', 'org:list']
+  static override aliases = ['list:orgs', 'list:organizations']
 
   // eslint-disable-next-line no-restricted-syntax
   static override description = 'List all organizations'
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
+    '<%= config.bin %> org list',
     '<%= config.bin %> list orgs',
     '<%= config.bin %> list organizations',
-    '<%= config.bin %> list orgs --json',
+    '<%= config.bin %> org list --json',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -30,7 +31,7 @@ export default class ListOrgs extends Command {
   }
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(ListOrgs)
+    const { flags } = await this.parse(OrgList)
 
     const response = await daemonListOrganizations({})
 
@@ -41,7 +42,7 @@ export default class ListOrgs extends Command {
 
     if (response.organizations.length === 0) {
       this.log('No organizations found.')
-      this.log('\nCreate one with: centy create org "My Organization"')
+      this.log('\nCreate one with: centy org create "My Organization"')
       return
     }
 

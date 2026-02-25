@@ -7,9 +7,9 @@ import { daemonGetOrganization } from '../../daemon/daemon-get-organization.js'
  * Get organization details
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class GetOrg extends Command {
+export default class OrgGet extends Command {
   // eslint-disable-next-line no-restricted-syntax
-  static override aliases = ['get:organization']
+  static override aliases = ['get:org', 'get:organization']
 
   // eslint-disable-next-line no-restricted-syntax
   static override args = {
@@ -24,6 +24,7 @@ export default class GetOrg extends Command {
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
+    '<%= config.bin %> org get centy-io',
     '<%= config.bin %> get org centy-io',
     '<%= config.bin %> get organization my-org --json',
   ]
@@ -37,7 +38,7 @@ export default class GetOrg extends Command {
   }
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(GetOrg)
+    const { args, flags } = await this.parse(OrgGet)
 
     const response = await daemonGetOrganization({
       slug: args.slug,

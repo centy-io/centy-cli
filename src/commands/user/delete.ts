@@ -13,7 +13,10 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  * Delete a user
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class DeleteUser extends Command {
+export default class UserDelete extends Command {
+  // eslint-disable-next-line no-restricted-syntax
+  static override aliases = ['delete:user']
+
   // eslint-disable-next-line no-restricted-syntax
   static override args = {
     id: Args.string({
@@ -27,9 +30,9 @@ export default class DeleteUser extends Command {
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
-    '<%= config.bin %> delete user john-doe',
+    '<%= config.bin %> user delete john-doe --force',
     '<%= config.bin %> delete user john-doe --force',
-    '<%= config.bin %> delete user john-doe --project centy-daemon',
+    '<%= config.bin %> user delete john-doe --project centy-daemon',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -43,7 +46,7 @@ export default class DeleteUser extends Command {
   }
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(DeleteUser)
+    const { args, flags } = await this.parse(UserDelete)
     const cwd = await resolveProjectPath(flags.project)
 
     try {

@@ -11,27 +11,27 @@ vi.mock('../../daemon/daemon-delete-organization.js', () => ({
     mockDaemonDeleteOrganization(...args),
 }))
 
-describe('DeleteOrg command', () => {
+describe('OrgDelete command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('should have correct static properties', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./delete.js')
 
     expect(Command.description).toBeDefined()
     expect(typeof Command.description).toBe('string')
   })
 
   it('should export a valid oclif command class', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./delete.js')
 
     expect(Command).toBeDefined()
     expect(Command.prototype.run).toBeDefined()
   })
 
   it('should delete organization successfully with force flag', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./delete.js')
     mockDaemonDeleteOrganization.mockResolvedValue({
       success: true,
     })
@@ -53,7 +53,7 @@ describe('DeleteOrg command', () => {
   })
 
   it('should error without force flag', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./delete.js')
 
     const cmd = createMockCommand(Command, {
       flags: { force: false },
@@ -67,7 +67,7 @@ describe('DeleteOrg command', () => {
   })
 
   it('should show warning message without force flag', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./delete.js')
 
     const cmd = createMockCommand(Command, {
       flags: { force: false },
@@ -80,7 +80,7 @@ describe('DeleteOrg command', () => {
   })
 
   it('should handle daemon error', async () => {
-    const { default: Command } = await import('./org.js')
+    const { default: Command } = await import('./delete.js')
     mockDaemonDeleteOrganization.mockResolvedValue({
       success: false,
       error: 'Organization has projects',

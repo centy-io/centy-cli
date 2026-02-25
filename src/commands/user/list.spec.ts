@@ -26,7 +26,7 @@ vi.mock('../../utils/ensure-initialized.js', () => ({
   },
 }))
 
-describe('ListUsers command', () => {
+describe('UserList command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
@@ -34,21 +34,21 @@ describe('ListUsers command', () => {
   })
 
   it('should have correct static properties', async () => {
-    const { default: Command } = await import('./users.js')
+    const { default: Command } = await import('./list.js')
 
     expect(Command.description).toBeDefined()
     expect(typeof Command.description).toBe('string')
   })
 
   it('should export a valid oclif command class', async () => {
-    const { default: Command } = await import('./users.js')
+    const { default: Command } = await import('./list.js')
 
     expect(Command).toBeDefined()
     expect(Command.prototype.run).toBeDefined()
   })
 
   it('should list users successfully', async () => {
-    const { default: Command } = await import('./users.js')
+    const { default: Command } = await import('./list.js')
     mockDaemonListUsers.mockResolvedValue({
       users: [
         {
@@ -80,7 +80,7 @@ describe('ListUsers command', () => {
   })
 
   it('should output JSON when json flag is set', async () => {
-    const { default: Command } = await import('./users.js')
+    const { default: Command } = await import('./list.js')
     mockDaemonListUsers.mockResolvedValue({
       users: [{ id: 'john-doe', name: 'John Doe', gitUsernames: [] }],
       totalCount: 1,
@@ -97,7 +97,7 @@ describe('ListUsers command', () => {
   })
 
   it('should show empty message when no users', async () => {
-    const { default: Command } = await import('./users.js')
+    const { default: Command } = await import('./list.js')
     mockDaemonListUsers.mockResolvedValue({
       users: [],
       totalCount: 0,
@@ -114,7 +114,7 @@ describe('ListUsers command', () => {
   })
 
   it('should filter by git username', async () => {
-    const { default: Command } = await import('./users.js')
+    const { default: Command } = await import('./list.js')
     mockDaemonListUsers.mockResolvedValue({
       users: [{ id: 'john', name: 'John', gitUsernames: ['johnd'] }],
       totalCount: 1,
@@ -135,7 +135,7 @@ describe('ListUsers command', () => {
   })
 
   it('should handle NotInitializedError', async () => {
-    const { default: Command } = await import('./users.js')
+    const { default: Command } = await import('./list.js')
     const { NotInitializedError } =
       await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
@@ -154,7 +154,7 @@ describe('ListUsers command', () => {
   })
 
   it('should use project flag to resolve path', async () => {
-    const { default: Command } = await import('./users.js')
+    const { default: Command } = await import('./list.js')
     mockResolveProjectPath.mockResolvedValue('/other/project')
     mockDaemonListUsers.mockResolvedValue({
       users: [],

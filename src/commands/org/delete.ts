@@ -7,9 +7,9 @@ import { daemonDeleteOrganization } from '../../daemon/daemon-delete-organizatio
  * Delete an organization
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class DeleteOrg extends Command {
+export default class OrgDelete extends Command {
   // eslint-disable-next-line no-restricted-syntax
-  static override aliases = ['delete:organization']
+  static override aliases = ['delete:org', 'delete:organization']
 
   // eslint-disable-next-line no-restricted-syntax
   static override args = {
@@ -25,8 +25,9 @@ export default class DeleteOrg extends Command {
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
-    '<%= config.bin %> delete org my-org',
-    '<%= config.bin %> delete organization old-org',
+    '<%= config.bin %> org delete my-org --force',
+    '<%= config.bin %> delete org my-org --force',
+    '<%= config.bin %> delete organization old-org --force',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -39,7 +40,7 @@ export default class DeleteOrg extends Command {
   }
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(DeleteOrg)
+    const { args, flags } = await this.parse(OrgDelete)
 
     if (!flags.force) {
       this.log(`Warning: This will delete organization "${args.slug}"`)
