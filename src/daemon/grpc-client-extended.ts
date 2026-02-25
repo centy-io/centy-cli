@@ -3,6 +3,8 @@ import type {
   DaemonInfo,
   GetNextIssueNumberRequest,
   GetNextIssueNumberResponse,
+  GetSupportedEditorsRequest,
+  GetSupportedEditorsResponse,
   ShutdownRequest,
   ShutdownResponse,
   RestartRequest,
@@ -44,6 +46,10 @@ export interface CentyDaemonExtendedClient {
   getNextIssueNumber: GrpcMethod<
     GetNextIssueNumberRequest,
     GetNextIssueNumberResponse
+  >
+  getSupportedEditors: GrpcMethod<
+    GetSupportedEditorsRequest,
+    GetSupportedEditorsResponse
   >
   shutdown: GrpcMethod<ShutdownRequest, ShutdownResponse>
   restart: GrpcMethod<RestartRequest, RestartResponse>
