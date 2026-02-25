@@ -11,8 +11,5 @@ export function daemonOpenStandaloneWorkspace(
   request: OpenStandaloneWorkspaceWithEditorRequest
 ): Promise<OpenStandaloneWorkspaceResponse> {
   const client = getDaemonClient()
-  return callWithDeadline(
-    client.openStandaloneWorkspace.bind(client),
-    request
-  )
+  return callWithDeadline(client.openStandaloneWorkspace.bind(client), request)
 }
