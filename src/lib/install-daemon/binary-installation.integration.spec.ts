@@ -12,6 +12,12 @@ import { join } from 'node:path'
 import { execSync, spawnSync } from 'node:child_process'
 import { describe, it, expect, afterEach } from 'vitest'
 import {
+  IS_WINDOWS,
+  IS_UNIX,
+  skipOnWindows,
+  skipOnUnix,
+} from '../../testing/platform.js'
+import {
   getBinaryFileName,
   getArchiveExtension,
   isWindows,
@@ -23,9 +29,6 @@ import { extractArchive } from './extract.js'
 // =============================================================================
 // Constants
 // =============================================================================
-
-const IS_WINDOWS = process.platform === 'win32'
-const IS_UNIX = !IS_WINDOWS
 
 // =============================================================================
 // Helper Functions
@@ -133,7 +136,7 @@ describe('binary installation - chmod permission setting on Unix', () => {
     tempDirs.length = 0
   })
 
-  it.skipIf(IS_WINDOWS)(
+  skipOnWindows(
     'should set executable permissions (0o755) on Unix',
     () => {
       const tempDir = createTempDir()
@@ -149,7 +152,7 @@ describe('binary installation - chmod permission setting on Unix', () => {
     }
   )
 
-  it.skipIf(IS_WINDOWS)(
+  skipOnWindows(
     'should allow the file to be executed after makeExecutable',
     () => {
       const tempDir = createTempDir()
@@ -164,7 +167,7 @@ describe('binary installation - chmod permission setting on Unix', () => {
     }
   )
 
-  it.skipIf(IS_UNIX)(
+  skipOnUnix(
     'should skip chmod on Windows (makeExecutable is a no-op)',
     () => {
       const tempDir = createTempDir()
@@ -187,7 +190,7 @@ describe('binary installation - tar/unzip extraction on Unix', () => {
     tempDirs.length = 0
   })
 
-  it.skipIf(IS_WINDOWS)(
+  skipOnWindows(
     'should extract .tar.gz archives using tar on Unix',
     () => {
       const tempDir = createTempDir()
@@ -240,7 +243,7 @@ describe('binary installation - PowerShell Expand-Archive on Windows', () => {
     tempDirs.length = 0
   })
 
-  it.skipIf(IS_UNIX)(
+  skipOnUnix(
     'should extract .zip archives using PowerShell Expand-Archive on Windows',
     () => {
       const tempDir = createTempDir()
@@ -285,7 +288,7 @@ describe('binary installation - full flow on current platform', () => {
     expect(ext).toBe(IS_WINDOWS ? 'zip' : 'tar.gz')
   })
 
-  it.skipIf(IS_WINDOWS)(
+  skipOnWindows(
     'should complete a full install flow on Unix (extract tar.gz + chmod)',
     () => {
       const tempDir = createTempDir()

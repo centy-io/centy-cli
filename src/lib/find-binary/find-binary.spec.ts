@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { IS_WINDOWS } from '../../testing/platform.js'
 import { findBinary } from './find-binary.js'
 
 describe('findBinary', () => {
@@ -18,9 +19,7 @@ describe('findBinary', () => {
       devRepoName: 'nonexistent-repo',
     })
     expect(result).toBe(
-      process.platform === 'win32'
-        ? 'nonexistent-binary.exe'
-        : 'nonexistent-binary'
+      IS_WINDOWS ? 'nonexistent-binary.exe' : 'nonexistent-binary'
     )
   })
 
