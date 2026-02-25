@@ -40,7 +40,7 @@ function setupReadlineMock(answer: string) {
   })
 }
 
-describe('DeleteUser command', () => {
+describe('UserDelete command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
@@ -48,14 +48,14 @@ describe('DeleteUser command', () => {
   })
 
   it('should have correct static properties', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./delete.js')
 
     expect(Command.description).toBeDefined()
     expect(typeof Command.description).toBe('string')
   })
 
   it('should delete user with force flag', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./delete.js')
     mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
     const cmd = createMockCommand(Command, {
@@ -75,7 +75,7 @@ describe('DeleteUser command', () => {
   })
 
   it('should delete user after confirmation', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./delete.js')
     setupReadlineMock('y')
     mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
@@ -90,7 +90,7 @@ describe('DeleteUser command', () => {
   })
 
   it('should cancel when user answers no', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./delete.js')
     setupReadlineMock('n')
 
     const cmd = createMockCommand(Command, {
@@ -105,7 +105,7 @@ describe('DeleteUser command', () => {
   })
 
   it('should handle NotInitializedError', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./delete.js')
     const { NotInitializedError } =
       await import('../../utils/ensure-initialized.js')
     mockEnsureInitialized.mockRejectedValue(
@@ -124,7 +124,7 @@ describe('DeleteUser command', () => {
   })
 
   it('should handle daemon delete failure', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./delete.js')
     mockDaemonDeleteItem.mockResolvedValue({
       success: false,
       error: 'User not found',
@@ -142,7 +142,7 @@ describe('DeleteUser command', () => {
   })
 
   it('should handle non-Error throws', async () => {
-    const { default: Command } = await import('./user.js')
+    const { default: Command } = await import('./delete.js')
     mockEnsureInitialized.mockRejectedValue('string error')
 
     const cmd = createMockCommand(Command, {

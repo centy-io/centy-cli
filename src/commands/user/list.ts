@@ -13,19 +13,20 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  * List all users in the project
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
-export default class ListUsers extends Command {
+export default class UserList extends Command {
+  // eslint-disable-next-line no-restricted-syntax
+  static override aliases = ['list:users']
+
   // eslint-disable-next-line no-restricted-syntax
   static override description = 'List all users in the project'
 
   // eslint-disable-next-line no-restricted-syntax
-  static override aliases = ['user:list']
-
-  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
+    '<%= config.bin %> user list',
     '<%= config.bin %> list users',
-    '<%= config.bin %> list users --json',
-    '<%= config.bin %> list users --git-username johndoe',
-    '<%= config.bin %> list users --project centy-daemon',
+    '<%= config.bin %> user list --json',
+    '<%= config.bin %> user list --git-username johndoe',
+    '<%= config.bin %> user list --project centy-daemon',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -42,7 +43,7 @@ export default class ListUsers extends Command {
   }
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(ListUsers)
+    const { flags } = await this.parse(UserList)
     const cwd = await resolveProjectPath(flags.project)
 
     try {
