@@ -136,21 +136,18 @@ describe('binary installation - chmod permission setting on Unix', () => {
     tempDirs.length = 0
   })
 
-  skipOnWindows(
-    'should set executable permissions (0o755) on Unix',
-    () => {
-      const tempDir = createTempDir()
-      tempDirs.push(tempDir)
+  skipOnWindows('should set executable permissions (0o755) on Unix', () => {
+    const tempDir = createTempDir()
+    tempDirs.push(tempDir)
 
-      const binaryPath = createTestBinary(tempDir, 'test-binary')
-      makeExecutable(binaryPath)
+    const binaryPath = createTestBinary(tempDir, 'test-binary')
+    makeExecutable(binaryPath)
 
-      const stat = statSync(binaryPath)
-      // Check owner execute bit (0o100) and group execute bit (0o010) and other execute bit (0o001)
-      const mode = stat.mode & 0o777
-      expect(mode).toBe(0o755)
-    }
-  )
+    const stat = statSync(binaryPath)
+    // Check owner execute bit (0o100) and group execute bit (0o010) and other execute bit (0o001)
+    const mode = stat.mode & 0o777
+    expect(mode).toBe(0o755)
+  })
 
   skipOnWindows(
     'should allow the file to be executed after makeExecutable',
@@ -167,17 +164,14 @@ describe('binary installation - chmod permission setting on Unix', () => {
     }
   )
 
-  skipOnUnix(
-    'should skip chmod on Windows (makeExecutable is a no-op)',
-    () => {
-      const tempDir = createTempDir()
-      tempDirs.push(tempDir)
+  skipOnUnix('should skip chmod on Windows (makeExecutable is a no-op)', () => {
+    const tempDir = createTempDir()
+    tempDirs.push(tempDir)
 
-      const binaryPath = createTestBinary(tempDir, 'test-binary.exe')
-      // Should not throw on Windows
-      expect(() => makeExecutable(binaryPath)).not.toThrow()
-    }
-  )
+    const binaryPath = createTestBinary(tempDir, 'test-binary.exe')
+    // Should not throw on Windows
+    expect(() => makeExecutable(binaryPath)).not.toThrow()
+  })
 })
 
 describe('binary installation - tar/unzip extraction on Unix', () => {
@@ -190,25 +184,22 @@ describe('binary installation - tar/unzip extraction on Unix', () => {
     tempDirs.length = 0
   })
 
-  skipOnWindows(
-    'should extract .tar.gz archives using tar on Unix',
-    () => {
-      const tempDir = createTempDir()
-      tempDirs.push(tempDir)
+  skipOnWindows('should extract .tar.gz archives using tar on Unix', () => {
+    const tempDir = createTempDir()
+    tempDirs.push(tempDir)
 
-      const srcDir = join(tempDir, 'src')
-      mkdirSync(srcDir)
-      createTestBinary(srcDir, 'centy-daemon')
+    const srcDir = join(tempDir, 'src')
+    mkdirSync(srcDir)
+    createTestBinary(srcDir, 'centy-daemon')
 
-      const archivePath = join(tempDir, 'centy-daemon.tar.gz')
-      createTarGz(archivePath, join(srcDir, 'centy-daemon'))
+    const archivePath = join(tempDir, 'centy-daemon.tar.gz')
+    createTarGz(archivePath, join(srcDir, 'centy-daemon'))
 
-      const destDir = join(tempDir, 'dest')
-      extractArchive(archivePath, destDir)
+    const destDir = join(tempDir, 'dest')
+    extractArchive(archivePath, destDir)
 
-      expect(existsSync(join(destDir, 'centy-daemon'))).toBe(true)
-    }
-  )
+    expect(existsSync(join(destDir, 'centy-daemon'))).toBe(true)
+  })
 
   it.skipIf(IS_WINDOWS || !checkUnzipAvailable())(
     'should extract .zip archives using unzip on Unix',

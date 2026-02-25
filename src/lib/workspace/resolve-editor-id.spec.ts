@@ -44,7 +44,10 @@ describe('resolveEditorId', () => {
   })
 
   it('should return the editor flag value when provided and available', async () => {
-    const result = await resolveEditorId('vscode', [vsCodeEditor, terminalEditor])
+    const result = await resolveEditorId('vscode', [
+      vsCodeEditor,
+      terminalEditor,
+    ])
 
     expect(result).toBe('vscode')
     expect(mockSelectEditor).not.toHaveBeenCalled()
@@ -70,7 +73,10 @@ describe('resolveEditorId', () => {
   })
 
   it('should auto-select when only one editor is available', async () => {
-    const result = await resolveEditorId(undefined, [vsCodeEditor, unavailableEditor])
+    const result = await resolveEditorId(undefined, [
+      vsCodeEditor,
+      unavailableEditor,
+    ])
 
     expect(result).toBe('vscode')
     expect(mockSelectEditor).not.toHaveBeenCalled()
@@ -79,9 +85,15 @@ describe('resolveEditorId', () => {
   it('should show selection prompt when multiple editors are available', async () => {
     mockSelectEditor.mockResolvedValue('terminal')
 
-    const result = await resolveEditorId(undefined, [vsCodeEditor, terminalEditor])
+    const result = await resolveEditorId(undefined, [
+      vsCodeEditor,
+      terminalEditor,
+    ])
 
     expect(result).toBe('terminal')
-    expect(mockSelectEditor).toHaveBeenCalledWith([vsCodeEditor, terminalEditor])
+    expect(mockSelectEditor).toHaveBeenCalledWith([
+      vsCodeEditor,
+      terminalEditor,
+    ])
   })
 })

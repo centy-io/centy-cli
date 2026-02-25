@@ -128,7 +128,9 @@ describe('WorkspaceOpen command', () => {
 
   it('should error if resolveEditorId throws', async () => {
     const { default: Command } = await import('./open.js')
-    mockResolveEditorId.mockRejectedValue(new Error('Editor "zed" is not available. Available editors: vscode'))
+    mockResolveEditorId.mockRejectedValue(
+      new Error('Editor "zed" is not available. Available editors: vscode')
+    )
 
     const cmd = createMockCommand(Command, {
       flags: { editor: 'zed' },
@@ -138,7 +140,9 @@ describe('WorkspaceOpen command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors).toContain('Editor "zed" is not available. Available editors: vscode')
+    expect(cmd.errors).toContain(
+      'Editor "zed" is not available. Available editors: vscode'
+    )
   })
 
   it('should handle open error', async () => {

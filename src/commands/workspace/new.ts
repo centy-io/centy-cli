@@ -42,7 +42,8 @@ export default class WorkspaceNew extends Command {
       description: 'Agent name to use (default: project default)',
     }),
     editor: Flags.string({
-      description: 'Editor to use: vscode, terminal (default: interactive selection or project default)',
+      description:
+        'Editor to use: vscode, terminal (default: interactive selection or project default)',
     }),
   }
 

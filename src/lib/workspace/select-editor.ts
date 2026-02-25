@@ -5,7 +5,9 @@ import type { EditorInfo } from '../../daemon/types.js'
  * Prompt the user to select an editor from available editors.
  * Returns the editorId of the chosen editor.
  */
-export async function selectEditor(availableEditors: EditorInfo[]): Promise<string> {
+export async function selectEditor(
+  availableEditors: EditorInfo[]
+): Promise<string> {
   const choices = availableEditors.map(e => ({
     title: e.name,
     description: e.description,
