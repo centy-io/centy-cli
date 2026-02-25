@@ -5,21 +5,44 @@ import {
 } from '../../testing/command-test-utils.js'
 
 const mockDaemonOpenStandaloneWorkspace = vi.fn()
+const mockDaemonGetSupportedEditors = vi.fn()
 const mockResolveProjectPath = vi.fn()
+const mockResolveEditorId = vi.fn()
 
 vi.mock('../../daemon/daemon-open-standalone-workspace.js', () => ({
   daemonOpenStandaloneWorkspace: (...args: unknown[]) =>
     mockDaemonOpenStandaloneWorkspace(...args),
 }))
 
+vi.mock('../../daemon/daemon-get-supported-editors.js', () => ({
+  daemonGetSupportedEditors: (...args: unknown[]) =>
+    mockDaemonGetSupportedEditors(...args),
+}))
+
+vi.mock('../../lib/workspace/resolve-editor-id.js', () => ({
+  resolveEditorId: (...args: unknown[]) => mockResolveEditorId(...args),
+}))
+
 vi.mock('../../utils/resolve-project-path.js', () => ({
   resolveProjectPath: (...args: unknown[]) => mockResolveProjectPath(...args),
 }))
+
+const defaultEditors = [
+  {
+    editorId: 'vscode',
+    name: 'VS Code',
+    description: 'Visual Studio Code',
+    available: true,
+    terminalWrapper: false,
+  },
+]
 
 describe('WorkspaceNew command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
+    mockDaemonGetSupportedEditors.mockResolvedValue({ editors: defaultEditors })
+    mockResolveEditorId.mockResolvedValue('vscode')
   })
 
   it('should have correct static properties', async () => {
@@ -51,6 +74,7 @@ describe('WorkspaceNew command', () => {
 
     await cmd.run()
 
+    expect(mockDaemonGetSupportedEditors).toHaveBeenCalledWith({})
     expect(mockDaemonOpenStandaloneWorkspace).toHaveBeenCalledWith(
       expect.objectContaining({
         projectPath: '/test/project',
@@ -58,10 +82,48 @@ describe('WorkspaceNew command', () => {
         description: '',
         ttlHours: 0,
         agentName: '',
-        editorId: '',
+        editorId: 'vscode',
       })
     )
     expect(cmd.logs[0]).toContain('/tmp/centy-standalone-workspace-123')
+  })
+
+  it('should pass editor flag to resolveEditorId', async () => {
+    const { default: Command } = await import('./new.js')
+    mockResolveEditorId.mockResolvedValue('terminal')
+    mockDaemonOpenStandaloneWorkspace.mockResolvedValue({
+      success: true,
+      workspacePath: '/tmp/workspace',
+      workspaceId: 'uuid-456',
+      name: '',
+      expiresAt: '2024-12-15T00:00:00Z',
+      editorOpened: true,
+    })
+
+    const cmd = createMockCommand(Command, {
+      flags: { editor: 'terminal' },
+    })
+
+    await cmd.run()
+
+    expect(mockResolveEditorId).toHaveBeenCalledWith('terminal', defaultEditors)
+    expect(mockDaemonOpenStandaloneWorkspace).toHaveBeenCalledWith(
+      expect.objectContaining({ editorId: 'terminal' })
+    )
+  })
+
+  it('should error if resolveEditorId throws', async () => {
+    const { default: Command } = await import('./new.js')
+    mockResolveEditorId.mockRejectedValue(new Error('Editor "zed" is not available. Available editors: vscode'))
+
+    const cmd = createMockCommand(Command, {
+      flags: { editor: 'zed' },
+    })
+
+    const { error } = await runCommandSafely(cmd)
+
+    expect(error).toBeDefined()
+    expect(cmd.errors).toContain('Editor "zed" is not available. Available editors: vscode')
   })
 
   it('should pass name and description flags', async () => {

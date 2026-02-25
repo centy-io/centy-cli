@@ -1,8 +1,10 @@
 // eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
 
+import { daemonGetSupportedEditors } from '../../daemon/daemon-get-supported-editors.js'
 import { daemonOpenStandaloneWorkspace } from '../../daemon/daemon-open-standalone-workspace.js'
 import { projectFlag } from '../../flags/project-flag.js'
+import { resolveEditorId } from '../../lib/workspace/resolve-editor-id.js'
 import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
@@ -19,6 +21,8 @@ export default class WorkspaceNew extends Command {
     '<%= config.bin %> workspace new',
     '<%= config.bin %> workspace new --name my-workspace',
     '<%= config.bin %> workspace new --name "Feature spike" --description "Explore new auth approach" --ttl 24',
+    '<%= config.bin %> workspace new --editor vscode',
+    '<%= config.bin %> workspace new --editor terminal',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -37,11 +41,23 @@ export default class WorkspaceNew extends Command {
     agent: Flags.string({
       description: 'Agent name to use (default: project default)',
     }),
+    editor: Flags.string({
+      description: 'Editor to use: vscode, terminal (default: interactive selection or project default)',
+    }),
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(WorkspaceNew)
     const cwd = await resolveProjectPath(flags.project)
+
+    const { editors } = await daemonGetSupportedEditors({})
+
+    let editorId: string
+    try {
+      editorId = await resolveEditorId(flags.editor, editors)
+    } catch (error) {
+      this.error(error instanceof Error ? error.message : String(error))
+    }
 
     const response = await daemonOpenStandaloneWorkspace({
       projectPath: cwd,
@@ -49,7 +65,7 @@ export default class WorkspaceNew extends Command {
       description: flags.description !== undefined ? flags.description : '',
       ttlHours: flags.ttl !== undefined ? flags.ttl : 0,
       agentName: flags.agent !== undefined ? flags.agent : '',
-      editorId: '',
+      editorId,
     })
 
     if (!response.success) {

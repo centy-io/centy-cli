@@ -1,9 +1,11 @@
 // eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
 
+import { daemonGetSupportedEditors } from '../../daemon/daemon-get-supported-editors.js'
 import { daemonOpenInTempWorkspace } from '../../daemon/daemon-open-in-temp-workspace.js'
 import { LlmAction } from '../../daemon/types.js'
 import { projectFlag } from '../../flags/project-flag.js'
+import { resolveEditorId } from '../../lib/workspace/resolve-editor-id.js'
 import {
   ensureInitialized,
   NotInitializedError,
@@ -11,17 +13,19 @@ import {
 import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
- * Open an issue in a temporary VS Code workspace
+ * Open an issue in a temporary workspace
  */
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class WorkspaceOpen extends Command {
   // eslint-disable-next-line no-restricted-syntax
-  static override description = 'Open an issue in a temporary VS Code workspace'
+  static override description = 'Open an issue in a temporary workspace'
 
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> workspace open 1',
     '<%= config.bin %> workspace open abc-123 --ttl 24',
+    '<%= config.bin %> workspace open 1 --editor vscode',
+    '<%= config.bin %> workspace open 1 --editor terminal',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -41,6 +45,9 @@ export default class WorkspaceOpen extends Command {
     agent: Flags.string({
       description: 'Agent name to use (default: project default)',
     }),
+    editor: Flags.string({
+      description: 'Editor to use: vscode, terminal (default: interactive selection or project default)',
+    }),
   }
 
   public async run(): Promise<void> {
@@ -56,13 +63,22 @@ export default class WorkspaceOpen extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
+    const { editors } = await daemonGetSupportedEditors({})
+
+    let editorId: string
+    try {
+      editorId = await resolveEditorId(flags.editor, editors)
+    } catch (error) {
+      this.error(error instanceof Error ? error.message : String(error))
+    }
+
     const response = await daemonOpenInTempWorkspace({
       projectPath: cwd,
       issueId: args.issueId,
       action: LlmAction.LLM_ACTION_PLAN,
       agentName: flags.agent !== undefined ? flags.agent : '',
       ttlHours: flags.ttl !== undefined ? flags.ttl : 0,
-      editorId: '',
+      editorId,
     })
 
     if (!response.success) {
