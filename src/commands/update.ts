@@ -59,6 +59,10 @@ export default class Update extends Command {
       multiple: true,
       description: 'Custom field in key=value format (repeatable)',
     }),
+    json: Flags.boolean({
+      description: 'Output as JSON',
+      default: false,
+    }),
     project: projectFlag,
   }
 
@@ -108,6 +112,27 @@ export default class Update extends Command {
 
     const item = response.item!
     const meta = item.metadata
+
+    if (flags.json) {
+      this.log(
+        JSON.stringify(
+          {
+            type: args.type,
+            id: item.id,
+            displayNumber:
+              meta !== undefined && meta.displayNumber > 0
+                ? meta.displayNumber
+                : undefined,
+            title: item.title,
+            status: meta !== undefined ? meta.status : undefined,
+          },
+          null,
+          2
+        )
+      )
+      return
+    }
+
     const displayNum =
       meta !== undefined && meta.displayNumber > 0
         ? ` #${meta.displayNumber}`

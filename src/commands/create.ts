@@ -62,6 +62,10 @@ export default class Create extends Command {
       description: 'Custom field as key=value (repeatable)',
       multiple: true,
     }),
+    json: Flags.boolean({
+      description: 'Output as JSON',
+      default: false,
+    }),
     project: projectFlag,
   }
 
@@ -99,6 +103,27 @@ export default class Create extends Command {
 
     const item = response.item!
     const meta = item.metadata
+
+    if (flags.json) {
+      this.log(
+        JSON.stringify(
+          {
+            type: args.type,
+            id: item.id,
+            displayNumber:
+              meta !== undefined && meta.displayNumber > 0
+                ? meta.displayNumber
+                : undefined,
+            title: item.title,
+            status: meta !== undefined ? meta.status : undefined,
+          },
+          null,
+          2
+        )
+      )
+      return
+    }
+
     const displayId =
       meta !== undefined && meta.displayNumber > 0
         ? ` #${meta.displayNumber}`
