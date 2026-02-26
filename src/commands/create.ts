@@ -8,6 +8,7 @@ import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
+import { formatItemJson } from '../utils/format-item-json.js'
 import { parseCustomFields } from '../utils/parse-custom-fields.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
 
@@ -105,22 +106,7 @@ export default class Create extends Command {
     const meta = item.metadata
 
     if (flags.json) {
-      this.log(
-        JSON.stringify(
-          {
-            type: args.type,
-            id: item.id,
-            displayNumber:
-              meta !== undefined && meta.displayNumber > 0
-                ? meta.displayNumber
-                : undefined,
-            title: item.title,
-            status: meta !== undefined ? meta.status : undefined,
-          },
-          null,
-          2
-        )
-      )
+      this.log(JSON.stringify(formatItemJson(args.type, item), null, 2))
       return
     }
 

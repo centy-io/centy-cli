@@ -237,7 +237,13 @@ describe('Create command', () => {
 
     const cmd = createMockCommand(Command, {
       args: { type: 'issue' },
-      flags: { title: 'Test Issue', body: '', status: '', priority: 0, json: true },
+      flags: {
+        title: 'Test Issue',
+        body: '',
+        status: '',
+        priority: 0,
+        json: true,
+      },
     })
 
     await cmd.run()
@@ -273,7 +279,13 @@ describe('Create command', () => {
 
     const cmd = createMockCommand(Command, {
       args: { type: 'doc' },
-      flags: { title: 'Getting Started', body: '', status: '', priority: 0, json: true },
+      flags: {
+        title: 'Getting Started',
+        body: '',
+        status: '',
+        priority: 0,
+        json: true,
+      },
     })
 
     await cmd.run()
