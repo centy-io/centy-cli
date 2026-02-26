@@ -8,6 +8,7 @@ import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
+import { formatItemJson } from '../utils/format-item-json.js'
 import { parseCustomFields } from '../utils/parse-custom-fields.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
 
@@ -62,6 +63,10 @@ export default class Create extends Command {
       description: 'Custom field as key=value (repeatable)',
       multiple: true,
     }),
+    json: Flags.boolean({
+      description: 'Output as JSON',
+      default: false,
+    }),
     project: projectFlag,
   }
 
@@ -99,6 +104,12 @@ export default class Create extends Command {
 
     const item = response.item!
     const meta = item.metadata
+
+    if (flags.json) {
+      this.log(JSON.stringify(formatItemJson(args.type, item), null, 2))
+      return
+    }
+
     const displayId =
       meta !== undefined && meta.displayNumber > 0
         ? ` #${meta.displayNumber}`

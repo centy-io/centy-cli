@@ -8,6 +8,7 @@ import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
+import { formatItemJson } from '../utils/format-item-json.js'
 import { parseCustomFields } from '../utils/parse-custom-fields.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
 import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
@@ -59,6 +60,10 @@ export default class Update extends Command {
       multiple: true,
       description: 'Custom field in key=value format (repeatable)',
     }),
+    json: Flags.boolean({
+      description: 'Output as JSON',
+      default: false,
+    }),
     project: projectFlag,
   }
 
@@ -76,21 +81,19 @@ export default class Update extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    const noFields =
+    if (
       !flags.title &&
       !flags.body &&
       !flags.status &&
       !flags.priority &&
-      (flags['custom-field'] === undefined ||
-        flags['custom-field'].length === 0)
-    if (noFields) {
+      (!flags['custom-field'] || flags['custom-field'].length === 0)
+    ) {
       this.error('At least one field must be specified to update.')
     }
 
     const itemId = await resolveItemId(args.id, itemType, cwd, msg =>
       this.error(msg)
     )
-    const customFields = parseCustomFields(flags['custom-field'])
     const response = await daemonUpdateItem({
       projectPath: cwd,
       itemType,
@@ -99,19 +102,21 @@ export default class Update extends Command {
       body: flags.body !== undefined ? flags.body : '',
       status: flags.status !== undefined ? flags.status : '',
       priority: flags.priority !== undefined ? flags.priority : 0,
-      customFields,
+      customFields: parseCustomFields(flags['custom-field']),
     })
 
-    if (!response.success) {
-      this.error(response.error)
-    }
+    if (!response.success) this.error(response.error)
 
     const item = response.item!
+
+    if (flags.json) {
+      this.log(JSON.stringify(formatItemJson(args.type, item), null, 2))
+      return
+    }
+
     const meta = item.metadata
-    const displayNum =
-      meta !== undefined && meta.displayNumber > 0
-        ? ` #${meta.displayNumber}`
-        : ` ${item.id}`
-    this.log(`Updated ${args.type}${displayNum}`)
+    const dn =
+      meta !== undefined && meta.displayNumber > 0 ? meta.displayNumber : 0
+    this.log(`Updated ${args.type}${dn > 0 ? ` #${dn}` : ` ${item.id}`}`)
   }
 }

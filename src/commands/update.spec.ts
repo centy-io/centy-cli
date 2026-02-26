@@ -96,6 +96,58 @@ describe('Update command', () => {
       expect(cmd.logs[0]).toContain('item-uuid')
     })
 
+    it('should output JSON when --json flag is set', async () => {
+      const { default: Command } = await import('./update.js')
+      mockDaemonUpdateItem.mockResolvedValue({
+        success: true,
+        item: {
+          id: 'item-uuid',
+          title: 'My Issue',
+          metadata: { displayNumber: 1, status: 'closed' },
+        },
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { status: 'closed', json: true },
+        args: { type: 'issue', id: 'item-uuid' },
+      })
+
+      await cmd.run()
+
+      expect(cmd.logs).toHaveLength(1)
+      const parsed = JSON.parse(cmd.logs[0])
+      expect(parsed).toMatchObject({
+        type: 'issue',
+        id: 'item-uuid',
+        displayNumber: 1,
+        title: 'My Issue',
+        status: 'closed',
+      })
+    })
+
+    it('should omit displayNumber from JSON when item has no display number', async () => {
+      const { default: Command } = await import('./update.js')
+      mockDaemonUpdateItem.mockResolvedValue({
+        success: true,
+        item: {
+          id: 'doc-slug',
+          title: 'My Doc',
+          metadata: { displayNumber: 0, status: '' },
+        },
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { title: 'My Doc', json: true },
+        args: { type: 'doc', id: 'doc-slug' },
+      })
+
+      await cmd.run()
+
+      const parsed = JSON.parse(cmd.logs[0])
+      expect(parsed.displayNumber).toBeUndefined()
+      expect(parsed.type).toBe('doc')
+    })
+
     it('should use project flag to resolve path', async () => {
       const { default: Command } = await import('./update.js')
       mockResolveProjectPath.mockResolvedValue('/other/project')

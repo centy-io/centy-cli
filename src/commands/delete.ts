@@ -46,6 +46,10 @@ export default class Delete extends Command {
       description: 'Skip confirmation prompt',
       default: false,
     }),
+    json: Flags.boolean({
+      description: 'Output as JSON (also skips confirmation prompt)',
+      default: false,
+    }),
     project: projectFlag,
   }
 
@@ -63,7 +67,7 @@ export default class Delete extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    if (!flags.force) {
+    if (!flags.force && !flags.json) {
       const readline = await import('node:readline')
       const rl = readline.createInterface({
         input: process.stdin,
@@ -94,6 +98,21 @@ export default class Delete extends Command {
 
     if (!response.success) {
       this.error(response.error)
+    }
+
+    if (flags.json) {
+      this.log(
+        JSON.stringify(
+          {
+            type: args.type,
+            id: itemId,
+            deleted: true,
+          },
+          null,
+          2
+        )
+      )
+      return
     }
 
     this.log(`Deleted ${args.type} ${args.id}`)
