@@ -1,6 +1,7 @@
 import { Hook } from '@oclif/core'
 import { checkDaemonConnection } from '../daemon/check-daemon-connection.js'
 import { getProjectVersionStatus } from '../daemon/daemon-get-project-version.js'
+import { assertInitialized, NotInitializedError } from '../lib/assert/index.js'
 
 const EXCLUDED_COMMANDS = [
   'info',
@@ -9,6 +10,18 @@ const EXCLUDED_COMMANDS = [
   'start',
   'daemon',
   'cockpit',
+]
+
+/**
+ * Commands that do not require a .centy folder to be present.
+ * Extends EXCLUDED_COMMANDS with commands that set up or observe
+ * the project without needing it to already be initialized.
+ */
+const INIT_EXEMPT_COMMANDS = [
+  ...EXCLUDED_COMMANDS,
+  'init',
+  'version',
+  'register',
 ]
 
 const hook: Hook<'prerun'> = async function (options) {
@@ -37,6 +50,28 @@ const hook: Hook<'prerun'> = async function (options) {
     this.warn(
       `Your project is at version ${versionStatus.projectVersion}, daemon is at ${versionStatus.daemonVersion}. Run 'centy init' to migrate.`
     )
+  }
+
+  // Check that the project is initialized before running repo-context commands.
+  // Skip for init-exempt commands and when --project is supplied (the command
+  // resolves its own path and performs its own assertion for that path).
+  const isInitExempt = INIT_EXEMPT_COMMANDS.some(
+    cmd => commandId === cmd || commandId.startsWith(`${cmd}:`)
+  )
+
+  const argv =
+    options.argv !== null && options.argv !== undefined ? options.argv : []
+  const hasProjectFlag = argv.some(arg => arg === '--project')
+  if (!isInitExempt && !hasProjectFlag) {
+    try {
+      await assertInitialized(projectPath)
+    } catch (error) {
+      if (error instanceof NotInitializedError) {
+        this.error(error.message)
+        return
+      }
+      throw error instanceof Error ? error : new Error(String(error))
+    }
   }
 }
 
