@@ -25,11 +25,7 @@ export default class Compact extends Command {
     'Compact uncompacted issues into feature summaries'
 
   // eslint-disable-next-line no-restricted-syntax
-  static override examples = [
-    '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> --dry-run',
-    '<%= config.bin %> <%= command.id %> --output context.md',
-  ]
+  static override examples = ['<%= config.bin %> <%= command.id %>']
 
   // eslint-disable-next-line no-restricted-syntax
   static override flags = {
@@ -86,8 +82,7 @@ export default class Compact extends Command {
       cwd,
       response.issues.map(item => ({
         id: item.id,
-        displayNumber:
-          item.metadata !== undefined ? item.metadata.displayNumber : 0,
+        displayNumber: item.metadata ? item.metadata.displayNumber : 0,
         title: item.title,
         description: item.body,
       }))
