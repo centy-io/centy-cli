@@ -30,6 +30,9 @@ export default class List extends Command {
   static override examples = [
     '<%= config.bin %> list issues',
     '<%= config.bin %> list epics --status open',
+    '<%= config.bin %> list epics --priority 1',
+    '<%= config.bin %> list bugs --json',
+    '<%= config.bin %> list bugs --json --limit 10',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
