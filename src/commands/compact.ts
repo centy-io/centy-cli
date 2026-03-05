@@ -25,11 +25,7 @@ export default class Compact extends Command {
     'Compact uncompacted issues into feature summaries'
 
   // eslint-disable-next-line no-restricted-syntax
-  static override examples = [
-    '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> --dry-run',
-    '<%= config.bin %> <%= command.id %> --output context.md',
-  ]
+  static override examples = ['<%= config.bin %> <%= command.id %>']
 
   // eslint-disable-next-line no-restricted-syntax
   static override flags = {
@@ -78,9 +74,7 @@ export default class Compact extends Command {
     }
 
     if (flags['dry-run']) {
-      for (const line of formatDryRun(response, flags.json)) {
-        this.log(line)
-      }
+      formatDryRun(response, flags.json).forEach(line => this.log(line))
       return
     }
 
@@ -88,8 +82,7 @@ export default class Compact extends Command {
       cwd,
       response.issues.map(item => ({
         id: item.id,
-        displayNumber:
-          item.metadata !== undefined ? item.metadata.displayNumber : 0,
+        displayNumber: item.metadata ? item.metadata.displayNumber : 0,
         title: item.title,
         description: item.body,
       }))
@@ -116,9 +109,9 @@ export default class Compact extends Command {
         this.log('compact.md updated')
       }
       if (result.noIdsFound) {
-        this.warn(
+        const noIdsMsg =
           'No issue IDs found in migration content. Issues will not be marked as compacted.'
-        )
+        this.warn(noIdsMsg)
       } else {
         this.log(`Marked ${result.markedCount} issue(s) as compacted`)
       }
