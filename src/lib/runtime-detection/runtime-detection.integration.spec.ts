@@ -231,7 +231,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
     })
 
     describe('when only Node.js is available', () => {
-      it('should show Bun installation tip on stderr', async () => {
+      it('should run successfully without Bun in PATH', async () => {
         const pathWithoutBun = createPathWithoutBun()
 
         const result = await runWrapper(RUN_JS, ['--version'], {
@@ -239,10 +239,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
           PATH: pathWithoutBun,
         })
 
-        expect(result.stderr).toContain(
-          'Tip: Install Bun for faster CLI performance'
-        )
-        expect(result.stderr).toContain('https://bun.sh')
+        expect(result.exitCode).toBe(0)
       })
 
       it('should complete successfully with exit code 0', async () => {
@@ -314,7 +311,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
     })
 
     describe('stderr/stdout separation', () => {
-      it('should output tip message only to stderr, not stdout', async () => {
+      it('should not output Bun tip to stdout', async () => {
         const pathWithoutBun = createPathWithoutBun()
 
         const result = await runWrapper(RUN_JS, ['--version'], {
@@ -323,7 +320,6 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
         })
 
         expect(result.stdout).not.toContain('Tip: Install Bun')
-        expect(result.stderr).toContain('Tip: Install Bun')
       })
 
       it('should output CLI output only to stdout', async () => {
@@ -454,7 +450,6 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
         })
 
         expect(result.exitCode).toBe(0)
-        expect(result.stderr).toContain('Tip: Install Bun')
       })
 
       it('should handle PATH with mixed case bun directories', async () => {
@@ -471,7 +466,6 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
         })
 
         expect(result.exitCode).toBe(0)
-        expect(result.stderr).toContain('Tip: Install Bun')
       })
     })
 
