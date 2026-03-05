@@ -29,9 +29,9 @@ describe('daemonGetDoc', () => {
 
   it('should resolve with response on success', async () => {
     const mockDoc = { id: 'doc-1', slug: 'test-doc' }
-    const mockResponse = { success: true, doc: mockDoc }
+    const mockResponse = { success: true, item: mockDoc }
     const mockClient = {
-      getDoc: vi.fn((_req, _options, callback) => {
+      getItem: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
       }),
     }
@@ -43,13 +43,17 @@ describe('daemonGetDoc', () => {
     const result = await daemonGetDoc({} as never)
 
     expect(result).toEqual(mockDoc)
-    expect(mockClient.getDoc).toHaveBeenCalledWith({}, {}, expect.any(Function))
+    expect(mockClient.getItem).toHaveBeenCalledWith(
+      { itemType: 'docs' },
+      {},
+      expect.any(Function)
+    )
   })
 
   it('should reject with error on failure', async () => {
     const mockError = new Error('gRPC error')
     const mockClient = {
-      getDoc: vi.fn((_req, _options, callback) => {
+      getItem: vi.fn((_req, _options, callback) => {
         callback(mockError, null)
       }),
     }

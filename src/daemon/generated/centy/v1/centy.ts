@@ -5,1808 +5,1495 @@
 // source: centy/v1/centy.proto
 
 /* eslint-disable */
+import type { GenericItem, Manifest } from "./generic_item";
 
 export enum FileType {
-  FILE_TYPE_UNSPECIFIED = 'FILE_TYPE_UNSPECIFIED',
-  FILE_TYPE_FILE = 'FILE_TYPE_FILE',
-  FILE_TYPE_DIRECTORY = 'FILE_TYPE_DIRECTORY',
-}
-
-/** Action types for workspace operations */
-export enum LlmAction {
-  LLM_ACTION_UNSPECIFIED = 'LLM_ACTION_UNSPECIFIED',
-  LLM_ACTION_PLAN = 'LLM_ACTION_PLAN',
-  LLM_ACTION_IMPLEMENT = 'LLM_ACTION_IMPLEMENT',
-  LLM_ACTION_DEEPDIVE = 'LLM_ACTION_DEEPDIVE',
-}
-
-/** Workspace mode for agent operations */
-export enum WorkspaceMode {
-  /** WORKSPACE_MODE_UNSPECIFIED - Use project default or prompt user */
-  WORKSPACE_MODE_UNSPECIFIED = 'WORKSPACE_MODE_UNSPECIFIED',
-  /** WORKSPACE_MODE_TEMP - Create temporary worktree */
-  WORKSPACE_MODE_TEMP = 'WORKSPACE_MODE_TEMP',
-  /** WORKSPACE_MODE_CURRENT - Use current project directory */
-  WORKSPACE_MODE_CURRENT = 'WORKSPACE_MODE_CURRENT',
+  FILE_TYPE_UNSPECIFIED = "FILE_TYPE_UNSPECIFIED",
+  FILE_TYPE_FILE = "FILE_TYPE_FILE",
+  FILE_TYPE_DIRECTORY = "FILE_TYPE_DIRECTORY",
 }
 
 /** Editor type for opening workspaces */
 export enum EditorType {
-  EDITOR_TYPE_UNSPECIFIED = 'EDITOR_TYPE_UNSPECIFIED',
+  EDITOR_TYPE_UNSPECIFIED = "EDITOR_TYPE_UNSPECIFIED",
   /** EDITOR_TYPE_VSCODE - VS Code editor */
-  EDITOR_TYPE_VSCODE = 'EDITOR_TYPE_VSCODE',
+  EDITOR_TYPE_VSCODE = "EDITOR_TYPE_VSCODE",
   /** EDITOR_TYPE_TERMINAL - OS terminal */
-  EDITOR_TYPE_TERMINAL = 'EDITOR_TYPE_TERMINAL',
+  EDITOR_TYPE_TERMINAL = "EDITOR_TYPE_TERMINAL",
 }
 
 /** Target entity type for links */
 export enum LinkTargetType {
-  LINK_TARGET_TYPE_UNSPECIFIED = 'LINK_TARGET_TYPE_UNSPECIFIED',
-  LINK_TARGET_TYPE_ISSUE = 'LINK_TARGET_TYPE_ISSUE',
-  LINK_TARGET_TYPE_DOC = 'LINK_TARGET_TYPE_DOC',
+  LINK_TARGET_TYPE_UNSPECIFIED = "LINK_TARGET_TYPE_UNSPECIFIED",
+  LINK_TARGET_TYPE_ISSUE = "LINK_TARGET_TYPE_ISSUE",
+  LINK_TARGET_TYPE_DOC = "LINK_TARGET_TYPE_DOC",
 }
 
 /** Entity type for actions */
 export enum EntityType {
-  ENTITY_TYPE_UNSPECIFIED = 'ENTITY_TYPE_UNSPECIFIED',
-  ENTITY_TYPE_ISSUE = 'ENTITY_TYPE_ISSUE',
-  ENTITY_TYPE_DOC = 'ENTITY_TYPE_DOC',
+  ENTITY_TYPE_UNSPECIFIED = "ENTITY_TYPE_UNSPECIFIED",
+  ENTITY_TYPE_ISSUE = "ENTITY_TYPE_ISSUE",
+  ENTITY_TYPE_DOC = "ENTITY_TYPE_DOC",
 }
 
 /** Action category for grouping in UI */
 export enum ActionCategory {
-  ACTION_CATEGORY_UNSPECIFIED = 'ACTION_CATEGORY_UNSPECIFIED',
+  ACTION_CATEGORY_UNSPECIFIED = "ACTION_CATEGORY_UNSPECIFIED",
   /** ACTION_CATEGORY_CRUD - Create, Delete, Duplicate, Move */
-  ACTION_CATEGORY_CRUD = 'ACTION_CATEGORY_CRUD',
+  ACTION_CATEGORY_CRUD = "ACTION_CATEGORY_CRUD",
   /** ACTION_CATEGORY_MODE - Plan, Implement (LLM actions) */
-  ACTION_CATEGORY_MODE = 'ACTION_CATEGORY_MODE',
+  ACTION_CATEGORY_MODE = "ACTION_CATEGORY_MODE",
   /** ACTION_CATEGORY_STATUS - Status/state changes */
-  ACTION_CATEGORY_STATUS = 'ACTION_CATEGORY_STATUS',
+  ACTION_CATEGORY_STATUS = "ACTION_CATEGORY_STATUS",
   /** ACTION_CATEGORY_EXTERNAL - Open in VSCode, external tools */
-  ACTION_CATEGORY_EXTERNAL = 'ACTION_CATEGORY_EXTERNAL',
+  ACTION_CATEGORY_EXTERNAL = "ACTION_CATEGORY_EXTERNAL",
 }
 
 /** Sync mode enum */
 export enum SyncMode {
-  SYNC_MODE_UNSPECIFIED = 'SYNC_MODE_UNSPECIFIED',
+  SYNC_MODE_UNSPECIFIED = "SYNC_MODE_UNSPECIFIED",
   /** SYNC_MODE_FULL - Full sync with remote */
-  SYNC_MODE_FULL = 'SYNC_MODE_FULL',
+  SYNC_MODE_FULL = "SYNC_MODE_FULL",
   /** SYNC_MODE_LOCAL_ONLY - Local-only mode (no remote) */
-  SYNC_MODE_LOCAL_ONLY = 'SYNC_MODE_LOCAL_ONLY',
+  SYNC_MODE_LOCAL_ONLY = "SYNC_MODE_LOCAL_ONLY",
   /** SYNC_MODE_DISABLED - Sync disabled (not a git repo) */
-  SYNC_MODE_DISABLED = 'SYNC_MODE_DISABLED',
+  SYNC_MODE_DISABLED = "SYNC_MODE_DISABLED",
 }
 
 /** Conflict resolution type */
 export enum ConflictResolutionType {
-  CONFLICT_RESOLUTION_UNSPECIFIED = 'CONFLICT_RESOLUTION_UNSPECIFIED',
-  CONFLICT_RESOLUTION_TAKE_OURS = 'CONFLICT_RESOLUTION_TAKE_OURS',
-  CONFLICT_RESOLUTION_TAKE_THEIRS = 'CONFLICT_RESOLUTION_TAKE_THEIRS',
-  CONFLICT_RESOLUTION_MERGE = 'CONFLICT_RESOLUTION_MERGE',
+  CONFLICT_RESOLUTION_UNSPECIFIED = "CONFLICT_RESOLUTION_UNSPECIFIED",
+  CONFLICT_RESOLUTION_TAKE_OURS = "CONFLICT_RESOLUTION_TAKE_OURS",
+  CONFLICT_RESOLUTION_TAKE_THEIRS = "CONFLICT_RESOLUTION_TAKE_THEIRS",
+  CONFLICT_RESOLUTION_MERGE = "CONFLICT_RESOLUTION_MERGE",
 }
 
 export interface InitRequest {
   /** The project directory path where .centy should be initialized */
-  projectPath: string
+  projectPath: string;
   /** If true, skip prompts and use defaults (create all, restore all, reset none) */
-  force: boolean
+  force: boolean;
   /** Decisions for files that need user input (only used when force=false) */
-  decisions?: ReconciliationDecisions | undefined
+  decisions?:
+    | ReconciliationDecisions
+    | undefined;
+  /**
+   * Optional configuration to apply during initialization.
+   * Fields set here will be written to .centy/config.json.
+   * Unset/zero-value fields fall back to project defaults.
+   */
+  initConfig?:
+    | Config
+    | undefined;
+  /**
+   * Optional project title to set during initialization (stored in .centy/project.json,
+   * visible to all team members). Empty string means no title is set.
+   */
+  title: string;
 }
 
 export interface InitResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Summary of what was done */
-  created: string[]
-  restored: string[]
-  reset: string[]
-  skipped: string[]
+  created: string[];
+  restored: string[];
+  reset: string[];
+  skipped: string[];
   /** The updated manifest */
-  manifest?: Manifest | undefined
+  manifest?:
+    | Manifest
+    | undefined;
   /** Organization inference result from git remote */
-  orgInference?: OrgInferenceResult | undefined
+  orgInference?: OrgInferenceResult | undefined;
 }
 
 export interface GetReconciliationPlanRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 export interface ReconciliationPlan {
   /** Files that need to be created (not on disk, not in manifest) */
-  toCreate: FileInfo[]
+  toCreate: FileInfo[];
   /** Files that were deleted but exist in manifest (can be restored) */
-  toRestore: FileInfo[]
+  toRestore: FileInfo[];
   /** Files that were modified from original (hash mismatch) */
-  toReset: FileInfo[]
+  toReset: FileInfo[];
   /** Files that are up to date */
-  upToDate: FileInfo[]
+  upToDate: FileInfo[];
   /** User-created files (not managed by centy) */
-  userFiles: FileInfo[]
+  userFiles: FileInfo[];
   /** Whether user decisions are needed */
-  needsDecisions: boolean
-  success: boolean
-  error: string
+  needsDecisions: boolean;
+  success: boolean;
+  error: string;
 }
 
 export interface ExecuteReconciliationRequest {
-  projectPath: string
-  decisions?: ReconciliationDecisions | undefined
+  projectPath: string;
+  decisions?: ReconciliationDecisions | undefined;
 }
 
 export interface ReconciliationDecisions {
   /** Paths of files to restore (from to_restore list) */
-  restore: string[]
+  restore: string[];
   /** Paths of files to reset (from to_reset list) */
-  reset: string[]
-}
-
-export interface CreateIssueRequest {
-  projectPath: string
-  title: string
-  description: string
-  /** 1 = highest priority, 0 = use default */
-  priority: number
-  /** default: "open" */
-  status: string
-  customFields: { [key: string]: string }
-  /** Optional template name (without .md extension) */
-  template: string
-  /** Create as draft (default: false) */
-  draft: boolean
-  /** Create as organization-wide issue (syncs to all org projects) */
-  isOrgIssue: boolean
-}
-
-export interface CreateIssueRequest_CustomFieldsEntry {
-  key: string
-  value: string
-}
-
-export interface CreateIssueResponse {
-  success: boolean
-  error: string
-  /** The created issue ID (UUID) */
-  id: string
-  /** Human-readable display number (1, 2, 3...) */
-  displayNumber: number
-  /** Legacy: same as id (for backward compatibility) */
-  issueNumber: string
-  /** Paths to created files */
-  createdFiles: string[]
-  /** The updated manifest */
-  manifest?: Manifest | undefined
-  /** Org-level display number (only for org issues, 0 if not an org issue) */
-  orgDisplayNumber: number
-  /** Results from syncing to other org projects (org issues only) */
-  syncResults: OrgDocSyncResult[]
-}
-
-export interface GetNextIssueNumberRequest {
-  projectPath: string
-}
-
-export interface GetNextIssueNumberResponse {
-  issueNumber: string
-  success: boolean
-  error: string
-}
-
-/** Issue represents a full issue with all its data */
-export interface Issue {
-  /** UUID-based issue ID (folder name) */
-  id: string
-  /** Human-readable display number (1, 2, 3...) */
-  displayNumber: number
-  /** Legacy: same as id (for backward compatibility) */
-  issueNumber: string
-  title: string
-  description: string
-  metadata?: IssueMetadata | undefined
-}
-
-export interface IssueMetadata {
-  /** Human-readable display number (1, 2, 3...) */
-  displayNumber: number
-  /** e.g., "open", "in-progress", "closed" */
-  status: string
-  /** 1 = highest priority, N = lowest */
-  priority: number
-  /** ISO timestamp */
-  createdAt: string
-  /** ISO timestamp */
-  updatedAt: string
-  customFields: { [key: string]: string }
-  /** Human-readable label (e.g., "high", "P1") */
-  priorityLabel: string
-  /** Whether this issue is a draft */
-  draft: boolean
-  /** ISO timestamp when soft-deleted (empty if not deleted) */
-  deletedAt: string
-  /** Whether this is an organization-level issue */
-  isOrgIssue: boolean
-  /** Organization slug (empty if not org issue) */
-  orgSlug: string
-  /** Org-scoped display number (0 if not org issue) */
-  orgDisplayNumber: number
-}
-
-export interface IssueMetadata_CustomFieldsEntry {
-  key: string
-  value: string
-}
-
-export interface GetIssueRequest {
-  projectPath: string
-  /** UUID or legacy issue number (e.g., "0001") */
-  issueId: string
-}
-
-export interface GetIssueByDisplayNumberRequest {
-  projectPath: string
-  /** Human-readable number (1, 2, 3...) */
-  displayNumber: number
-}
-
-/** Wrapper response for GetIssue and GetIssueByDisplayNumber RPCs */
-export interface GetIssueResponse {
-  success: boolean
-  error: string
-  issue?: Issue | undefined
-}
-
-export interface GetIssuesByUuidRequest {
-  /** The UUID to search for (must be valid UUID format) */
-  uuid: string
-}
-
-/** An issue with its source project path */
-export interface IssueWithProject {
-  issue?: Issue | undefined
-  /** Absolute path to the project where this issue was found */
-  projectPath: string
-  /** Human-readable project name (directory name) */
-  projectName: string
-  /** Human-readable path with ~/ for home dir (use for display only) */
-  displayPath: string
-}
-
-export interface GetIssuesByUuidResponse {
-  issues: IssueWithProject[]
-  totalCount: number
-  /** Non-fatal errors (e.g., projects that couldn't be accessed) */
-  errors: string[]
-  success: boolean
-  error: string
-}
-
-export interface ListIssuesRequest {
-  projectPath: string
-  /** Optional filters */
-  status: string
-  /** Filter by priority (0 = all) */
-  priority: number
-  /** Filter by draft status (absent = all, true = drafts only, false = non-drafts only) */
-  draft?: boolean | undefined
-  /** Include soft-deleted issues (default: false) */
-  includeDeleted: boolean
-}
-
-export interface ListIssuesResponse {
-  issues: Issue[]
-  totalCount: number
-  success: boolean
-  error: string
-}
-
-/** Advanced search request */
-export interface AdvancedSearchRequest {
-  /** Query string (e.g., "status:open AND priority:1") */
-  query: string
-  /** Field to sort by (e.g., "createdAt", "priority") */
-  sortBy: string
-  /** Sort order (true = descending) */
-  sortDescending: boolean
-  /** Search across all tracked projects */
-  multiProject: boolean
-  /** Project path (required if multi_project is false) */
-  projectPath: string
-}
-
-/** Search result containing issue and project info */
-export interface SearchResultIssue {
-  issue?: Issue | undefined
-  projectPath: string
-  projectName: string
-  displayPath: string
-}
-
-/** Advanced search response */
-export interface AdvancedSearchResponse {
-  success: boolean
-  error: string
-  results: SearchResultIssue[]
-  totalCount: number
-  /** Debug: the parsed query representation */
-  parsedQuery: string
-}
-
-export interface UpdateIssueRequest {
-  projectPath: string
-  /** UUID or legacy issue number */
-  issueId: string
-  /** Fields to update (empty string = don't update, 0 = don't update priority) */
-  title: string
-  description: string
-  status: string
-  /** 0 = don't update, otherwise 1-N */
-  priority: number
-  customFields: { [key: string]: string }
-  /** Update draft status (absent = don't update) */
-  draft?: boolean | undefined
-}
-
-export interface UpdateIssueRequest_CustomFieldsEntry {
-  key: string
-  value: string
-}
-
-export interface UpdateIssueResponse {
-  success: boolean
-  error: string
-  /** The updated issue */
-  issue?: Issue | undefined
-  manifest?: Manifest | undefined
-  /** Results from syncing to other org projects (org issues only) */
-  syncResults: OrgDocSyncResult[]
-}
-
-export interface DeleteIssueRequest {
-  projectPath: string
-  /** UUID or legacy issue number */
-  issueId: string
-}
-
-export interface DeleteIssueResponse {
-  success: boolean
-  error: string
-  /** Updated manifest after deletion */
-  manifest?: Manifest | undefined
-}
-
-/** Soft-delete an issue (set deleted_at timestamp) */
-export interface SoftDeleteIssueRequest {
-  projectPath: string
-  /** UUID or legacy issue number */
-  issueId: string
-}
-
-export interface SoftDeleteIssueResponse {
-  success: boolean
-  error: string
-  /** The soft-deleted issue (with deleted_at set) */
-  issue?: Issue | undefined
-  /** Updated manifest */
-  manifest?: Manifest | undefined
-}
-
-/** Restore a soft-deleted issue (clear deleted_at timestamp) */
-export interface RestoreIssueRequest {
-  projectPath: string
-  /** UUID or legacy issue number */
-  issueId: string
-}
-
-export interface RestoreIssueResponse {
-  success: boolean
-  error: string
-  /** The restored issue (with deleted_at cleared) */
-  issue?: Issue | undefined
-  /** Updated manifest */
-  manifest?: Manifest | undefined
-}
-
-export interface MoveIssueRequest {
-  /** Project containing the issue */
-  sourceProjectPath: string
-  /** UUID of the issue to move */
-  issueId: string
-  /** Target project path */
-  targetProjectPath: string
-}
-
-export interface MoveIssueResponse {
-  success: boolean
-  error: string
-  /** The moved issue (same UUID, new display_number) */
-  issue?: Issue | undefined
-  /** Original display number for reference */
-  oldDisplayNumber: number
-  /** Updated source project manifest */
-  sourceManifest?: Manifest | undefined
-  /** Updated target project manifest */
-  targetManifest?: Manifest | undefined
-}
-
-export interface DuplicateIssueRequest {
-  /** Project containing the original issue */
-  sourceProjectPath: string
-  /** UUID of the issue to duplicate */
-  issueId: string
-  /** Target project (can be same as source) */
-  targetProjectPath: string
-  /** Optional: override title (default: "Copy of {original}") */
-  newTitle: string
-}
-
-export interface DuplicateIssueResponse {
-  success: boolean
-  error: string
-  /** The new duplicate issue (new UUID, new display_number) */
-  issue?: Issue | undefined
-  /** UUID of the original issue */
-  originalIssueId: string
-  /** Updated target project manifest */
-  manifest?: Manifest | undefined
+  reset: string[];
 }
 
 export interface GetManifestRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 /** Wrapper response for GetManifest RPC */
 export interface GetManifestResponse {
-  success: boolean
-  error: string
-  manifest?: Manifest | undefined
-}
-
-export interface Manifest {
-  schemaVersion: number
-  centyVersion: string
-  createdAt: string
-  updatedAt: string
+  success: boolean;
+  error: string;
+  manifest?: Manifest | undefined;
 }
 
 export interface FileInfo {
-  path: string
-  fileType: FileType
-  hash: string
+  path: string;
+  fileType: FileType;
+  hash: string;
   /** For display purposes */
-  contentPreview: string
+  contentPreview: string;
 }
 
 export interface GetConfigRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 /** Wrapper response for GetConfig RPC */
 export interface GetConfigResponse {
-  success: boolean
-  error: string
-  config?: Config | undefined
+  success: boolean;
+  error: string;
+  config?: Config | undefined;
 }
 
 export interface Config {
-  customFields: CustomFieldDefinition[]
-  defaults: { [key: string]: string }
+  customFields: CustomFieldDefinition[];
+  defaults: { [key: string]: string };
   /** Number of priority levels (default: 3) */
-  priorityLevels: number
-  /** Allowed status values (default: ["open", "in-progress", "closed"]) */
-  allowedStates: string[]
+  priorityLevels: number;
   /** Project version (semver, empty = daemon default) */
-  version: string
+  version: string;
   /** State name → hex color (e.g., "open" → "#10b981") */
-  stateColors: { [key: string]: string }
+  stateColors: { [key: string]: string };
   /** Priority level → hex color (e.g., "1" → "#ef4444") */
-  priorityColors: { [key: string]: string }
+  priorityColors: { [key: string]: string };
   /** Custom link types (in addition to built-in) */
-  customLinkTypes: LinkTypeDefinition[]
+  customLinkTypes: LinkTypeDefinition[];
   /** Default editor ID for this project (e.g., "vscode", "terminal", "zed") */
-  defaultEditor: string
+  defaultEditor: string;
   /** Lifecycle hooks */
-  hooks: HookDefinition[]
+  hooks: HookDefinition[];
   /** Workspace settings */
-  workspace?: WorkspaceConfig | undefined
+  workspace?: WorkspaceConfig | undefined;
 }
 
 export interface Config_DefaultsEntry {
-  key: string
-  value: string
+  key: string;
+  value: string;
 }
 
 export interface Config_StateColorsEntry {
-  key: string
-  value: string
+  key: string;
+  value: string;
 }
 
 export interface Config_PriorityColorsEntry {
-  key: string
-  value: string
+  key: string;
+  value: string;
 }
 
 /** Workspace configuration section */
 export interface WorkspaceConfig {
   /** Auto-update issue status to "in-progress" when opening a temp workspace */
-  updateStatusOnOpen?: boolean | undefined
+  updateStatusOnOpen?: boolean | undefined;
 }
 
 export interface CustomFieldDefinition {
-  name: string
+  name: string;
   /** "string", "number", "boolean", "enum" */
-  fieldType: string
-  required: boolean
-  defaultValue: string
+  fieldType: string;
+  required: boolean;
+  defaultValue: string;
   /** For enum type */
-  enumValues: string[]
+  enumValues: string[];
 }
 
 /** Lifecycle hook definition (bash scripts to run before/after operations) */
 export interface HookDefinition {
   /** Pattern like "pre:issue:create" or "*:*:delete" */
-  pattern: string
+  pattern: string;
   /** Bash command to execute */
-  command: string
+  command: string;
   /** If true, run in background (post-hooks only) */
-  runAsync: boolean
+  runAsync: boolean;
   /** Timeout in seconds (default: 30) */
-  timeout: string
+  timeout: string;
   /** Whether hook is enabled (default: true) */
-  enabled: boolean
+  enabled: boolean;
 }
 
 /** Custom link type definition (for custom relationship types) */
 export interface LinkTypeDefinition {
   /** Link type name (e.g., "depends-on") */
-  name: string
+  name: string;
   /** Inverse link type (e.g., "dependency-of") */
-  inverse: string
+  inverse: string;
   /** Optional description */
-  description: string
+  description: string;
 }
 
 export interface UpdateConfigRequest {
-  projectPath: string
-  config?: Config | undefined
+  projectPath: string;
+  config?: Config | undefined;
 }
 
 export interface UpdateConfigResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The saved config (with any normalization applied) */
-  config?: Config | undefined
+  config?: Config | undefined;
 }
 
 export interface IsInitializedRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 export interface IsInitializedResponse {
-  initialized: boolean
+  initialized: boolean;
   /** Full path to .centy folder if initialized */
-  centyPath: string
-}
-
-export interface CreateDocRequest {
-  projectPath: string
-  /** Doc title (used to generate slug) */
-  title: string
-  /** Markdown content */
-  content: string
-  /** Optional custom slug (auto-generated from title if empty) */
-  slug: string
-  /** Optional template name (without .md extension) */
-  template: string
-  /** Create as organization-wide doc (syncs to all org projects) */
-  isOrgDoc: boolean
-}
-
-/** Result of syncing an org doc to a project */
-export interface OrgDocSyncResult {
-  /** Path of target project */
-  projectPath: string
-  /** Whether sync succeeded */
-  success: boolean
-  /** Error message if failed */
-  error: string
-}
-
-export interface CreateDocResponse {
-  success: boolean
-  error: string
-  /** The created doc slug */
-  slug: string
-  /** Path to created file */
-  createdFile: string
-  manifest?: Manifest | undefined
-  /** Results from syncing to other org projects */
-  syncResults: OrgDocSyncResult[]
-}
-
-export interface GetDocRequest {
-  projectPath: string
-  /** e.g., "getting-started" */
-  slug: string
-}
-
-/** Wrapper response for GetDoc RPC */
-export interface GetDocResponse {
-  success: boolean
-  error: string
-  doc?: Doc | undefined
-}
-
-export interface GetDocsBySlugRequest {
-  /** The slug to search for (kebab-case) */
-  slug: string
-}
-
-/** A doc with its source project path */
-export interface DocWithProject {
-  doc?: Doc | undefined
-  /** Absolute path to the project where this doc was found */
-  projectPath: string
-  /** Human-readable project name (directory name) */
-  projectName: string
-  /** Human-readable path with ~/ for home dir (use for display only) */
-  displayPath: string
-}
-
-export interface GetDocsBySlugResponse {
-  docs: DocWithProject[]
-  totalCount: number
-  /** Non-fatal errors (e.g., projects that couldn't be accessed) */
-  errors: string[]
-  success: boolean
-  error: string
-}
-
-export interface ListDocsRequest {
-  projectPath: string
-  /** Include soft-deleted docs (default: false) */
-  includeDeleted: boolean
-}
-
-export interface ListDocsResponse {
-  docs: Doc[]
-  totalCount: number
-  success: boolean
-  error: string
-}
-
-/** Doc represents a documentation file */
-export interface Doc {
-  /** e.g., "getting-started" */
-  slug: string
-  title: string
-  /** Full markdown content */
-  content: string
-  metadata?: DocMetadata | undefined
-}
-
-export interface DocMetadata {
-  /** ISO timestamp */
-  createdAt: string
-  /** ISO timestamp */
-  updatedAt: string
-  /** ISO timestamp when soft-deleted (empty if not deleted) */
-  deletedAt: string
-  /** Whether this is an organization-level doc */
-  isOrgDoc: boolean
-  /** Organization slug (for org docs) */
-  orgSlug: string
-}
-
-export interface UpdateDocRequest {
-  projectPath: string
-  slug: string
-  /** Fields to update (empty string = don't update) */
-  title: string
-  content: string
-  /** Rename the doc (empty = keep current slug) */
-  newSlug: string
-}
-
-export interface UpdateDocResponse {
-  success: boolean
-  error: string
-  /** The updated doc */
-  doc?: Doc | undefined
-  manifest?: Manifest | undefined
-  /** Results from syncing to other org projects (org docs only) */
-  syncResults: OrgDocSyncResult[]
-}
-
-export interface DeleteDocRequest {
-  projectPath: string
-  slug: string
-}
-
-export interface DeleteDocResponse {
-  success: boolean
-  error: string
-  manifest?: Manifest | undefined
-}
-
-/** Soft-delete a doc (set deleted_at timestamp) */
-export interface SoftDeleteDocRequest {
-  projectPath: string
-  slug: string
-}
-
-export interface SoftDeleteDocResponse {
-  success: boolean
-  error: string
-  /** The soft-deleted doc (with deleted_at set) */
-  doc?: Doc | undefined
-  manifest?: Manifest | undefined
-}
-
-/** Restore a soft-deleted doc (clear deleted_at timestamp) */
-export interface RestoreDocRequest {
-  projectPath: string
-  slug: string
-}
-
-export interface RestoreDocResponse {
-  success: boolean
-  error: string
-  /** The restored doc (with deleted_at cleared) */
-  doc?: Doc | undefined
-  manifest?: Manifest | undefined
-}
-
-export interface MoveDocRequest {
-  /** Project containing the doc */
-  sourceProjectPath: string
-  /** Slug of the doc to move */
-  slug: string
-  /** Target project path */
-  targetProjectPath: string
-  /** Optional: new slug if conflict exists */
-  newSlug: string
-}
-
-export interface MoveDocResponse {
-  success: boolean
-  error: string
-  /** The moved doc */
-  doc?: Doc | undefined
-  /** Original slug for reference */
-  oldSlug: string
-  /** Updated source project manifest */
-  sourceManifest?: Manifest | undefined
-  /** Updated target project manifest */
-  targetManifest?: Manifest | undefined
-}
-
-export interface DuplicateDocRequest {
-  /** Project containing the original doc */
-  sourceProjectPath: string
-  /** Slug of the doc to duplicate */
-  slug: string
-  /** Target project (can be same as source) */
-  targetProjectPath: string
-  /** Optional: override slug (default: "{slug}-copy") */
-  newSlug: string
-  /** Optional: override title (default: "Copy of {original}") */
-  newTitle: string
-}
-
-export interface DuplicateDocResponse {
-  success: boolean
-  error: string
-  /** The new duplicate doc */
-  doc?: Doc | undefined
-  /** Slug of the original doc */
-  originalSlug: string
-  /** Updated target project manifest */
-  manifest?: Manifest | undefined
+  centyPath: string;
 }
 
 /** Asset represents file metadata */
 export interface Asset {
   /** Original filename */
-  filename: string
+  filename: string;
   /** SHA-256 hash */
-  hash: string
+  hash: string;
   /** File size in bytes */
-  size: string
+  size: string;
   /** MIME type (e.g., "image/png") */
-  mimeType: string
+  mimeType: string;
   /** Whether this is a shared asset */
-  isShared: boolean
+  isShared: boolean;
   /** ISO timestamp */
-  createdAt: string
+  createdAt: string;
 }
 
 export interface AddAssetRequest {
-  projectPath: string
+  projectPath: string;
   /** Issue ID (required for issue-specific assets) */
-  issueId: string
+  issueId: string;
   /** Filename to save as */
-  filename: string
+  filename: string;
   /** Binary file data */
-  data: Buffer
+  data: Buffer;
   /** If true, store as shared asset (default: false) */
-  isShared: boolean
+  isShared: boolean;
 }
 
 export interface AddAssetResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The created asset info */
-  asset?: Asset | undefined
+  asset?:
+    | Asset
+    | undefined;
   /** Full path to the asset file */
-  path: string
-  manifest?: Manifest | undefined
+  path: string;
+  manifest?: Manifest | undefined;
 }
 
 export interface ListAssetsRequest {
-  projectPath: string
+  projectPath: string;
   /** Issue ID to list assets for */
-  issueId: string
+  issueId: string;
   /** Include shared assets in result (default: false) */
-  includeShared: boolean
+  includeShared: boolean;
 }
 
 export interface ListAssetsResponse {
-  assets: Asset[]
-  totalCount: number
-  success: boolean
-  error: string
+  assets: Asset[];
+  totalCount: number;
+  success: boolean;
+  error: string;
 }
 
 export interface GetAssetRequest {
-  projectPath: string
+  projectPath: string;
   /** Issue ID (required for issue-specific assets) */
-  issueId: string
+  issueId: string;
   /** Asset filename */
-  filename: string
+  filename: string;
   /** Whether to look for a shared asset */
-  isShared: boolean
+  isShared: boolean;
 }
 
 export interface GetAssetResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Binary file data */
-  data: Buffer
+  data: Buffer;
   /** Asset metadata */
-  asset?: Asset | undefined
+  asset?: Asset | undefined;
 }
 
 export interface DeleteAssetRequest {
-  projectPath: string
+  projectPath: string;
   /** Issue ID (required for issue-specific assets) */
-  issueId: string
+  issueId: string;
   /** Asset filename */
-  filename: string
+  filename: string;
   /** Whether to delete a shared asset */
-  isShared: boolean
+  isShared: boolean;
 }
 
 export interface DeleteAssetResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Deleted filename */
-  filename: string
+  filename: string;
   /** Whether it was a shared asset */
-  wasShared: boolean
-  manifest?: Manifest | undefined
+  wasShared: boolean;
+  manifest?: Manifest | undefined;
 }
 
 export interface ListSharedAssetsRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 /** Returned by API (enriched with live data from disk) */
 export interface ProjectInfo {
   /** Absolute path to project (use this for API calls) */
-  path: string
+  path: string;
   /** ISO timestamp */
-  firstAccessed: string
+  firstAccessed: string;
   /** ISO timestamp */
-  lastAccessed: string
+  lastAccessed: string;
   /** Fetched live from .centy/issues/ */
-  issueCount: number
+  issueCount: number;
   /** Fetched live from .centy/docs/ */
-  docCount: number
+  docCount: number;
   /** Fetched live (manifest exists) */
-  initialized: boolean
+  initialized: boolean;
   /** Fetched live (directory name) */
-  name: string
+  name: string;
   /** User-marked favorite status */
-  isFavorite: boolean
+  isFavorite: boolean;
   /** User-marked archived status */
-  isArchived: boolean
+  isArchived: boolean;
   /** Human-readable path with ~/ for home dir (use for display only) */
-  displayPath: string
+  displayPath: string;
   /** Organization slug (empty if ungrouped) */
-  organizationSlug: string
+  organizationSlug: string;
   /** Organization display name (for convenience) */
-  organizationName: string
+  organizationName: string;
   /** User-scope custom title (from ~/.centy/projects.json) */
-  userTitle: string
+  userTitle: string;
   /** Project-scope custom title (from .centy/project.json) */
-  projectTitle: string
+  projectTitle: string;
+  /** Centy version recorded in manifest (empty if not initialized) */
+  projectVersion: string;
+  /** True if project version is behind current daemon version */
+  projectBehind: boolean;
 }
 
 export interface ListProjectsRequest {
   /** Include projects where path no longer exists */
-  includeStale: boolean
+  includeStale: boolean;
   /** Include projects without .centy manifest */
-  includeUninitialized: boolean
+  includeUninitialized: boolean;
   /** Include archived projects (default: false) */
-  includeArchived: boolean
+  includeArchived: boolean;
   /** Filter by organization (empty = all) */
-  organizationSlug: string
+  organizationSlug: string;
   /** Only show projects without organization */
-  ungroupedOnly: boolean
+  ungroupedOnly: boolean;
   /** Include projects in system temp directory (default: false) */
-  includeTemp: boolean
+  includeTemp: boolean;
 }
 
 export interface ListProjectsResponse {
-  projects: ProjectInfo[]
-  totalCount: number
-  success: boolean
-  error: string
+  projects: ProjectInfo[];
+  totalCount: number;
+  success: boolean;
+  error: string;
 }
 
 export interface RegisterProjectRequest {
   /** Path to register */
-  projectPath: string
+  projectPath: string;
 }
 
 export interface RegisterProjectResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The registered project info */
-  project?: ProjectInfo | undefined
+  project?:
+    | ProjectInfo
+    | undefined;
   /** Organization inference result from git remote */
-  orgInference?: OrgInferenceResult | undefined
+  orgInference?: OrgInferenceResult | undefined;
 }
 
 export interface UntrackProjectRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 export interface UntrackProjectResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
 }
 
 export interface GetProjectInfoRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 export interface GetProjectInfoResponse {
-  found: boolean
-  project?: ProjectInfo | undefined
-  success: boolean
-  error: string
+  found: boolean;
+  project?: ProjectInfo | undefined;
+  success: boolean;
+  error: string;
 }
 
 export interface SetProjectFavoriteRequest {
-  projectPath: string
-  isFavorite: boolean
+  projectPath: string;
+  isFavorite: boolean;
 }
 
 export interface SetProjectFavoriteResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The updated project info */
-  project?: ProjectInfo | undefined
+  project?: ProjectInfo | undefined;
 }
 
 export interface SetProjectArchivedRequest {
-  projectPath: string
-  isArchived: boolean
+  projectPath: string;
+  isArchived: boolean;
 }
 
 export interface SetProjectArchivedResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The updated project info */
-  project?: ProjectInfo | undefined
+  project?: ProjectInfo | undefined;
 }
 
 export interface SetProjectOrganizationRequest {
-  projectPath: string
+  projectPath: string;
   /** Empty to remove from organization */
-  organizationSlug: string
+  organizationSlug: string;
 }
 
 export interface SetProjectOrganizationResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The updated project info */
-  project?: ProjectInfo | undefined
+  project?: ProjectInfo | undefined;
 }
 
 export interface SetProjectUserTitleRequest {
-  projectPath: string
+  projectPath: string;
   /** Custom title (empty to clear) */
-  title: string
+  title: string;
 }
 
 export interface SetProjectUserTitleResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The updated project info */
-  project?: ProjectInfo | undefined
+  project?: ProjectInfo | undefined;
 }
 
 export interface SetProjectTitleRequest {
-  projectPath: string
+  projectPath: string;
   /** Custom title (empty to clear) */
-  title: string
+  title: string;
 }
 
 export interface SetProjectTitleResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The updated project info */
-  project?: ProjectInfo | undefined
+  project?: ProjectInfo | undefined;
 }
 
 export interface Organization {
   /** Unique identifier (kebab-case) */
-  slug: string
+  slug: string;
   /** Display name */
-  name: string
+  name: string;
   /** Optional description */
-  description: string
+  description: string;
   /** ISO timestamp */
-  createdAt: string
+  createdAt: string;
   /** ISO timestamp */
-  updatedAt: string
+  updatedAt: string;
   /** Number of projects in this org */
-  projectCount: number
+  projectCount: number;
 }
 
 /** Organization inference result from git remote */
 export interface OrgInferenceResult {
   /** The inferred slug (empty if not found) */
-  inferredOrgSlug: string
+  inferredOrgSlug: string;
   /** The inferred display name */
-  inferredOrgName: string
+  inferredOrgName: string;
   /** Whether a new org was created */
-  orgCreated: boolean
+  orgCreated: boolean;
   /** Existing org if already assigned */
-  existingOrgSlug: string
+  existingOrgSlug: string;
   /** True if inferred != existing */
-  hasMismatch: boolean
+  hasMismatch: boolean;
   /** Human-readable status message */
-  message: string
+  message: string;
 }
 
 export interface CreateOrganizationRequest {
   /** Unique slug (auto-generated from name if empty) */
-  slug: string
+  slug: string;
   /** Display name (required) */
-  name: string
+  name: string;
   /** Optional description */
-  description: string
+  description: string;
 }
 
 export interface CreateOrganizationResponse {
-  success: boolean
-  error: string
-  organization?: Organization | undefined
+  success: boolean;
+  error: string;
+  organization?: Organization | undefined;
 }
 
-export interface ListOrganizationsRequest {}
+export interface ListOrganizationsRequest {
+}
 
 export interface ListOrganizationsResponse {
-  organizations: Organization[]
-  totalCount: number
-  success: boolean
-  error: string
+  organizations: Organization[];
+  totalCount: number;
+  success: boolean;
+  error: string;
 }
 
 export interface GetOrganizationRequest {
-  slug: string
+  slug: string;
 }
 
 export interface GetOrganizationResponse {
-  found: boolean
-  organization?: Organization | undefined
-  success: boolean
-  error: string
+  found: boolean;
+  organization?: Organization | undefined;
+  success: boolean;
+  error: string;
 }
 
 export interface UpdateOrganizationRequest {
   /** Current slug */
-  slug: string
+  slug: string;
   /** New name (empty = don't change) */
-  name: string
+  name: string;
   /** New description (empty = don't change) */
-  description: string
+  description: string;
   /** Rename slug (empty = keep current) */
-  newSlug: string
+  newSlug: string;
 }
 
 export interface UpdateOrganizationResponse {
-  success: boolean
-  error: string
-  organization?: Organization | undefined
+  success: boolean;
+  error: string;
+  organization?: Organization | undefined;
 }
 
 export interface DeleteOrganizationRequest {
-  slug: string
+  slug: string;
+  cascade: boolean;
 }
 
 export interface DeleteOrganizationResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Projects that are now ungrouped (should be 0 if block deletion) */
-  unassignedProjects: number
+  unassignedProjects: number;
 }
 
-export interface GetDaemonInfoRequest {}
+export interface GetDaemonInfoRequest {
+}
 
 export interface DaemonInfo {
   /** Current daemon version (e.g., "0.1.0") */
-  version: string
+  version: string;
   /** Absolute path to the running daemon binary */
-  binaryPath: string
+  binaryPath: string;
   /** Whether VS Code is installed and accessible */
-  vscodeAvailable: boolean
+  vscodeAvailable: boolean;
 }
 
 export interface ShutdownRequest {
   /** Optional delay in seconds before shutdown (default: 0) */
-  delaySeconds: number
+  delaySeconds: number;
 }
 
 export interface ShutdownResponse {
-  success: boolean
-  message: string
+  success: boolean;
+  message: string;
 }
 
 export interface RestartRequest {
   /** Optional delay in seconds before restart (default: 0) */
-  delaySeconds: number
+  delaySeconds: number;
 }
 
 export interface RestartResponse {
-  success: boolean
-  message: string
+  success: boolean;
+  message: string;
 }
 
 /** Request to get supported editors (empty request) */
-export interface GetSupportedEditorsRequest {}
+export interface GetSupportedEditorsRequest {
+}
 
 /** Information about a supported editor */
 export interface EditorInfo {
   /** Editor type enum value (deprecated: use editor_id) */
-  editorType: EditorType
+  editorType: EditorType;
   /** Display name (e.g., "VS Code", "Terminal") */
-  name: string
+  name: string;
   /** Brief description */
-  description: string
+  description: string;
   /** Whether this editor is available on the current system */
-  available: boolean
+  available: boolean;
   /** String-based editor identifier (e.g., "vscode", "terminal", "zed") */
-  editorId: string
+  editorId: string;
   /** Whether this editor runs inside a terminal */
-  terminalWrapper: boolean
+  terminalWrapper: boolean;
 }
 
 /** Response with list of supported editors */
 export interface GetSupportedEditorsResponse {
   /** List of supported editors */
-  editors: EditorInfo[]
+  editors: EditorInfo[];
 }
 
 /** Request for unified OpenInTempWorkspace (new, configurable editor) */
 export interface OpenInTempWorkspaceWithEditorRequest {
   /** Source project path */
-  projectPath: string
+  projectPath: string;
   /** Issue UUID or display number */
-  issueId: string
-  /** Plan or Implement */
-  action: LlmAction
-  /** Agent to use (empty = default) */
-  agentName: string
+  issueId: string;
   /** Custom TTL in hours (0 = use default 12h) */
-  ttlHours: number
+  ttlHours: number;
   /** Editor ID (e.g., "vscode", "terminal", "zed"). Empty = use project/user default. */
-  editorId: string
+  editorId: string;
 }
 
 /** Request for unified OpenStandaloneWorkspace (new, configurable editor) */
 export interface OpenStandaloneWorkspaceWithEditorRequest {
   /** Source project path */
-  projectPath: string
+  projectPath: string;
   /** Optional custom name for the workspace */
-  name: string
+  name: string;
   /** Optional description/goals for this workspace */
-  description: string
+  description: string;
   /** Custom TTL in hours (0 = use default 12h) */
-  ttlHours: number
-  /** Agent to use (empty = default) */
-  agentName: string
+  ttlHours: number;
   /** Editor ID (e.g., "vscode", "terminal", "zed"). Empty = use project/user default. */
-  editorId: string
+  editorId: string;
 }
 
 /** Shared request for OpenInTempVscode and OpenInTempTerminal (deprecated: use OpenInTempWorkspaceWithEditorRequest) */
 export interface OpenInTempWorkspaceRequest {
   /** Source project path */
-  projectPath: string
+  projectPath: string;
   /** Issue UUID or display number */
-  issueId: string
-  /** Plan or Implement */
-  action: LlmAction
-  /** Agent to use (empty = default) */
-  agentName: string
+  issueId: string;
   /** Custom TTL in hours (0 = use default 12h) */
-  ttlHours: number
+  ttlHours: number;
 }
 
 /** Shared response for OpenInTempVscode and OpenInTempTerminal */
 export interface OpenInTempWorkspaceResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Path to the temp workspace */
-  workspacePath: string
+  workspacePath: string;
   /** Resolved issue UUID */
-  issueId: string
+  issueId: string;
   /** Issue display number */
-  displayNumber: number
+  displayNumber: number;
   /** ISO timestamp when workspace expires */
-  expiresAt: string
+  expiresAt: string;
   /** Whether the editor (VS Code or Terminal) was successfully opened */
-  editorOpened: boolean
+  editorOpened: boolean;
   /** True if user must configure update_status_on_start setting */
-  requiresStatusConfig: boolean
+  requiresStatusConfig: boolean;
   /** True if an existing workspace was reopened instead of creating new */
-  workspaceReused: boolean
+  workspaceReused: boolean;
   /** Original creation timestamp (only set if workspace_reused is true) */
-  originalCreatedAt: string
-}
-
-/** Request to open an agent in a terminal */
-export interface OpenAgentInTerminalRequest {
-  /** Source project path */
-  projectPath: string
-  /** Issue UUID or display number */
-  issueId: string
-  /** Agent to use (empty = default) */
-  agentName: string
-  /** Temp worktree or current project */
-  workspaceMode: WorkspaceMode
-  /** Custom TTL in hours (0 = default, only for temp mode) */
-  ttlHours: number
-}
-
-export interface OpenAgentInTerminalResponse {
-  success: boolean
-  error: string
-  /** Path where agent was launched */
-  workingDirectory: string
-  /** Resolved issue UUID */
-  issueId: string
-  /** Issue display number */
-  displayNumber: number
-  /** The agent command that was executed */
-  agentCommand: string
-  /** Whether terminal was successfully opened */
-  terminalOpened: boolean
-  /** ISO timestamp (only for temp mode) */
-  expiresAt: string
-  /** True if user must configure update_status_on_start setting */
-  requiresStatusConfig: boolean
+  originalCreatedAt: string;
 }
 
 /** Request to open a standalone workspace (not tied to an issue) */
 export interface OpenStandaloneWorkspaceRequest {
   /** Source project path */
-  projectPath: string
+  projectPath: string;
   /** Optional custom name for the workspace */
-  name: string
+  name: string;
   /** Optional description/goals for this workspace */
-  description: string
+  description: string;
   /** Custom TTL in hours (0 = use default 12h) */
-  ttlHours: number
-  /** Agent to use (empty = default) */
-  agentName: string
+  ttlHours: number;
 }
 
 /** Response for opening a standalone workspace */
 export interface OpenStandaloneWorkspaceResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Path to the temp workspace */
-  workspacePath: string
+  workspacePath: string;
   /** Unique workspace identifier (UUID) */
-  workspaceId: string
+  workspaceId: string;
   /** Workspace name (provided or generated) */
-  name: string
+  name: string;
   /** ISO timestamp when workspace expires */
-  expiresAt: string
+  expiresAt: string;
   /** Whether the editor was successfully opened */
-  editorOpened: boolean
+  editorOpened: boolean;
   /** True if an existing workspace was reopened */
-  workspaceReused: boolean
+  workspaceReused: boolean;
   /** Original creation timestamp (only set if workspace_reused) */
-  originalCreatedAt: string
+  originalCreatedAt: string;
 }
 
 /** A temporary workspace entry */
 export interface TempWorkspace {
   /** Absolute path to temp workspace */
-  workspacePath: string
+  workspacePath: string;
   /** Original project path */
-  sourceProjectPath: string
+  sourceProjectPath: string;
   /** Issue UUID (empty for standalone workspaces) */
-  issueId: string
+  issueId: string;
   /** Issue display number (0 for standalone) */
-  issueDisplayNumber: number
+  issueDisplayNumber: number;
   /** Issue title (empty for standalone) */
-  issueTitle: string
-  /** Agent being used */
-  agentName: string
-  /** Plan or Implement */
-  action: LlmAction
+  issueTitle: string;
   /** ISO timestamp */
-  createdAt: string
+  createdAt: string;
   /** ISO timestamp when workspace expires */
-  expiresAt: string
+  expiresAt: string;
   /** True if this is a standalone workspace (not tied to an issue) */
-  isStandalone: boolean
+  isStandalone: boolean;
   /** Unique workspace ID (UUID, used for standalone workspaces) */
-  workspaceId: string
+  workspaceId: string;
   /** Custom workspace name (for standalone) */
-  workspaceName: string
+  workspaceName: string;
   /** Custom workspace description (for standalone) */
-  workspaceDescription: string
+  workspaceDescription: string;
 }
 
 export interface ListTempWorkspacesRequest {
   /** Include expired workspaces (default: false) */
-  includeExpired: boolean
+  includeExpired: boolean;
   /** Filter by source project (empty = all) */
-  sourceProjectPath: string
+  sourceProjectPath: string;
 }
 
 export interface ListTempWorkspacesResponse {
-  workspaces: TempWorkspace[]
-  totalCount: number
+  workspaces: TempWorkspace[];
+  totalCount: number;
   /** Number of expired workspaces (not included unless include_expired) */
-  expiredCount: number
-  success: boolean
-  error: string
+  expiredCount: number;
+  success: boolean;
+  error: string;
 }
 
 export interface CloseTempWorkspaceRequest {
   /** Path to the workspace to close */
-  workspacePath: string
+  workspacePath: string;
   /** Force removal even if VS Code may be open */
-  force: boolean
+  force: boolean;
 }
 
 export interface CloseTempWorkspaceResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Whether git worktree was removed */
-  worktreeRemoved: boolean
+  worktreeRemoved: boolean;
   /** Whether directory was removed */
-  directoryRemoved: boolean
+  directoryRemoved: boolean;
 }
 
-export interface CleanupExpiredWorkspacesRequest {}
+export interface CleanupExpiredWorkspacesRequest {
+}
 
 export interface CleanupExpiredWorkspacesResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Number of workspaces cleaned up */
-  cleanedCount: number
+  cleanedCount: number;
   /** Paths that were cleaned */
-  cleanedPaths: string[]
+  cleanedPaths: string[];
   /** Paths that failed to clean */
-  failedPaths: string[]
+  failedPaths: string[];
 }
 
 /** A link between two entities */
 export interface Link {
   /** Target entity ID (UUID for issues, slug for docs) */
-  targetId: string
+  targetId: string;
   /** Type of the target entity */
-  targetType: LinkTargetType
+  targetType: LinkTargetType;
   /** Relationship type (e.g., "blocks", "parent-of") */
-  linkType: string
+  linkType: string;
   /** ISO timestamp when link was created */
-  createdAt: string
+  createdAt: string;
 }
 
 /** Create a link between two entities (bidirectional - also creates inverse) */
 export interface CreateLinkRequest {
-  projectPath: string
+  projectPath: string;
   /** Source entity ID */
-  sourceId: string
+  sourceId: string;
   /** Source entity type */
-  sourceType: LinkTargetType
+  sourceType: LinkTargetType;
   /** Target entity ID */
-  targetId: string
+  targetId: string;
   /** Target entity type */
-  targetType: LinkTargetType
+  targetType: LinkTargetType;
   /** Link type (e.g., "blocks") */
-  linkType: string
+  linkType: string;
 }
 
 export interface CreateLinkResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The forward link that was created */
-  createdLink?: Link | undefined
+  createdLink?:
+    | Link
+    | undefined;
   /** The inverse link that was created */
-  inverseLink?: Link | undefined
+  inverseLink?: Link | undefined;
 }
 
 /** Delete a link between two entities (also deletes inverse) */
 export interface DeleteLinkRequest {
-  projectPath: string
+  projectPath: string;
   /** Source entity ID */
-  sourceId: string
+  sourceId: string;
   /** Source entity type */
-  sourceType: LinkTargetType
+  sourceType: LinkTargetType;
   /** Target entity ID */
-  targetId: string
+  targetId: string;
   /** Target entity type */
-  targetType: LinkTargetType
+  targetType: LinkTargetType;
   /** Optional: specific link type to delete (empty = all links between entities) */
-  linkType: string
+  linkType: string;
 }
 
 export interface DeleteLinkResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Number of links deleted (including inverse) */
-  deletedCount: number
+  deletedCount: number;
 }
 
 /** List all links for an entity */
 export interface ListLinksRequest {
-  projectPath: string
+  projectPath: string;
   /** Entity ID to list links for */
-  entityId: string
+  entityId: string;
   /** Entity type */
-  entityType: LinkTargetType
+  entityType: LinkTargetType;
 }
 
 export interface ListLinksResponse {
-  links: Link[]
-  totalCount: number
-  success: boolean
-  error: string
+  links: Link[];
+  totalCount: number;
+  success: boolean;
+  error: string;
 }
 
 /** Get all available link types (builtin + custom) */
 export interface GetAvailableLinkTypesRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 /** Information about a link type */
 export interface LinkTypeInfo {
   /** Link type name (e.g., "blocks") */
-  name: string
+  name: string;
   /** Inverse link type (e.g., "blocked-by") */
-  inverse: string
+  inverse: string;
   /** Optional description */
-  description: string
+  description: string;
   /** Whether this is a built-in type */
-  isBuiltin: boolean
+  isBuiltin: boolean;
 }
 
 export interface GetAvailableLinkTypesResponse {
-  linkTypes: LinkTypeInfo[]
+  linkTypes: LinkTypeInfo[];
 }
 
 /** A project user/team member */
 export interface User {
   /** Unique identifier (slug format, e.g., "john-doe") */
-  id: string
+  id: string;
   /** Display name */
-  name: string
+  name: string;
   /** Email address (optional) */
-  email: string
+  email: string;
   /** Git usernames (e.g., GitHub handles) */
-  gitUsernames: string[]
+  gitUsernames: string[];
   /** ISO timestamp */
-  createdAt: string
+  createdAt: string;
   /** ISO timestamp */
-  updatedAt: string
+  updatedAt: string;
   /** ISO timestamp when soft-deleted (empty if not deleted) */
-  deletedAt: string
+  deletedAt: string;
 }
 
 export interface CreateUserRequest {
-  projectPath: string
+  projectPath: string;
   /** User ID (slug format) */
-  id: string
+  id: string;
   /** Display name (required) */
-  name: string
+  name: string;
   /** Email address (optional) */
-  email: string
+  email: string;
   /** Git usernames (optional) */
-  gitUsernames: string[]
+  gitUsernames: string[];
 }
 
 export interface CreateUserResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The created user */
-  user?: User | undefined
-  manifest?: Manifest | undefined
+  user?: User | undefined;
+  manifest?: Manifest | undefined;
 }
 
 export interface GetUserRequest {
-  projectPath: string
+  projectPath: string;
   /** User ID (slug format) */
-  userId: string
+  userId: string;
 }
 
 /** Wrapper response for GetUser RPC */
 export interface GetUserResponse {
-  success: boolean
-  error: string
-  user?: User | undefined
+  success: boolean;
+  error: string;
+  user?: User | undefined;
 }
 
 export interface ListUsersRequest {
-  projectPath: string
+  projectPath: string;
   /** Optional: filter by git username */
-  gitUsername: string
+  gitUsername: string;
   /** Include soft-deleted users (default: false) */
-  includeDeleted: boolean
+  includeDeleted: boolean;
 }
 
 export interface ListUsersResponse {
-  users: User[]
-  totalCount: number
-  success: boolean
-  error: string
+  users: User[];
+  totalCount: number;
+  success: boolean;
+  error: string;
 }
 
 export interface UpdateUserRequest {
-  projectPath: string
+  projectPath: string;
   /** User ID (slug format) */
-  userId: string
+  userId: string;
   /** Empty = don't update */
-  name: string
+  name: string;
   /** Empty = don't update */
-  email: string
+  email: string;
   /** Empty array = don't update */
-  gitUsernames: string[]
+  gitUsernames: string[];
 }
 
 export interface UpdateUserResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The updated user */
-  user?: User | undefined
-  manifest?: Manifest | undefined
+  user?: User | undefined;
+  manifest?: Manifest | undefined;
 }
 
 export interface DeleteUserRequest {
-  projectPath: string
+  projectPath: string;
   /** User ID (slug format) */
-  userId: string
+  userId: string;
 }
 
 export interface DeleteUserResponse {
-  success: boolean
-  error: string
-  manifest?: Manifest | undefined
+  success: boolean;
+  error: string;
+  manifest?: Manifest | undefined;
 }
 
 /** Soft-delete a user (set deleted_at timestamp) */
 export interface SoftDeleteUserRequest {
-  projectPath: string
+  projectPath: string;
   /** User ID (slug format) */
-  userId: string
+  userId: string;
 }
 
 export interface SoftDeleteUserResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The soft-deleted user (with deleted_at set) */
-  user?: User | undefined
-  manifest?: Manifest | undefined
+  user?: User | undefined;
+  manifest?: Manifest | undefined;
 }
 
 /** Restore a soft-deleted user (clear deleted_at timestamp) */
 export interface RestoreUserRequest {
-  projectPath: string
+  projectPath: string;
   /** User ID (slug format) */
-  userId: string
+  userId: string;
 }
 
 export interface RestoreUserResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The restored user (with deleted_at cleared) */
-  user?: User | undefined
-  manifest?: Manifest | undefined
+  user?: User | undefined;
+  manifest?: Manifest | undefined;
 }
 
 /** Git contributor found in history */
 export interface GitContributor {
-  name: string
-  email: string
+  name: string;
+  email: string;
 }
 
 export interface SyncUsersRequest {
-  projectPath: string
+  projectPath: string;
   /** If true, don't create users, just show what would be created */
-  dryRun: boolean
+  dryRun: boolean;
 }
 
 export interface SyncUsersResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** User IDs that were created */
-  created: string[]
+  created: string[];
   /** Emails that were skipped (already exist) */
-  skipped: string[]
+  skipped: string[];
   /** Errors during creation */
-  errors: string[]
+  errors: string[];
   /** For dry run: users that would be created */
-  wouldCreate: GitContributor[]
+  wouldCreate: GitContributor[];
   /** For dry run: users that would be skipped */
-  wouldSkip: GitContributor[]
-  manifest?: Manifest | undefined
+  wouldSkip: GitContributor[];
+  manifest?: Manifest | undefined;
 }
 
 /** An action that can be performed on an entity */
 export interface EntityAction {
   /** Action identifier (e.g., "delete", "duplicate", "status:closed") */
-  id: string
+  id: string;
   /** Human-readable label (e.g., "Delete", "Mark as Closed") */
-  label: string
+  label: string;
   /** Category for grouping in UI */
-  category: ActionCategory
+  category: ActionCategory;
   /** Whether action is available for current entity state */
-  enabled: boolean
+  enabled: boolean;
   /** Explanation if action is disabled */
-  disabledReason: string
+  disabledReason: string;
   /** UI hint: show in red, require confirmation */
-  destructive: boolean
+  destructive: boolean;
   /** Optional keyboard shortcut (e.g., "d" for delete) */
-  keyboardShortcut: string
+  keyboardShortcut: string;
 }
 
 /** Request to get available actions for an entity */
 export interface GetEntityActionsRequest {
   /** Project path for config/state lookup */
-  projectPath: string
+  projectPath: string;
   /** Type of entity (issue, doc) */
-  entityType: EntityType
+  entityType: EntityType;
   /** Optional: entity ID for contextual actions (empty = general actions like "create") */
-  entityId: string
+  entityId: string;
 }
 
 /** Response with available actions */
 export interface GetEntityActionsResponse {
   /** Available actions, ordered by category then priority */
-  actions: EntityAction[]
-  success: boolean
-  error: string
+  actions: EntityAction[];
+  success: boolean;
+  error: string;
 }
 
 /** Sync conflict information */
 export interface SyncConflict {
   /** Unique conflict ID */
-  id: string
+  id: string;
   /** Type of item (issue, doc) */
-  itemType: string
+  itemType: string;
   /** ID of the item with conflict */
-  itemId: string
+  itemId: string;
   /** Relative file path within .centy */
-  filePath: string
+  filePath: string;
   /** When the conflict was detected */
-  createdAt: string
+  createdAt: string;
   /** Description of the conflict */
-  description: string
+  description: string;
   /** Base content (common ancestor) */
-  baseContent: string
+  baseContent: string;
   /** Our version of the content */
-  oursContent: string
+  oursContent: string;
   /** Their version of the content */
-  theirsContent: string
+  theirsContent: string;
 }
 
 /** Request to list sync conflicts */
 export interface ListSyncConflictsRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 /** Response with list of sync conflicts */
 export interface ListSyncConflictsResponse {
-  conflicts: SyncConflict[]
-  success: boolean
-  error: string
+  conflicts: SyncConflict[];
+  success: boolean;
+  error: string;
 }
 
 /** Request to get a specific sync conflict */
 export interface GetSyncConflictRequest {
-  projectPath: string
-  conflictId: string
+  projectPath: string;
+  conflictId: string;
 }
 
 /** Response with sync conflict details */
 export interface GetSyncConflictResponse {
-  conflict?: SyncConflict | undefined
-  success: boolean
-  error: string
+  conflict?: SyncConflict | undefined;
+  success: boolean;
+  error: string;
 }
 
 /** Request to resolve a sync conflict */
 export interface ResolveSyncConflictRequest {
-  projectPath: string
-  conflictId: string
-  resolution: ConflictResolutionType
+  projectPath: string;
+  conflictId: string;
+  resolution: ConflictResolutionType;
   /** Only used when resolution is MERGE */
-  mergedContent: string
+  mergedContent: string;
 }
 
 /** Response after resolving a conflict */
 export interface ResolveSyncConflictResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
 }
 
 /** Request to get sync status */
 export interface GetSyncStatusRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 /** Response with sync status */
 export interface GetSyncStatusResponse {
   /** Current sync mode */
-  mode: SyncMode
+  mode: SyncMode;
   /** Whether there are uncommitted changes */
-  hasPendingChanges: boolean
+  hasPendingChanges: boolean;
   /** Whether there are unpushed commits */
-  hasPendingPush: boolean
+  hasPendingPush: boolean;
   /** Number of unresolved conflicts */
-  conflictCount: number
+  conflictCount: number;
   /** Last successful sync timestamp */
-  lastSyncTime: string
-  success: boolean
-  error: string
+  lastSyncTime: string;
+  success: boolean;
+  error: string;
 }
 
 /** Request to manually trigger sync pull */
 export interface SyncPullRequest {
-  projectPath: string
+  projectPath: string;
 }
 
 /** Response from sync pull */
 export interface SyncPullResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Whether any changes were pulled */
-  hadChanges: boolean
+  hadChanges: boolean;
   /** Files with conflicts (if any) */
-  conflictFiles: string[]
+  conflictFiles: string[];
 }
 
 /** Request to manually trigger sync push */
 export interface SyncPushRequest {
-  projectPath: string
+  projectPath: string;
   /** Optional custom commit message */
-  commitMessage: string
+  commitMessage: string;
 }
 
 /** Response from sync push */
 export interface SyncPushResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** Whether any changes were pushed */
-  hadChanges: boolean
+  hadChanges: boolean;
+}
+
+/** Toggle-able features for an item type */
+export interface ItemTypeFeatures {
+  /** Enable display numbers (1, 2, 3...) */
+  displayNumber: boolean;
+  /** Enable status tracking */
+  status: boolean;
+  /** Enable priority levels */
+  priority: boolean;
+  /** Enable file attachments */
+  assets: boolean;
+  /** Enable organization sync */
+  orgSync: boolean;
+  /** Enable moving between projects */
+  move: boolean;
+  /** Enable duplication */
+  duplicate: boolean;
+  /** Enable soft-deletion (restorable delete) */
+  softDelete: boolean;
+}
+
+/** Request to create a new item type */
+export interface CreateItemTypeRequest {
+  projectPath: string;
+  /** Singular display name (e.g., "Bug", "Task", "Epic") */
+  name: string;
+  /** Folder/type key (e.g., "bugs", "tasks", "epics") */
+  plural: string;
+  /** "uuid" or "slug" */
+  identifier: string;
+  /** Toggle-able features */
+  features?:
+    | ItemTypeFeatures
+    | undefined;
+  /** Allowed statuses (e.g., ["open", "in-progress", "closed"]) */
+  statuses: string[];
+  /** Default status for new items (must be in statuses list) */
+  defaultStatus: string;
+  /** Number of priority levels (0 = none) */
+  priorityLevels: number;
+  /** Custom field definitions */
+  customFields: CustomFieldDefinition[];
+}
+
+/** Response after creating an item type */
+export interface CreateItemTypeResponse {
+  success: boolean;
+  error: string;
+  /** The created item type config */
+  config?: ItemTypeConfigProto | undefined;
+}
+
+/** Proto representation of an ItemTypeConfig */
+export interface ItemTypeConfigProto {
+  name: string;
+  plural: string;
+  identifier: string;
+  features?: ItemTypeFeatures | undefined;
+  statuses: string[];
+  defaultStatus: string;
+  priorityLevels: number;
+  customFields: CustomFieldDefinition[];
+  /** Optional icon identifier (e.g. "clipboard") */
+  icon: string;
+  /** Optional template file path */
+  template: string;
+}
+
+export interface ListItemTypesRequest {
+  projectPath: string;
+}
+
+export interface ListItemTypesResponse {
+  success: boolean;
+  error: string;
+  itemTypes: ItemTypeConfigProto[];
+  totalCount: number;
+}
+
+export interface MoveItemRequest {
+  sourceProjectPath: string;
+  targetProjectPath: string;
+  itemType: string;
+  itemId: string;
+  /** Optional: for slug renames */
+  newId: string;
+}
+
+export interface MoveItemResponse {
+  success: boolean;
+  error: string;
+  item?: GenericItem | undefined;
+  oldId: string;
+  sourceManifest?: Manifest | undefined;
+  targetManifest?: Manifest | undefined;
+}
+
+export interface ArchiveItemRequest {
+  projectPath: string;
+  /** Source folder name (e.g., "issues", "docs") */
+  itemType: string;
+  /** UUID of the item to archive */
+  itemId: string;
+}
+
+export interface ArchiveItemResponse {
+  success: boolean;
+  error: string;
+  /** The archived item with original_item_type set */
+  item?: GenericItem | undefined;
+}
+
+export interface UnarchiveItemRequest {
+  projectPath: string;
+  /** UUID of the archived item */
+  itemId: string;
+  /** Optional: override original_item_type from metadata */
+  targetItemType: string;
+}
+
+export interface UnarchiveItemResponse {
+  success: boolean;
+  error: string;
+  /** The restored item */
+  item?:
+    | GenericItem
+    | undefined;
+  /** The folder the item was restored to */
+  originalItemType: string;
+}
+
+export interface OrgIssueMetadata {
+  displayNumber: number;
+  status: string;
+  priority: number;
+  createdAt: string;
+  updatedAt: string;
+  customFields: { [key: string]: string };
+  priorityLabel: string;
+  referencedProjects: string[];
+}
+
+export interface OrgIssueMetadata_CustomFieldsEntry {
+  key: string;
+  value: string;
+}
+
+export interface OrgIssue {
+  id: string;
+  displayNumber: number;
+  title: string;
+  description: string;
+  metadata?: OrgIssueMetadata | undefined;
+}
+
+export interface CreateOrgIssueRequest {
+  organizationSlug: string;
+  title: string;
+  description: string;
+  priority: number;
+  status: string;
+  customFields: { [key: string]: string };
+  referencedProjects: string[];
+}
+
+export interface CreateOrgIssueRequest_CustomFieldsEntry {
+  key: string;
+  value: string;
+}
+
+export interface CreateOrgIssueResponse {
+  success: boolean;
+  error: string;
+  id: string;
+  displayNumber: number;
+  createdFiles: string[];
+}
+
+export interface GetOrgIssueRequest {
+  organizationSlug: string;
+  issueId: string;
+}
+
+export interface GetOrgIssueByDisplayNumberRequest {
+  organizationSlug: string;
+  displayNumber: number;
+}
+
+export interface ListOrgIssuesRequest {
+  organizationSlug: string;
+  /** Filter by status (empty = all) */
+  status: string;
+  /** Filter by priority (0 = all) */
+  priority: number;
+  /** Filter by referenced project path (empty = all) */
+  referencedProject: string;
+}
+
+export interface ListOrgIssuesResponse {
+  issues: OrgIssue[];
+  totalCount: number;
+}
+
+export interface UpdateOrgIssueRequest {
+  organizationSlug: string;
+  issueId: string;
+  title: string;
+  description: string;
+  status: string;
+  priority: number;
+  customFields: { [key: string]: string };
+  addReferencedProjects: string[];
+  removeReferencedProjects: string[];
+}
+
+export interface UpdateOrgIssueRequest_CustomFieldsEntry {
+  key: string;
+  value: string;
+}
+
+export interface UpdateOrgIssueResponse {
+  success: boolean;
+  error: string;
+  issue?: OrgIssue | undefined;
+}
+
+export interface DeleteOrgIssueRequest {
+  organizationSlug: string;
+  issueId: string;
+}
+
+export interface DeleteOrgIssueResponse {
+  success: boolean;
+  error: string;
+}
+
+export interface OrgConfig {
+  priorityLevels: number;
+  customFields: CustomFieldDefinition[];
+}
+
+export interface GetOrgConfigRequest {
+  organizationSlug: string;
+}
+
+export interface UpdateOrgConfigRequest {
+  organizationSlug: string;
+  priorityLevels: number;
+  customFields: CustomFieldDefinition[];
+}
+
+export interface UpdateOrgConfigResponse {
+  success: boolean;
+  error: string;
+  config?: OrgConfig | undefined;
 }

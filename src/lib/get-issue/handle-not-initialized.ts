@@ -24,7 +24,7 @@ export async function handleIssueNotInitialized(
     async globalSearchFn() {
       const searchResult = await daemonGetIssuesByUuid({ uuid: id })
       return {
-        matches: searchResult.issues.map(iwp => ({
+        matches: searchResult.items.map(iwp => ({
           projectName: iwp.projectName,
           projectPath: iwp.projectPath,
         })),

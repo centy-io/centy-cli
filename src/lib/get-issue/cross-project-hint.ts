@@ -24,11 +24,11 @@ export async function checkCrossProjectIssue(
   }
 
   const result = await daemonGetIssuesByUuid({ uuid: id })
-  if (result.issues.length === 0) {
+  if (result.items.length === 0) {
     return { hint: null, jsonOutput: null }
   }
 
-  const matches = result.issues.map(iwp => ({
+  const matches = result.items.map(iwp => ({
     projectName: iwp.projectName,
     projectPath: iwp.projectPath,
   }))

@@ -22,6 +22,7 @@ export const VALID_FEATURES = [
   'org-sync',
   'move',
   'duplicate',
+  'soft-delete',
 ]
 
 /**
@@ -49,5 +50,6 @@ export function parseFeatures(
     orgSync: enabled.has('org-sync'),
     move: enabled.has('move'),
     duplicate: enabled.has('duplicate'),
+    softDelete: enabled.has('soft-delete'),
   }
 }

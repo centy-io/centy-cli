@@ -65,7 +65,6 @@ export default class WorkspaceNew extends Command {
       name: flags.name !== undefined ? flags.name : '',
       description: flags.description !== undefined ? flags.description : '',
       ttlHours: flags.ttl !== undefined ? flags.ttl : 0,
-      agentName: flags.agent !== undefined ? flags.agent : '',
       editorId,
     })
 

@@ -29,9 +29,9 @@ describe('daemonGetIssue', () => {
 
   it('should resolve with response on success', async () => {
     const mockIssue = { id: 'issue-1', title: 'Test Issue' }
-    const mockResponse = { success: true, issue: mockIssue }
+    const mockResponse = { success: true, item: mockIssue }
     const mockClient = {
-      getIssue: vi.fn((_req, _options, callback) => {
+      getItem: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
       }),
     }
@@ -43,8 +43,8 @@ describe('daemonGetIssue', () => {
     const result = await daemonGetIssue({} as never)
 
     expect(result).toEqual(mockIssue)
-    expect(mockClient.getIssue).toHaveBeenCalledWith(
-      {},
+    expect(mockClient.getItem).toHaveBeenCalledWith(
+      { itemType: 'issues' },
       {},
       expect.any(Function)
     )
@@ -53,7 +53,7 @@ describe('daemonGetIssue', () => {
   it('should reject with error on failure', async () => {
     const mockError = new Error('gRPC error')
     const mockClient = {
-      getIssue: vi.fn((_req, _options, callback) => {
+      getItem: vi.fn((_req, _options, callback) => {
         callback(mockError, null)
       }),
     }

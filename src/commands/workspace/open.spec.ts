@@ -93,8 +93,6 @@ describe('WorkspaceOpen command', () => {
       expect.objectContaining({
         projectPath: '/test/project',
         issueId: '1',
-        action: 'LLM_ACTION_PLAN',
-        agentName: '',
         ttlHours: 0,
         editorId: 'vscode',
       })

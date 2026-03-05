@@ -30,7 +30,7 @@ describe('daemonListDocs', () => {
   it('should resolve with response on success', async () => {
     const mockResponse = { success: true }
     const mockClient = {
-      listDocs: vi.fn((_req, _options, callback) => {
+      listItems: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
       }),
     }
@@ -42,8 +42,8 @@ describe('daemonListDocs', () => {
     const result = await daemonListDocs({} as never)
 
     expect(result).toEqual(mockResponse)
-    expect(mockClient.listDocs).toHaveBeenCalledWith(
-      {},
+    expect(mockClient.listItems).toHaveBeenCalledWith(
+      { itemType: 'docs' },
       {},
       expect.any(Function)
     )
@@ -52,7 +52,7 @@ describe('daemonListDocs', () => {
   it('should reject with error on failure', async () => {
     const mockError = new Error('gRPC error')
     const mockClient = {
-      listDocs: vi.fn((_req, _options, callback) => {
+      listItems: vi.fn((_req, _options, callback) => {
         callback(mockError, null)
       }),
     }

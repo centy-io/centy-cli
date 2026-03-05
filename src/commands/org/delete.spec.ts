@@ -45,6 +45,7 @@ describe('OrgDelete command', () => {
 
     expect(mockDaemonDeleteOrganization).toHaveBeenCalledWith({
       slug: 'my-org',
+      cascade: false,
     })
     expect(cmd.logs.some(log => log.includes('Deleted organization'))).toBe(
       true

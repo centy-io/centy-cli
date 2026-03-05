@@ -107,14 +107,6 @@ describe('buildConfigFromOptions', () => {
     expect(result!.priorityLevels).toBe(5)
   })
 
-  it('should build config with allowedStates', () => {
-    const result = buildConfigFromOptions({
-      allowedStates: ['open', 'closed'],
-    })
-    expect(result).toBeDefined()
-    expect(result!.allowedStates).toEqual(['open', 'closed'])
-  })
-
   it('should build config with version', () => {
     const result = buildConfigFromOptions({ version: '1.0.0' })
     expect(result).toBeDefined()
@@ -124,12 +116,10 @@ describe('buildConfigFromOptions', () => {
   it('should build config with all options combined', () => {
     const result = buildConfigFromOptions({
       priorityLevels: 5,
-      allowedStates: ['todo', 'doing', 'done'],
       version: '2.0.0',
     })
     expect(result).toBeDefined()
     expect(result!.priorityLevels).toBe(5)
-    expect(result!.allowedStates).toEqual(['todo', 'doing', 'done'])
     expect(result!.version).toBe('2.0.0')
     // Non-configurable fields should have defaults
     expect(result!.customFields).toEqual([])
@@ -144,7 +134,6 @@ describe('buildConfigFromOptions', () => {
     expect(result).toBeDefined()
     expect(result!.priorityLevels).toBe(3)
     // Unset fields should use proto defaults (0, '', [])
-    expect(result!.allowedStates).toEqual([])
     expect(result!.version).toBe('')
   })
 })

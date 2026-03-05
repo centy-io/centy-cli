@@ -24,7 +24,8 @@ export async function findEntityByDisplayNumber(
     foundEntities.push({
       type: 'issue',
       id: issue.id,
-      displayNumber: issue.displayNumber,
+      displayNumber:
+        issue.metadata !== undefined ? issue.metadata.displayNumber : 0,
     })
   } catch {
     // Issue not found, continue

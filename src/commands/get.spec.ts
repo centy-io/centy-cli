@@ -230,26 +230,32 @@ describe('Get command', () => {
   it('should search globally with --global flag for issues', async () => {
     const { default: Command } = await import('./get.js')
     mockDaemonGetIssuesByUuid.mockResolvedValue({
-      issues: [
+      items: [
         {
-          issue: {
+          item: {
             id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-            displayNumber: 1,
+            itemType: 'issues',
             title: 'Test Issue',
+            body: '',
             metadata: {
+              displayNumber: 1,
               status: 'open',
               priority: 1,
-              priorityLabel: 'P1',
               createdAt: '2024-01-01T00:00:00Z',
               updatedAt: '2024-01-02T00:00:00Z',
+              deletedAt: '',
+              customFields: {},
             },
           },
           projectName: 'project-a',
           projectPath: '/path/to/project-a',
+          displayPath: '~/project-a',
         },
       ],
       totalCount: 1,
       errors: [],
+      success: true,
+      error: '',
     })
 
     const cmd = createMockCommand(Command, {
