@@ -3,7 +3,6 @@ import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonGetSupportedEditors } from '../../daemon/daemon-get-supported-editors.js'
 import { daemonOpenInTempWorkspace } from '../../daemon/daemon-open-in-temp-workspace.js'
-import { LlmAction } from '../../daemon/types.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import { resolveEditorId } from '../../lib/workspace/resolve-editor-id.js'
 import {
@@ -76,8 +75,6 @@ export default class WorkspaceOpen extends Command {
     const response = await daemonOpenInTempWorkspace({
       projectPath: cwd,
       issueId: args.issueId,
-      action: LlmAction.LLM_ACTION_PLAN,
-      agentName: flags.agent !== undefined ? flags.agent : '',
       ttlHours: flags.ttl !== undefined ? flags.ttl : 0,
       editorId,
     })

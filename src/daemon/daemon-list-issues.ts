@@ -1,12 +1,15 @@
-import type { ListIssuesRequest, ListIssuesResponse } from './types.js'
+import type { ListItemsRequest, ListItemsResponse } from './types.js'
 import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * List issues via daemon
  */
 export function daemonListIssues(
-  request: ListIssuesRequest
-): Promise<ListIssuesResponse> {
+  request: Omit<ListItemsRequest, 'itemType'>
+): Promise<ListItemsResponse> {
   const client = getDaemonClient()
-  return callWithDeadline(client.listIssues.bind(client), request)
+  return callWithDeadline(client.listItems.bind(client), {
+    ...request,
+    itemType: 'issues',
+  })
 }

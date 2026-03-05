@@ -1,12 +1,15 @@
-import type { UpdateDocRequest, UpdateDocResponse } from './types.js'
+import type { UpdateItemRequest, UpdateItemResponse } from './types.js'
 import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Update a doc via daemon
  */
 export function daemonUpdateDoc(
-  request: UpdateDocRequest
-): Promise<UpdateDocResponse> {
+  request: Omit<UpdateItemRequest, 'itemType'>
+): Promise<UpdateItemResponse> {
   const client = getDaemonClient()
-  return callWithDeadline(client.updateDoc.bind(client), request)
+  return callWithDeadline(client.updateItem.bind(client), {
+    ...request,
+    itemType: 'docs',
+  })
 }

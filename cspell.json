@@ -75,6 +75,7 @@
     "pnpm-lock.yaml",
     "*.min.js",
     "bun.lock",
-    "src/daemon/generated"
+    "src/daemon/generated",
+    "proto"
   ]
 }

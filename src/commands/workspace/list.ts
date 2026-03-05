@@ -63,7 +63,6 @@ export default class WorkspaceList extends Command {
     for (const ws of response.workspaces) {
       this.log(`\n  Path: ${ws.workspacePath}`)
       this.log(`  Issue: #${ws.issueDisplayNumber} - ${ws.issueTitle}`)
-      this.log(`  Action: ${ws.action.toLowerCase()}`)
       this.log(`  Created: ${ws.createdAt}`)
       this.log(`  Expires: ${ws.expiresAt}`)
     }

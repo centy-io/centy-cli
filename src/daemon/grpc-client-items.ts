@@ -17,8 +17,8 @@ import type {
   DuplicateItemResponse,
   MoveItemRequest,
   MoveItemResponse,
-  AdvancedSearchRequest,
-  AdvancedSearchResponse,
+  SearchItemsRequest,
+  SearchItemsResponse,
   GetAvailableLinkTypesRequest,
   GetAvailableLinkTypesResponse,
   GetSupportedEditorsRequest,
@@ -41,7 +41,7 @@ export interface CentyDaemonItemsClient {
   deleteItem: GrpcMethod<DeleteItemRequest, DeleteItemResponse>
   softDeleteItem: GrpcMethod<SoftDeleteItemRequest, SoftDeleteItemResponse>
   restoreItem: GrpcMethod<RestoreItemRequest, RestoreItemResponse>
-  advancedSearch: GrpcMethod<AdvancedSearchRequest, AdvancedSearchResponse>
+  searchItems: GrpcMethod<SearchItemsRequest, SearchItemsResponse>
   getAvailableLinkTypes: GrpcMethod<
     GetAvailableLinkTypesRequest,
     GetAvailableLinkTypesResponse

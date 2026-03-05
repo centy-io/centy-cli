@@ -6,302 +6,226 @@
 
 /* eslint-disable */
 
-/** Features that can be enabled for an item type (legacy enum, kept for CreateItemTypeRequest) */
-export enum ItemTypeFeature {
-  ITEM_TYPE_FEATURE_UNSPECIFIED = 'ITEM_TYPE_FEATURE_UNSPECIFIED',
-  ITEM_TYPE_FEATURE_DISPLAY_NUMBER = 'ITEM_TYPE_FEATURE_DISPLAY_NUMBER',
-  ITEM_TYPE_FEATURE_STATUS = 'ITEM_TYPE_FEATURE_STATUS',
-  ITEM_TYPE_FEATURE_PRIORITY = 'ITEM_TYPE_FEATURE_PRIORITY',
-  ITEM_TYPE_FEATURE_ASSETS = 'ITEM_TYPE_FEATURE_ASSETS',
-  ITEM_TYPE_FEATURE_ORG_SYNC = 'ITEM_TYPE_FEATURE_ORG_SYNC',
-  ITEM_TYPE_FEATURE_MOVE = 'ITEM_TYPE_FEATURE_MOVE',
-  ITEM_TYPE_FEATURE_DUPLICATE = 'ITEM_TYPE_FEATURE_DUPLICATE',
+/** Manifest is defined here so it can be shared by both generic_item.proto and centy.proto */
+export interface Manifest {
+  schemaVersion: number;
+  centyVersion: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /** A generic item that can represent any item type (issues, docs, custom types) */
 export interface GenericItem {
   /** Item identifier (UUID or slug) */
-  id: string
+  id: string;
   /** Plural type name (e.g., "issues", "docs") */
-  itemType: string
+  itemType: string;
   /** Item title */
-  title: string
+  title: string;
   /** Item body (markdown content) */
-  body: string
-  metadata?: GenericItemMetadata | undefined
+  body: string;
+  metadata?: GenericItemMetadata | undefined;
 }
 
 export interface GenericItemMetadata {
   /** Human-readable display number (0 if not applicable) */
-  displayNumber: number
+  displayNumber: number;
   /** Item status (empty if not applicable) */
-  status: string
+  status: string;
   /** Priority level (0 if not applicable) */
-  priority: number
+  priority: number;
   /** ISO timestamp */
-  createdAt: string
+  createdAt: string;
   /** ISO timestamp */
-  updatedAt: string
+  updatedAt: string;
   /** ISO timestamp when soft-deleted (empty if not deleted) */
-  deletedAt: string
+  deletedAt: string;
   /** Custom fields (values are JSON strings) */
-  customFields: { [key: string]: string }
+  customFields: { [key: string]: string };
 }
 
 export interface GenericItemMetadata_CustomFieldsEntry {
-  key: string
-  value: string
+  key: string;
+  value: string;
 }
 
 export interface CreateItemRequest {
-  projectPath: string
+  projectPath: string;
   /** e.g., "issues", "docs", or custom type */
-  itemType: string
-  title: string
-  body: string
+  itemType: string;
+  title: string;
+  body: string;
   /** Initial status (empty = use default) */
-  status: string
+  status: string;
   /** 0 = use default */
-  priority: number
+  priority: number;
   /** Custom fields (values are JSON strings) */
-  customFields: { [key: string]: string }
+  customFields: { [key: string]: string };
 }
 
 export interface CreateItemRequest_CustomFieldsEntry {
-  key: string
-  value: string
+  key: string;
+  value: string;
 }
 
 export interface CreateItemResponse {
-  success: boolean
-  error: string
-  item?: GenericItem | undefined
+  success: boolean;
+  error: string;
+  item?: GenericItem | undefined;
 }
 
 export interface GetItemRequest {
-  projectPath: string
-  itemType: string
+  projectPath: string;
+  itemType: string;
   /** Item identifier (UUID or slug) */
-  itemId: string
+  itemId: string;
   /** Look up by display number instead of item_id (1-based, 0 = not specified) */
-  displayNumber?: number | undefined
+  displayNumber?: number | undefined;
 }
 
 export interface GetItemResponse {
-  success: boolean
-  error: string
-  item?: GenericItem | undefined
+  success: boolean;
+  error: string;
+  item?: GenericItem | undefined;
 }
 
 export interface ListItemsRequest {
-  projectPath: string
-  itemType: string
-  /** Filter by status (empty = all) */
-  status: string
-  /** Filter by priority (0 = all) */
-  priority: number
-  /** Include soft-deleted items (default: false) */
-  includeDeleted: boolean
+  projectPath: string;
+  itemType: string;
   /** Limit results (0 = no limit) */
-  limit: number
+  limit: number;
   /** Offset for pagination (0 = no offset) */
-  offset: number
+  offset: number;
+  /** JSON-encoded MQL query (e.g. {"status":{"$in":["open","in-progress"]}}) */
+  filter: string;
 }
 
 export interface ListItemsResponse {
-  success: boolean
-  error: string
-  items: GenericItem[]
-  totalCount: number
+  success: boolean;
+  error: string;
+  items: GenericItem[];
+  totalCount: number;
 }
 
 export interface UpdateItemRequest {
-  projectPath: string
-  itemType: string
-  itemId: string
+  projectPath: string;
+  itemType: string;
+  itemId: string;
   /** Empty = don't update */
-  title: string
+  title: string;
   /** Empty = don't update */
-  body: string
+  body: string;
   /** Empty = don't update */
-  status: string
+  status: string;
   /** 0 = don't update */
-  priority: number
+  priority: number;
   /** Custom fields to merge (values are JSON strings) */
-  customFields: { [key: string]: string }
+  customFields: { [key: string]: string };
 }
 
 export interface UpdateItemRequest_CustomFieldsEntry {
-  key: string
-  value: string
+  key: string;
+  value: string;
 }
 
 export interface UpdateItemResponse {
-  success: boolean
-  error: string
-  item?: GenericItem | undefined
+  success: boolean;
+  error: string;
+  item?: GenericItem | undefined;
 }
 
 export interface DeleteItemRequest {
-  projectPath: string
-  itemType: string
-  itemId: string
+  projectPath: string;
+  itemType: string;
+  itemId: string;
   /** If true, hard delete immediately */
-  force: boolean
+  force: boolean;
 }
 
 export interface DeleteItemResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
 }
 
 export interface SoftDeleteItemRequest {
-  projectPath: string
-  itemType: string
-  itemId: string
+  projectPath: string;
+  itemType: string;
+  itemId: string;
 }
 
 export interface SoftDeleteItemResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The soft-deleted item (with deleted_at set) */
-  item?: GenericItem | undefined
+  item?: GenericItem | undefined;
 }
 
 export interface RestoreItemRequest {
-  projectPath: string
-  itemType: string
-  itemId: string
+  projectPath: string;
+  itemType: string;
+  itemId: string;
 }
 
 export interface RestoreItemResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The restored item (with deleted_at cleared) */
-  item?: GenericItem | undefined
-}
-
-export interface ListItemTypesRequest {
-  projectPath: string
-}
-
-export interface ListItemTypesResponse {
-  success: boolean
-  error: string
-  itemTypes: ItemTypeConfig[]
-  totalCount: number
+  item?: GenericItem | undefined;
 }
 
 export interface DuplicateItemRequest {
   /** Project containing the original item */
-  sourceProjectPath: string
+  sourceProjectPath: string;
   /** e.g., "issues", "docs", or custom type */
-  itemType: string
+  itemType: string;
   /** ID of the item to duplicate (UUID or slug) */
-  itemId: string
+  itemId: string;
   /** Target project (can be same as source) */
-  targetProjectPath: string
+  targetProjectPath: string;
   /** Optional: override ID for the copy (for slug-identified types) */
-  newId: string
+  newId: string;
   /** Optional: override title (default: "Copy of {original}") */
-  newTitle: string
+  newTitle: string;
 }
 
 export interface DuplicateItemResponse {
-  success: boolean
-  error: string
+  success: boolean;
+  error: string;
   /** The new duplicate item */
-  item?: GenericItem | undefined
+  item?:
+    | GenericItem
+    | undefined;
   /** ID of the original item */
-  originalId: string
+  originalId: string;
+  /** Updated target project manifest */
+  manifest?: Manifest | undefined;
 }
 
-export interface MoveItemRequest {
-  sourceProjectPath: string
-  targetProjectPath: string
-  itemType: string
-  itemId: string
-  /** Optional: for slug renames */
-  newId: string
+export interface SearchItemsRequest {
+  /** Plural type name (e.g., "issues", "docs") */
+  itemType: string;
+  /** Item identifier (UUID or slug) to search for across projects */
+  itemId: string;
 }
 
-export interface MoveItemResponse {
-  success: boolean
-  error: string
-  item?: GenericItem | undefined
-  oldId: string
+/** A generic item with its source project metadata */
+export interface ItemWithProject {
+  item?:
+    | GenericItem
+    | undefined;
+  /** Absolute path to the project where this item was found */
+  projectPath: string;
+  /** Human-readable project name (directory name) */
+  projectName: string;
+  /** Human-readable path with ~/ for home dir (use for display only) */
+  displayPath: string;
 }
 
-/** Toggle-able features for an item type */
-export interface ItemTypeFeatures {
-  displayNumber: boolean
-  status: boolean
-  priority: boolean
-  assets: boolean
-  orgSync: boolean
-  move: boolean
-  duplicate: boolean
-}
-
-/** Custom field definition for item types */
-export interface ItemTypeCustomField {
-  /** Field name */
-  name: string
-  /** "string", "number", "boolean", "enum" */
-  fieldType: string
-  /** Whether field is required */
-  required: boolean
-  /** Default value */
-  defaultValue: string
-  /** For enum type */
-  enumValues: string[]
-}
-
-/** Request to create a new item type */
-export interface CreateItemTypeRequest {
-  projectPath: string
-  /** Singular display name (e.g., "Bug", "Task") */
-  name: string
-  /** Folder/type key, lowercase alphanumeric + hyphens (e.g., "bugs") */
-  plural: string
-  /** "uuid" or "slug" */
-  identifier: string
-  /** Enabled features */
-  features?: ItemTypeFeatures | undefined
-  /** Allowed statuses (e.g., ["open", "in-progress", "closed"]) */
-  statuses: string[]
-  /** Default status for new items (must be in statuses list) */
-  defaultStatus: string
-  /** Number of priority levels (0 = none) */
-  priorityLevels: number
-  /** Custom field definitions */
-  customFields: ItemTypeCustomField[]
-}
-
-/** Response from creating an item type */
-export interface CreateItemTypeResponse {
-  success: boolean
-  error: string
-  /** The created item type configuration */
-  itemType?: ItemTypeConfig | undefined
-}
-
-/** Configuration for an item type (stored in .centy/config.yaml) */
-export interface ItemTypeConfig {
-  /** Singular display name */
-  name: string
-  /** Folder/type key */
-  plural: string
-  /** "uuid" or "slug" */
-  identifier: string
-  /** Enabled features */
-  features?: ItemTypeFeatures | undefined
-  /** Allowed statuses */
-  statuses: string[]
-  /** Default status */
-  defaultStatus: string
-  /** Number of priority levels */
-  priorityLevels: number
-  /** Custom field definitions */
-  customFields: ItemTypeCustomField[]
+export interface SearchItemsResponse {
+  items: ItemWithProject[];
+  totalCount: number;
+  /** Non-fatal errors (e.g., projects that couldn't be accessed) */
+  errors: string[];
+  success: boolean;
+  error: string;
 }

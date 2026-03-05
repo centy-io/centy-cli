@@ -1,7 +1,7 @@
-import type { Issue } from '../../daemon/types.js'
+import type { GenericItem } from '../../daemon/types.js'
 
 interface DryRunInput {
-  issues: Issue[]
+  issues: GenericItem[]
   totalCount: number
 }
 
@@ -19,7 +19,8 @@ export function formatDryRun(
   for (const issue of response.issues) {
     const meta = issue.metadata
     const status = meta !== undefined ? meta.status : 'unknown'
-    lines.push(`#${issue.displayNumber} [${status}] ${issue.title}`)
+    const dn = meta !== undefined ? meta.displayNumber : 0
+    lines.push(`#${dn} [${status}] ${issue.title}`)
   }
   return lines
 }

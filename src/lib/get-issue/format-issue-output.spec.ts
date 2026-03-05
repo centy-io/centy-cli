@@ -1,45 +1,39 @@
 import { describe, it, expect, vi } from 'vitest'
-import type { Issue } from '../../daemon/types.js'
+import type { GenericItem } from '../../daemon/types.js'
 import { formatIssuePlain } from './format-issue-output.js'
 
 const baseMeta = {
   displayNumber: 1,
   status: 'open',
   priority: 2,
-  priorityLabel: 'High',
   createdAt: '2024-01-01',
   updatedAt: '2024-01-02',
   customFields: {},
-  draft: false,
   deletedAt: '',
-  isOrgIssue: false,
-  orgSlug: '',
-  orgDisplayNumber: 0,
 }
 
-const baseIssue: Issue = {
+const baseIssue: GenericItem = {
   id: 'abc',
-  issueNumber: 'abc',
-  displayNumber: 1,
+  itemType: 'issues',
   title: 'Bug',
-  description: '',
+  body: '',
 }
 
 describe('formatIssuePlain', () => {
-  it('logs fields with metadata and priorityLabel present', () => {
+  it('logs fields with metadata present', () => {
     const log = vi.fn()
-    const issue: Issue = { ...baseIssue, metadata: { ...baseMeta } }
+    const issue: GenericItem = { ...baseIssue, metadata: { ...baseMeta } }
     formatIssuePlain(issue, log)
     expect(log).toHaveBeenCalledWith('Issue #1')
     expect(log).toHaveBeenCalledWith('Status: open')
-    expect(log).toHaveBeenCalledWith('Priority: High')
+    expect(log).toHaveBeenCalledWith('Priority: P2')
   })
 
-  it('falls back to P<n> when priorityLabel is empty', () => {
+  it('logs priority as P<n> from metadata', () => {
     const log = vi.fn()
-    const issue: Issue = {
+    const issue: GenericItem = {
       ...baseIssue,
-      metadata: { ...baseMeta, priority: 3, priorityLabel: '' },
+      metadata: { ...baseMeta, priority: 3 },
     }
     formatIssuePlain(issue, log)
     expect(log).toHaveBeenCalledWith('Priority: P3')
@@ -47,17 +41,17 @@ describe('formatIssuePlain', () => {
 
   it('falls back to unknowns when metadata is missing', () => {
     const log = vi.fn()
-    const issue: Issue = { ...baseIssue, metadata: undefined }
+    const issue: GenericItem = { ...baseIssue, metadata: undefined }
     formatIssuePlain(issue, log)
     expect(log).toHaveBeenCalledWith('Status: unknown')
     expect(log).toHaveBeenCalledWith('Priority: P?')
   })
 
-  it('logs description when present', () => {
+  it('logs body when present', () => {
     const log = vi.fn()
-    const issue: Issue = {
+    const issue: GenericItem = {
       ...baseIssue,
-      description: 'A description',
+      body: 'A description',
       metadata: undefined,
     }
     formatIssuePlain(issue, log)

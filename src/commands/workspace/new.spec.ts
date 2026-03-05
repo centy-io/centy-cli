@@ -81,7 +81,6 @@ describe('WorkspaceNew command', () => {
         name: '',
         description: '',
         ttlHours: 0,
-        agentName: '',
         editorId: 'vscode',
       })
     )
@@ -176,7 +175,6 @@ describe('WorkspaceNew command', () => {
     expect(mockDaemonOpenStandaloneWorkspace).toHaveBeenCalledWith(
       expect.objectContaining({
         ttlHours: 24,
-        agentName: 'claude',
       })
     )
   })

@@ -58,6 +58,7 @@ export default class RegisterProject extends Command {
       const initResponse = await daemonInit({
         projectPath,
         force: true,
+        title: '',
       })
 
       if (!initResponse.success) {

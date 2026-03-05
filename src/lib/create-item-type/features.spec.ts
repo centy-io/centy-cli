@@ -11,6 +11,7 @@ describe('parseFeatures', () => {
       orgSync: false,
       move: false,
       duplicate: false,
+      softDelete: false,
     })
   })
 
@@ -24,6 +25,7 @@ describe('parseFeatures', () => {
       orgSync: false,
       move: true,
       duplicate: false,
+      softDelete: false,
     })
   })
 
@@ -37,6 +39,7 @@ describe('parseFeatures', () => {
       orgSync: false,
       move: false,
       duplicate: false,
+      softDelete: false,
     })
   })
 

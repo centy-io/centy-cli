@@ -15,9 +15,9 @@ export async function closeIssue(
 
   const response = await daemonUpdateIssue({
     projectPath,
-    issueId: issue.id,
+    itemId: issue.id,
     title: '',
-    description: '',
+    body: '',
     status: 'closed',
     priority: 0,
     customFields: {},
@@ -28,9 +28,10 @@ export async function closeIssue(
   }
 
   if (jsonOutput) {
-    log(JSON.stringify({ type: 'issue', ...response.issue! }, null, 2))
+    log(JSON.stringify({ type: 'issue', ...response.item! }, null, 2))
     return
   }
 
-  log(`Closed issue #${response.issue!.displayNumber}`)
+  const meta = response.item !== undefined ? response.item.metadata : undefined
+  log(`Closed issue #${meta !== undefined ? meta.displayNumber : 0}`)
 }

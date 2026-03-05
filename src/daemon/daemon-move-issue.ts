@@ -1,12 +1,15 @@
-import type { MoveIssueRequest, MoveIssueResponse } from './types.js'
+import type { MoveItemRequest, MoveItemResponse } from './types.js'
 import { getDaemonClient, callWithDeadline } from './load-proto.js'
 
 /**
  * Move an issue to a different project via daemon
  */
 export function daemonMoveIssue(
-  request: MoveIssueRequest
-): Promise<MoveIssueResponse> {
+  request: Omit<MoveItemRequest, 'itemType'>
+): Promise<MoveItemResponse> {
   const client = getDaemonClient()
-  return callWithDeadline(client.moveIssue.bind(client), request)
+  return callWithDeadline(client.moveItem.bind(client), {
+    ...request,
+    itemType: 'issues',
+  })
 }

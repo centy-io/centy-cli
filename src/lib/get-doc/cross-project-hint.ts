@@ -22,11 +22,11 @@ export async function checkCrossProjectDoc(
   }
 
   const result = await daemonGetDocsBySlug({ slug })
-  if (result.docs.length === 0) {
+  if (result.items.length === 0) {
     return { hint: null, jsonOutput: null }
   }
 
-  const matches = result.docs.map(dwp => ({
+  const matches = result.items.map(dwp => ({
     projectName: dwp.projectName,
     projectPath: dwp.projectPath,
   }))

@@ -52,6 +52,7 @@ export default class OrgDelete extends Command {
 
     const response = await daemonDeleteOrganization({
       slug: args.slug,
+      cascade: false,
     })
 
     if (!response.success) {

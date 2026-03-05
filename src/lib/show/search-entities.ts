@@ -1,10 +1,10 @@
 /* eslint-disable single-export/single-export */
 
 import { daemonGetIssuesByUuid } from '../../daemon/daemon-get-issues-by-uuid.js'
-import type { GetIssuesByUuidResponse } from '../../daemon/types.js'
+import type { SearchItemsResponse } from '../../daemon/types.js'
 
 export interface EntitySearchResult {
-  issuesResult: GetIssuesByUuidResponse
+  issuesResult: SearchItemsResponse
 }
 
 export async function searchEntitiesByUuid(

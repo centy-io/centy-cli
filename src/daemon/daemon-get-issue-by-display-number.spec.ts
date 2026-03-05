@@ -29,9 +29,9 @@ describe('daemonGetIssueByDisplayNumber', () => {
 
   it('should resolve with response on success', async () => {
     const mockIssue = { id: 'issue-1', displayNumber: 1 }
-    const mockResponse = { success: true, issue: mockIssue }
+    const mockResponse = { success: true, item: mockIssue }
     const mockClient = {
-      getIssueByDisplayNumber: vi.fn((_req, _options, callback) => {
+      getItem: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
       }),
     }
@@ -43,8 +43,8 @@ describe('daemonGetIssueByDisplayNumber', () => {
     const result = await daemonGetIssueByDisplayNumber({} as never)
 
     expect(result).toEqual(mockIssue)
-    expect(mockClient.getIssueByDisplayNumber).toHaveBeenCalledWith(
-      {},
+    expect(mockClient.getItem).toHaveBeenCalledWith(
+      expect.objectContaining({ itemType: 'issues', itemId: '' }),
       {},
       expect.any(Function)
     )
@@ -53,7 +53,7 @@ describe('daemonGetIssueByDisplayNumber', () => {
   it('should reject with error on failure', async () => {
     const mockError = new Error('gRPC error')
     const mockClient = {
-      getIssueByDisplayNumber: vi.fn((_req, _options, callback) => {
+      getItem: vi.fn((_req, _options, callback) => {
         callback(mockError, null)
       }),
     }

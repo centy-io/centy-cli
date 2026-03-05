@@ -117,15 +117,33 @@ describe('Compact command', () => {
         issues: [
           {
             id: 'uuid-1',
-            displayNumber: 1,
+            itemType: 'issues',
             title: 'Issue 1',
-            metadata: { status: 'open' },
+            body: '',
+            metadata: {
+              displayNumber: 1,
+              status: 'open',
+              priority: 0,
+              createdAt: '',
+              updatedAt: '',
+              deletedAt: '',
+              customFields: {},
+            },
           },
           {
             id: 'uuid-2',
-            displayNumber: 2,
+            itemType: 'issues',
             title: 'Issue 2',
-            metadata: { status: 'closed' },
+            body: '',
+            metadata: {
+              displayNumber: 2,
+              status: 'closed',
+              priority: 0,
+              createdAt: '',
+              updatedAt: '',
+              deletedAt: '',
+              customFields: {},
+            },
           },
         ],
         totalCount: 2,
@@ -144,8 +162,8 @@ describe('Compact command', () => {
     it('should output JSON in dry-run mode with json flag', async () => {
       const { default: Command } = await import('./compact.js')
       const issues = [
-        { id: 'uuid-1', displayNumber: 1, title: 'Issue 1' },
-        { id: 'uuid-2', displayNumber: 2, title: 'Issue 2' },
+        { id: 'uuid-1', itemType: 'issues', title: 'Issue 1', body: '' },
+        { id: 'uuid-2', itemType: 'issues', title: 'Issue 2', body: '' },
       ]
       mockDaemonListUncompactedIssues.mockResolvedValue({
         issues,
@@ -163,7 +181,9 @@ describe('Compact command', () => {
     it('should handle issues without metadata', async () => {
       const { default: Command } = await import('./compact.js')
       mockDaemonListUncompactedIssues.mockResolvedValue({
-        issues: [{ id: 'uuid-1', displayNumber: 1, title: 'Issue 1' }],
+        issues: [
+          { id: 'uuid-1', itemType: 'issues', title: 'Issue 1', body: '' },
+        ],
         totalCount: 1,
       })
 
@@ -181,9 +201,18 @@ describe('Compact command', () => {
         issues: [
           {
             id: 'uuid-1',
-            displayNumber: 1,
+            itemType: 'issues',
             title: 'Issue 1',
-            description: 'Desc 1',
+            body: 'Desc 1',
+            metadata: {
+              displayNumber: 1,
+              status: '',
+              priority: 0,
+              createdAt: '',
+              updatedAt: '',
+              deletedAt: '',
+              customFields: {},
+            },
           },
         ],
         totalCount: 1,
@@ -207,7 +236,9 @@ describe('Compact command', () => {
         expect.stringContaining('# LLM Compaction Context'),
         'utf-8'
       )
-      expect(cmd.logs).toContain('LLM context written to: context.md')
+      expect(
+        cmd.logs.some(log => log.includes('LLM context written to: context.md'))
+      ).toBe(true)
     })
 
     it('should handle non-existing compact.md', async () => {
@@ -216,9 +247,18 @@ describe('Compact command', () => {
         issues: [
           {
             id: 'uuid-1',
-            displayNumber: 1,
+            itemType: 'issues',
             title: 'Issue 1',
-            description: '',
+            body: '',
+            metadata: {
+              displayNumber: 1,
+              status: '',
+              priority: 0,
+              createdAt: '',
+              updatedAt: '',
+              deletedAt: '',
+              customFields: {},
+            },
           },
         ],
         totalCount: 1,
@@ -452,9 +492,18 @@ id: c3d4e5f6-a7b8-9012-cdef-123456789012
         issues: [
           {
             id: 'uuid-1',
-            displayNumber: 1,
+            itemType: 'issues',
             title: 'Issue 1',
-            description: 'Description 1',
+            body: 'Description 1',
+            metadata: {
+              displayNumber: 1,
+              status: '',
+              priority: 0,
+              createdAt: '',
+              updatedAt: '',
+              deletedAt: '',
+              customFields: {},
+            },
           },
         ],
         totalCount: 1,

@@ -47,7 +47,7 @@ describe('daemonGetDocsBySlug', () => {
     )
 
     ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue({
-      getDocsBySlug: mockGetDocsBySlug,
+      searchItems: mockGetDocsBySlug,
     } as ReturnType<typeof getDaemonClient>)
 
     const result = await daemonGetDocsBySlug({ slug: 'test-slug' })
@@ -68,7 +68,7 @@ describe('daemonGetDocsBySlug', () => {
     )
 
     ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue({
-      getDocsBySlug: mockGetDocsBySlug,
+      searchItems: mockGetDocsBySlug,
     } as ReturnType<typeof getDaemonClient>)
 
     await expect(daemonGetDocsBySlug({ slug: 'test-slug' })).rejects.toThrow(

@@ -20,7 +20,7 @@ export async function handleDocNotInitialized(
     async globalSearchFn() {
       const searchResult = await daemonGetDocsBySlug({ slug })
       return {
-        matches: searchResult.docs.map(dwp => ({
+        matches: searchResult.items.map(dwp => ({
           projectName: dwp.projectName,
           projectPath: dwp.projectPath,
         })),

@@ -29,12 +29,10 @@ export default class List extends Command {
   // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> list issues',
-    '<%= config.bin %> list epics',
     '<%= config.bin %> list epics --status open',
     '<%= config.bin %> list epics --priority 1',
     '<%= config.bin %> list bugs --json',
     '<%= config.bin %> list bugs --json --limit 10',
-    '<%= config.bin %> list issues --project centy-daemon',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -81,12 +79,18 @@ export default class List extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
+    const filterParts: Record<string, unknown> = {}
+    if (flags.status !== undefined)
+      filterParts['status'] = { $eq: flags.status }
+    if (flags.priority !== undefined)
+      filterParts['priority'] = { $eq: flags.priority }
+    const filter =
+      Object.keys(filterParts).length > 0 ? JSON.stringify(filterParts) : ''
+
     const response = await daemonListItems({
       projectPath: cwd,
       itemType,
-      status: flags.status !== undefined ? flags.status : '',
-      priority: flags.priority !== undefined ? flags.priority : 0,
-      includeDeleted: flags['include-deleted'],
+      filter,
       limit: flags.limit !== undefined ? flags.limit : 0,
       offset: flags.offset !== undefined ? flags.offset : 0,
     })

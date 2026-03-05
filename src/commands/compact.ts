@@ -29,7 +29,6 @@ export default class Compact extends Command {
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> --dry-run',
     '<%= config.bin %> <%= command.id %> --output context.md',
-    '<%= config.bin %> <%= command.id %> --input response.md --project centy-daemon',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -85,13 +84,21 @@ export default class Compact extends Command {
       return
     }
 
-    const context = await generateLlmContext(cwd, response.issues)
+    const context = await generateLlmContext(
+      cwd,
+      response.issues.map(item => ({
+        id: item.id,
+        displayNumber:
+          item.metadata !== undefined ? item.metadata.displayNumber : 0,
+        title: item.title,
+        description: item.body,
+      }))
+    )
     if (flags.output !== undefined) {
       // eslint-disable-next-line security/detect-non-literal-fs-filename
       await writeFile(flags.output, context, 'utf-8')
-      this.log(`LLM context written to: ${flags.output}`)
       this.log(
-        `\nNext steps:\n1. Process the file with your LLM\n2. Run: centy compact --input <response-file>`
+        `LLM context written to: ${flags.output}\n\nNext steps:\n1. Process the file with your LLM\n2. Run: centy compact --input <response-file>`
       )
       return
     }
