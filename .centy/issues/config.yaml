@@ -1,0 +1,21 @@
+# This file is managed by Centy. Use the Centy CLI to modify it.
+name: Issue
+icon: clipboard
+identifier: uuid
+features:
+  displayNumber: true
+  status: true
+  priority: true
+  softDelete: true
+  assets: true
+  orgSync: true
+  move: true
+  duplicate: true
+statuses:
+- open
+- planning
+- in-progress
+- closed
+defaultStatus: open
+priorityLevels: 3
+template: template.md

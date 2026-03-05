@@ -1,23 +1,23 @@
 {
-  "version": "0.2",
+  "ignorePaths": [".centy-manifest.json"],
   "language": "en",
+  "version": "0.2",
   "words": [
-    "centy",
-    "displayNumber",
-    "createdAt",
-    "updatedAt",
-    "compacted",
-    "priorityLevels",
-    "allowedStates",
-    "stateColors",
-    "priorityColors",
-    "autoCloseOnComplete",
-    "updateStatusOnStart",
-    "allowDirectEdits",
-    "centyVersion",
-    "schemaVersion",
     "CICD",
-    "EBADMACHO"
-  ],
-  "ignorePaths": [".centy-manifest.json"]
+    "EBADMACHO",
+    "allowDirectEdits",
+    "allowedStates",
+    "autoCloseOnComplete",
+    "centy",
+    "centyVersion",
+    "compacted",
+    "createdAt",
+    "displayNumber",
+    "priorityColors",
+    "priorityLevels",
+    "schemaVersion",
+    "stateColors",
+    "updateStatusOnStart",
+    "updatedAt"
+  ]
 }

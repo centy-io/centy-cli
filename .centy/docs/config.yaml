@@ -1,0 +1,13 @@
+# This file is managed by Centy. Use the Centy CLI to modify it.
+name: Doc
+icon: document
+identifier: slug
+features:
+  displayNumber: false
+  status: false
+  priority: false
+  softDelete: false
+  assets: false
+  orgSync: true
+  move: true
+  duplicate: true
