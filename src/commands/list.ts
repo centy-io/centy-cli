@@ -2,12 +2,9 @@
 import { Args, Command, Flags } from '@oclif/core'
 
 import pluralize from 'pluralize'
-import { daemonListItems } from '../daemon/daemon-list-items.js'
 import { projectFlag } from '../flags/project-flag.js'
-import {
-  ensureInitialized,
-  NotInitializedError,
-} from '../utils/ensure-initialized.js'
+import { handleGlobalList } from '../lib/list-items/handle-global-list.js'
+import { handleProjectList } from '../lib/list-items/handle-project-list.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
 
 /**
@@ -30,6 +27,8 @@ export default class List extends Command {
   static override examples = [
     '<%= config.bin %> list issues',
     '<%= config.bin %> list epics --status open',
+    '<%= config.bin %> list issues --global',
+    '<%= config.bin %> list issues --global --status open --json',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -59,22 +58,19 @@ export default class List extends Command {
       description: 'Output as JSON',
       default: false,
     }),
+    global: Flags.boolean({
+      char: 'g',
+      description: 'List items across all tracked projects',
+      default: false,
+    }),
     project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(List)
     const itemType = pluralize(args.type)
-    const cwd = await resolveProjectPath(flags.project)
-
-    try {
-      await ensureInitialized(cwd)
-    } catch (error) {
-      if (error instanceof NotInitializedError) {
-        this.error(error.message)
-      }
-      throw error instanceof Error ? error : new Error(String(error))
-    }
+    const limit = flags.limit !== undefined ? flags.limit : 0
+    const offset = flags.offset !== undefined ? flags.offset : 0
 
     const filterParts: Record<string, unknown> = {}
     if (flags.status !== undefined)
@@ -84,39 +80,30 @@ export default class List extends Command {
     const filter =
       Object.keys(filterParts).length > 0 ? JSON.stringify(filterParts) : ''
 
-    const response = await daemonListItems({
-      projectPath: cwd,
+    if (flags.global) {
+      await handleGlobalList(
+        itemType,
+        filter,
+        limit,
+        offset,
+        flags.json,
+        this.log.bind(this),
+        this.warn.bind(this)
+      )
+      return
+    }
+
+    const cwd = await resolveProjectPath(flags.project)
+    const throwError = (msg: string): never => this.error(msg)
+    await handleProjectList(
+      cwd,
       itemType,
       filter,
-      limit: flags.limit !== undefined ? flags.limit : 0,
-      offset: flags.offset !== undefined ? flags.offset : 0,
-    })
-
-    if (!response.success) {
-      this.error(response.error)
-    }
-
-    if (flags.json) {
-      this.log(JSON.stringify(response.items, null, 2))
-      return
-    }
-
-    if (response.items.length === 0) {
-      this.log(`No ${itemType} found.`)
-      return
-    }
-
-    this.log(`Found ${response.totalCount} ${itemType}:\n`)
-    for (const item of response.items) {
-      const meta = item.metadata
-      if (meta === undefined) {
-        this.log(item.title)
-        continue
-      }
-      const dn = meta.displayNumber > 0 ? `#${meta.displayNumber} ` : ''
-      const status = meta.status !== '' ? ` [${meta.status}]` : ''
-      const priority = meta.priority > 0 ? ` [P${meta.priority}]` : ''
-      this.log(`${dn}${item.title}${status}${priority}`)
-    }
+      limit,
+      offset,
+      flags.json,
+      this.log.bind(this),
+      throwError
+    )
   }
 }
