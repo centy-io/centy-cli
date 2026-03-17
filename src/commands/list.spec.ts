@@ -191,6 +191,97 @@ describe('List command', () => {
     })
   })
 
+  describe('filtering flags', () => {
+    it('should pass status filter as MQL to daemon', async () => {
+      const { default: Command } = await import('./list.js')
+      mockDaemonListItems.mockResolvedValue({
+        success: true,
+        items: [],
+        totalCount: 0,
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { status: 'open' },
+        args: { type: 'issue' },
+      })
+
+      await cmd.run()
+
+      expect(mockDaemonListItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filter: JSON.stringify({ status: { $eq: 'open' } }),
+        })
+      )
+    })
+
+    it('should pass priority filter as MQL to daemon', async () => {
+      const { default: Command } = await import('./list.js')
+      mockDaemonListItems.mockResolvedValue({
+        success: true,
+        items: [],
+        totalCount: 0,
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { priority: 1 },
+        args: { type: 'issue' },
+      })
+
+      await cmd.run()
+
+      expect(mockDaemonListItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filter: JSON.stringify({ priority: { $eq: 1 } }),
+        })
+      )
+    })
+
+    it('should combine status and priority into a single MQL filter', async () => {
+      const { default: Command } = await import('./list.js')
+      mockDaemonListItems.mockResolvedValue({
+        success: true,
+        items: [],
+        totalCount: 0,
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: { status: 'in-progress', priority: 2 },
+        args: { type: 'issue' },
+      })
+
+      await cmd.run()
+
+      expect(mockDaemonListItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filter: JSON.stringify({
+            status: { $eq: 'in-progress' },
+            priority: { $eq: 2 },
+          }),
+        })
+      )
+    })
+
+    it('should pass empty filter when no filter flags set', async () => {
+      const { default: Command } = await import('./list.js')
+      mockDaemonListItems.mockResolvedValue({
+        success: true,
+        items: [],
+        totalCount: 0,
+      })
+
+      const cmd = createMockCommand(Command, {
+        flags: {},
+        args: { type: 'issue' },
+      })
+
+      await cmd.run()
+
+      expect(mockDaemonListItems).toHaveBeenCalledWith(
+        expect.objectContaining({ filter: '' })
+      )
+    })
+  })
+
   describe('pagination flags', () => {
     it('should pass limit flag to daemon', async () => {
       const { default: Command } = await import('./list.js')
