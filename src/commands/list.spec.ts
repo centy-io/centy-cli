@@ -4,63 +4,45 @@ import {
   runCommandSafely,
 } from '../testing/command-test-utils.js'
 
-const mockDaemonListItems = vi.fn()
+const mockHandleGlobalList = vi.fn()
+const mockHandleProjectList = vi.fn()
 const mockResolveProjectPath = vi.fn()
-const mockEnsureInitialized = vi.fn()
 
-vi.mock('../daemon/daemon-list-items.js', () => ({
-  daemonListItems: (...args: unknown[]) => mockDaemonListItems(...args),
+vi.mock('../lib/list-items/handle-global-list.js', () => ({
+  handleGlobalList: (...args: unknown[]) => mockHandleGlobalList(...args),
+}))
+
+vi.mock('../lib/list-items/handle-project-list.js', () => ({
+  handleProjectList: (...args: unknown[]) => mockHandleProjectList(...args),
 }))
 
 vi.mock('../utils/resolve-project-path.js', () => ({
   resolveProjectPath: (...args: unknown[]) => mockResolveProjectPath(...args),
 }))
 
-vi.mock('../utils/ensure-initialized.js', () => ({
-  ensureInitialized: (...args: unknown[]) => mockEnsureInitialized(...args),
-  NotInitializedError: class NotInitializedError extends Error {
-    constructor(message = 'Not initialized') {
-      super(message)
-      this.name = 'NotInitializedError'
-    }
-  },
-}))
-
 describe('List command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockResolveProjectPath.mockResolvedValue('/test/project')
-    mockEnsureInitialized.mockResolvedValue('/test/project/.centy')
+    mockHandleProjectList.mockResolvedValue(undefined)
+    mockHandleGlobalList.mockResolvedValue(undefined)
   })
 
   it('should have correct static properties', async () => {
     const { default: Command } = await import('./list.js')
-
     expect(Command.description).toBeDefined()
     expect(typeof Command.description).toBe('string')
   })
 
   it('should export a valid oclif command class', async () => {
     const { default: Command } = await import('./list.js')
-
     expect(Command).toBeDefined()
     expect(Command.prototype.run).toBeDefined()
   })
 
-  describe('listing items', () => {
-    it('should list items and show count', async () => {
+  describe('single-project listing', () => {
+    it('should delegate to handleProjectList', async () => {
       const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [
-          {
-            id: 'item-1',
-            title: 'First item',
-            metadata: { displayNumber: 1, status: 'open', priority: 0 },
-          },
-        ],
-        totalCount: 1,
-      })
 
       const cmd = createMockCommand(Command, {
         flags: {},
@@ -69,136 +51,20 @@ describe('List command', () => {
 
       await cmd.run()
 
-      expect(mockDaemonListItems).toHaveBeenCalledWith(
-        expect.objectContaining({
-          projectPath: '/test/project',
-          itemType: 'issues',
-        })
+      expect(mockHandleProjectList).toHaveBeenCalledWith(
+        '/test/project',
+        'issues',
+        '',
+        0,
+        0,
+        undefined,
+        expect.any(Function),
+        expect.any(Function)
       )
-      expect(cmd.logs[0]).toContain('1')
     })
 
-    it('should show item without display number', async () => {
+    it('should pass status filter', async () => {
       const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [{ id: 'item-1', title: 'No number item', metadata: undefined }],
-        totalCount: 1,
-      })
-
-      const cmd = createMockCommand(Command, {
-        flags: {},
-        args: { type: 'issue' },
-      })
-
-      await cmd.run()
-
-      expect(cmd.logs.join('')).toContain('No number item')
-    })
-
-    it('should show message when no items found', async () => {
-      const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [],
-        totalCount: 0,
-      })
-
-      const cmd = createMockCommand(Command, {
-        flags: {},
-        args: { type: 'issue' },
-      })
-
-      await cmd.run()
-
-      expect(cmd.logs[0]).toContain('No')
-    })
-  })
-
-  describe('error handling', () => {
-    it('should handle NotInitializedError', async () => {
-      const { default: Command } = await import('./list.js')
-      const { NotInitializedError } =
-        await import('../utils/ensure-initialized.js')
-      mockEnsureInitialized.mockRejectedValue(
-        new NotInitializedError('Project not initialized')
-      )
-
-      const cmd = createMockCommand(Command, {
-        flags: {},
-        args: { type: 'issue' },
-      })
-
-      const { error } = await runCommandSafely(cmd)
-
-      expect(error).toBeDefined()
-      expect(cmd.errors).toContain('Project not initialized')
-    })
-
-    it('should re-throw non-NotInitializedError', async () => {
-      const { default: Command } = await import('./list.js')
-      mockEnsureInitialized.mockRejectedValue(new Error('Generic error'))
-
-      const cmd = createMockCommand(Command, {
-        flags: {},
-        args: { type: 'issue' },
-      })
-
-      const { error } = await runCommandSafely(cmd)
-
-      expect(error).toBeDefined()
-    })
-
-    it('should handle daemon error', async () => {
-      const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: false,
-        error: 'List failed',
-        items: [],
-        totalCount: 0,
-      })
-
-      const cmd = createMockCommand(Command, {
-        flags: {},
-        args: { type: 'issue' },
-      })
-
-      const { error } = await runCommandSafely(cmd)
-
-      expect(error).toBeDefined()
-      expect(cmd.errors).toContain('List failed')
-    })
-  })
-
-  describe('JSON output', () => {
-    it('should output JSON when flag set', async () => {
-      const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [{ id: 'item-1', title: 'First item', metadata: {} }],
-        totalCount: 1,
-      })
-
-      const cmd = createMockCommand(Command, {
-        flags: { json: true },
-        args: { type: 'issue' },
-      })
-
-      await cmd.run()
-
-      const output = JSON.parse(cmd.logs[0])
-      expect(Array.isArray(output)).toBe(true)
-    })
-  })
-
-  describe('filtering flags', () => {
-    it('should pass status filter as MQL to daemon', async () => {
-      const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [],
-        totalCount: 0,
-      })
 
       const cmd = createMockCommand(Command, {
         flags: { status: 'open' },
@@ -207,20 +73,20 @@ describe('List command', () => {
 
       await cmd.run()
 
-      expect(mockDaemonListItems).toHaveBeenCalledWith(
-        expect.objectContaining({
-          filter: JSON.stringify({ status: { $eq: 'open' } }),
-        })
+      expect(mockHandleProjectList).toHaveBeenCalledWith(
+        '/test/project',
+        'issues',
+        JSON.stringify({ status: { $eq: 'open' } }),
+        0,
+        0,
+        undefined,
+        expect.any(Function),
+        expect.any(Function)
       )
     })
 
-    it('should pass priority filter as MQL to daemon', async () => {
+    it('should pass priority filter', async () => {
       const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [],
-        totalCount: 0,
-      })
 
       const cmd = createMockCommand(Command, {
         flags: { priority: 1 },
@@ -229,118 +95,142 @@ describe('List command', () => {
 
       await cmd.run()
 
-      expect(mockDaemonListItems).toHaveBeenCalledWith(
-        expect.objectContaining({
-          filter: JSON.stringify({ priority: { $eq: 1 } }),
-        })
+      expect(mockHandleProjectList).toHaveBeenCalledWith(
+        '/test/project',
+        'issues',
+        JSON.stringify({ priority: { $eq: 1 } }),
+        0,
+        0,
+        undefined,
+        expect.any(Function),
+        expect.any(Function)
       )
     })
 
-    it('should combine status and priority into a single MQL filter', async () => {
+    it('should pass limit and offset', async () => {
       const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [],
-        totalCount: 0,
-      })
 
       const cmd = createMockCommand(Command, {
-        flags: { status: 'in-progress', priority: 2 },
+        flags: { limit: 10, offset: 20 },
         args: { type: 'issue' },
       })
 
       await cmd.run()
 
-      expect(mockDaemonListItems).toHaveBeenCalledWith(
-        expect.objectContaining({
-          filter: JSON.stringify({
-            status: { $eq: 'in-progress' },
-            priority: { $eq: 2 },
-          }),
-        })
+      expect(mockHandleProjectList).toHaveBeenCalledWith(
+        '/test/project',
+        'issues',
+        '',
+        10,
+        20,
+        undefined,
+        expect.any(Function),
+        expect.any(Function)
       )
     })
 
-    it('should pass empty filter when no filter flags set', async () => {
+    it('should pass json flag', async () => {
       const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [],
-        totalCount: 0,
-      })
 
       const cmd = createMockCommand(Command, {
-        flags: {},
+        flags: { json: true },
         args: { type: 'issue' },
       })
 
       await cmd.run()
 
-      expect(mockDaemonListItems).toHaveBeenCalledWith(
-        expect.objectContaining({ filter: '' })
+      expect(mockHandleProjectList).toHaveBeenCalledWith(
+        '/test/project',
+        'issues',
+        '',
+        0,
+        0,
+        true,
+        expect.any(Function),
+        expect.any(Function)
       )
     })
   })
 
-  describe('pagination flags', () => {
-    it('should pass limit flag to daemon', async () => {
+  describe('global listing', () => {
+    it('should delegate to handleGlobalList when --global is set', async () => {
       const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [],
-        totalCount: 0,
-      })
 
       const cmd = createMockCommand(Command, {
-        flags: { limit: 10 },
+        flags: { global: true },
         args: { type: 'issue' },
       })
 
       await cmd.run()
 
-      expect(mockDaemonListItems).toHaveBeenCalledWith(
-        expect.objectContaining({ limit: 10 })
+      expect(mockHandleGlobalList).toHaveBeenCalledWith(
+        'issues',
+        '',
+        0,
+        0,
+        undefined,
+        expect.any(Function),
+        expect.any(Function)
       )
+      expect(mockHandleProjectList).not.toHaveBeenCalled()
+      expect(mockResolveProjectPath).not.toHaveBeenCalled()
     })
 
-    it('should pass offset flag to daemon', async () => {
+    it('should pass filters to global list', async () => {
       const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [],
-        totalCount: 0,
-      })
 
       const cmd = createMockCommand(Command, {
-        flags: { offset: 20 },
+        flags: { global: true, status: 'open', limit: 5 },
         args: { type: 'issue' },
       })
 
       await cmd.run()
 
-      expect(mockDaemonListItems).toHaveBeenCalledWith(
-        expect.objectContaining({ offset: 20 })
+      expect(mockHandleGlobalList).toHaveBeenCalledWith(
+        'issues',
+        JSON.stringify({ status: { $eq: 'open' } }),
+        5,
+        0,
+        undefined,
+        expect.any(Function),
+        expect.any(Function)
       )
     })
 
-    it('should default limit and offset to 0', async () => {
+    it('should pass json flag to global list', async () => {
       const { default: Command } = await import('./list.js')
-      mockDaemonListItems.mockResolvedValue({
-        success: true,
-        items: [],
-        totalCount: 0,
+
+      const cmd = createMockCommand(Command, {
+        flags: { global: true, json: true },
+        args: { type: 'issue' },
       })
+
+      await cmd.run()
+
+      expect(mockHandleGlobalList).toHaveBeenCalledWith(
+        'issues',
+        '',
+        0,
+        0,
+        true,
+        expect.any(Function),
+        expect.any(Function)
+      )
+    })
+  })
+
+  describe('error handling', () => {
+    it('should propagate errors from handleProjectList', async () => {
+      const { default: Command } = await import('./list.js')
+      mockHandleProjectList.mockRejectedValue(new Error('Failed'))
 
       const cmd = createMockCommand(Command, {
         flags: {},
         args: { type: 'issue' },
       })
 
-      await cmd.run()
-
-      expect(mockDaemonListItems).toHaveBeenCalledWith(
-        expect.objectContaining({ limit: 0, offset: 0 })
-      )
+      const { error } = await runCommandSafely(cmd)
+      expect(error).toBeDefined()
     })
   })
 })
