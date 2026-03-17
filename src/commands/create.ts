@@ -1,13 +1,14 @@
 // eslint-disable-next-line import/order
-import { Args, Command, Flags } from '@oclif/core'
+import { Args, Command } from '@oclif/core'
 
 import pluralize from 'pluralize'
 import { daemonCreateItem } from '../daemon/daemon-create-item.js'
-import { projectFlag } from '../flags/project-flag.js'
+import { createFlags } from '../flags/create-flags.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
+import { applyLinkFlags } from '../utils/apply-link-flags.js'
 import { formatItemJson } from '../utils/format-item-json.js'
 import { parseCustomFields } from '../utils/parse-custom-fields.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
@@ -35,40 +36,12 @@ export default class Create extends Command {
     '<%= config.bin %> create epic --title "Auth overhaul" --status open',
     '<%= config.bin %> create bug --title "Crash on startup"',
     '<%= config.bin %> create task --title "Review PR" --custom-field "assignee=alice"',
+    '<%= config.bin %> create issue --title "Login crash" --link blocks:issue:2',
+    '<%= config.bin %> create task --title "Write tests" --link relates-to:issue:5 --link relates-to:doc:api-guide',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
-  static override flags = {
-    title: Flags.string({
-      char: 't',
-      description: 'Item title',
-      required: true,
-    }),
-    body: Flags.string({
-      char: 'b',
-      description: 'Item body / description (markdown)',
-      default: '',
-    }),
-    status: Flags.string({
-      char: 's',
-      description: 'Initial status (empty = use type default)',
-      default: '',
-    }),
-    priority: Flags.integer({
-      char: 'p',
-      description: 'Priority level (0 = use default)',
-      default: 0,
-    }),
-    'custom-field': Flags.string({
-      description: 'Custom field as key=value (repeatable)',
-      multiple: true,
-    }),
-    json: Flags.boolean({
-      description: 'Output as JSON',
-      default: false,
-    }),
-    project: projectFlag,
-  }
+  static override flags = createFlags
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Create)
@@ -116,5 +89,8 @@ export default class Create extends Command {
         : ''
     this.log(`Created ${args.type}${displayId}: "${item.title}"`)
     this.log(`  ID: ${item.id}`)
+
+    const linkSpecs = flags.link !== undefined ? flags.link : []
+    await applyLinkFlags(linkSpecs, item.id, args.type, cwd, this)
   }
 }

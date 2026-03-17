@@ -1,13 +1,14 @@
 // eslint-disable-next-line import/order
-import { Args, Command, Flags } from '@oclif/core'
+import { Args, Command } from '@oclif/core'
 
 import pluralize from 'pluralize'
 import { daemonUpdateItem } from '../daemon/daemon-update-item.js'
-import { projectFlag } from '../flags/project-flag.js'
+import { updateFlags } from '../flags/update-flags.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
+import { applyLinkFlags } from '../utils/apply-link-flags.js'
 import { formatItemJson } from '../utils/format-item-json.js'
 import { parseCustomFields } from '../utils/parse-custom-fields.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
@@ -39,33 +40,11 @@ export default class Update extends Command {
     '<%= config.bin %> update epic 1 --title "New title"',
     '<%= config.bin %> update bug abc123-uuid --status in-progress --priority 1',
     '<%= config.bin %> update epic 1 --project centy-daemon',
+    '<%= config.bin %> update issue 1 --status closed --link blocks:issue:2',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
-  static override flags = {
-    title: Flags.string({ char: 't', description: 'New title' }),
-    body: Flags.string({
-      char: 'b',
-      description: 'New body (markdown content)',
-    }),
-    status: Flags.string({
-      char: 's',
-      description: 'New status (e.g., open, in-progress, closed)',
-    }),
-    priority: Flags.integer({
-      char: 'p',
-      description: 'New priority level (1 = highest)',
-    }),
-    'custom-field': Flags.string({
-      multiple: true,
-      description: 'Custom field in key=value format (repeatable)',
-    }),
-    json: Flags.boolean({
-      description: 'Output as JSON',
-      default: false,
-    }),
-    project: projectFlag,
-  }
+  static override flags = updateFlags
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Update)
@@ -86,7 +65,8 @@ export default class Update extends Command {
       !flags.body &&
       !flags.status &&
       !flags.priority &&
-      (!flags['custom-field'] || flags['custom-field'].length === 0)
+      (!flags['custom-field'] || flags['custom-field'].length === 0) &&
+      (!flags.link || flags.link.length === 0)
     ) {
       this.error('At least one field must be specified to update.')
     }
@@ -118,5 +98,8 @@ export default class Update extends Command {
     const dn =
       meta !== undefined && meta.displayNumber > 0 ? meta.displayNumber : 0
     this.log(`Updated ${args.type}${dn > 0 ? ` #${dn}` : ` ${item.id}`}`)
+
+    const linkSpecs = flags.link !== undefined ? flags.link : []
+    await applyLinkFlags(linkSpecs, itemId, args.type, cwd, this)
   }
 }
