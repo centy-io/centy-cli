@@ -2,12 +2,9 @@
 import { Args, Command, Flags } from '@oclif/core'
 
 import pluralize from 'pluralize'
-import { daemonListItems } from '../daemon/daemon-list-items.js'
 import { projectFlag } from '../flags/project-flag.js'
-import {
-  ensureInitialized,
-  NotInitializedError,
-} from '../utils/ensure-initialized.js'
+import { handleGlobalNext } from '../lib/next-item/handle-global-next.js'
+import { handleProjectNext } from '../lib/next-item/handle-project-next.js'
 import { resolveProjectPath } from '../utils/resolve-project-path.js'
 
 /**
@@ -32,6 +29,8 @@ export default class Next extends Command {
     '<%= config.bin %> next issue --status in-progress',
     '<%= config.bin %> next bug --json',
     '<%= config.bin %> next issue --project centy-daemon',
+    '<%= config.bin %> next issue --global',
+    '<%= config.bin %> next issue --global --status in-progress',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
@@ -45,63 +44,42 @@ export default class Next extends Command {
       description: 'Output as JSON',
       default: false,
     }),
+    global: Flags.boolean({
+      char: 'g',
+      description: 'Fetch next item across all tracked projects',
+      default: false,
+    }),
     project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Next)
     const itemType = pluralize(args.type)
-    const cwd = await resolveProjectPath(flags.project)
-
-    try {
-      await ensureInitialized(cwd)
-    } catch (error) {
-      if (error instanceof NotInitializedError) {
-        this.error(error.message)
-      }
-      throw error instanceof Error ? error : new Error(String(error))
-    }
-
     const status = flags.status !== undefined ? flags.status : 'open'
     const filter = JSON.stringify({ status: { $eq: status } })
 
-    const response = await daemonListItems({
-      projectPath: cwd,
+    if (flags.global) {
+      await handleGlobalNext(
+        itemType,
+        args.type,
+        filter,
+        status,
+        flags.json,
+        this.log.bind(this)
+      )
+      return
+    }
+
+    const cwd = await resolveProjectPath(flags.project)
+    await handleProjectNext(
+      cwd,
       itemType,
+      args.type,
       filter,
-      limit: 1,
-      offset: 0,
-    })
-
-    if (!response.success) {
-      this.error(response.error)
-    }
-
-    if (response.items.length === 0) {
-      this.log(`No ${status} ${args.type} found.`)
-      return
-    }
-
-    const item = response.items[0]
-
-    if (flags.json) {
-      this.log(JSON.stringify(item, null, 2))
-      return
-    }
-
-    const meta = item.metadata
-    const dn =
-      meta !== undefined && meta.displayNumber > 0
-        ? `#${meta.displayNumber} `
-        : ''
-    const statusLabel =
-      meta !== undefined && meta.status !== '' ? ` [${meta.status}]` : ''
-    const priority =
-      meta !== undefined && meta.priority > 0 ? ` [P${meta.priority}]` : ''
-    this.log(`${dn}${item.title}${statusLabel}${priority}`)
-
-    if (item.body) {
-      this.log(`\n${item.body}`)
-    }
+      status,
+      flags.json,
+      this.log.bind(this),
+      this.error.bind(this)
+    )
   }
 }
