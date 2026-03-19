@@ -5,11 +5,16 @@ import {
 } from '../../testing/command-test-utils.js'
 
 const mockDaemonListItems = vi.fn()
+const mockListItemsGlobally = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 
 vi.mock('../../daemon/daemon-list-items.js', () => ({
   daemonListItems: (...args: unknown[]) => mockDaemonListItems(...args),
+}))
+
+vi.mock('../../daemon/daemon-list-items-globally.js', () => ({
+  listItemsGlobally: (...args: unknown[]) => mockListItemsGlobally(...args),
 }))
 
 vi.mock('../../utils/resolve-project-path.js', () => ({
@@ -316,5 +321,139 @@ describe('ListItems command', () => {
     expect(mockDaemonListItems).toHaveBeenCalledWith(
       expect.objectContaining({ projectPath: '/other/project' })
     )
+  })
+
+  describe('--global flag', () => {
+    it('should call listItemsGlobally instead of daemonListItems', async () => {
+      const { default: Command } = await import('./items.js')
+      mockListItemsGlobally.mockResolvedValue({ items: [], errors: [] })
+
+      const cmd = createMockCommand(Command, {
+        args: { type: 'issues' },
+        flags: { global: true, limit: 0, offset: 0 },
+      })
+      await cmd.run()
+
+      expect(mockListItemsGlobally).toHaveBeenCalledWith('issues', '', 0, 0)
+      expect(mockDaemonListItems).not.toHaveBeenCalled()
+    })
+
+    it('should skip resolveProjectPath and ensureInitialized when --global is set', async () => {
+      const { default: Command } = await import('./items.js')
+      mockListItemsGlobally.mockResolvedValue({ items: [], errors: [] })
+
+      const cmd = createMockCommand(Command, {
+        args: { type: 'issues' },
+        flags: { global: true },
+      })
+      await cmd.run()
+
+      expect(mockResolveProjectPath).not.toHaveBeenCalled()
+      expect(mockEnsureInitialized).not.toHaveBeenCalled()
+    })
+
+    it('should display items with project name prefix', async () => {
+      const { default: Command } = await import('./items.js')
+      mockListItemsGlobally.mockResolvedValue({
+        items: [
+          {
+            item: createMockItem(),
+            projectName: 'centy-daemon',
+            projectPath: '/path/to/centy-daemon',
+            displayPath: '~/centy-daemon',
+          },
+        ],
+        errors: [],
+      })
+
+      const cmd = createMockCommand(Command, {
+        args: { type: 'issues' },
+        flags: { global: true },
+      })
+      await cmd.run()
+
+      expect(
+        cmd.logs.some(
+          l => l.includes('[centy-daemon]') && l.includes('Test issue')
+        )
+      ).toBe(true)
+    })
+
+    it('should include projectName and projectPath in JSON output', async () => {
+      const { default: Command } = await import('./items.js')
+      const item = createMockItem()
+      mockListItemsGlobally.mockResolvedValue({
+        items: [
+          {
+            item,
+            projectName: 'centy-daemon',
+            projectPath: '/path/to/centy-daemon',
+            displayPath: '~/centy-daemon',
+          },
+        ],
+        errors: [],
+      })
+
+      const cmd = createMockCommand(Command, {
+        args: { type: 'issues' },
+        flags: { global: true, json: true },
+      })
+      await cmd.run()
+
+      const parsed = JSON.parse(cmd.logs[0])
+      expect(parsed[0].projectName).toBe('centy-daemon')
+      expect(parsed[0].projectPath).toBe('/path/to/centy-daemon')
+      expect(parsed[0].id).toBe('uuid-123')
+    })
+
+    it('should pass filters to listItemsGlobally', async () => {
+      const { default: Command } = await import('./items.js')
+      mockListItemsGlobally.mockResolvedValue({ items: [], errors: [] })
+
+      const cmd = createMockCommand(Command, {
+        args: { type: 'issues' },
+        flags: {
+          global: true,
+          status: 'open',
+          priority: 1,
+          limit: 0,
+          offset: 0,
+        },
+      })
+      await cmd.run()
+
+      expect(mockListItemsGlobally).toHaveBeenCalledWith(
+        'issues',
+        JSON.stringify({ status: 'open', priority: 1 }),
+        0,
+        0
+      )
+    })
+
+    it('should pass limit and offset to listItemsGlobally', async () => {
+      const { default: Command } = await import('./items.js')
+      mockListItemsGlobally.mockResolvedValue({ items: [], errors: [] })
+
+      const cmd = createMockCommand(Command, {
+        args: { type: 'issues' },
+        flags: { global: true, limit: 5, offset: 2 },
+      })
+      await cmd.run()
+
+      expect(mockListItemsGlobally).toHaveBeenCalledWith('issues', '', 5, 2)
+    })
+
+    it('should show no items message when global returns empty', async () => {
+      const { default: Command } = await import('./items.js')
+      mockListItemsGlobally.mockResolvedValue({ items: [], errors: [] })
+
+      const cmd = createMockCommand(Command, {
+        args: { type: 'issues' },
+        flags: { global: true },
+      })
+      await cmd.run()
+
+      expect(cmd.logs[0]).toContain('No issues found.')
+    })
   })
 })

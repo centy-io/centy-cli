@@ -9,6 +9,10 @@ import {
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
 import { formatItemLine } from '../../lib/list-items/format-item-line.js'
+import {
+  buildFilter,
+  runGlobalList,
+} from '../../lib/list-items/run-global-list.js'
 import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
@@ -33,55 +37,43 @@ export default class ListItems extends Command {
     '<%= config.bin %> list issues --status open --priority 1',
     '<%= config.bin %> list docs --json --limit 10',
     '<%= config.bin %> list bugs --project centy-daemon',
+    '<%= config.bin %> list issues --global',
+    '<%= config.bin %> list issues --global --status open --json',
   ]
 
   // eslint-disable-next-line no-restricted-syntax
   static override flags = {
-    status: Flags.string({
-      description: 'Filter by status',
-    }),
-    priority: Flags.integer({
-      description: 'Filter by priority level',
-    }),
+    status: Flags.string({ description: 'Filter by status' }),
+    priority: Flags.integer({ description: 'Filter by priority level' }),
     limit: Flags.integer({
       description: 'Limit number of results (0 = no limit)',
       default: 0,
     }),
-    offset: Flags.integer({
-      description: 'Offset for pagination',
-      default: 0,
-    }),
-    json: Flags.boolean({
-      description: 'Output as JSON',
+    offset: Flags.integer({ description: 'Offset for pagination', default: 0 }),
+    json: Flags.boolean({ description: 'Output as JSON', default: false }),
+    project: projectFlag,
+    global: Flags.boolean({
+      char: 'g',
+      description: 'Query items across all tracked projects',
       default: false,
     }),
-    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(ListItems)
     const itemType = pluralize(args.type)
+    const filter = buildFilter(flags.status, flags.priority)
+    if (flags.global) {
+      await runGlobalList(this, itemType, filter, flags.limit, flags.offset, flags.json) // prettier-ignore
+      return
+    }
     const cwd = await resolveProjectPath(flags.project)
-
     try {
       await ensureInitialized(cwd)
     } catch (error) {
-      if (error instanceof NotInitializedError) {
-        this.error(error.message)
-      }
+      if (error instanceof NotInitializedError) this.error(error.message)
       throw error instanceof Error ? error : new Error(String(error))
     }
-
-    const filterObj: Record<string, unknown> = {}
-    if (flags.status !== undefined) {
-      filterObj['status'] = flags.status
-    }
-    if (flags.priority !== undefined) {
-      filterObj['priority'] = flags.priority
-    }
-    const filter =
-      Object.keys(filterObj).length > 0 ? JSON.stringify(filterObj) : ''
-
     const response = await daemonListItems({
       projectPath: cwd,
       itemType,
@@ -89,21 +81,15 @@ export default class ListItems extends Command {
       offset: flags.offset,
       filter,
     })
-
-    if (!response.success) {
-      this.error(response.error)
-    }
-
+    if (!response.success) this.error(response.error)
     if (flags.json) {
       this.log(JSON.stringify(response.items, null, 2))
       return
     }
-
     if (response.items.length === 0) {
       this.log(`No ${itemType} found.`)
       return
     }
-
     this.log(`Found ${response.totalCount} ${itemType}:\n`)
     for (const item of response.items) {
       this.log(`${formatItemLine(item)}\n  ID: ${item.id}`)
