@@ -12,7 +12,7 @@ import { getPermissionDeniedMsg } from '../utils/get-permission-denied-msg.js'
 const INSTALL_CMD = `curl -fsSL ${getInstallScriptUrl()} | sh`
 
 const getMissingDaemonMsg = (p: string) =>
-  `Daemon not found at: ${p}\n\nFix:\n  1. Install using: ${INSTALL_CMD}\n  2. centy start\n  3. centy info\n\nOr set CENTY_DAEMON_PATH.`
+  `Daemon binary not found\n\nThe centy-daemon binary could not be found at: ${p}\n\nTo fix this:\n  1. Install the daemon: ${INSTALL_CMD}\n  2. Start the daemon: centy start\n  3. Verify installation: centy info\n\nOr set CENTY_DAEMON_PATH environment variable to the binary location.`
 
 // eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Start extends Command {
