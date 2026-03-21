@@ -12,8 +12,6 @@ import {
   fileInfoToRestoreFormat,
 } from './type-converters.js'
 
-export { buildConfigFromOptions } from './config-builder.js'
-
 const CENTY_FOLDER = '.centy'
 
 /**

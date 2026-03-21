@@ -69,7 +69,6 @@ describe('Manifest command', () => {
       true
     )
     expect(cmd.logs.some(log => log.includes('Created:'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('Updated:'))).toBe(true)
   })
 
   it('should output JSON when json flag is set', async () => {

@@ -7,7 +7,8 @@ vi.mock('../../utils/is-git-repo.js', () => ({
   isGitRepo: (cwd: unknown) => mockIsGitRepo(cwd),
 }))
 
-const { buildConfigFromOptions, init } = await import('./init.js')
+const { init } = await import('./init.js')
+const { buildConfigFromOptions } = await import('./config-builder.js')
 
 function createOutputCollector(): {
   stream: Writable

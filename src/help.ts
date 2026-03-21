@@ -1,5 +1,4 @@
 import { Command, Help } from '@oclif/core'
-import { daemonGetSupportedEditors } from './daemon/daemon-get-supported-editors.js'
 
 /**
  * Custom help class that adds LLM callout to root help output
@@ -26,13 +25,15 @@ export default class CentyHelp extends Help {
   override async showCommandHelp(command: Command.Loadable): Promise<void> {
     if (command.flags !== undefined && 'editor' in command.flags) {
       try {
+        const { daemonGetSupportedEditors } =
+          await import('./daemon/daemon-get-supported-editors.js')
         const { editors } = await daemonGetSupportedEditors({})
         const ids = editors.filter(e => e.available).map(e => e.editorId)
         if (ids.length > 0) {
           command.flags.editor.description = `Editor to use: ${ids.join(', ')} (default: interactive selection or project default)`
         }
       } catch {
-        // daemon unavailable — keep static description
+        // daemon unavailable or module resolution failed — keep static description
       }
     }
 
