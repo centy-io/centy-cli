@@ -89,10 +89,11 @@ export function getDaemonClient(): CentyDaemonClient {
   // loadPackageDefinition returns a GrpcObject (which is indexed by string: any).
   // We access the 'centy' property directly to get the typed proto package.
   const rawDescriptor = loadPackageDefinition(packageDefinition)
-  // eslint-disable-next-line no-restricted-syntax
+  /* eslint-disable no-restricted-syntax */
   const protoDescriptor: ProtoDescriptor = {
     centy: rawDescriptor.centy as unknown as CentyPackage,
   }
+  /* eslint-enable no-restricted-syntax */
 
   const address = getAddress()
   clientInstance = new protoDescriptor.centy.v1.CentyDaemon(
