@@ -54,6 +54,5 @@ export default class Manifest extends Command {
     this.log(`  Schema Version: ${manifest.schemaVersion}`)
     this.log(`  Centy Version: ${manifest.centyVersion}`)
     this.log(`  Created: ${manifest.createdAt}`)
-    this.log(`  Updated: ${manifest.updatedAt}`)
   }
 }

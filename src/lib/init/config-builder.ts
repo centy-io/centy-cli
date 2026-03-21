@@ -25,5 +25,6 @@ export function buildConfigFromOptions(opts: InitOptions): Config | undefined {
     customLinkTypes: [],
     defaultEditor: '',
     hooks: [],
+    userValues: {},
   }
 }
