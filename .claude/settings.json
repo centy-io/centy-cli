@@ -134,7 +134,9 @@
       "Bash(gh pr checks:*)",
       "Bash(gh run list:*)",
       "Bash(gh run view:*)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(pnpm centy:*)",
+      "WebFetch(domain:claude.com)"
     ],
     "deny": [
       "Bash(npm install)",
