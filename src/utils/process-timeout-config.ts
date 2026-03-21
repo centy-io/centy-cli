@@ -1,4 +1,3 @@
-
 /**
  * Timeout for quick commands like version checks (5 seconds)
  */

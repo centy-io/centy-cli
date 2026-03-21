@@ -14,7 +14,6 @@ import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
  */
 
 export default class Duplicate extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -26,10 +25,8 @@ export default class Duplicate extends Command {
     }),
   }
 
-
   static override description =
     'Duplicate an item to the same or a different project'
-
 
   static override examples = [
     '<%= config.bin %> duplicate issue 1',
@@ -37,7 +34,6 @@ export default class Duplicate extends Command {
     '<%= config.bin %> duplicate bug abc123-uuid --to /path/to/other/project',
     '<%= config.bin %> duplicate epic 1 --project centy-daemon',
   ]
-
 
   static override flags = {
     to: Flags.string({

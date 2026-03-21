@@ -1,4 +1,3 @@
-
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { daemonOpenInTempWorkspace } from './daemon-open-in-temp-workspace.js'
 import { getDaemonClient } from './load-proto.js'
@@ -19,7 +18,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-
 describe('daemonOpenInTempWorkspace', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -33,9 +31,7 @@ describe('daemonOpenInTempWorkspace', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const result = await daemonOpenInTempWorkspace({
       projectPath: '/test',
@@ -55,9 +51,7 @@ describe('daemonOpenInTempWorkspace', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     await expect(
       daemonOpenInTempWorkspace({

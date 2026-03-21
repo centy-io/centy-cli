@@ -14,9 +14,7 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class WorkspaceOpen extends Command {
-
   static override description = 'Open an issue in a temporary workspace'
-
 
   static override examples = [
     '<%= config.bin %> workspace open 1',
@@ -24,14 +22,12 @@ export default class WorkspaceOpen extends Command {
     '<%= config.bin %> workspace open 1 --editor vscode',
   ]
 
-
   static override args = {
     issueId: Args.string({
       description: 'Issue ID or display number',
       required: true,
     }),
   }
-
 
   static override flags = {
     project: projectFlag,

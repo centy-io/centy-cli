@@ -5,10 +5,8 @@ import Get from './get.js'
  */
 
 export default class Show extends Get {
-
   static override description =
     'Alias for `get`. Get an item by type and identifier'
-
 
   static override examples = [
     '<%= config.bin %> show issue 1',

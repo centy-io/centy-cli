@@ -6,15 +6,12 @@ import { daemonGetDaemonInfo } from '../daemon/daemon-get-daemon-info.js'
  */
 
 export default class Info extends Command {
-
   static override description = 'Get centy daemon info'
-
 
   static override examples = [
     '<%= config.bin %> info',
     '<%= config.bin %> info --json',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

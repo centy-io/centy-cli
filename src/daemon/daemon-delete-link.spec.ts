@@ -1,4 +1,3 @@
-
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { daemonDeleteLink } from './daemon-delete-link.js'
 import { getDaemonClient } from './load-proto.js'
@@ -19,7 +18,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-
 describe('daemonDeleteLink', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -33,9 +31,7 @@ describe('daemonDeleteLink', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const result = await daemonDeleteLink({})
 
@@ -55,9 +51,7 @@ describe('daemonDeleteLink', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     await expect(daemonDeleteLink({})).rejects.toThrow('gRPC error')
   })

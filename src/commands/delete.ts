@@ -14,7 +14,6 @@ import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
  */
 
 export default class Delete extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -26,9 +25,7 @@ export default class Delete extends Command {
     }),
   }
 
-
   static override description = 'Delete an item by type and identifier'
-
 
   static override examples = [
     '<%= config.bin %> delete issue 1',
@@ -36,7 +33,6 @@ export default class Delete extends Command {
     '<%= config.bin %> delete bug abc123-uuid',
     '<%= config.bin %> delete epic 1 --project centy-daemon',
   ]
-
 
   static override flags = {
     force: Flags.boolean({

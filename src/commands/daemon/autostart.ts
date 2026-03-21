@@ -3,19 +3,15 @@ import { findDaemonBinary } from '../../lib/start/find-daemon-binary.js'
 import { daemonBinaryExists } from '../../lib/start/daemon-binary-exists.js'
 import { launchdService } from '../../lib/autostart/launchd.js'
 
-
 export default class DaemonAutostart extends Command {
-
   static override description =
     'Configure daemon to start automatically on boot'
-
 
   static override examples = [
     '<%= config.bin %> daemon autostart',
     '<%= config.bin %> daemon autostart --enable',
     '<%= config.bin %> daemon autostart --disable',
   ]
-
 
   static override flags = {
     enable: Flags.boolean({
@@ -61,7 +57,6 @@ export default class DaemonAutostart extends Command {
       )
       this.log(`Daemon path: ${daemonPath}`)
     } catch (error) {
-
       this.error(`Failed to enable autostart: ${(error as Error).message}`)
     }
   }
@@ -71,7 +66,6 @@ export default class DaemonAutostart extends Command {
       launchdService.disableAutostart()
       this.log('Autostart disabled. The daemon will no longer start on boot.')
     } catch (error) {
-
       this.error(`Failed to disable autostart: ${(error as Error).message}`)
     }
   }

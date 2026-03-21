@@ -20,7 +20,11 @@ describe('getInstallScriptUrl', () => {
   })
 
   it('should return custom URL when env var is set', async () => {
-    Reflect.set(process.env, 'CENTY_INSTALL_SCRIPT_URL', 'https://custom.url/install.sh')
+    Reflect.set(
+      process.env,
+      'CENTY_INSTALL_SCRIPT_URL',
+      'https://custom.url/install.sh'
+    )
     const { getInstallScriptUrl } = await import('./install-script-url.js')
 
     expect(getInstallScriptUrl()).toBe('https://custom.url/install.sh')

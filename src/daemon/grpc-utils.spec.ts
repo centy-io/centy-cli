@@ -11,7 +11,11 @@ import {
 } from './grpc-utils.js'
 
 function makeServiceError(code: number, message: string = ''): ServiceError {
-  return Object.assign(new Error(message), { code, details: message, metadata: new Metadata() })
+  return Object.assign(new Error(message), {
+    code,
+    details: message,
+    metadata: new Metadata(),
+  })
 }
 
 describe('grpc-utils', () => {
@@ -22,7 +26,8 @@ describe('grpc-utils', () => {
       const after = Date.now()
 
       expect(options.deadline).toBeInstanceOf(Date)
-      const deadline = options.deadline instanceof Date ? options.deadline.getTime() : 0
+      const deadline =
+        options.deadline instanceof Date ? options.deadline.getTime() : 0
       // Default timeout is 30_000ms
       expect(deadline).toBeGreaterThanOrEqual(before + 30_000)
       expect(deadline).toBeLessThanOrEqual(after + 30_000)
@@ -33,7 +38,8 @@ describe('grpc-utils', () => {
       const options = createCallOptions(5000)
       const after = Date.now()
 
-      const deadline = options.deadline instanceof Date ? options.deadline.getTime() : 0
+      const deadline =
+        options.deadline instanceof Date ? options.deadline.getTime() : 0
       expect(deadline).toBeGreaterThanOrEqual(before + 5000)
       expect(deadline).toBeLessThanOrEqual(after + 5000)
     })
@@ -68,7 +74,10 @@ describe('grpc-utils', () => {
     })
 
     it('should return true for ECONNREFUSED message', () => {
-      const error = makeServiceError(status.UNKNOWN, 'connect ECONNREFUSED 127.0.0.1:50051')
+      const error = makeServiceError(
+        status.UNKNOWN,
+        'connect ECONNREFUSED 127.0.0.1:50051'
+      )
       expect(isDaemonUnavailableError(error)).toBe(true)
     })
   })
@@ -85,11 +94,7 @@ describe('grpc-utils', () => {
         }
       )
 
-      const result = await callWithDeadline(
-        mockMethod,
-        { test: true },
-        5000
-      )
+      const result = await callWithDeadline(mockMethod, { test: true }, 5000)
       expect(result).toBe('response')
     })
 

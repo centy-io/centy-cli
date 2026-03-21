@@ -12,12 +12,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class UserList extends Command {
-
   static override aliases = ['list:users']
 
-
   static override description = 'List all users in the project'
-
 
   static override examples = [
     '<%= config.bin %> user list',
@@ -26,7 +23,6 @@ export default class UserList extends Command {
     '<%= config.bin %> user list --git-username johndoe',
     '<%= config.bin %> user list --project centy-daemon',
   ]
-
 
   static override flags = {
     'git-username': Flags.string({

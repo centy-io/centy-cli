@@ -22,7 +22,8 @@ vi.mock('./load-proto.js', () => {
     LONG_GRPC_TIMEOUT_MS: 120000,
     DEFAULT_GRPC_TIMEOUT_MS: 30000,
     isDeadlineExceededError: (error: { message?: string }) =>
-      error.message !== undefined && error.message.includes('DEADLINE_EXCEEDED'),
+      error.message !== undefined &&
+      error.message.includes('DEADLINE_EXCEEDED'),
     isDaemonUnavailableError: (error: { message?: string }) =>
       error.message !== undefined && error.message.includes('UNAVAILABLE'),
   }
@@ -60,9 +61,7 @@ describe.skipIf(isBun)('checkDaemonConnection', () => {
       ),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const resultPromise = checkDaemonConnection()
     await vi.runAllTimersAsync()
@@ -80,14 +79,17 @@ describe.skipIf(isBun)('checkDaemonConnection', () => {
           _options: unknown,
           callback: (err: Error & { code?: number }, res: null) => void
         ) => {
-          callback(Object.assign(new Error('UNAVAILABLE: connection refused'), { code: 14 }), null)
+          callback(
+            Object.assign(new Error('UNAVAILABLE: connection refused'), {
+              code: 14,
+            }),
+            null
+          )
         }
       ),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const resultPromise = checkDaemonConnection()
     await vi.runAllTimersAsync()
@@ -106,14 +108,15 @@ describe.skipIf(isBun)('checkDaemonConnection', () => {
           callback: (err: Error & { code?: number }, res: null) => void
         ) => {
           // Simulate DEADLINE_EXCEEDED error
-          callback(Object.assign(new Error('DEADLINE_EXCEEDED: timeout'), { code: 4 }), null)
+          callback(
+            Object.assign(new Error('DEADLINE_EXCEEDED: timeout'), { code: 4 }),
+            null
+          )
         }
       ),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const resultPromise = checkDaemonConnection()
     await vi.runAllTimersAsync()
@@ -131,14 +134,15 @@ describe.skipIf(isBun)('checkDaemonConnection', () => {
           _options: unknown,
           callback: (err: Error & { code?: number }, res: null) => void
         ) => {
-          callback(Object.assign(new Error('Some other error'), { code: 2 }), null)
+          callback(
+            Object.assign(new Error('Some other error'), { code: 2 }),
+            null
+          )
         }
       ),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const resultPromise = checkDaemonConnection()
     await vi.runAllTimersAsync()

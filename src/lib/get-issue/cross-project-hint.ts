@@ -1,4 +1,3 @@
-
 import { daemonGetIssuesByUuid } from '../../daemon/daemon-get-issues-by-uuid.js'
 import {
   formatCrossProjectHint,

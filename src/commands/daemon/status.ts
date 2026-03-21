@@ -7,15 +7,12 @@ import { daemonGetDaemonInfo } from '../../daemon/daemon-get-daemon-info.js'
  */
 
 export default class DaemonStatus extends Command {
-
   static override description = 'Check whether the centy daemon is running'
-
 
   static override examples = [
     '<%= config.bin %> daemon status',
     '<%= config.bin %> daemon status --json',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

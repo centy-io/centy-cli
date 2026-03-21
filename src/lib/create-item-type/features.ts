@@ -1,4 +1,3 @@
-
 import type { ItemTypeFeatures } from '../../daemon/types.js'
 
 export class InvalidFeatureError extends Error {

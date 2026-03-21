@@ -14,7 +14,6 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Restore extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -26,16 +25,13 @@ export default class Restore extends Command {
     }),
   }
 
-
   static override description = 'Restore a soft-deleted item'
-
 
   static override examples = [
     '<%= config.bin %> restore issue 1',
     '<%= config.bin %> restore epic abc123-uuid',
     '<%= config.bin %> restore bug 1 --project centy-daemon',
   ]
-
 
   static override flags = {
     project: projectFlag,

@@ -12,7 +12,6 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class DeleteAsset extends Command {
-
   static override args = {
     filename: Args.string({
       description: 'Asset filename',
@@ -20,9 +19,7 @@ export default class DeleteAsset extends Command {
     }),
   }
 
-
   static override description = 'Delete an asset'
-
 
   static override examples = [
     '<%= config.bin %> delete asset screenshot.png --issue 1',
@@ -30,7 +27,6 @@ export default class DeleteAsset extends Command {
     '<%= config.bin %> delete asset old-image.png --issue 1 --force',
     '<%= config.bin %> delete asset screenshot.png --issue 1 --project centy-daemon',
   ]
-
 
   static override flags = {
     issue: Flags.string({

@@ -1,4 +1,3 @@
-
 import { daemonGetIssueByDisplayNumber } from '../../daemon/daemon-get-issue-by-display-number.js'
 
 export type EntityType = 'issue'

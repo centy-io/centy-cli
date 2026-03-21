@@ -12,16 +12,13 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class ItemTypeList extends Command {
-
   static override description = 'List all item types for a project'
-
 
   static override examples = [
     '<%= config.bin %> item-type list',
     '<%= config.bin %> item-type list --json',
     '<%= config.bin %> item-type list --project centy-daemon',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

@@ -13,7 +13,6 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Links extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Entity type (e.g., issue, doc)',
@@ -25,16 +24,13 @@ export default class Links extends Command {
     }),
   }
 
-
   static override description = 'List all links for an entity'
-
 
   static override examples = [
     '<%= config.bin %> links issue 1',
     '<%= config.bin %> links doc getting-started --json',
     '<%= config.bin %> links issue 1 --project my-project',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

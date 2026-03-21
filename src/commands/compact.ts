@@ -16,13 +16,10 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Compact extends Command {
-
   static override description =
     'Compact uncompacted issues into feature summaries'
 
-
   static override examples = ['<%= config.bin %> <%= command.id %>']
-
 
   static override flags = {
     'dry-run': Flags.boolean({
@@ -84,7 +81,6 @@ export default class Compact extends Command {
       }))
     )
     if (flags.output !== undefined) {
-
       await writeFile(flags.output, context, 'utf-8')
       this.log(
         `LLM context written to: ${flags.output}\n\nNext steps:\n1. Process the file with your LLM\n2. Run: centy compact --input <response-file>`

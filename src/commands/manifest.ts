@@ -12,16 +12,13 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Manifest extends Command {
-
   static override description = 'Get the project manifest'
-
 
   static override examples = [
     '<%= config.bin %> manifest',
     '<%= config.bin %> manifest --json',
     '<%= config.bin %> manifest --project centy-daemon',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

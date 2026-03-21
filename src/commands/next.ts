@@ -10,7 +10,6 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Next extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, bug, epic, or custom type)',
@@ -18,9 +17,7 @@ export default class Next extends Command {
     }),
   }
 
-
   static override description = 'Get the next open item of any type'
-
 
   static override examples = [
     '<%= config.bin %> next issue',
@@ -30,7 +27,6 @@ export default class Next extends Command {
     '<%= config.bin %> next issue --global',
     '<%= config.bin %> next issue --global --status in-progress',
   ]
-
 
   static override flags = {
     status: Flags.string({

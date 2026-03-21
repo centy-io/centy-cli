@@ -6,15 +6,12 @@ import { daemonControlService } from '../daemon/daemon-control-service.js'
  */
 
 export default class Restart extends Command {
-
   static override description = 'Restart the centy daemon'
-
 
   static override examples = [
     '<%= config.bin %> restart',
     '<%= config.bin %> restart --delay 5',
   ]
-
 
   static override flags = {
     delay: Flags.integer({
@@ -32,7 +29,6 @@ export default class Restart extends Command {
     })
 
     if (!result.success) {
-
       this.error(result.error ?? 'Restart failed')
     }
 

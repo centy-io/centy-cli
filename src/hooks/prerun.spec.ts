@@ -41,7 +41,6 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-
     await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockCheckDaemonConnection).not.toHaveBeenCalled()
@@ -54,7 +53,6 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-
     await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockCheckDaemonConnection).not.toHaveBeenCalled()
@@ -66,7 +64,6 @@ describe('prerun hook', () => {
       Command: { id: 'restart' },
       argv: [],
     }
-
 
     await hook.call({ error: mockError, warn: mockWarn }, options)
 
@@ -82,7 +79,6 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-
     await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockCheckDaemonConnection).toHaveBeenCalled()
@@ -96,7 +92,6 @@ describe('prerun hook', () => {
       Command: { id: 'init' },
       argv: [],
     }
-
 
     await hook.call({ error: mockError, warn: mockWarn }, options)
 
@@ -117,7 +112,6 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-
     await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockCheckDaemonConnection).toHaveBeenCalled()
@@ -136,7 +130,6 @@ describe('prerun hook', () => {
       Command: { id: 'list' },
       argv: [],
     }
-
 
     await hook.call({ error: mockError, warn: mockWarn }, options)
 
@@ -159,7 +152,6 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-
     await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockWarn).not.toHaveBeenCalled()
@@ -175,7 +167,6 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-
     await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockWarn).not.toHaveBeenCalled()
@@ -190,7 +181,6 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-
     await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockGetProjectVersionStatus).not.toHaveBeenCalled()
@@ -204,7 +194,6 @@ describe('prerun hook', () => {
         Command: { id: 'list' },
         argv: [],
       }
-
 
       await hook.call({ error: mockError, warn: mockWarn }, options)
 
@@ -224,7 +213,6 @@ describe('prerun hook', () => {
         argv: [],
       }
 
-
       await hook.call({ error: mockError, warn: mockWarn }, options)
 
       expect(mockError).toHaveBeenCalledWith(
@@ -240,7 +228,6 @@ describe('prerun hook', () => {
         argv: [],
       }
 
-
       await hook.call({ error: mockError, warn: mockWarn }, options)
 
       expect(mockAssertInitialized).not.toHaveBeenCalled()
@@ -254,7 +241,6 @@ describe('prerun hook', () => {
         argv: [],
       }
 
-
       await hook.call({ error: mockError, warn: mockWarn }, options)
 
       expect(mockAssertInitialized).not.toHaveBeenCalled()
@@ -267,7 +253,6 @@ describe('prerun hook', () => {
         Command: { id: 'list' },
         argv: ['issues', '--project', 'centy-daemon'],
       }
-
 
       await hook.call({ error: mockError, warn: mockWarn }, options)
 
@@ -283,7 +268,6 @@ describe('prerun hook', () => {
         Command: { id: 'info' },
         argv: [],
       }
-
 
       await hook.call({ error: mockError, warn: mockWarn }, options)
 

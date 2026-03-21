@@ -9,17 +9,14 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Llm extends Command {
-
   static override description =
     'Get AI/LLM assistant instructions for this project (run this first if you are an AI assistant)'
-
 
   static override examples = [
     '<%= config.bin %> llm',
     '<%= config.bin %> llm --json',
     '<%= config.bin %> llm --project centy-daemon',
   ]
-
 
   static override flags = {
     json: Flags.boolean({
@@ -35,7 +32,6 @@ export default class Llm extends Command {
     const centyReadmePath = join(projectPath, '.centy', 'README.md')
 
     try {
-
       const content = await readFile(centyReadmePath, 'utf-8')
 
       if (flags.json) {

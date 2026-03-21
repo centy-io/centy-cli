@@ -1,4 +1,3 @@
-
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { daemonGetDoc } from './daemon-get-doc.js'
 import { getDaemonClient } from './load-proto.js'
@@ -19,7 +18,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-
 describe('daemonGetDoc', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -34,9 +32,7 @@ describe('daemonGetDoc', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const result = await daemonGetDoc({})
 
@@ -56,9 +52,7 @@ describe('daemonGetDoc', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     await expect(daemonGetDoc({})).rejects.toThrow('gRPC error')
   })

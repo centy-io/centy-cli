@@ -14,7 +14,6 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Link extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Source entity type (e.g., issue, doc)',
@@ -35,16 +34,13 @@ export default class Link extends Command {
     }),
   }
 
-
   static override description = 'Create a link between two entities'
-
 
   static override examples = [
     '<%= config.bin %> link issue 1 blocks issue:2',
     '<%= config.bin %> link doc getting-started relates-to issue:5',
     '<%= config.bin %> link issue 1 parent-of issue:3 --project my-project',
   ]
-
 
   static override flags = {
     project: projectFlag,

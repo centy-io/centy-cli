@@ -6,12 +6,9 @@ import { daemonListOrganizations } from '../../daemon/daemon-list-organizations.
  */
 
 export default class OrgList extends Command {
-
   static override aliases = ['list:orgs', 'list:organizations']
 
-
   static override description = 'List all organizations'
-
 
   static override examples = [
     '<%= config.bin %> org list',
@@ -19,7 +16,6 @@ export default class OrgList extends Command {
     '<%= config.bin %> list organizations',
     '<%= config.bin %> org list --json',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

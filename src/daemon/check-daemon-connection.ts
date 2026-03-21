@@ -1,4 +1,3 @@
-
 import type { ServiceError } from '@grpc/grpc-js'
 import {
   getDaemonClient,

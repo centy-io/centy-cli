@@ -6,17 +6,14 @@ import { init } from '../lib/init/index.js'
  */
 
 export default class Init extends Command {
-
   static override description =
     'Initialize a .centy folder in the current project'
-
 
   static override examples = [
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> --force',
     '<%= config.bin %> <%= command.id %> --no-git',
   ]
-
 
   static override flags = {
     force: Flags.boolean({

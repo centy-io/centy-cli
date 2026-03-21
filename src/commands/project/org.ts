@@ -6,9 +6,7 @@ import { daemonSetProjectOrganization } from '../../daemon/daemon-set-project-or
  */
 
 export default class ProjectOrg extends Command {
-
   static override aliases = ['project:organization']
-
 
   static override args = {
     slug: Args.string({
@@ -17,10 +15,8 @@ export default class ProjectOrg extends Command {
     }),
   }
 
-
   static override description =
     'Assign or remove a project from an organization'
-
 
   static override examples = [
     '<%= config.bin %> project org centy-io',
@@ -28,7 +24,6 @@ export default class ProjectOrg extends Command {
     '<%= config.bin %> project org --remove',
     '<%= config.bin %> project organization centy-io',
   ]
-
 
   static override flags = {
     path: Flags.string({
@@ -54,7 +49,6 @@ export default class ProjectOrg extends Command {
     if (!args.slug && !flags.remove) {
       this.error('Provide an organization slug or use --remove to unassign')
     }
-
 
     const organizationSlug = flags.remove ? '' : (args.slug ?? '')
 

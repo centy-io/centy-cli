@@ -1,4 +1,3 @@
-
 import {
   mkdirSync,
   mkdtempSync,
@@ -117,8 +116,12 @@ describe('binary installation - binary path resolution', () => {
   it('should place install dir under user home directory', () => {
     const installDir = getInstallDir()
     const home: string | undefined = Reflect.get(process.env, 'HOME')
-    const userProfile: string | undefined = Reflect.get(process.env, 'USERPROFILE')
-    const homeDir = home !== undefined ? home : (userProfile !== undefined ? userProfile : '')
+    const userProfile: string | undefined = Reflect.get(
+      process.env,
+      'USERPROFILE'
+    )
+    const homeDir =
+      home !== undefined ? home : userProfile !== undefined ? userProfile : ''
     expect(installDir.startsWith(homeDir)).toBe(true)
   })
 

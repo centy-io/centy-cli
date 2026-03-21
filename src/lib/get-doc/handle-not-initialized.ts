@@ -1,4 +1,3 @@
-
 import { daemonGetDocsBySlug } from '../../daemon/daemon-get-docs-by-slug.js'
 import { handleNotInitializedWithSearch } from '../../utils/cross-project-search.js'
 

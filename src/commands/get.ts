@@ -16,7 +16,6 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Get extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, doc, user, or custom type)',
@@ -28,9 +27,7 @@ export default class Get extends Command {
     }),
   }
 
-
   static override description = 'Get an item by type and identifier'
-
 
   static override examples = [
     '<%= config.bin %> get issue 1',
@@ -43,7 +40,6 @@ export default class Get extends Command {
     '<%= config.bin %> get issue abc123-uuid --global',
     '<%= config.bin %> get issue 1 --project centy-daemon',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

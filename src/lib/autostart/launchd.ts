@@ -37,19 +37,15 @@ function enableAutostart(daemonPath: string): void {
   const plistPath = getPlistPath()
   const launchAgentsDir = join(homedir(), 'Library', 'LaunchAgents')
 
-
   if (!existsSync(launchAgentsDir)) {
-
     mkdirSync(launchAgentsDir, { recursive: true })
   }
 
   const logsDir = join(homedir(), '.centy', 'logs')
 
   if (!existsSync(logsDir)) {
-
     mkdirSync(logsDir, { recursive: true })
   }
-
 
   if (existsSync(plistPath)) {
     try {
@@ -70,7 +66,6 @@ function enableAutostart(daemonPath: string): void {
 function disableAutostart(): void {
   const plistPath = getPlistPath()
 
-
   if (!existsSync(plistPath)) {
     return
   }
@@ -81,20 +76,17 @@ function disableAutostart(): void {
     // Ignore errors if service wasn't loaded
   }
 
-
   unlinkSync(plistPath)
 }
 
 function getAutostartStatus(): { enabled: boolean; daemonPath?: string } {
   const plistPath = getPlistPath()
 
-
   if (!existsSync(plistPath)) {
     return { enabled: false }
   }
 
   try {
-
     const content = readFileSync(plistPath, 'utf-8')
     const parsed = plist.parse(content)
     let daemonPath: string | undefined

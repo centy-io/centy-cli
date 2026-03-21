@@ -6,7 +6,6 @@ import { daemonSetProjectFavorite } from '../../daemon/daemon-set-project-favori
  */
 
 export default class ProjectFavorite extends Command {
-
   static override args = {
     path: Args.string({
       description: 'Path to the project (defaults to current directory)',
@@ -14,16 +13,13 @@ export default class ProjectFavorite extends Command {
     }),
   }
 
-
   static override description = 'Mark a project as favorite or unfavorite'
-
 
   static override examples = [
     '<%= config.bin %> project favorite',
     '<%= config.bin %> project favorite /path/to/project',
     '<%= config.bin %> project favorite --off',
   ]
-
 
   static override flags = {
     off: Flags.boolean({

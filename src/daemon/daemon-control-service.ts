@@ -1,4 +1,3 @@
-
 import type {
   ShutdownRequest,
   ShutdownResponse,

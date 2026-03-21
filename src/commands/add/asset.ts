@@ -14,7 +14,6 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class AddAsset extends Command {
-
   static override args = {
     file: Args.string({
       description: 'Path to the file to add',
@@ -22,10 +21,8 @@ export default class AddAsset extends Command {
     }),
   }
 
-
   static override description =
     'Add an asset to an issue, PR, or as a shared asset'
-
 
   static override examples = [
     '<%= config.bin %> add asset screenshot.png --issue 1',
@@ -34,7 +31,6 @@ export default class AddAsset extends Command {
     '<%= config.bin %> add asset image.jpg --issue 1 --name my-image.jpg',
     '<%= config.bin %> add asset screenshot.png --issue 1 --project centy-daemon',
   ]
-
 
   static override flags = {
     issue: Flags.string({
@@ -80,7 +76,6 @@ export default class AddAsset extends Command {
 
     let fileData: Buffer
     try {
-
       fileData = await readFile(args.file)
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error)
@@ -89,7 +84,6 @@ export default class AddAsset extends Command {
       }
       throw error instanceof Error ? error : new Error(String(error))
     }
-
 
     const filename = flags.name ?? basename(args.file)
 

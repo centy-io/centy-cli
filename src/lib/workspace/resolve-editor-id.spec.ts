@@ -8,7 +8,6 @@ vi.mock('./select-editor.js', () => ({
   selectEditor: (...args: unknown[]) => mockSelectEditor(...args),
 }))
 
-
 const vsCodeEditor: EditorInfo = {
   editorType: 0,
   name: 'VS Code',

@@ -12,9 +12,7 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class UserCreate extends Command {
-
   static override description = 'Create a new user in the project'
-
 
   static override examples = [
     '<%= config.bin %> user create --name "John Doe"',
@@ -22,7 +20,6 @@ export default class UserCreate extends Command {
     '<%= config.bin %> user create -n "Alice" -g alice-dev -g alice-work',
     '<%= config.bin %> user create --name "Bob" --project centy-daemon',
   ]
-
 
   static override flags = {
     id: Flags.string({

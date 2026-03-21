@@ -7,7 +7,6 @@ import { daemonSetProjectUserTitle } from '../../daemon/daemon-set-project-user-
  */
 
 export default class ProjectTitle extends Command {
-
   static override args = {
     title: Args.string({
       description: 'Custom title for the project (omit to clear)',
@@ -15,9 +14,7 @@ export default class ProjectTitle extends Command {
     }),
   }
 
-
   static override description = 'Set a custom title for a project'
-
 
   static override examples = [
     '<%= config.bin %> project title "My Awesome Project"',
@@ -26,7 +23,6 @@ export default class ProjectTitle extends Command {
     '<%= config.bin %> project title --clear --shared',
     '<%= config.bin %> project title "Custom Name" --path /path/to/project',
   ]
-
 
   static override flags = {
     path: Flags.string({
@@ -54,7 +50,6 @@ export default class ProjectTitle extends Command {
     const { args, flags } = await this.parse(ProjectTitle)
 
     const projectPath = flags.path ?? process.env['CENTY_CWD'] ?? process.cwd()
-
 
     const title = flags.clear ? '' : (args.title ?? '')
 

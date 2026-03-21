@@ -1,4 +1,3 @@
-
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { daemonSetProjectOrganization } from './daemon-set-project-organization.js'
 import { getDaemonClient } from './load-proto.js'
@@ -19,7 +18,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-
 describe('daemonSetProjectOrganization', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -33,9 +31,7 @@ describe('daemonSetProjectOrganization', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const result = await daemonSetProjectOrganization({})
 
@@ -55,12 +51,8 @@ describe('daemonSetProjectOrganization', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
-    await expect(daemonSetProjectOrganization({})).rejects.toThrow(
-      'gRPC error'
-    )
+    await expect(daemonSetProjectOrganization({})).rejects.toThrow('gRPC error')
   })
 })

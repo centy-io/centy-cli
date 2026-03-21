@@ -14,11 +14,8 @@ const INSTALL_CMD = `curl -fsSL ${getInstallScriptUrl()} | sh`
 const getMissingDaemonMsg = (p: string) =>
   `Daemon binary not found\n\nThe centy-daemon binary could not be found at: ${p}\n\nTo fix this:\n  1. Install the daemon: ${INSTALL_CMD}\n  2. Start the daemon: centy start\n  3. Verify installation: centy info\n\nOr set CENTY_DAEMON_PATH environment variable to the binary location.`
 
-
 export default class Start extends Command {
-
   static override description = 'Start the centy daemon'
-
 
   static override examples = [
     '<%= config.bin %> start',
@@ -27,7 +24,6 @@ export default class Start extends Command {
     '<%= config.bin %> start --yes  # Auto-install daemon if missing',
     '<%= config.bin %> start -y',
   ]
-
 
   static override flags = {
     foreground: Flags.boolean({
@@ -100,7 +96,6 @@ export default class Start extends Command {
   }
 
   private handleSpawnError(error: Error, daemonPath: string): void {
-
     const errno = (error as NodeJS.ErrnoException).code
     if (errno === 'ENOENT') {
       this.debugSearchedPaths()

@@ -12,15 +12,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class ItemTypeCreate extends Command {
-
   static override description = 'Create a new custom item type'
-
 
   static override examples = [
     '<%= config.bin %> item-type create --name "Bug" --plural "bugs" --identifier uuid --statuses open,in-progress,closed --default-status open --priority-levels 3 --features display-number,status,priority,move,duplicate',
     '<%= config.bin %> item-type create --name "Task" --plural "tasks" --identifier slug --statuses todo,doing,done --default-status todo --features status,priority',
   ]
-
 
   static override flags = {
     name: Flags.string({

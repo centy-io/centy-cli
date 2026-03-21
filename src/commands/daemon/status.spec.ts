@@ -96,7 +96,6 @@ describe('DaemonStatus command', () => {
   })
 
   it('should use custom address from env var', async () => {
-
     process.env['CENTY_DAEMON_ADDR'] = 'localhost:9090'
     const { default: Command } = await import('./status.js')
     mockCheckDaemonConnection.mockResolvedValue({ connected: true })

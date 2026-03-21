@@ -1,12 +1,9 @@
 import { Command } from '@oclif/core'
 import { launchTuiManager } from '../lib/launch-tui-manager/index.js'
 
-
 export default class Cockpit extends Command {
-
   static override description =
     'Launch the TUI Manager (cockpit) for multi-pane terminal'
-
 
   static override examples = ['<%= config.bin %> cockpit']
 

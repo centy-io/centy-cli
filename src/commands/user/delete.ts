@@ -12,9 +12,7 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class UserDelete extends Command {
-
   static override aliases = ['delete:user']
-
 
   static override args = {
     id: Args.string({
@@ -23,16 +21,13 @@ export default class UserDelete extends Command {
     }),
   }
 
-
   static override description = 'Delete a user'
-
 
   static override examples = [
     '<%= config.bin %> user delete john-doe --force',
     '<%= config.bin %> delete user john-doe --force',
     '<%= config.bin %> user delete john-doe --project centy-daemon',
   ]
-
 
   static override flags = {
     force: Flags.boolean({

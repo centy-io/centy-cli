@@ -10,10 +10,8 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class WorkspaceNew extends Command {
-
   static override description =
     'Create a standalone workspace not tied to an issue'
-
 
   static override examples = [
     '<%= config.bin %> workspace new',
@@ -21,7 +19,6 @@ export default class WorkspaceNew extends Command {
     '<%= config.bin %> workspace new --name "Feature spike" --description "Explore new auth approach" --ttl 24',
     '<%= config.bin %> workspace new --editor vscode',
   ]
-
 
   static override flags = {
     project: projectFlag,

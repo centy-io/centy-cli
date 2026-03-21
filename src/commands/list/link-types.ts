@@ -12,16 +12,13 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class ListLinkTypes extends Command {
-
   static override description = 'List all available link types'
-
 
   static override examples = [
     '<%= config.bin %> list link-types',
     '<%= config.bin %> list link-types --json',
     '<%= config.bin %> list link-types --project centy-daemon',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

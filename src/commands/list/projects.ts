@@ -6,12 +6,9 @@ import { daemonListProjects } from '../../daemon/daemon-list-projects.js'
  */
 
 export default class ListProjects extends Command {
-
   static override description = 'List all tracked centy projects'
 
-
   static override aliases = ['project:list']
-
 
   static override examples = [
     '<%= config.bin %> list projects',
@@ -22,7 +19,6 @@ export default class ListProjects extends Command {
     '<%= config.bin %> list projects --ungrouped',
     '<%= config.bin %> list projects --json',
   ]
-
 
   static override flags = {
     'include-stale': Flags.boolean({

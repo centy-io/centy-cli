@@ -7,7 +7,6 @@ vi.mock('prompts', () => ({
   default: (...args: unknown[]) => mockPrompts(...args),
 }))
 
-
 const vsCodeEditor: EditorInfo = {
   editorType: 0,
   name: 'VS Code',

@@ -6,7 +6,6 @@ import { daemonCreateOrganization } from '../../daemon/daemon-create-organizatio
  */
 
 export default class OrgCreate extends Command {
-
   static override args = {
     name: Args.string({
       description: 'Organization display name',
@@ -14,16 +13,13 @@ export default class OrgCreate extends Command {
     }),
   }
 
-
   static override description = 'Create a new organization to group projects'
-
 
   static override examples = [
     '<%= config.bin %> org create "My Company"',
     '<%= config.bin %> org create "Centy.io" --slug centy-io',
     '<%= config.bin %> org create "My Org" --description "Official projects"',
   ]
-
 
   static override flags = {
     slug: Flags.string({

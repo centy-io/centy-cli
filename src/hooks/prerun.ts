@@ -43,7 +43,6 @@ const hook: Hook<'prerun'> = async function (options) {
     return
   }
 
-
   const projectPath = process.env['CENTY_CWD'] ?? process.cwd()
   const versionStatus = await getProjectVersionStatus(projectPath)
   if (versionStatus !== null && versionStatus.isProjectBehind) {

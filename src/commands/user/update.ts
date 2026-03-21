@@ -12,9 +12,7 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class UserUpdate extends Command {
-
   static override aliases = ['update:user', 'edit:user']
-
 
   static override args = {
     id: Args.string({
@@ -23,9 +21,7 @@ export default class UserUpdate extends Command {
     }),
   }
 
-
   static override description = 'Update a user'
-
 
   static override examples = [
     '<%= config.bin %> user update john-doe --name "John D."',
@@ -33,7 +29,6 @@ export default class UserUpdate extends Command {
     '<%= config.bin %> user update john-doe --git-username johndoe --git-username john-work',
     '<%= config.bin %> update user john-doe --name "John" --project centy-daemon',
   ]
-
 
   static override flags = {
     name: Flags.string({

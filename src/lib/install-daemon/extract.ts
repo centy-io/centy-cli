@@ -10,9 +10,7 @@ export class UnsupportedArchiveFormatError extends Error {
 }
 
 function ensureDir(dir: string): void {
-
   if (!existsSync(dir)) {
-
     mkdirSync(dir, { recursive: true })
   }
 }

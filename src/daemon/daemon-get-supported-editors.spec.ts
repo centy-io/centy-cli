@@ -1,4 +1,3 @@
-
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { daemonGetSupportedEditors } from './daemon-get-supported-editors.js'
 import { getDaemonClient } from './load-proto.js'
@@ -18,7 +17,6 @@ vi.mock('./load-proto.js', () => {
     LONG_GRPC_TIMEOUT_MS: 120000,
   }
 })
-
 
 describe('daemonGetSupportedEditors', () => {
   beforeEach(() => {
@@ -52,9 +50,7 @@ describe('daemonGetSupportedEditors', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const result = await daemonGetSupportedEditors({})
 
@@ -70,9 +66,7 @@ describe('daemonGetSupportedEditors', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     await expect(daemonGetSupportedEditors({})).rejects.toThrow('gRPC error')
   })

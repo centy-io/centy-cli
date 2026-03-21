@@ -51,7 +51,6 @@ const PROTO_PATH = join(currentDir, '../../proto/centy/v1/centy.proto')
 const PROTO_INCLUDE_DIR = join(currentDir, '../../proto')
 const DEFAULT_DAEMON_ADDRESS = '127.0.0.1:50051'
 
-
 let clientInstance: CentyDaemonClient | null = null
 
 function getAddress(): string {

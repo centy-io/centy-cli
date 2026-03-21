@@ -7,7 +7,6 @@ import { daemonInit } from '../../daemon/daemon-init.js'
  */
 
 export default class RegisterProject extends Command {
-
   static override args = {
     path: Args.string({
       description: 'Path to the project (defaults to current directory)',
@@ -15,16 +14,13 @@ export default class RegisterProject extends Command {
     }),
   }
 
-
   static override description = 'Register a project for tracking'
-
 
   static override examples = [
     '<%= config.bin %> register project',
     '<%= config.bin %> register project /path/to/project',
     '<%= config.bin %> register project --no-init',
   ]
-
 
   static override flags = {
     init: Flags.boolean({

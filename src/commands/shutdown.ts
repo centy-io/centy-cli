@@ -6,15 +6,12 @@ import { daemonControlService } from '../daemon/daemon-control-service.js'
  */
 
 export default class Shutdown extends Command {
-
   static override description = 'Shutdown the centy daemon gracefully'
-
 
   static override examples = [
     '<%= config.bin %> shutdown',
     '<%= config.bin %> shutdown --delay 5',
   ]
-
 
   static override flags = {
     delay: Flags.integer({
@@ -32,7 +29,6 @@ export default class Shutdown extends Command {
     })
 
     if (!result.success) {
-
       this.error(result.error ?? 'Shutdown failed')
     }
 

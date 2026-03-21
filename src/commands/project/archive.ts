@@ -6,7 +6,6 @@ import { daemonSetProjectArchived } from '../../daemon/daemon-set-project-archiv
  */
 
 export default class ProjectArchive extends Command {
-
   static override args = {
     path: Args.string({
       description: 'Path to the project (defaults to current directory)',
@@ -14,16 +13,13 @@ export default class ProjectArchive extends Command {
     }),
   }
 
-
   static override description = 'Archive or unarchive a project'
-
 
   static override examples = [
     '<%= config.bin %> project archive',
     '<%= config.bin %> project archive /path/to/project',
     '<%= config.bin %> project archive --off',
   ]
-
 
   static override flags = {
     off: Flags.boolean({

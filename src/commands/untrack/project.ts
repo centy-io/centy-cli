@@ -6,7 +6,6 @@ import { daemonUntrackProject } from '../../daemon/daemon-untrack-project.js'
  */
 
 export default class UntrackProject extends Command {
-
   static override args = {
     path: Args.string({
       description: 'Path to the project (defaults to current directory)',
@@ -14,16 +13,13 @@ export default class UntrackProject extends Command {
     }),
   }
 
-
   static override description = 'Remove a project from tracking'
-
 
   static override examples = [
     '<%= config.bin %> untrack project',
     '<%= config.bin %> untrack project /path/to/project',
     '<%= config.bin %> untrack project --force',
   ]
-
 
   static override flags = {
     force: Flags.boolean({

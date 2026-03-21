@@ -6,9 +6,7 @@ import { daemonDeleteOrganization } from '../../daemon/daemon-delete-organizatio
  */
 
 export default class UntrackOrg extends Command {
-
   static override aliases = ['untrack:organization']
-
 
   static override args = {
     slug: Args.string({
@@ -17,16 +15,13 @@ export default class UntrackOrg extends Command {
     }),
   }
 
-
   static override description = 'Remove an organization from tracking'
-
 
   static override examples = [
     '<%= config.bin %> untrack org my-org',
     '<%= config.bin %> untrack org my-org --force',
     '<%= config.bin %> untrack organization my-org',
   ]
-
 
   static override flags = {
     force: Flags.boolean({

@@ -13,12 +13,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class ListAssets extends Command {
-
   static override description = 'List assets for an issue or shared assets'
 
-
   static override aliases = ['asset:list']
-
 
   static override examples = [
     '<%= config.bin %> list assets --issue 1',
@@ -26,7 +23,6 @@ export default class ListAssets extends Command {
     '<%= config.bin %> list assets --issue 1 --include-shared',
     '<%= config.bin %> list assets --issue 1 --project centy-daemon',
   ]
-
 
   static override flags = {
     issue: Flags.string({

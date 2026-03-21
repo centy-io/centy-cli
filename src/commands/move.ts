@@ -14,7 +14,6 @@ import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
  */
 
 export default class Move extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -26,9 +25,7 @@ export default class Move extends Command {
     }),
   }
 
-
   static override description = 'Move an item to a different project'
-
 
   static override examples = [
     '<%= config.bin %> move issue 1 --to /path/to/target/project',
@@ -36,7 +33,6 @@ export default class Move extends Command {
     '<%= config.bin %> move bug abc123-uuid --to ~/projects/target',
     '<%= config.bin %> move epic 1 --to /other --project centy-daemon',
   ]
-
 
   static override flags = {
     to: Flags.string({

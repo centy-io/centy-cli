@@ -1,4 +1,3 @@
-
 import type { FileInfo } from '../../daemon/types.js'
 
 export interface FileToRestore {

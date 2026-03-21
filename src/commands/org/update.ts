@@ -6,14 +6,12 @@ import { daemonUpdateOrganization } from '../../daemon/daemon-update-organizatio
  */
 
 export default class OrgUpdate extends Command {
-
   static override aliases = [
     'update:org',
     'update:organization',
     'edit:org',
     'edit:organization',
   ]
-
 
   static override args = {
     slug: Args.string({
@@ -22,9 +20,7 @@ export default class OrgUpdate extends Command {
     }),
   }
 
-
   static override description = 'Update an organization'
-
 
   static override examples = [
     '<%= config.bin %> org update my-org --name "New Name"',
@@ -32,7 +28,6 @@ export default class OrgUpdate extends Command {
     '<%= config.bin %> org update my-org --new-slug new-slug',
     '<%= config.bin %> update org centy-io --name "Centy.io"',
   ]
-
 
   static override flags = {
     name: Flags.string({

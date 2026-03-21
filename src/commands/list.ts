@@ -10,7 +10,6 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class List extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, doc, epic, or custom type)',
@@ -18,9 +17,7 @@ export default class List extends Command {
     }),
   }
 
-
   static override description = 'List items of any type'
-
 
   static override examples = [
     '<%= config.bin %> list issues',
@@ -28,7 +25,6 @@ export default class List extends Command {
     '<%= config.bin %> list issues --global',
     '<%= config.bin %> list issues --global --status open --json',
   ]
-
 
   static override flags = {
     status: Flags.string({

@@ -1,4 +1,3 @@
-
 import { readFile } from 'node:fs/promises'
 import { extractAndMarkIssues } from './mark-issues.js'
 import { parseLlmResponse } from './parse-llm-response.js'
@@ -15,7 +14,6 @@ export async function applyLlmResponseFromFile(
   projectPath: string,
   inputFile: string
 ): Promise<ApplyResult> {
-
   const content = await readFile(inputFile, 'utf-8')
   const parsed = parseLlmResponse(content)
 

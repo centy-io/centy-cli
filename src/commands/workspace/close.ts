@@ -6,15 +6,12 @@ import { daemonCloseTempWorkspace } from '../../daemon/daemon-close-temp-workspa
  */
 
 export default class WorkspaceClose extends Command {
-
   static override description = 'Close and remove a temporary workspace'
-
 
   static override examples = [
     '<%= config.bin %> workspace close /tmp/centy-workspace-abc123',
     '<%= config.bin %> workspace close /tmp/centy-workspace-abc123 --force',
   ]
-
 
   static override args = {
     path: Args.string({
@@ -22,7 +19,6 @@ export default class WorkspaceClose extends Command {
       required: true,
     }),
   }
-
 
   static override flags = {
     force: Flags.boolean({

@@ -1,4 +1,3 @@
-
 import type { InitOptions } from '../../types/init-options.js'
 import { promptForReset } from './prompt-for-reset.js'
 import { promptForRestore } from './prompt-for-restore.js'

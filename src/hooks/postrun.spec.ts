@@ -17,7 +17,6 @@ describe('postrun hook', () => {
   })
 
   it('should call updateNotifier with correct package config', async () => {
-
     await hook.call({}, {})
 
     expect(mockUpdateNotifier).toHaveBeenCalledWith(
@@ -31,7 +30,6 @@ describe('postrun hook', () => {
   })
 
   it('should call notify with isGlobal true', async () => {
-
     await hook.call({}, {})
 
     expect(mockNotify).toHaveBeenCalledWith(
@@ -42,7 +40,6 @@ describe('postrun hook', () => {
   })
 
   it('should include update message in notification', async () => {
-
     await hook.call({}, {})
 
     expect(mockNotify).toHaveBeenCalledWith(

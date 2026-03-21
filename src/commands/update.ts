@@ -17,7 +17,6 @@ import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
  */
 
 export default class Update extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -29,9 +28,7 @@ export default class Update extends Command {
     }),
   }
 
-
   static override description = 'Update an item by type and identifier'
-
 
   static override examples = [
     '<%= config.bin %> update issue 1 --status closed',
@@ -40,7 +37,6 @@ export default class Update extends Command {
     '<%= config.bin %> update epic 1 --project centy-daemon',
     '<%= config.bin %> update issue 1 --status closed --link blocks:issue:2',
   ]
-
 
   static override flags = updateFlags
 

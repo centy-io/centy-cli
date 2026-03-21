@@ -13,9 +13,7 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class SyncUsers extends Command {
-
   static override description = 'Sync users from git history'
-
 
   static override examples = [
     '<%= config.bin %> sync users',
@@ -23,7 +21,6 @@ export default class SyncUsers extends Command {
     '<%= config.bin %> sync users --json',
     '<%= config.bin %> sync users --project centy-daemon',
   ]
-
 
   static override flags = {
     'dry-run': Flags.boolean({

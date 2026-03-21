@@ -6,9 +6,7 @@ import { daemonDeleteOrganization } from '../../daemon/daemon-delete-organizatio
  */
 
 export default class OrgDelete extends Command {
-
   static override aliases = ['delete:org', 'delete:organization']
-
 
   static override args = {
     slug: Args.string({
@@ -17,17 +15,14 @@ export default class OrgDelete extends Command {
     }),
   }
 
-
   static override description =
     'Delete an organization (must have no projects assigned)'
-
 
   static override examples = [
     '<%= config.bin %> org delete my-org --force',
     '<%= config.bin %> delete org my-org --force',
     '<%= config.bin %> delete organization old-org --force',
   ]
-
 
   static override flags = {
     force: Flags.boolean({

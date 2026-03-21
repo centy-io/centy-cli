@@ -3,5 +3,7 @@ const DEFAULT_INSTALL_SCRIPT_URL =
 
 export function getInstallScriptUrl(): string {
   const { CENTY_INSTALL_SCRIPT_URL } = process.env
-  return CENTY_INSTALL_SCRIPT_URL !== undefined ? CENTY_INSTALL_SCRIPT_URL : DEFAULT_INSTALL_SCRIPT_URL
+  return CENTY_INSTALL_SCRIPT_URL !== undefined
+    ? CENTY_INSTALL_SCRIPT_URL
+    : DEFAULT_INSTALL_SCRIPT_URL
 }

@@ -61,7 +61,12 @@ export async function resolveProjectPath(
 ): Promise<string> {
   // 1. If no arg provided, use env var or cwd
   const { CENTY_CWD } = process.env
-  const input = projectArg !== undefined ? projectArg : (CENTY_CWD !== undefined ? CENTY_CWD : process.cwd())
+  const input =
+    projectArg !== undefined
+      ? projectArg
+      : CENTY_CWD !== undefined
+        ? CENTY_CWD
+        : process.cwd()
 
   // 2. If it looks like a path, return it (with tilde expansion)
   if (isPath(input)) {

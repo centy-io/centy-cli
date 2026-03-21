@@ -16,7 +16,6 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Create extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, doc, epic, or custom type)',
@@ -24,9 +23,7 @@ export default class Create extends Command {
     }),
   }
 
-
   static override description = 'Create a new item of any type'
-
 
   static override examples = [
     '<%= config.bin %> create issue --title "Bug in login" --priority 1',
@@ -37,7 +34,6 @@ export default class Create extends Command {
     '<%= config.bin %> create issue --title "Login crash" --link blocks:issue:2',
     '<%= config.bin %> create task --title "Write tests" --link relates-to:issue:5 --link relates-to:doc:api-guide',
   ]
-
 
   static override flags = createFlags
 

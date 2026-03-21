@@ -1,4 +1,3 @@
-
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { daemonOpenStandaloneWorkspace } from './daemon-open-standalone-workspace.js'
 import { getDaemonClient } from './load-proto.js'
@@ -18,7 +17,6 @@ vi.mock('./load-proto.js', () => {
     LONG_GRPC_TIMEOUT_MS: 120000,
   }
 })
-
 
 describe('daemonOpenStandaloneWorkspace', () => {
   beforeEach(() => {
@@ -40,9 +38,7 @@ describe('daemonOpenStandaloneWorkspace', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const result = await daemonOpenStandaloneWorkspace({
       projectPath: '/test',
@@ -65,9 +61,7 @@ describe('daemonOpenStandaloneWorkspace', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     await expect(
       daemonOpenStandaloneWorkspace({

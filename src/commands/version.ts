@@ -7,15 +7,12 @@ import { getVersion } from '../get-version.js'
  */
 
 export default class Version extends Command {
-
   static override description = 'Show CLI and daemon version information'
-
 
   static override examples = [
     '<%= config.bin %> version',
     '<%= config.bin %> version --json',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

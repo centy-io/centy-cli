@@ -14,7 +14,6 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Unlink extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Source entity type (e.g., issue, doc)',
@@ -31,16 +30,13 @@ export default class Unlink extends Command {
     }),
   }
 
-
   static override description = 'Remove a link between two entities'
-
 
   static override examples = [
     '<%= config.bin %> unlink issue 1 issue:2',
     '<%= config.bin %> unlink issue 1 issue:2 --type blocks',
     '<%= config.bin %> unlink doc getting-started issue:5 --project my-project',
   ]
-
 
   static override flags = {
     type: Flags.string({

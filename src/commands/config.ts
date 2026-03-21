@@ -12,16 +12,13 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
  */
 
 export default class Config extends Command {
-
   static override description = 'Get the project configuration'
-
 
   static override examples = [
     '<%= config.bin %> config',
     '<%= config.bin %> config --json',
     '<%= config.bin %> config --project centy-daemon',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

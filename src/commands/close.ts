@@ -14,7 +14,6 @@ import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
  */
 
 export default class Close extends Command {
-
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -26,9 +25,7 @@ export default class Close extends Command {
     }),
   }
 
-
   static override description = 'Close an item by setting its status to closed'
-
 
   static override examples = [
     '<%= config.bin %> close issue 1',
@@ -36,7 +33,6 @@ export default class Close extends Command {
     '<%= config.bin %> close issue abc123-uuid',
     '<%= config.bin %> close epic 1 --project centy-daemon',
   ]
-
 
   static override flags = {
     project: projectFlag,

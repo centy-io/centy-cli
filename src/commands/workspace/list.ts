@@ -8,16 +8,13 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class WorkspaceList extends Command {
-
   static override description = 'List all temporary workspaces'
-
 
   static override examples = [
     '<%= config.bin %> workspace list',
     '<%= config.bin %> workspace list --include-expired',
     '<%= config.bin %> workspace list --project ./my-project',
   ]
-
 
   static override flags = {
     project: projectFlag,

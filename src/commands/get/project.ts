@@ -6,9 +6,7 @@ import { daemonGetProjectInfo } from '../../daemon/daemon-get-project-info.js'
  */
 
 export default class GetProject extends Command {
-
   static override aliases = ['show:project']
-
 
   static override args = {
     path: Args.string({
@@ -17,16 +15,13 @@ export default class GetProject extends Command {
     }),
   }
 
-
   static override description = 'Get info about a specific project'
-
 
   static override examples = [
     '<%= config.bin %> get project',
     '<%= config.bin %> get project /path/to/project',
     '<%= config.bin %> get project --json',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

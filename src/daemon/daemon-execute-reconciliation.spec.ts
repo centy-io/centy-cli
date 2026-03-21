@@ -1,4 +1,3 @@
-
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { daemonExecuteReconciliation } from './daemon-execute-reconciliation.js'
 import { getDaemonClient } from './load-proto.js'
@@ -19,7 +18,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-
 describe('daemonExecuteReconciliation', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -33,9 +31,7 @@ describe('daemonExecuteReconciliation', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const result = await daemonExecuteReconciliation({})
 
@@ -55,12 +51,8 @@ describe('daemonExecuteReconciliation', () => {
       }),
     }
 
-    ;vi.mocked(getDaemonClient).mockReturnValue(
-      mockClient
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
-    await expect(daemonExecuteReconciliation({})).rejects.toThrow(
-      'gRPC error'
-    )
+    await expect(daemonExecuteReconciliation({})).rejects.toThrow('gRPC error')
   })
 })

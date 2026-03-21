@@ -29,7 +29,7 @@ describeOrSkip('load-proto', () => {
     const { loadPackageDefinition } = await import('@grpc/grpc-js')
     const MockClient = vi.fn()
 
-    ;vi.mocked(loadPackageDefinition).mockReturnValue({
+    vi.mocked(loadPackageDefinition).mockReturnValue({
       centy: { v1: { CentyDaemon: MockClient } },
     })
 
@@ -49,7 +49,7 @@ describeOrSkip('load-proto', () => {
     const { loadPackageDefinition } = await import('@grpc/grpc-js')
     const MockClient = vi.fn()
 
-    ;vi.mocked(loadPackageDefinition).mockReturnValue({
+    vi.mocked(loadPackageDefinition).mockReturnValue({
       centy: { v1: { CentyDaemon: MockClient } },
     })
 
@@ -74,7 +74,7 @@ describeOrSkip('load-proto', () => {
       }
     }
 
-    ;vi.mocked(loadPackageDefinition).mockReturnValue({
+    vi.mocked(loadPackageDefinition).mockReturnValue({
       centy: { v1: { CentyDaemon: MockClient } },
     })
 

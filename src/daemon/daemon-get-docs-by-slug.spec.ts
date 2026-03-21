@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { daemonGetDocsBySlug } from './daemon-get-docs-by-slug.js'
 import { getDaemonClient } from './load-proto.js'
@@ -19,7 +18,6 @@ vi.mock('./load-proto.js', () => {
     LONG_GRPC_TIMEOUT_MS: 120000,
   }
 })
-
 
 describe('daemonGetDocsBySlug', () => {
   beforeEach(() => {
@@ -43,7 +41,7 @@ describe('daemonGetDocsBySlug', () => {
       }
     )
 
-    ;vi.mocked(getDaemonClient).mockReturnValue({
+    vi.mocked(getDaemonClient).mockReturnValue({
       searchItems: mockGetDocsBySlug,
     })
 
@@ -64,7 +62,7 @@ describe('daemonGetDocsBySlug', () => {
       }
     )
 
-    ;vi.mocked(getDaemonClient).mockReturnValue({
+    vi.mocked(getDaemonClient).mockReturnValue({
       searchItems: mockGetDocsBySlug,
     })
 

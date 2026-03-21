@@ -6,9 +6,7 @@ import { daemonGetOrganization } from '../../daemon/daemon-get-organization.js'
  */
 
 export default class OrgGet extends Command {
-
   static override aliases = ['get:org', 'get:organization']
-
 
   static override args = {
     slug: Args.string({
@@ -17,16 +15,13 @@ export default class OrgGet extends Command {
     }),
   }
 
-
   static override description = 'Get organization details by slug'
-
 
   static override examples = [
     '<%= config.bin %> org get centy-io',
     '<%= config.bin %> get org centy-io',
     '<%= config.bin %> get organization my-org --json',
   ]
-
 
   static override flags = {
     json: Flags.boolean({

@@ -5,10 +5,8 @@ import Update from './update.js'
  */
 
 export default class Edit extends Update {
-
   static override description =
     'Alias for `update`. Update an item by type and identifier'
-
 
   static override examples = [
     '<%= config.bin %> edit issue 1 --status closed',

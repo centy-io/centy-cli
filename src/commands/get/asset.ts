@@ -13,9 +13,7 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
  */
 
 export default class GetAsset extends Command {
-
   static override aliases = ['show:asset']
-
 
   static override args = {
     filename: Args.string({
@@ -24,16 +22,13 @@ export default class GetAsset extends Command {
     }),
   }
 
-
   static override description = 'Get an asset and save it to a file'
-
 
   static override examples = [
     '<%= config.bin %> get asset screenshot.png --issue 1 --output ./screenshot.png',
     '<%= config.bin %> get asset logo.svg --shared --output ./logo.svg',
     '<%= config.bin %> get asset screenshot.png --issue 1 --project centy-daemon',
   ]
-
 
   static override flags = {
     issue: Flags.string({
@@ -79,7 +74,6 @@ export default class GetAsset extends Command {
     if (!response.success) {
       this.error(response.error)
     }
-
 
     const outputPath = flags.output ?? args.filename
 

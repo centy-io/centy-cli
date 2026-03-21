@@ -6,9 +6,7 @@ import { daemonCleanupExpiredWorkspaces } from '../../daemon/daemon-cleanup-expi
  */
 
 export default class WorkspaceCleanup extends Command {
-
   static override description = 'Cleanup all expired temporary workspaces'
-
 
   static override examples = ['<%= config.bin %> workspace cleanup']
 
