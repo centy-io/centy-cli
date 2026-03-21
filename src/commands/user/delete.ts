@@ -7,6 +7,7 @@ import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
+import { promptQuestion } from '../../utils/create-prompt-interface.js'
 import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
@@ -59,19 +60,10 @@ export default class UserDelete extends Command {
     }
 
     if (!flags.force) {
-      const readline = await import('node:readline')
-      const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-      })
-      const answer = await new Promise<string>(resolve => {
-        rl.question(
-          `Are you sure you want to delete user "${args.id}"? (y/N) `,
-          resolve
-        )
-      })
-      rl.close()
-      if (answer.toLowerCase() !== 'y') {
+      const answer = await promptQuestion(
+        `Are you sure you want to delete user "${args.id}"? (y/N) `
+      )
+      if (answer === null || answer.toLowerCase() !== 'y') {
         this.log('Cancelled.')
         return
       }

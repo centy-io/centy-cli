@@ -5,10 +5,15 @@ import {
 } from '../../testing/command-test-utils.js'
 
 const mockDaemonUntrackProject = vi.fn()
+const mockPromptQuestion = vi.fn()
 
 vi.mock('../../daemon/daemon-untrack-project.js', () => ({
   daemonUntrackProject: (...args: unknown[]) =>
     mockDaemonUntrackProject(...args),
+}))
+
+vi.mock('../../utils/create-prompt-interface.js', () => ({
+  promptQuestion: (...args: unknown[]) => mockPromptQuestion(...args),
 }))
 
 describe('UntrackProject command', () => {
@@ -90,15 +95,7 @@ describe('UntrackProject command', () => {
       success: true,
       project: { name: 'My Project', path: '/test/project' },
     })
-
-    // Mock readline
-    const mockRl = {
-      question: vi.fn((_, callback) => callback('y')),
-      close: vi.fn(),
-    }
-    vi.doMock('node:readline', () => ({
-      createInterface: () => mockRl,
-    }))
+    mockPromptQuestion.mockResolvedValue('y')
 
     const cmd = createMockCommand(Command, {
       flags: { force: false },
@@ -112,15 +109,7 @@ describe('UntrackProject command', () => {
 
   it('should prompt for confirmation without --force and cancel on n', async () => {
     const { default: Command } = await import('./project.js')
-
-    // Mock readline
-    const mockRl = {
-      question: vi.fn((_, callback) => callback('n')),
-      close: vi.fn(),
-    }
-    vi.doMock('node:readline', () => ({
-      createInterface: () => mockRl,
-    }))
+    mockPromptQuestion.mockResolvedValue('n')
 
     const cmd = createMockCommand(Command, {
       flags: { force: false },

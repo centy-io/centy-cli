@@ -22,6 +22,7 @@ describe('isGitRepo', () => {
     expect(mockExecSync).toHaveBeenCalledWith('git rev-parse --git-dir', {
       cwd: '/some/git/project',
       stdio: 'ignore',
+      timeout: 5000,
     })
   })
 

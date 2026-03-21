@@ -2,6 +2,7 @@
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonDeleteOrganization } from '../../daemon/daemon-delete-organization.js'
+import { promptQuestion } from '../../utils/create-prompt-interface.js'
 
 /**
  * Remove an organization from tracking
@@ -42,19 +43,10 @@ export default class UntrackOrg extends Command {
     const { args, flags } = await this.parse(UntrackOrg)
 
     if (!flags.force) {
-      const readline = await import('node:readline')
-      const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-      })
-      const answer = await new Promise<string>(resolve => {
-        rl.question(
-          `Are you sure you want to untrack organization "${args.slug}"? (y/N) `,
-          resolve
-        )
-      })
-      rl.close()
-      if (answer.toLowerCase() !== 'y') {
+      const answer = await promptQuestion(
+        `Are you sure you want to untrack organization "${args.slug}"? (y/N) `
+      )
+      if (answer === null || answer.toLowerCase() !== 'y') {
         this.log('Cancelled.')
         return
       }
@@ -67,17 +59,11 @@ export default class UntrackOrg extends Command {
 
     if (!response.success) {
       if (response.error.toLowerCase().includes('projects')) {
-        const readline = await import('node:readline')
-        const rl = readline.createInterface({
-          input: process.stdin,
-          output: process.stdout,
-        })
-        const answer = await new Promise<string>(resolve => {
-          rl.question(`${response.error} Untrack them as well? (y/N) `, resolve)
-        })
-        rl.close()
+        const answer = await promptQuestion(
+          `${response.error} Untrack them as well? (y/N) `
+        )
 
-        if (answer.toLowerCase() !== 'y') {
+        if (answer === null || answer.toLowerCase() !== 'y') {
           this.error(response.error)
         }
 
