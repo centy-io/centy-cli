@@ -1,9 +1,5 @@
-// eslint-disable-next-line import/order
 import { writeFile } from 'node:fs/promises'
-
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonListUncompactedIssues } from '../daemon/daemon-list-uncompacted-issues.js'
 import { projectFlag } from '../flags/project-flag.js'
 import { applyLlmResponseFromFile } from '../lib/compact/apply-llm-response.js'
@@ -18,16 +14,16 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * Compact uncompacted issues into features
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Compact extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description =
     'Compact uncompacted issues into feature summaries'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = ['<%= config.bin %> <%= command.id %>']
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     'dry-run': Flags.boolean({
       char: 'd',
@@ -88,7 +84,7 @@ export default class Compact extends Command {
       }))
     )
     if (flags.output !== undefined) {
-      // eslint-disable-next-line security/detect-non-literal-fs-filename
+
       await writeFile(flags.output, context, 'utf-8')
       this.log(
         `LLM context written to: ${flags.output}\n\nNext steps:\n1. Process the file with your LLM\n2. Run: centy compact --input <response-file>`

@@ -1,15 +1,13 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { EditorNotAvailableError } from './editor-not-available-error.js'
-// eslint-disable-next-line import/order
 import type { EditorInfo } from '../../daemon/types.js'
+import { EditorNotAvailableError } from './editor-not-available-error.js'
+import { resolveEditorId } from './resolve-editor-id.js'
 
 const mockSelectEditor = vi.fn()
 vi.mock('./select-editor.js', () => ({
   selectEditor: (...args: unknown[]) => mockSelectEditor(...args),
 }))
 
-// eslint-disable-next-line import/first
-import { resolveEditorId } from './resolve-editor-id.js'
 
 const vsCodeEditor: EditorInfo = {
   editorType: 0,

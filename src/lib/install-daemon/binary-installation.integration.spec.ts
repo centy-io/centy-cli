@@ -1,4 +1,4 @@
-/* eslint-disable security/detect-non-literal-fs-filename -- Integration test uses controlled temp paths */
+
 import {
   mkdirSync,
   mkdtempSync,
@@ -116,8 +116,9 @@ describe('binary installation - binary path resolution', () => {
 
   it('should place install dir under user home directory', () => {
     const installDir = getInstallDir()
-    // eslint-disable-next-line no-restricted-syntax
-    const homeDir = process.env['HOME'] ?? process.env['USERPROFILE'] ?? ''
+    const home: string | undefined = Reflect.get(process.env, 'HOME')
+    const userProfile: string | undefined = Reflect.get(process.env, 'USERPROFILE')
+    const homeDir = home !== undefined ? home : (userProfile !== undefined ? userProfile : '')
     expect(installDir.startsWith(homeDir)).toBe(true)
   })
 

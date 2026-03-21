@@ -41,8 +41,8 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+    await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockCheckDaemonConnection).not.toHaveBeenCalled()
     expect(mockError).not.toHaveBeenCalled()
@@ -54,8 +54,8 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+    await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockCheckDaemonConnection).not.toHaveBeenCalled()
     expect(mockError).not.toHaveBeenCalled()
@@ -67,8 +67,8 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+    await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockCheckDaemonConnection).not.toHaveBeenCalled()
     expect(mockError).not.toHaveBeenCalled()
@@ -82,8 +82,8 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+    await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockCheckDaemonConnection).toHaveBeenCalled()
     expect(mockError).not.toHaveBeenCalled()
@@ -97,8 +97,8 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+    await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockCheckDaemonConnection).toHaveBeenCalled()
     expect(mockError).toHaveBeenCalledWith(
@@ -117,8 +117,8 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+    await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockCheckDaemonConnection).toHaveBeenCalled()
     expect(mockError).toHaveBeenCalledWith('Custom error message')
@@ -137,8 +137,8 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+    await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockWarn).toHaveBeenCalledWith(
       "Your project is at version 0.5.0, daemon is at 1.0.0. Run 'centy init' to migrate."
@@ -159,8 +159,8 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+    await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockWarn).not.toHaveBeenCalled()
     expect(mockError).not.toHaveBeenCalled()
@@ -175,8 +175,8 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+    await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockWarn).not.toHaveBeenCalled()
     expect(mockError).not.toHaveBeenCalled()
@@ -190,8 +190,8 @@ describe('prerun hook', () => {
       argv: [],
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+    await hook.call({ error: mockError, warn: mockWarn }, options)
 
     expect(mockGetProjectVersionStatus).not.toHaveBeenCalled()
   })
@@ -205,8 +205,8 @@ describe('prerun hook', () => {
         argv: [],
       }
 
-      // eslint-disable-next-line no-restricted-syntax
-      await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+      await hook.call({ error: mockError, warn: mockWarn }, options)
 
       expect(mockAssertInitialized).toHaveBeenCalled()
       expect(mockError).not.toHaveBeenCalled()
@@ -224,8 +224,8 @@ describe('prerun hook', () => {
         argv: [],
       }
 
-      // eslint-disable-next-line no-restricted-syntax
-      await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+      await hook.call({ error: mockError, warn: mockWarn }, options)
 
       expect(mockError).toHaveBeenCalledWith(
         expect.stringContaining('/my/project')
@@ -240,8 +240,8 @@ describe('prerun hook', () => {
         argv: [],
       }
 
-      // eslint-disable-next-line no-restricted-syntax
-      await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+      await hook.call({ error: mockError, warn: mockWarn }, options)
 
       expect(mockAssertInitialized).not.toHaveBeenCalled()
     })
@@ -254,8 +254,8 @@ describe('prerun hook', () => {
         argv: [],
       }
 
-      // eslint-disable-next-line no-restricted-syntax
-      await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+      await hook.call({ error: mockError, warn: mockWarn }, options)
 
       expect(mockAssertInitialized).not.toHaveBeenCalled()
     })
@@ -268,8 +268,8 @@ describe('prerun hook', () => {
         argv: ['issues', '--project', 'centy-daemon'],
       }
 
-      // eslint-disable-next-line no-restricted-syntax
-      await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+      await hook.call({ error: mockError, warn: mockWarn }, options)
 
       expect(mockAssertInitialized).not.toHaveBeenCalled()
       expect(mockError).not.toHaveBeenCalled()
@@ -284,8 +284,8 @@ describe('prerun hook', () => {
         argv: [],
       }
 
-      // eslint-disable-next-line no-restricted-syntax
-      await hook.call({ error: mockError, warn: mockWarn }, options as never)
+
+      await hook.call({ error: mockError, warn: mockWarn }, options)
 
       expect(mockAssertInitialized).not.toHaveBeenCalled()
     })

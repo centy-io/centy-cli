@@ -21,13 +21,10 @@ const CENTY_FOLDER = '.centy'
  * Requires daemon to be running
  */
 export async function init(options?: InitOptions): Promise<InitResult> {
-  // eslint-disable-next-line no-restricted-syntax
-  const opts = options ?? {}
-  // eslint-disable-next-line no-restricted-syntax
-  const cwd = opts.cwd ?? process.cwd()
+  const opts = options !== undefined ? options : {}
+  const cwd = opts.cwd !== undefined ? opts.cwd : process.cwd()
   const centyPath = join(cwd, CENTY_FOLDER)
-  // eslint-disable-next-line no-restricted-syntax
-  const output = opts.output ?? process.stdout
+  const output = opts.output !== undefined ? opts.output : process.stdout
 
   const result: InitResult = {
     success: false,

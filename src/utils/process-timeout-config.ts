@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 
 /**
  * Timeout for quick commands like version checks (5 seconds)
@@ -19,13 +18,3 @@ export const PROMPT_TIMEOUT_MS = 60_000
  * Timeout for system service commands like launchctl (30 seconds)
  */
 export const SERVICE_COMMAND_TIMEOUT_MS = 30_000
-
-/**
- * Timeout for archive extraction commands like tar/unzip (60 seconds)
- */
-export const EXTRACT_TIMEOUT_MS = 60_000
-
-/**
- * Timeout for git commands like rev-parse (5 seconds)
- */
-export const GIT_COMMAND_TIMEOUT_MS = 5_000

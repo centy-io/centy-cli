@@ -18,7 +18,7 @@ vi.mock('../../daemon/daemon-get-daemon-info.js', () => ({
 describe('DaemonStatus command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    // eslint-disable-next-line no-restricted-syntax
+
     delete process.env['CENTY_DAEMON_ADDR']
   })
 
@@ -96,7 +96,7 @@ describe('DaemonStatus command', () => {
   })
 
   it('should use custom address from env var', async () => {
-    // eslint-disable-next-line no-restricted-syntax
+
     process.env['CENTY_DAEMON_ADDR'] = 'localhost:9090'
     const { default: Command } = await import('./status.js')
     mockCheckDaemonConnection.mockResolvedValue({ connected: true })

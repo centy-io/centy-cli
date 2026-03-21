@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonSyncUsers } from '../../daemon/daemon-sync-users.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import type { SyncUsersResponse } from '../../daemon/types.js'
@@ -13,12 +11,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Sync users from git history
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class SyncUsers extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Sync users from git history'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> sync users',
     '<%= config.bin %> sync users --dry-run',
@@ -26,7 +24,7 @@ export default class SyncUsers extends Command {
     '<%= config.bin %> sync users --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     'dry-run': Flags.boolean({
       char: 'd',

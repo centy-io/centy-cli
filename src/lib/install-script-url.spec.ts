@@ -12,8 +12,7 @@ describe('getInstallScriptUrl', () => {
   })
 
   it('should return default URL when env var is not set', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    delete process.env['CENTY_INSTALL_SCRIPT_URL']
+    Reflect.deleteProperty(process.env, 'CENTY_INSTALL_SCRIPT_URL')
     const { getInstallScriptUrl } = await import('./install-script-url.js')
 
     expect(getInstallScriptUrl()).toContain('centy-io/installer')
@@ -21,8 +20,7 @@ describe('getInstallScriptUrl', () => {
   })
 
   it('should return custom URL when env var is set', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    process.env['CENTY_INSTALL_SCRIPT_URL'] = 'https://custom.url/install.sh'
+    Reflect.set(process.env, 'CENTY_INSTALL_SCRIPT_URL', 'https://custom.url/install.sh')
     const { getInstallScriptUrl } = await import('./install-script-url.js')
 
     expect(getInstallScriptUrl()).toBe('https://custom.url/install.sh')

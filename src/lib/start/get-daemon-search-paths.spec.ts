@@ -26,20 +26,16 @@ describe('getDaemonSearchPaths', () => {
   })
 
   it('should include CENTY_DAEMON_PATH when env var is set', () => {
-    // eslint-disable-next-line no-restricted-syntax
-    const originalEnv = process.env['CENTY_DAEMON_PATH']
-    // eslint-disable-next-line no-restricted-syntax
-    process.env['CENTY_DAEMON_PATH'] = '/custom/centy-daemon'
+    const originalEnv = Reflect.get(process.env, 'CENTY_DAEMON_PATH')
+    Reflect.set(process.env, 'CENTY_DAEMON_PATH', '/custom/centy-daemon')
 
     const result = getDaemonSearchPaths()
     expect(result).toContain('/custom/centy-daemon')
 
     if (originalEnv !== undefined) {
-      // eslint-disable-next-line no-restricted-syntax
-      process.env['CENTY_DAEMON_PATH'] = originalEnv
+      Reflect.set(process.env, 'CENTY_DAEMON_PATH', originalEnv)
     } else {
-      // eslint-disable-next-line no-restricted-syntax
-      delete process.env['CENTY_DAEMON_PATH']
+      Reflect.deleteProperty(process.env, 'CENTY_DAEMON_PATH')
     }
   })
 })

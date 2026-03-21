@@ -1,7 +1,7 @@
-/* eslint-disable no-restricted-syntax */
+
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-// eslint-disable-next-line import/order
 import { daemonGetDaemonInfo } from './daemon-get-daemon-info.js'
+import { getDaemonClient } from './load-proto.js'
 
 vi.mock('./load-proto.js', () => {
   const mockCallWithDeadline = vi.fn(async (method, request, _timeout) => {
@@ -19,8 +19,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-// eslint-disable-next-line import/first
-import { getDaemonClient } from './load-proto.js'
 
 describe('daemonGetDaemonInfo', () => {
   beforeEach(() => {
@@ -35,11 +33,11 @@ describe('daemonGetDaemonInfo', () => {
       }),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
+    ;vi.mocked(getDaemonClient).mockReturnValue(
+      mockClient
     )
 
-    const result = await daemonGetDaemonInfo({} as never)
+    const result = await daemonGetDaemonInfo({})
 
     expect(result).toEqual(mockResponse)
     expect(mockClient.getDaemonInfo).toHaveBeenCalledWith(
@@ -57,10 +55,10 @@ describe('daemonGetDaemonInfo', () => {
       }),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
+    ;vi.mocked(getDaemonClient).mockReturnValue(
+      mockClient
     )
 
-    await expect(daemonGetDaemonInfo({} as never)).rejects.toThrow('gRPC error')
+    await expect(daemonGetDaemonInfo({})).rejects.toThrow('gRPC error')
   })
 })

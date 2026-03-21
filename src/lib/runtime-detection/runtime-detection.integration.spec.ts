@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-non-literal-fs-filename -- Test file uses controlled path constants */
 import fs from 'node:fs'
 import { spawn, spawnSync } from 'node:child_process'
 import path from 'node:path'
@@ -192,8 +191,8 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
   // This is not related to the actual CLI functionality and passes on Node 22 and locally.
   // See: https://github.com/oclif/core/issues - ESM resolution issues
   const isNode20 = process.version.startsWith('v20.')
-  // eslint-disable-next-line no-restricted-syntax
-  const isCI = process.env['CI'] === 'true'
+  const { CI } = process.env
+  const isCI = CI === 'true'
   const skipOnNode20CI = isNode20 && isCI
 
   // ===========================================================================

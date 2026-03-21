@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import { daemonUpdateUser } from '../../daemon/daemon-update-user.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
@@ -12,12 +10,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Update a user
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class UserUpdate extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override aliases = ['update:user', 'edit:user']
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     id: Args.string({
       description: 'User ID',
@@ -25,10 +23,10 @@ export default class UserUpdate extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Update a user'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> user update john-doe --name "John D."',
     '<%= config.bin %> user update john-doe --email john.new@example.com',
@@ -36,7 +34,7 @@ export default class UserUpdate extends Command {
     '<%= config.bin %> update user john-doe --name "John" --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     name: Flags.string({
       char: 'n',

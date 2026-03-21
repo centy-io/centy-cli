@@ -1,17 +1,15 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import { daemonGetOrganization } from '../../daemon/daemon-get-organization.js'
 
 /**
  * Get organization details
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class OrgGet extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override aliases = ['get:org', 'get:organization']
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     slug: Args.string({
       description: 'Organization slug',
@@ -19,17 +17,17 @@ export default class OrgGet extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Get organization details by slug'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> org get centy-io',
     '<%= config.bin %> get org centy-io',
     '<%= config.bin %> get organization my-org --json',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',

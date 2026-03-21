@@ -17,8 +17,8 @@ describe('postrun hook', () => {
   })
 
   it('should call updateNotifier with correct package config', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({} as never, {} as never)
+
+    await hook.call({}, {})
 
     expect(mockUpdateNotifier).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -31,8 +31,8 @@ describe('postrun hook', () => {
   })
 
   it('should call notify with isGlobal true', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({} as never, {} as never)
+
+    await hook.call({}, {})
 
     expect(mockNotify).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -42,8 +42,8 @@ describe('postrun hook', () => {
   })
 
   it('should include update message in notification', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    await hook.call({} as never, {} as never)
+
+    await hook.call({}, {})
 
     expect(mockNotify).toHaveBeenCalledWith(
       expect.objectContaining({

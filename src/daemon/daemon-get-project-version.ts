@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 /**
  * Project version status utilities
  * Multiple exports allowed for related types and functions

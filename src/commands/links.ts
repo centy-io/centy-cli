@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import { daemonListLinks } from '../daemon/daemon-list-links.js'
 import { LinkTargetType } from '../daemon/types.js'
 import { projectFlag } from '../flags/project-flag.js'
@@ -13,9 +11,9 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * List all links for an entity
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Links extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Entity type (e.g., issue, doc)',
@@ -27,17 +25,17 @@ export default class Links extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'List all links for an entity'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> links issue 1',
     '<%= config.bin %> links doc getting-started --json',
     '<%= config.bin %> links issue 1 --project my-project',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',
@@ -62,7 +60,7 @@ export default class Links extends Command {
     const response = await daemonListLinks({
       projectPath: cwd,
       entityId: args.id,
-      // eslint-disable-next-line no-restricted-syntax
+
       entityType: args.type as LinkTargetType,
     })
 

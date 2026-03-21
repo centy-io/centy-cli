@@ -37,20 +37,20 @@ function enableAutostart(daemonPath: string): void {
   const plistPath = getPlistPath()
   const launchAgentsDir = join(homedir(), 'Library', 'LaunchAgents')
 
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   if (!existsSync(launchAgentsDir)) {
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
+
     mkdirSync(launchAgentsDir, { recursive: true })
   }
 
   const logsDir = join(homedir(), '.centy', 'logs')
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   if (!existsSync(logsDir)) {
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
+
     mkdirSync(logsDir, { recursive: true })
   }
 
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   if (existsSync(plistPath)) {
     try {
       execSync(`launchctl unload "${plistPath}"`, LAUNCHCTL_UNLOAD_OPTS)
@@ -60,7 +60,7 @@ function enableAutostart(daemonPath: string): void {
   }
 
   const plistContent = generatePlist(daemonPath)
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   writeFileSync(plistPath, plistContent, 'utf-8')
   execSync(`launchctl load "${plistPath}"`, {
     timeout: SERVICE_COMMAND_TIMEOUT_MS,
@@ -70,7 +70,7 @@ function enableAutostart(daemonPath: string): void {
 function disableAutostart(): void {
   const plistPath = getPlistPath()
 
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   if (!existsSync(plistPath)) {
     return
   }
@@ -81,20 +81,20 @@ function disableAutostart(): void {
     // Ignore errors if service wasn't loaded
   }
 
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   unlinkSync(plistPath)
 }
 
 function getAutostartStatus(): { enabled: boolean; daemonPath?: string } {
   const plistPath = getPlistPath()
 
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   if (!existsSync(plistPath)) {
     return { enabled: false }
   }
 
   try {
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
+
     const content = readFileSync(plistPath, 'utf-8')
     const parsed = plist.parse(content)
     let daemonPath: string | undefined

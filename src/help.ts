@@ -3,7 +3,7 @@ import { Help } from '@oclif/core'
 /**
  * Custom help class that adds LLM callout to root help output
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class CentyHelp extends Help {
   /**
    * Override showRootHelp to add LLM callout at the beginning

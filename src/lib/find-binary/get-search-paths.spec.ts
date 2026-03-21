@@ -35,10 +35,8 @@ describe('getSearchPaths', () => {
   })
 
   it('should include env var path when set', () => {
-    // eslint-disable-next-line no-restricted-syntax
-    const originalEnv = process.env['TEST_SEARCH_PATHS_ENV']
-    // eslint-disable-next-line no-restricted-syntax
-    process.env['TEST_SEARCH_PATHS_ENV'] = '/custom/path/to/binary'
+    const originalEnv = Reflect.get(process.env, 'TEST_SEARCH_PATHS_ENV')
+    Reflect.set(process.env, 'TEST_SEARCH_PATHS_ENV', '/custom/path/to/binary')
 
     const result = getSearchPaths({
       binaryName: 'test-binary',
@@ -48,17 +46,14 @@ describe('getSearchPaths', () => {
     expect(result).toContain('/custom/path/to/binary')
 
     if (originalEnv !== undefined) {
-      // eslint-disable-next-line no-restricted-syntax
-      process.env['TEST_SEARCH_PATHS_ENV'] = originalEnv
+      Reflect.set(process.env, 'TEST_SEARCH_PATHS_ENV', originalEnv)
     } else {
-      // eslint-disable-next-line no-restricted-syntax
-      delete process.env['TEST_SEARCH_PATHS_ENV']
+      Reflect.deleteProperty(process.env, 'TEST_SEARCH_PATHS_ENV')
     }
   })
 
   it('should not include env var path when not set', () => {
-    // eslint-disable-next-line no-restricted-syntax
-    delete process.env['NONEXISTENT_TEST_ENV_VAR_2']
+    Reflect.deleteProperty(process.env, 'NONEXISTENT_TEST_ENV_VAR_2')
     const result = getSearchPaths({
       binaryName: 'test-binary',
       envVar: 'NONEXISTENT_TEST_ENV_VAR_2',

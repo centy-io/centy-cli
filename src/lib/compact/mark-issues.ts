@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 
 import { daemonMarkIssuesCompacted } from '../../daemon/daemon-mark-issues-compacted.js'
 import { CompactSaveError } from './compact-save-error.js'

@@ -29,12 +29,9 @@ describe('handleNotInitializedWithSearch', () => {
     )
 
     expect(result).not.toBeNull()
-    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
-    expect(result?.foundElsewhere).toBe(false)
-    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
-    expect(result?.message).toContain('No .centy folder found')
-    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
-    expect(result?.message).toContain('--global (-g)')
+    expect(result!.foundElsewhere).toBe(false)
+    expect(result!.message).toContain('No .centy folder found')
+    expect(result!.message).toContain('--global (-g)')
   })
 
   it('returns cross-project hint when entity found in other projects', async () => {
@@ -54,12 +51,9 @@ describe('handleNotInitializedWithSearch', () => {
     )
 
     expect(result).not.toBeNull()
-    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
-    expect(result?.foundElsewhere).toBe(true)
-    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
-    expect(result?.message).toContain('other-project')
-    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
-    expect(result?.message).toContain('--global')
+    expect(result!.foundElsewhere).toBe(true)
+    expect(result!.message).toContain('other-project')
+    expect(result!.message).toContain('--global')
   })
 
   it('returns JSON output when jsonMode is true and entity found', async () => {
@@ -79,10 +73,8 @@ describe('handleNotInitializedWithSearch', () => {
     )
 
     expect(result).not.toBeNull()
-    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
-    expect(result?.foundElsewhere).toBe(true)
-    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
-    expect(result?.jsonOutput).toBeDefined()
+    expect(result!.foundElsewhere).toBe(true)
+    expect(result!.jsonOutput).toBeDefined()
   })
 
   it('skips global search when shouldSearch returns false', async () => {
@@ -100,10 +92,8 @@ describe('handleNotInitializedWithSearch', () => {
     )
 
     expect(globalSearchFn).not.toHaveBeenCalled()
-    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
-    expect(result?.foundElsewhere).toBe(false)
-    // eslint-disable-next-line no-optional-chaining/no-optional-chaining
-    expect(result?.message).toContain('--global (-g)')
+    expect(result!.foundElsewhere).toBe(false)
+    expect(result!.message).toContain('--global (-g)')
   })
 
   it('performs global search when shouldSearch returns true', async () => {

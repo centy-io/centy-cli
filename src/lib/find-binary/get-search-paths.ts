@@ -19,8 +19,7 @@ export function getSearchPaths(options: FindBinaryOptions): string[] {
   const paths: string[] = []
 
   // 1. Environment variable (if set)
-  // eslint-disable-next-line no-restricted-syntax, security/detect-object-injection
-  const envPath = process.env[envVar]
+  const envPath: string | undefined = Reflect.get(process.env, envVar)
   if (envPath !== undefined) {
     paths.push(envPath)
   }

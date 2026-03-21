@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonGetSupportedEditors } from '../../daemon/daemon-get-supported-editors.js'
 import { daemonOpenStandaloneWorkspace } from '../../daemon/daemon-open-standalone-workspace.js'
 import { projectFlag } from '../../flags/project-flag.js'
@@ -10,13 +8,13 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Open a standalone workspace not tied to an issue
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class WorkspaceNew extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description =
     'Create a standalone workspace not tied to an issue'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> workspace new',
     '<%= config.bin %> workspace new --name my-workspace',
@@ -25,7 +23,7 @@ export default class WorkspaceNew extends Command {
     '<%= config.bin %> workspace new --editor terminal',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     project: projectFlag,
     name: Flags.string({

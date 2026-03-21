@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonGetManifest } from '../daemon/daemon-get-manifest.js'
 import { projectFlag } from '../flags/project-flag.js'
 import {
@@ -12,19 +10,19 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * Get the project manifest
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Manifest extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Get the project manifest'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> manifest',
     '<%= config.bin %> manifest --json',
     '<%= config.bin %> manifest --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',

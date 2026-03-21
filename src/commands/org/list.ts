@@ -1,20 +1,18 @@
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonListOrganizations } from '../../daemon/daemon-list-organizations.js'
 
 /**
  * List all organizations
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class OrgList extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override aliases = ['list:orgs', 'list:organizations']
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'List all organizations'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> org list',
     '<%= config.bin %> list orgs',
@@ -22,7 +20,7 @@ export default class OrgList extends Command {
     '<%= config.bin %> org list --json',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',

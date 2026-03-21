@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 
 import type { FileInfo } from '../../daemon/types.js'
 

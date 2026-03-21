@@ -2,7 +2,6 @@ import type { Command } from '@oclif/core'
 import { listItemsGlobally } from '../../daemon/daemon-list-items-globally.js'
 import { formatItemLine } from './format-item-line.js'
 
-/* eslint-disable single-export/single-export */
 export function buildFilter(
   status: string | undefined,
   priority: number | undefined

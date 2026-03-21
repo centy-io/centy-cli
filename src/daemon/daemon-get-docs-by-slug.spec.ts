@@ -1,6 +1,7 @@
-/* eslint-disable no-restricted-syntax */
-// eslint-disable-next-line import/order
+
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { daemonGetDocsBySlug } from './daemon-get-docs-by-slug.js'
+import { getDaemonClient } from './load-proto.js'
 
 // Mock the load-proto module before importing the function
 vi.mock('./load-proto.js', () => {
@@ -19,10 +20,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-// eslint-disable-next-line import/first
-import { daemonGetDocsBySlug } from './daemon-get-docs-by-slug.js'
-// eslint-disable-next-line import/first
-import { getDaemonClient } from './load-proto.js'
 
 describe('daemonGetDocsBySlug', () => {
   beforeEach(() => {
@@ -46,9 +43,9 @@ describe('daemonGetDocsBySlug', () => {
       }
     )
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue({
+    ;vi.mocked(getDaemonClient).mockReturnValue({
       searchItems: mockGetDocsBySlug,
-    } as ReturnType<typeof getDaemonClient>)
+    })
 
     const result = await daemonGetDocsBySlug({ slug: 'test-slug' })
     expect(result).toEqual(mockResponse)
@@ -67,9 +64,9 @@ describe('daemonGetDocsBySlug', () => {
       }
     )
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue({
+    ;vi.mocked(getDaemonClient).mockReturnValue({
       searchItems: mockGetDocsBySlug,
-    } as ReturnType<typeof getDaemonClient>)
+    })
 
     await expect(daemonGetDocsBySlug({ slug: 'test-slug' })).rejects.toThrow(
       'Test error'

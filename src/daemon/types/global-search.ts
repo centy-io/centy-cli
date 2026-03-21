@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 /**
  * Types for cross-project global item search (CLI-side only).
  */

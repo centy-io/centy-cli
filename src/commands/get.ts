@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { daemonGetItem } from '../daemon/daemon-get-item.js'
 import { projectFlag } from '../flags/project-flag.js'
@@ -16,9 +14,9 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * Get any item by type and identifier
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Get extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, doc, user, or custom type)',
@@ -30,10 +28,10 @@ export default class Get extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Get an item by type and identifier'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> get issue 1',
     '<%= config.bin %> get issue abc123-uuid',
@@ -46,7 +44,7 @@ export default class Get extends Command {
     '<%= config.bin %> get issue 1 --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',

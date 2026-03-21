@@ -213,7 +213,7 @@ describe('WorkspaceOpen command', () => {
 
     expect(error).toBeDefined()
     expect(error).toBeInstanceOf(Error)
-    // eslint-disable-next-line no-restricted-syntax
+
     expect((error as Error).message).toBe('Some other error')
   })
 

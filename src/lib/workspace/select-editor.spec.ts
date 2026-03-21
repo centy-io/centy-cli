@@ -1,14 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-// eslint-disable-next-line import/order
 import type { EditorInfo } from '../../daemon/types.js'
+import { selectEditor } from './select-editor.js'
 
 const mockPrompts = vi.fn()
 vi.mock('prompts', () => ({
   default: (...args: unknown[]) => mockPrompts(...args),
 }))
 
-// eslint-disable-next-line import/first
-import { selectEditor } from './select-editor.js'
 
 const vsCodeEditor: EditorInfo = {
   editorType: 0,

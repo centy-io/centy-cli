@@ -1,15 +1,13 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import { daemonSetProjectTitle } from '../../daemon/daemon-set-project-title.js'
 import { daemonSetProjectUserTitle } from '../../daemon/daemon-set-project-user-title.js'
 
 /**
  * Set a custom title for a project
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class ProjectTitle extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     title: Args.string({
       description: 'Custom title for the project (omit to clear)',
@@ -17,10 +15,10 @@ export default class ProjectTitle extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Set a custom title for a project'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> project title "My Awesome Project"',
     '<%= config.bin %> project title "Work Project" --shared',
@@ -29,7 +27,7 @@ export default class ProjectTitle extends Command {
     '<%= config.bin %> project title "Custom Name" --path /path/to/project',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     path: Flags.string({
       char: 'p',
@@ -54,10 +52,10 @@ export default class ProjectTitle extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(ProjectTitle)
-    // eslint-disable-next-line no-restricted-syntax
+
     const projectPath = flags.path ?? process.env['CENTY_CWD'] ?? process.cwd()
 
-    // eslint-disable-next-line no-restricted-syntax
+
     const title = flags.clear ? '' : (args.title ?? '')
 
     if (!title && !flags.clear) {

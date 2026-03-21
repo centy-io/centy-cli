@@ -7,6 +7,16 @@ interface Logger {
   warn(msg: string): void
 }
 
+function toLinkTargetType(value: string): LinkTargetType {
+  if (value === 'issue' || value === 'LINK_TARGET_TYPE_ISSUE') {
+    return LinkTargetType.LINK_TARGET_TYPE_ISSUE
+  }
+  if (value === 'doc' || value === 'LINK_TARGET_TYPE_DOC') {
+    return LinkTargetType.LINK_TARGET_TYPE_DOC
+  }
+  return LinkTargetType.LINK_TARGET_TYPE_UNSPECIFIED
+}
+
 /**
  * Process --link flag specs and create links for a newly created/updated item.
  */
@@ -34,11 +44,9 @@ export async function applyLinkFlags(
     const linkResp = await daemonCreateLink({
       projectPath,
       sourceId,
-      // eslint-disable-next-line no-restricted-syntax
-      sourceType: sourceType as LinkTargetType,
+      sourceType: toLinkTargetType(sourceType),
       targetId: parsed[1],
-      // eslint-disable-next-line no-restricted-syntax
-      targetType: parsed[0] as LinkTargetType,
+      targetType: toLinkTargetType(parsed[0]),
       linkType,
     })
     if (!linkResp.success) {

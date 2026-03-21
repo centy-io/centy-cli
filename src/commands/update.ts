@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { daemonUpdateItem } from '../daemon/daemon-update-item.js'
 import { updateFlags } from '../flags/update-flags.js'
@@ -17,9 +15,9 @@ import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
 /**
  * Update an item of any type by type and identifier
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Update extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -31,10 +29,10 @@ export default class Update extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Update an item by type and identifier'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> update issue 1 --status closed',
     '<%= config.bin %> update epic 1 --title "New title"',
@@ -43,7 +41,7 @@ export default class Update extends Command {
     '<%= config.bin %> update issue 1 --status closed --link blocks:issue:2',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = updateFlags
 
   public async run(): Promise<void> {

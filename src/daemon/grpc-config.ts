@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 import type { ChannelOptions } from '@grpc/grpc-js'
 
 /**

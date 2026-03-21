@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { daemonMoveItem } from '../daemon/daemon-move-item.js'
 import {
@@ -14,9 +12,9 @@ import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
 /**
  * Move an item of any type to a different project
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Move extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -28,10 +26,10 @@ export default class Move extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Move an item to a different project'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> move issue 1 --to /path/to/target/project',
     '<%= config.bin %> move epic 1 --to ../other-project',
@@ -39,7 +37,7 @@ export default class Move extends Command {
     '<%= config.bin %> move epic 1 --to /other --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     to: Flags.string({
       char: 't',

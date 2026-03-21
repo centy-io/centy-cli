@@ -5,15 +5,10 @@ import {
 } from '../../testing/command-test-utils.js'
 
 const mockDaemonDeleteOrganization = vi.fn()
-const mockPromptQuestion = vi.fn()
 
 vi.mock('../../daemon/daemon-delete-organization.js', () => ({
   daemonDeleteOrganization: (...args: unknown[]) =>
     mockDaemonDeleteOrganization(...args),
-}))
-
-vi.mock('../../utils/create-prompt-interface.js', () => ({
-  promptQuestion: (...args: unknown[]) => mockPromptQuestion(...args),
 }))
 
 describe('UntrackOrg command', () => {
@@ -91,7 +86,14 @@ describe('UntrackOrg command', () => {
         error: '',
         unassignedProjects: 3,
       })
-    mockPromptQuestion.mockResolvedValue('y')
+
+    const mockRl = {
+      question: vi.fn((_, callback) => callback('y')),
+      close: vi.fn(),
+    }
+    vi.doMock('node:readline', () => ({
+      createInterface: () => mockRl,
+    }))
 
     const cmd = createMockCommand(Command, {
       flags: { force: true },
@@ -121,7 +123,14 @@ describe('UntrackOrg command', () => {
       error: 'Organization has 3 projects. Reassign or remove them first.',
       unassignedProjects: 0,
     })
-    mockPromptQuestion.mockResolvedValue('n')
+
+    const mockRl = {
+      question: vi.fn((_, callback) => callback('n')),
+      close: vi.fn(),
+    }
+    vi.doMock('node:readline', () => ({
+      createInterface: () => mockRl,
+    }))
 
     const cmd = createMockCommand(Command, {
       flags: { force: true },
@@ -140,7 +149,14 @@ describe('UntrackOrg command', () => {
       error: '',
       unassignedProjects: 0,
     })
-    mockPromptQuestion.mockResolvedValue('y')
+
+    const mockRl = {
+      question: vi.fn((_, callback) => callback('y')),
+      close: vi.fn(),
+    }
+    vi.doMock('node:readline', () => ({
+      createInterface: () => mockRl,
+    }))
 
     const cmd = createMockCommand(Command, {
       flags: { force: false },
@@ -154,7 +170,14 @@ describe('UntrackOrg command', () => {
 
   it('should prompt for confirmation without --force and cancel on n', async () => {
     const { default: Command } = await import('./org.js')
-    mockPromptQuestion.mockResolvedValue('n')
+
+    const mockRl = {
+      question: vi.fn((_, callback) => callback('n')),
+      close: vi.fn(),
+    }
+    vi.doMock('node:readline', () => ({
+      createInterface: () => mockRl,
+    }))
 
     const cmd = createMockCommand(Command, {
       flags: { force: false },

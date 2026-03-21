@@ -8,7 +8,8 @@ const mockDaemonDeleteItem = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
 const mockResolveItemId = vi.fn()
-const mockPromptQuestion = vi.fn()
+const mockRlQuestion = vi.fn()
+const mockRlClose = vi.fn()
 
 vi.mock('../daemon/daemon-delete-item.js', () => ({
   daemonDeleteItem: (...args: unknown[]) => mockDaemonDeleteItem(...args),
@@ -32,8 +33,11 @@ vi.mock('../utils/ensure-initialized.js', () => ({
   },
 }))
 
-vi.mock('../utils/create-prompt-interface.js', () => ({
-  promptQuestion: (...args: unknown[]) => mockPromptQuestion(...args),
+vi.mock('node:readline', () => ({
+  createInterface: vi.fn(() => ({
+    question: (...args: unknown[]) => mockRlQuestion(...args),
+    close: (...args: unknown[]) => mockRlClose(...args),
+  })),
 }))
 
 describe('Delete command', () => {
@@ -116,7 +120,7 @@ describe('Delete command', () => {
 
       await cmd.run()
 
-      expect(mockPromptQuestion).not.toHaveBeenCalled()
+      expect(mockRlQuestion).not.toHaveBeenCalled()
       expect(mockDaemonDeleteItem).toHaveBeenCalled()
       expect(cmd.logs).toHaveLength(1)
       const parsed = JSON.parse(cmd.logs[0])
@@ -131,22 +135,9 @@ describe('Delete command', () => {
   describe('confirmation prompt (no --force)', () => {
     it('should cancel when user answers N', async () => {
       const { default: Command } = await import('./delete.js')
-      mockPromptQuestion.mockResolvedValue('N')
-
-      const cmd = createMockCommand(Command, {
-        flags: { force: false },
-        args: { type: 'issue', id: 'item-uuid' },
-      })
-
-      await cmd.run()
-
-      expect(mockDaemonDeleteItem).not.toHaveBeenCalled()
-      expect(cmd.logs[0]).toContain('Cancelled')
-    })
-
-    it('should cancel when prompt times out (null answer)', async () => {
-      const { default: Command } = await import('./delete.js')
-      mockPromptQuestion.mockResolvedValue(null)
+      mockRlQuestion.mockImplementation(
+        (_q: unknown, cb: (a: string) => void) => cb('N')
+      )
 
       const cmd = createMockCommand(Command, {
         flags: { force: false },
@@ -161,7 +152,9 @@ describe('Delete command', () => {
 
     it('should proceed when user answers y', async () => {
       const { default: Command } = await import('./delete.js')
-      mockPromptQuestion.mockResolvedValue('y')
+      mockRlQuestion.mockImplementation(
+        (_q: unknown, cb: (a: string) => void) => cb('y')
+      )
       mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
       const cmd = createMockCommand(Command, {
