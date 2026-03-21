@@ -11,7 +11,6 @@ export interface Manifest {
   schemaVersion: number;
   centyVersion: string;
   createdAt: string;
-  updatedAt: string;
 }
 
 /** A generic item that can represent any item type (issues, docs, custom types) */
@@ -223,6 +222,27 @@ export interface ItemWithProject {
 
 export interface SearchItemsResponse {
   items: ItemWithProject[];
+  totalCount: number;
+  /** Non-fatal errors (e.g., projects that couldn't be accessed) */
+  errors: string[];
+  success: boolean;
+  error: string;
+}
+
+export interface ListItemsAcrossProjectsRequest {
+  /** Plural type name (e.g., "issues", "docs") */
+  itemType: string;
+  /** Limit results (0 = no limit) */
+  limit: number;
+  /** Offset for pagination (0 = no offset) */
+  offset: number;
+  /** JSON-encoded MQL query (same as ListItemsRequest) */
+  filter: string;
+}
+
+export interface ListItemsAcrossProjectsResponse {
+  items: ItemWithProject[];
+  /** Total count across all projects (before limit/offset) */
   totalCount: number;
   /** Non-fatal errors (e.g., projects that couldn't be accessed) */
   errors: string[];

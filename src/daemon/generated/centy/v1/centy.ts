@@ -13,15 +13,6 @@ export enum FileType {
   FILE_TYPE_DIRECTORY = "FILE_TYPE_DIRECTORY",
 }
 
-/** Editor type for opening workspaces */
-export enum EditorType {
-  EDITOR_TYPE_UNSPECIFIED = "EDITOR_TYPE_UNSPECIFIED",
-  /** EDITOR_TYPE_VSCODE - VS Code editor */
-  EDITOR_TYPE_VSCODE = "EDITOR_TYPE_VSCODE",
-  /** EDITOR_TYPE_TERMINAL - OS terminal */
-  EDITOR_TYPE_TERMINAL = "EDITOR_TYPE_TERMINAL",
-}
-
 /** Target entity type for links */
 export enum LinkTargetType {
   LINK_TARGET_TYPE_UNSPECIFIED = "LINK_TARGET_TYPE_UNSPECIFIED",
@@ -189,7 +180,11 @@ export interface Config {
   /** Lifecycle hooks */
   hooks: HookDefinition[];
   /** Workspace settings */
-  workspace?: WorkspaceConfig | undefined;
+  workspace?:
+    | WorkspaceConfig
+    | undefined;
+  /** User-defined free-form key-value pairs */
+  userValues: { [key: string]: string };
 }
 
 export interface Config_DefaultsEntry {
@@ -203,6 +198,11 @@ export interface Config_StateColorsEntry {
 }
 
 export interface Config_PriorityColorsEntry {
+  key: string;
+  value: string;
+}
+
+export interface Config_UserValuesEntry {
   key: string;
   value: string;
 }
@@ -628,8 +628,6 @@ export interface DaemonInfo {
   version: string;
   /** Absolute path to the running daemon binary */
   binaryPath: string;
-  /** Whether VS Code is installed and accessible */
-  vscodeAvailable: boolean;
 }
 
 export interface ShutdownRequest {
@@ -658,8 +656,6 @@ export interface GetSupportedEditorsRequest {
 
 /** Information about a supported editor */
 export interface EditorInfo {
-  /** Editor type enum value (deprecated: use editor_id) */
-  editorType: EditorType;
   /** Display name (e.g., "VS Code", "Terminal") */
   name: string;
   /** Brief description */
