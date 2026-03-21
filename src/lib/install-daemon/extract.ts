@@ -1,6 +1,7 @@
 /* eslint-disable error/no-generic-error, error/require-custom-error, error/no-literal-error-message */
 import { execSync } from 'node:child_process'
 import { existsSync, mkdirSync } from 'node:fs'
+import { EXTRACT_TIMEOUT_MS } from '../../utils/process-timeout-config.js'
 import { isWindows } from './platform.js'
 
 function ensureDir(dir: string): void {
@@ -13,7 +14,10 @@ function ensureDir(dir: string): void {
 
 function extractTarGz(archivePath: string, destDir: string): void {
   ensureDir(destDir)
-  execSync(`tar -xzf "${archivePath}" -C "${destDir}"`, { stdio: 'pipe' })
+  execSync(`tar -xzf "${archivePath}" -C "${destDir}"`, {
+    stdio: 'pipe',
+    timeout: EXTRACT_TIMEOUT_MS,
+  })
 }
 
 function extractZip(archivePath: string, destDir: string): void {
@@ -21,10 +25,13 @@ function extractZip(archivePath: string, destDir: string): void {
   if (isWindows()) {
     execSync(
       `powershell -Command "Expand-Archive -Path '${archivePath}' -DestinationPath '${destDir}' -Force"`,
-      { stdio: 'pipe' }
+      { stdio: 'pipe', timeout: EXTRACT_TIMEOUT_MS }
     )
   } else {
-    execSync(`unzip -o "${archivePath}" -d "${destDir}"`, { stdio: 'pipe' })
+    execSync(`unzip -o "${archivePath}" -d "${destDir}"`, {
+      stdio: 'pipe',
+      timeout: EXTRACT_TIMEOUT_MS,
+    })
   }
 }
 

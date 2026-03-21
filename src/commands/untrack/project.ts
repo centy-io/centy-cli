@@ -2,6 +2,7 @@
 import { Args, Command, Flags } from '@oclif/core'
 
 import { daemonUntrackProject } from '../../daemon/daemon-untrack-project.js'
+import { promptQuestion } from '../../utils/create-prompt-interface.js'
 
 /**
  * Remove a project from tracking
@@ -41,19 +42,10 @@ export default class UntrackProject extends Command {
     const projectPath = args.path ?? process.env['CENTY_CWD'] ?? process.cwd()
 
     if (!flags.force) {
-      const readline = await import('node:readline')
-      const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-      })
-      const answer = await new Promise<string>(resolve => {
-        rl.question(
-          `Are you sure you want to untrack project at "${projectPath}"? (y/N) `,
-          resolve
-        )
-      })
-      rl.close()
-      if (answer.toLowerCase() !== 'y') {
+      const answer = await promptQuestion(
+        `Are you sure you want to untrack project at "${projectPath}"? (y/N) `
+      )
+      if (answer === null || answer.toLowerCase() !== 'y') {
         this.log('Cancelled.')
         return
       }

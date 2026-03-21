@@ -7,7 +7,7 @@ import {
 const mockDaemonDeleteItem = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
-const mockCreateInterface = vi.fn()
+const mockPromptQuestion = vi.fn()
 
 vi.mock('../../daemon/daemon-delete-item.js', () => ({
   daemonDeleteItem: (...args: unknown[]) => mockDaemonDeleteItem(...args),
@@ -27,18 +27,9 @@ vi.mock('../../utils/ensure-initialized.js', () => ({
   },
 }))
 
-vi.mock('node:readline', () => ({
-  createInterface: () => mockCreateInterface(),
+vi.mock('../../utils/create-prompt-interface.js', () => ({
+  promptQuestion: (...args: unknown[]) => mockPromptQuestion(...args),
 }))
-
-function setupReadlineMock(answer: string) {
-  mockCreateInterface.mockReturnValue({
-    question: (_prompt: string, callback: (answer: string) => void) => {
-      callback(answer)
-    },
-    close: vi.fn(),
-  })
-}
 
 describe('UserDelete command', () => {
   beforeEach(() => {
@@ -76,7 +67,7 @@ describe('UserDelete command', () => {
 
   it('should delete user after confirmation', async () => {
     const { default: Command } = await import('./delete.js')
-    setupReadlineMock('y')
+    mockPromptQuestion.mockResolvedValue('y')
     mockDaemonDeleteItem.mockResolvedValue({ success: true })
 
     const cmd = createMockCommand(Command, {
@@ -91,7 +82,7 @@ describe('UserDelete command', () => {
 
   it('should cancel when user answers no', async () => {
     const { default: Command } = await import('./delete.js')
-    setupReadlineMock('n')
+    mockPromptQuestion.mockResolvedValue('n')
 
     const cmd = createMockCommand(Command, {
       flags: { force: false },
