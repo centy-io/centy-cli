@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import { daemonGetSupportedEditors } from '../../daemon/daemon-get-supported-editors.js'
 import { daemonOpenInTempWorkspace } from '../../daemon/daemon-open-in-temp-workspace.js'
 import { projectFlag } from '../../flags/project-flag.js'
@@ -14,12 +12,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Open an issue in a temporary workspace
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class WorkspaceOpen extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Open an issue in a temporary workspace'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> workspace open 1',
     '<%= config.bin %> workspace open abc-123 --ttl 24',
@@ -27,7 +25,7 @@ export default class WorkspaceOpen extends Command {
     '<%= config.bin %> workspace open 1 --editor terminal',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     issueId: Args.string({
       description: 'Issue ID or display number',
@@ -35,7 +33,7 @@ export default class WorkspaceOpen extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     project: projectFlag,
     ttl: Flags.integer({

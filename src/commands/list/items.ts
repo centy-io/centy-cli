@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { daemonListItems } from '../../daemon/daemon-list-items.js'
 import { projectFlag } from '../../flags/project-flag.js'
@@ -18,9 +16,9 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * List items of any type using the generic ListItems RPC
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class ListItems extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issues, docs, bugs)',
@@ -28,10 +26,10 @@ export default class ListItems extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'List items of any type'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> list issues',
     '<%= config.bin %> list issues --status open --priority 1',
@@ -41,7 +39,7 @@ export default class ListItems extends Command {
     '<%= config.bin %> list issues --global --status open --json',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     status: Flags.string({ description: 'Filter by status' }),
     priority: Flags.integer({ description: 'Filter by priority level' }),

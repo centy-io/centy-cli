@@ -55,9 +55,9 @@ describe('applyLinkFlags', () => {
     expect(mockFn).toHaveBeenCalledWith({
       projectPath: '/project',
       sourceId: 'src-id',
-      sourceType: 'issue',
+      sourceType: 'LINK_TARGET_TYPE_ISSUE',
       targetId: '2',
-      targetType: 'issue',
+      targetType: 'LINK_TARGET_TYPE_ISSUE',
       linkType: 'blocks',
     })
     expect(logger.log).toHaveBeenCalledWith(

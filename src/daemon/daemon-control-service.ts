@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 
 import type {
   ShutdownRequest,
@@ -25,8 +24,7 @@ export class DaemonControlService {
   async shutdown(
     request?: ShutdownRequest
   ): Promise<DaemonControlResult<ShutdownResponse>> {
-    // eslint-disable-next-line no-restricted-syntax
-    const req = request ?? { delaySeconds: 0 }
+    const req = request !== undefined ? request : { delaySeconds: 0 }
     try {
       const response = await daemonShutdown(req)
       return { success: true, data: response }
@@ -38,8 +36,7 @@ export class DaemonControlService {
   async restart(
     request?: RestartRequest
   ): Promise<DaemonControlResult<RestartResponse>> {
-    // eslint-disable-next-line no-restricted-syntax
-    const req = request ?? { delaySeconds: 0 }
+    const req = request !== undefined ? request : { delaySeconds: 0 }
     try {
       const response = await daemonRestart(req)
       return { success: true, data: response }

@@ -57,11 +57,8 @@ function flushMicrotasks(): Promise<void> {
   })
 }
 
-function createErrnoException(message: string, code: string) {
-  const error = new Error(message)
-  // eslint-disable-next-line no-restricted-syntax
-  ;(error as NodeJS.ErrnoException).code = code
-  return error
+function createErrnoException(message: string, code: string): Error & { code: string } {
+  return Object.assign(new Error(message), { code })
 }
 
 describe('launchTuiManager', () => {

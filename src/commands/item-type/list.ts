@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonListItemTypes } from '../../daemon/daemon-list-item-types.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
@@ -12,19 +10,19 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * List all item types configured for a project
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class ItemTypeList extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'List all item types for a project'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> item-type list',
     '<%= config.bin %> item-type list --json',
     '<%= config.bin %> item-type list --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',

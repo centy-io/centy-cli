@@ -1,23 +1,25 @@
-/* eslint-disable error/no-generic-error, error/require-custom-error, error/no-literal-error-message */
 import { execSync } from 'node:child_process'
 import { existsSync, mkdirSync } from 'node:fs'
-import { EXTRACT_TIMEOUT_MS } from '../../utils/process-timeout-config.js'
 import { isWindows } from './platform.js'
 
+export class UnsupportedArchiveFormatError extends Error {
+  constructor(archivePath: string) {
+    super(`Unsupported archive format: ${archivePath}`)
+    this.name = 'UnsupportedArchiveFormatError'
+  }
+}
+
 function ensureDir(dir: string): void {
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   if (!existsSync(dir)) {
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
+
     mkdirSync(dir, { recursive: true })
   }
 }
 
 function extractTarGz(archivePath: string, destDir: string): void {
   ensureDir(destDir)
-  execSync(`tar -xzf "${archivePath}" -C "${destDir}"`, {
-    stdio: 'pipe',
-    timeout: EXTRACT_TIMEOUT_MS,
-  })
+  execSync(`tar -xzf "${archivePath}" -C "${destDir}"`, { stdio: 'pipe' })
 }
 
 function extractZip(archivePath: string, destDir: string): void {
@@ -25,13 +27,10 @@ function extractZip(archivePath: string, destDir: string): void {
   if (isWindows()) {
     execSync(
       `powershell -Command "Expand-Archive -Path '${archivePath}' -DestinationPath '${destDir}' -Force"`,
-      { stdio: 'pipe', timeout: EXTRACT_TIMEOUT_MS }
+      { stdio: 'pipe' }
     )
   } else {
-    execSync(`unzip -o "${archivePath}" -d "${destDir}"`, {
-      stdio: 'pipe',
-      timeout: EXTRACT_TIMEOUT_MS,
-    })
+    execSync(`unzip -o "${archivePath}" -d "${destDir}"`, { stdio: 'pipe' })
   }
 }
 
@@ -41,6 +40,6 @@ export function extractArchive(archivePath: string, destDir: string): void {
   } else if (archivePath.endsWith('.zip')) {
     extractZip(archivePath, destDir)
   } else {
-    throw new Error(`Unsupported archive format: ${archivePath}`)
+    throw new UnsupportedArchiveFormatError(archivePath)
   }
 }

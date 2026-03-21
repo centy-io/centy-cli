@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonGetConfig } from '../daemon/daemon-get-config.js'
 import { projectFlag } from '../flags/project-flag.js'
 import {
@@ -12,19 +10,19 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * Get the project configuration
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Config extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Get the project configuration'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> config',
     '<%= config.bin %> config --json',
     '<%= config.bin %> config --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',

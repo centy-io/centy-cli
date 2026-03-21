@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadPackageDefinition, credentials } from '@grpc/grpc-js'
@@ -33,16 +32,18 @@ interface CentyDaemonClient
     CentyDaemonItemsClient,
     CentyDaemonLinkClient {}
 
-interface ProtoDescriptor {
-  centy: {
-    v1: {
-      CentyDaemon: new (
-        address: string,
-        creds: ReturnType<typeof credentials.createInsecure>,
-        options?: ChannelOptions
-      ) => CentyDaemonClient
-    }
+interface CentyPackage {
+  v1: {
+    CentyDaemon: new (
+      address: string,
+      creds: ReturnType<typeof credentials.createInsecure>,
+      options?: ChannelOptions
+    ) => CentyDaemonClient
   }
+}
+
+interface ProtoDescriptor {
+  centy: CentyPackage
 }
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
@@ -50,13 +51,13 @@ const PROTO_PATH = join(currentDir, '../../proto/centy/v1/centy.proto')
 const PROTO_INCLUDE_DIR = join(currentDir, '../../proto')
 const DEFAULT_DAEMON_ADDRESS = '127.0.0.1:50051'
 
+
 let clientInstance: CentyDaemonClient | null = null
 
 function getAddress(): string {
-  // eslint-disable-next-line no-restricted-syntax
-  const envAddr = process.env['CENTY_DAEMON_ADDR']
-  if (envAddr !== undefined && envAddr !== '') {
-    return envAddr
+  const { CENTY_DAEMON_ADDR } = process.env
+  if (CENTY_DAEMON_ADDR !== undefined && CENTY_DAEMON_ADDR !== '') {
+    return CENTY_DAEMON_ADDR
   }
   return DEFAULT_DAEMON_ADDRESS
 }
@@ -86,10 +87,10 @@ export function getDaemonClient(): CentyDaemonClient {
     includeDirs: [PROTO_INCLUDE_DIR],
   })
 
-  // eslint-disable-next-line no-restricted-syntax
-  const protoDescriptor = loadPackageDefinition(
-    packageDefinition
-  ) as unknown as ProtoDescriptor
+  // loadPackageDefinition returns a GrpcObject (which is indexed by string: any).
+  // We access the 'centy' property directly to get the typed proto package.
+  const rawDescriptor = loadPackageDefinition(packageDefinition)
+  const protoDescriptor: ProtoDescriptor = { centy: rawDescriptor.centy }
 
   const address = getAddress()
   clientInstance = new protoDescriptor.centy.v1.CentyDaemon(

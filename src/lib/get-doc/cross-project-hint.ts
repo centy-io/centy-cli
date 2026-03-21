@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 
 import { daemonGetDocsBySlug } from '../../daemon/daemon-get-docs-by-slug.js'
 import {

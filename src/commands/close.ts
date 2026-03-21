@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { daemonUpdateItem } from '../daemon/daemon-update-item.js'
 import { projectFlag } from '../flags/project-flag.js'
@@ -14,9 +12,9 @@ import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
 /**
  * Close an item by setting its status to closed
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Close extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -28,10 +26,10 @@ export default class Close extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Close an item by setting its status to closed'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> close issue 1',
     '<%= config.bin %> close epic 1',
@@ -39,7 +37,7 @@ export default class Close extends Command {
     '<%= config.bin %> close epic 1 --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     project: projectFlag,
     json: Flags.boolean({

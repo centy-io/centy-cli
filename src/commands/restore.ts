@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { daemonRestoreItem } from '../daemon/daemon-restore-item.js'
 import { projectFlag } from '../flags/project-flag.js'
@@ -14,9 +12,9 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * Restore a soft-deleted item by type and identifier
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Restore extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -28,17 +26,17 @@ export default class Restore extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Restore a soft-deleted item'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> restore issue 1',
     '<%= config.bin %> restore epic abc123-uuid',
     '<%= config.bin %> restore bug 1 --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     project: projectFlag,
   }

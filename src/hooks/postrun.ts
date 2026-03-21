@@ -1,10 +1,6 @@
-import { createRequire } from 'node:module'
 import { Hook } from '@oclif/core'
-// eslint-disable-next-line import/order
 import updateNotifier from 'update-notifier'
-
-const require = createRequire(import.meta.url)
-const pkg = require('../../package.json')
+import pkg from '../../package.json'
 
 const hook: Hook<'postrun'> = async function () {
   const notifier = updateNotifier({

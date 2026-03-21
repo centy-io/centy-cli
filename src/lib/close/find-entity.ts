@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 
 import { daemonGetIssueByDisplayNumber } from '../../daemon/daemon-get-issue-by-display-number.js'
 

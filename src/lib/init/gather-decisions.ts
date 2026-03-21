@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 
 import type { InitOptions } from '../../types/init-options.js'
 import { promptForReset } from './prompt-for-reset.js'

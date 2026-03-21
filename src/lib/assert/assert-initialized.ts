@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 import { daemonIsInitialized } from '../../daemon/daemon-is-initialized.js'
 
 export class NotInitializedError extends Error {

@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { projectFlag } from '../flags/project-flag.js'
 import { handleGlobalList } from '../lib/list-items/handle-global-list.js'
@@ -10,9 +8,9 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * List items of any type
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class List extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, doc, epic, or custom type)',
@@ -20,10 +18,10 @@ export default class List extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'List items of any type'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> list issues',
     '<%= config.bin %> list epics --status open',
@@ -31,7 +29,7 @@ export default class List extends Command {
     '<%= config.bin %> list issues --global --status open --json',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     status: Flags.string({
       char: 's',

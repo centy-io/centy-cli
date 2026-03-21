@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command } from '@oclif/core'
-
 import { daemonCreateLink } from '../daemon/daemon-create-link.js'
 import { LinkTargetType } from '../daemon/types.js'
 import { projectFlag } from '../flags/project-flag.js'
@@ -14,9 +12,9 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * Create a link between two entities
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Link extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Source entity type (e.g., issue, doc)',
@@ -37,17 +35,17 @@ export default class Link extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Create a link between two entities'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> link issue 1 blocks issue:2',
     '<%= config.bin %> link doc getting-started relates-to issue:5',
     '<%= config.bin %> link issue 1 parent-of issue:3 --project my-project',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     project: projectFlag,
   }
@@ -75,10 +73,10 @@ export default class Link extends Command {
     const response = await daemonCreateLink({
       projectPath: cwd,
       sourceId: args.id,
-      // eslint-disable-next-line no-restricted-syntax
+
       sourceType: args.type as LinkTargetType,
       targetId: parsed[1],
-      // eslint-disable-next-line no-restricted-syntax
+
       targetType: parsed[0] as LinkTargetType,
       linkType: args.linkType,
     })

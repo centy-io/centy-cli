@@ -1,7 +1,7 @@
-/* eslint-disable no-restricted-syntax */
+
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-// eslint-disable-next-line import/order
 import { daemonIsInitialized } from './daemon-is-initialized.js'
+import { getDaemonClient } from './load-proto.js'
 
 vi.mock('./load-proto.js', () => {
   const mockCallWithDeadline = vi.fn(async (method, request, _timeout) => {
@@ -19,8 +19,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-// eslint-disable-next-line import/first
-import { getDaemonClient } from './load-proto.js'
 
 describe('daemonIsInitialized', () => {
   beforeEach(() => {
@@ -35,11 +33,11 @@ describe('daemonIsInitialized', () => {
       }),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
+    ;vi.mocked(getDaemonClient).mockReturnValue(
+      mockClient
     )
 
-    const result = await daemonIsInitialized({} as never)
+    const result = await daemonIsInitialized({})
 
     expect(result).toEqual(mockResponse)
     expect(mockClient.isInitialized).toHaveBeenCalledWith(
@@ -57,10 +55,10 @@ describe('daemonIsInitialized', () => {
       }),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
+    ;vi.mocked(getDaemonClient).mockReturnValue(
+      mockClient
     )
 
-    await expect(daemonIsInitialized({} as never)).rejects.toThrow('gRPC error')
+    await expect(daemonIsInitialized({})).rejects.toThrow('gRPC error')
   })
 })

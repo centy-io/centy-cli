@@ -1,24 +1,21 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import { daemonDeleteItem } from '../../daemon/daemon-delete-item.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
   ensureInitialized,
   NotInitializedError,
 } from '../../utils/ensure-initialized.js'
-import { promptQuestion } from '../../utils/create-prompt-interface.js'
 import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 
 /**
  * Delete a user
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class UserDelete extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override aliases = ['delete:user']
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     id: Args.string({
       description: 'User ID',
@@ -26,17 +23,17 @@ export default class UserDelete extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Delete a user'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> user delete john-doe --force',
     '<%= config.bin %> delete user john-doe --force',
     '<%= config.bin %> user delete john-doe --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     force: Flags.boolean({
       char: 'f',
@@ -60,10 +57,19 @@ export default class UserDelete extends Command {
     }
 
     if (!flags.force) {
-      const answer = await promptQuestion(
-        `Are you sure you want to delete user "${args.id}"? (y/N) `
-      )
-      if (answer === null || answer.toLowerCase() !== 'y') {
+      const readline = await import('node:readline')
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      })
+      const answer = await new Promise<string>(resolve => {
+        rl.question(
+          `Are you sure you want to delete user "${args.id}"? (y/N) `,
+          resolve
+        )
+      })
+      rl.close()
+      if (answer.toLowerCase() !== 'y') {
         this.log('Cancelled.')
         return
       }

@@ -10,6 +10,6 @@ export function tuiManagerBinaryExists(path: string): boolean {
   ) {
     return true
   }
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   return existsSync(path)
 }

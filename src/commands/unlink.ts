@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import { daemonDeleteLink } from '../daemon/daemon-delete-link.js'
 import { LinkTargetType } from '../daemon/types.js'
 import { projectFlag } from '../flags/project-flag.js'
@@ -14,9 +12,9 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * Remove a link between two entities
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Unlink extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Source entity type (e.g., issue, doc)',
@@ -33,17 +31,17 @@ export default class Unlink extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Remove a link between two entities'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> unlink issue 1 issue:2',
     '<%= config.bin %> unlink issue 1 issue:2 --type blocks',
     '<%= config.bin %> unlink doc getting-started issue:5 --project my-project',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     type: Flags.string({
       description:
@@ -75,10 +73,10 @@ export default class Unlink extends Command {
     const response = await daemonDeleteLink({
       projectPath: cwd,
       sourceId: args.id,
-      // eslint-disable-next-line no-restricted-syntax
+
       sourceType: args.type as LinkTargetType,
       targetId: parsed[1],
-      // eslint-disable-next-line no-restricted-syntax
+
       targetType: parsed[0] as LinkTargetType,
       linkType: flags.type !== undefined ? flags.type : '',
     })

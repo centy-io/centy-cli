@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { daemonCreateItem } from '../daemon/daemon-create-item.js'
 import { createFlags } from '../flags/create-flags.js'
@@ -16,9 +14,9 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * Create a new item of any registered type via the generic CreateItem RPC
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Create extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, doc, epic, or custom type)',
@@ -26,10 +24,10 @@ export default class Create extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Create a new item of any type'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> create issue --title "Bug in login" --priority 1',
     '<%= config.bin %> create doc --title "Getting Started" --body "# Guide"',
@@ -40,7 +38,7 @@ export default class Create extends Command {
     '<%= config.bin %> create task --title "Write tests" --link relates-to:issue:5 --link relates-to:doc:api-guide',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = createFlags
 
   public async run(): Promise<void> {

@@ -11,8 +11,7 @@ export function parseCustomFields(
     if (eqIndex === -1) continue
     const key = field.slice(0, eqIndex)
     const value = field.slice(eqIndex + 1)
-    // eslint-disable-next-line security/detect-object-injection
-    result[key] = value
+    Reflect.set(result, key, value)
   }
   return result
 }

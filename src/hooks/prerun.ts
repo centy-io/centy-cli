@@ -43,7 +43,7 @@ const hook: Hook<'prerun'> = async function (options) {
     return
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   const projectPath = process.env['CENTY_CWD'] ?? process.cwd()
   const versionStatus = await getProjectVersionStatus(projectPath)
   if (versionStatus !== null && versionStatus.isProjectBehind) {

@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { daemonDuplicateItem } from '../daemon/daemon-duplicate-item.js'
 import {
@@ -14,9 +12,9 @@ import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
 /**
  * Duplicate an item of any type to the same or a different project
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Duplicate extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -28,11 +26,11 @@ export default class Duplicate extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description =
     'Duplicate an item to the same or a different project'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> duplicate issue 1',
     '<%= config.bin %> duplicate epic 1 --title "Copy of epic"',
@@ -40,7 +38,7 @@ export default class Duplicate extends Command {
     '<%= config.bin %> duplicate epic 1 --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     to: Flags.string({
       description: 'Target project path (defaults to same project)',

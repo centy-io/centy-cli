@@ -22,17 +22,16 @@ describeOrSkip('load-proto', () => {
       vi.resetModules()
     }
     vi.clearAllMocks()
-    // eslint-disable-next-line no-restricted-syntax
-    delete process.env['CENTY_DAEMON_ADDR']
+    Reflect.deleteProperty(process.env, 'CENTY_DAEMON_ADDR')
   })
 
   it('should create daemon client with default address', async () => {
     const { loadPackageDefinition } = await import('@grpc/grpc-js')
     const MockClient = vi.fn()
-    // eslint-disable-next-line no-restricted-syntax
-    ;(loadPackageDefinition as ReturnType<typeof vi.fn>).mockReturnValue({
+
+    ;vi.mocked(loadPackageDefinition).mockReturnValue({
       centy: { v1: { CentyDaemon: MockClient } },
-    } as never)
+    })
 
     const { getDaemonClient } = await import('./load-proto.js')
     getDaemonClient()
@@ -45,15 +44,14 @@ describeOrSkip('load-proto', () => {
   })
 
   it('should use CENTY_DAEMON_ADDR environment variable when set', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    process.env['CENTY_DAEMON_ADDR'] = 'localhost:9999'
+    Reflect.set(process.env, 'CENTY_DAEMON_ADDR', 'localhost:9999')
 
     const { loadPackageDefinition } = await import('@grpc/grpc-js')
     const MockClient = vi.fn()
-    // eslint-disable-next-line no-restricted-syntax
-    ;(loadPackageDefinition as ReturnType<typeof vi.fn>).mockReturnValue({
+
+    ;vi.mocked(loadPackageDefinition).mockReturnValue({
       centy: { v1: { CentyDaemon: MockClient } },
-    } as never)
+    })
 
     const { getDaemonClient } = await import('./load-proto.js')
     getDaemonClient()
@@ -69,16 +67,16 @@ describeOrSkip('load-proto', () => {
     const { loadPackageDefinition } = await import('@grpc/grpc-js')
     let constructorCallCount = 0
     class MockClient {
-      // eslint-disable-next-line no-restricted-syntax
-      mock = 'client'
+      mock: string
       constructor() {
+        this.mock = 'client'
         constructorCallCount++
       }
     }
-    // eslint-disable-next-line no-restricted-syntax
-    ;(loadPackageDefinition as ReturnType<typeof vi.fn>).mockReturnValue({
+
+    ;vi.mocked(loadPackageDefinition).mockReturnValue({
       centy: { v1: { CentyDaemon: MockClient } },
-    } as never)
+    })
 
     const { getDaemonClient } = await import('./load-proto.js')
     const client1 = getDaemonClient()

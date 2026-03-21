@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { projectFlag } from '../flags/project-flag.js'
 import { handleGlobalNext } from '../lib/next-item/handle-global-next.js'
@@ -10,9 +8,9 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * Get the next open item of any type
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Next extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, bug, epic, or custom type)',
@@ -20,10 +18,10 @@ export default class Next extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Get the next open item of any type'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> next issue',
     '<%= config.bin %> next issue --status in-progress',
@@ -33,7 +31,7 @@ export default class Next extends Command {
     '<%= config.bin %> next issue --global --status in-progress',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     status: Flags.string({
       char: 's',

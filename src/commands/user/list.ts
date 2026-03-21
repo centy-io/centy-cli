@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonListUsers } from '../../daemon/daemon-list-users.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
@@ -12,15 +10,15 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * List all users in the project
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class UserList extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override aliases = ['list:users']
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'List all users in the project'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> user list',
     '<%= config.bin %> list users',
@@ -29,7 +27,7 @@ export default class UserList extends Command {
     '<%= config.bin %> user list --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     'git-username': Flags.string({
       char: 'g',

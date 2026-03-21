@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonCreateUser } from '../../daemon/daemon-create-user.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
@@ -12,12 +10,12 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Create a new user in the project
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class UserCreate extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Create a new user in the project'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> user create --name "John Doe"',
     '<%= config.bin %> user create --id john-doe --name "John Doe" --email john@example.com',
@@ -25,7 +23,7 @@ export default class UserCreate extends Command {
     '<%= config.bin %> user create --name "Bob" --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     id: Flags.string({
       char: 'i',

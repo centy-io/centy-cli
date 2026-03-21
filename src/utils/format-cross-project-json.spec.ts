@@ -24,11 +24,7 @@ describe('formatCrossProjectJson', () => {
       },
     ])
 
-    expect(
-      // eslint-disable-next-line no-restricted-syntax
-      (result as { foundIn: Array<{ displayNumber?: number }> }).foundIn[0]
-        .displayNumber
-    ).toBe(5)
+    expect(result).toHaveProperty('foundIn.0.displayNumber', 5)
   })
 
   it('should format for pr entity', () => {

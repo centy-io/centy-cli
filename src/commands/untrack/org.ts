@@ -1,18 +1,15 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import { daemonDeleteOrganization } from '../../daemon/daemon-delete-organization.js'
-import { promptQuestion } from '../../utils/create-prompt-interface.js'
 
 /**
  * Remove an organization from tracking
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class UntrackOrg extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override aliases = ['untrack:organization']
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     slug: Args.string({
       description: 'Organization slug',
@@ -20,17 +17,17 @@ export default class UntrackOrg extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Remove an organization from tracking'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> untrack org my-org',
     '<%= config.bin %> untrack org my-org --force',
     '<%= config.bin %> untrack organization my-org',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     force: Flags.boolean({
       char: 'f',
@@ -43,10 +40,19 @@ export default class UntrackOrg extends Command {
     const { args, flags } = await this.parse(UntrackOrg)
 
     if (!flags.force) {
-      const answer = await promptQuestion(
-        `Are you sure you want to untrack organization "${args.slug}"? (y/N) `
-      )
-      if (answer === null || answer.toLowerCase() !== 'y') {
+      const readline = await import('node:readline')
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      })
+      const answer = await new Promise<string>(resolve => {
+        rl.question(
+          `Are you sure you want to untrack organization "${args.slug}"? (y/N) `,
+          resolve
+        )
+      })
+      rl.close()
+      if (answer.toLowerCase() !== 'y') {
         this.log('Cancelled.')
         return
       }
@@ -59,11 +65,17 @@ export default class UntrackOrg extends Command {
 
     if (!response.success) {
       if (response.error.toLowerCase().includes('projects')) {
-        const answer = await promptQuestion(
-          `${response.error} Untrack them as well? (y/N) `
-        )
+        const readline = await import('node:readline')
+        const rl = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout,
+        })
+        const answer = await new Promise<string>(resolve => {
+          rl.question(`${response.error} Untrack them as well? (y/N) `, resolve)
+        })
+        rl.close()
 
-        if (answer === null || answer.toLowerCase() !== 'y') {
+        if (answer.toLowerCase() !== 'y') {
           this.error(response.error)
         }
 

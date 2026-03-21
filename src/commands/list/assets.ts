@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonListAssets } from '../../daemon/daemon-list-assets.js'
 import { daemonListSharedAssets } from '../../daemon/daemon-list-shared-assets.js'
 import { projectFlag } from '../../flags/project-flag.js'
@@ -13,15 +11,15 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * List assets for an issue or shared assets
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class ListAssets extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'List assets for an issue or shared assets'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override aliases = ['asset:list']
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> list assets --issue 1',
     '<%= config.bin %> list assets --shared',
@@ -29,7 +27,7 @@ export default class ListAssets extends Command {
     '<%= config.bin %> list assets --issue 1 --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     issue: Flags.string({
       char: 'i',

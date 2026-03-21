@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 
 export function isWindows(): boolean {
   return process.platform === 'win32'

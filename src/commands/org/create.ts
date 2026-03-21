@@ -1,14 +1,12 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import { daemonCreateOrganization } from '../../daemon/daemon-create-organization.js'
 
 /**
  * Create a new organization
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class OrgCreate extends Command {
-  // eslint-disable-next-line no-restricted-syntax
+
   static override args = {
     name: Args.string({
       description: 'Organization display name',
@@ -16,17 +14,17 @@ export default class OrgCreate extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override description = 'Create a new organization to group projects'
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override examples = [
     '<%= config.bin %> org create "My Company"',
     '<%= config.bin %> org create "Centy.io" --slug centy-io',
     '<%= config.bin %> org create "My Org" --description "Official projects"',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
+
   static override flags = {
     slug: Flags.string({
       char: 's',

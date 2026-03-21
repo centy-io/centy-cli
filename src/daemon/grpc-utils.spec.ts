@@ -1,6 +1,5 @@
-/* eslint-disable no-restricted-syntax */
 import { describe, expect, it, vi } from 'vitest'
-import { status } from '@grpc/grpc-js'
+import { status, Metadata } from '@grpc/grpc-js'
 import type { ServiceError } from '@grpc/grpc-js'
 import {
   createCallOptions,
@@ -8,7 +7,12 @@ import {
   isDeadlineExceededError,
   isDaemonUnavailableError,
   callWithDeadline,
+  type GrpcMethod,
 } from './grpc-utils.js'
+
+function makeServiceError(code: number, message: string = ''): ServiceError {
+  return Object.assign(new Error(message), { code, details: message, metadata: new Metadata() })
+}
 
 describe('grpc-utils', () => {
   describe('createCallOptions', () => {
@@ -18,7 +22,7 @@ describe('grpc-utils', () => {
       const after = Date.now()
 
       expect(options.deadline).toBeInstanceOf(Date)
-      const deadline = (options.deadline as Date).getTime()
+      const deadline = options.deadline instanceof Date ? options.deadline.getTime() : 0
       // Default timeout is 30_000ms
       expect(deadline).toBeGreaterThanOrEqual(before + 30_000)
       expect(deadline).toBeLessThanOrEqual(after + 30_000)
@@ -29,7 +33,7 @@ describe('grpc-utils', () => {
       const options = createCallOptions(5000)
       const after = Date.now()
 
-      const deadline = (options.deadline as Date).getTime()
+      const deadline = options.deadline instanceof Date ? options.deadline.getTime() : 0
       expect(deadline).toBeGreaterThanOrEqual(before + 5000)
       expect(deadline).toBeLessThanOrEqual(after + 5000)
     })
@@ -47,37 +51,31 @@ describe('grpc-utils', () => {
 
   describe('isDeadlineExceededError', () => {
     it('should return true for deadline exceeded errors', () => {
-      const error = { code: status.DEADLINE_EXCEEDED } as ServiceError
+      const error = makeServiceError(status.DEADLINE_EXCEEDED)
       expect(isDeadlineExceededError(error)).toBe(true)
     })
 
     it('should return false for other errors', () => {
-      const error = { code: status.UNAVAILABLE } as ServiceError
+      const error = makeServiceError(status.UNAVAILABLE)
       expect(isDeadlineExceededError(error)).toBe(false)
     })
   })
 
   describe('isDaemonUnavailableError', () => {
     it('should return true for unavailable status', () => {
-      const error = {
-        code: status.UNAVAILABLE,
-        message: 'some error',
-      } as ServiceError
+      const error = makeServiceError(status.UNAVAILABLE, 'some error')
       expect(isDaemonUnavailableError(error)).toBe(true)
     })
 
     it('should return true for ECONNREFUSED message', () => {
-      const error = {
-        code: status.UNKNOWN,
-        message: 'connect ECONNREFUSED 127.0.0.1:50051',
-      } as ServiceError
+      const error = makeServiceError(status.UNKNOWN, 'connect ECONNREFUSED 127.0.0.1:50051')
       expect(isDaemonUnavailableError(error)).toBe(true)
     })
   })
 
   describe('callWithDeadline', () => {
     it('should resolve with response on success', async () => {
-      const mockMethod = vi.fn(
+      const mockMethod: GrpcMethod<unknown, string> = vi.fn(
         (
           _req: unknown,
           _opts: unknown,
@@ -88,7 +86,7 @@ describe('grpc-utils', () => {
       )
 
       const result = await callWithDeadline(
-        mockMethod as never,
+        mockMethod,
         { test: true },
         5000
       )
@@ -96,8 +94,8 @@ describe('grpc-utils', () => {
     })
 
     it('should reject with error on failure', async () => {
-      const mockError = new Error('test error') as ServiceError
-      const mockMethod = vi.fn(
+      const mockError = makeServiceError(status.UNKNOWN, 'test error')
+      const mockMethod: GrpcMethod<unknown, null> = vi.fn(
         (
           _req: unknown,
           _opts: unknown,
@@ -108,7 +106,7 @@ describe('grpc-utils', () => {
       )
 
       await expect(
-        callWithDeadline(mockMethod as never, { test: true }, 5000)
+        callWithDeadline(mockMethod, { test: true }, 5000)
       ).rejects.toThrow('test error')
     })
   })

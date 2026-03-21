@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 /**
  * Feature types (CLI-side only, not in daemon) for gRPC communication.
  */
