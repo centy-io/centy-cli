@@ -22,7 +22,6 @@ export default class WorkspaceOpen extends Command {
     '<%= config.bin %> workspace open 1',
     '<%= config.bin %> workspace open abc-123 --ttl 24',
     '<%= config.bin %> workspace open 1 --editor vscode',
-    '<%= config.bin %> workspace open 1 --editor terminal',
   ]
 
 
@@ -44,12 +43,25 @@ export default class WorkspaceOpen extends Command {
     }),
     editor: Flags.string({
       description:
-        'Editor to use: vscode, terminal (default: interactive selection or project default)',
+        'Editor to use (default: interactive selection or project default)',
     }),
   }
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(WorkspaceOpen)
+    const { editors } = await daemonGetSupportedEditors({})
+    const availableIds = editors.filter(e => e.available).map(e => e.editorId)
+
+    const { args, flags } = await this.parse({
+      args: WorkspaceOpen.args,
+      flags: {
+        ...WorkspaceOpen.flags,
+        editor: Flags.string({
+          description: WorkspaceOpen.flags.editor.description,
+          options: availableIds,
+        }),
+      },
+    })
+
     const cwd = await resolveProjectPath(flags.project)
 
     try {
@@ -60,8 +72,6 @@ export default class WorkspaceOpen extends Command {
       }
       throw error instanceof Error ? error : new Error(String(error))
     }
-
-    const { editors } = await daemonGetSupportedEditors({})
 
     let editorId: string
     try {

@@ -20,7 +20,6 @@ export default class WorkspaceNew extends Command {
     '<%= config.bin %> workspace new --name my-workspace',
     '<%= config.bin %> workspace new --name "Feature spike" --description "Explore new auth approach" --ttl 24',
     '<%= config.bin %> workspace new --editor vscode',
-    '<%= config.bin %> workspace new --editor terminal',
   ]
 
 
@@ -41,15 +40,25 @@ export default class WorkspaceNew extends Command {
     }),
     editor: Flags.string({
       description:
-        'Editor to use: vscode, terminal (default: interactive selection or project default)',
+        'Editor to use (default: interactive selection or project default)',
     }),
   }
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(WorkspaceNew)
-    const cwd = await resolveProjectPath(flags.project)
-
     const { editors } = await daemonGetSupportedEditors({})
+    const availableIds = editors.filter(e => e.available).map(e => e.editorId)
+
+    const { flags } = await this.parse({
+      flags: {
+        ...WorkspaceNew.flags,
+        editor: Flags.string({
+          description: WorkspaceNew.flags.editor.description,
+          options: availableIds,
+        }),
+      },
+    })
+
+    const cwd = await resolveProjectPath(flags.project)
 
     let editorId: string
     try {
