@@ -144,7 +144,9 @@ describe('Start command', () => {
     const { error } = await runCommandSafely(cmd)
 
     expect(error).toBeDefined()
-    expect(cmd.errors.some(e => e.includes('Daemon binary not found'))).toBe(true)
+    expect(cmd.errors.some(e => e.includes('Daemon binary not found'))).toBe(
+      true
+    )
   })
 
   it('should auto-install daemon with --yes flag', async () => {
