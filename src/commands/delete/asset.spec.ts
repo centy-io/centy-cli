@@ -7,7 +7,7 @@ import {
 const mockDaemonDeleteAsset = vi.fn()
 const mockResolveProjectPath = vi.fn()
 const mockEnsureInitialized = vi.fn()
-const mockCreateInterface = vi.fn()
+const mockPromptQuestion = vi.fn()
 
 vi.mock('../../daemon/daemon-delete-asset.js', () => ({
   daemonDeleteAsset: (...args: unknown[]) => mockDaemonDeleteAsset(...args),
@@ -27,18 +27,9 @@ vi.mock('../../utils/ensure-initialized.js', () => ({
   },
 }))
 
-vi.mock('node:readline', () => ({
-  createInterface: () => mockCreateInterface(),
+vi.mock('../../utils/create-prompt-interface.js', () => ({
+  promptQuestion: (...args: unknown[]) => mockPromptQuestion(...args),
 }))
-
-function setupReadlineMock(answer: string) {
-  mockCreateInterface.mockReturnValue({
-    question: (_prompt: string, callback: (answer: string) => void) => {
-      callback(answer)
-    },
-    close: vi.fn(),
-  })
-}
 
 describe('DeleteAsset command', () => {
   beforeEach(() => {
@@ -124,7 +115,7 @@ describe('DeleteAsset command', () => {
 
   it('should delete asset after confirmation', async () => {
     const { default: Command } = await import('./asset.js')
-    setupReadlineMock('y')
+    mockPromptQuestion.mockResolvedValue('y')
     mockDaemonDeleteAsset.mockResolvedValue({
       success: true,
       filename: 'test.png',
@@ -143,7 +134,7 @@ describe('DeleteAsset command', () => {
 
   it('should cancel when user answers no', async () => {
     const { default: Command } = await import('./asset.js')
-    setupReadlineMock('n')
+    mockPromptQuestion.mockResolvedValue('n')
 
     const cmd = createMockCommand(Command, {
       flags: { force: false, issue: '1', shared: false },
