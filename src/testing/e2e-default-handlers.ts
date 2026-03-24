@@ -14,7 +14,6 @@ export const BASE_HANDLERS: MockHandlers = {
   getDaemonInfo: () => ({
     version: '0.7.7',
     binaryPath: '/usr/local/bin/centy-daemon',
-    vscodeAvailable: false,
   }),
   /** Version check used by getProjectVersionStatus() in the prerun hook */
   getManifest: () => ({
@@ -24,7 +23,6 @@ export const BASE_HANDLERS: MockHandlers = {
       schemaVersion: 1,
       centyVersion: '0.7.7',
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
     },
   }),
 }

@@ -27,7 +27,6 @@ describe('daemonGetSupportedEditors', () => {
     const mockResponse = {
       editors: [
         {
-          editorType: 'EDITOR_TYPE_VSCODE',
           name: 'VS Code',
           description: 'Visual Studio Code',
           available: true,
@@ -35,7 +34,6 @@ describe('daemonGetSupportedEditors', () => {
           terminalWrapper: false,
         },
         {
-          editorType: 'EDITOR_TYPE_TERMINAL',
           name: 'Terminal',
           description: 'Terminal editor',
           available: true,

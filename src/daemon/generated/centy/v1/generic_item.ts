@@ -41,6 +41,8 @@ export interface GenericItemMetadata {
   deletedAt: string;
   /** Custom fields (values are JSON strings) */
   customFields: { [key: string]: string };
+  /** Free-form tags (e.g. ["bug", "frontend"]) */
+  tags: string[];
 }
 
 export interface GenericItemMetadata_CustomFieldsEntry {
@@ -60,6 +62,8 @@ export interface CreateItemRequest {
   priority: number;
   /** Custom fields (values are JSON strings) */
   customFields: { [key: string]: string };
+  /** Tags to set on create (empty = no tags) */
+  tags: string[];
 }
 
 export interface CreateItemRequest_CustomFieldsEntry {
@@ -120,6 +124,10 @@ export interface UpdateItemRequest {
   priority: number;
   /** Custom fields to merge (values are JSON strings) */
   customFields: { [key: string]: string };
+  /** Non-empty = replace tags; empty = don't change */
+  tags: string[];
+  /** If true, clear all tags (takes precedence over tags field) */
+  clearTags: boolean;
 }
 
 export interface UpdateItemRequest_CustomFieldsEntry {

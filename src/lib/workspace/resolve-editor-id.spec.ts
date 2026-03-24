@@ -9,7 +9,6 @@ vi.mock('./select-editor.js', () => ({
 }))
 
 const vsCodeEditor: EditorInfo = {
-  editorType: 0,
   name: 'VS Code',
   description: 'Visual Studio Code',
   available: true,
@@ -18,7 +17,6 @@ const vsCodeEditor: EditorInfo = {
 }
 
 const terminalEditor: EditorInfo = {
-  editorType: 1,
   name: 'Terminal',
   description: 'Terminal editor',
   available: true,
@@ -27,7 +25,6 @@ const terminalEditor: EditorInfo = {
 }
 
 const unavailableEditor: EditorInfo = {
-  editorType: 0,
   name: 'Zed',
   description: 'Zed editor',
   available: false,

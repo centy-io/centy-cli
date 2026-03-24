@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { daemonOpenInTempWorkspace } from './daemon-open-in-temp-workspace.js'
+import { daemonListItemsAcrossProjects } from './daemon-list-items-across-projects.js'
 import { getDaemonClient } from './load-proto.js'
 
 vi.mock('./load-proto.js', () => {
@@ -18,36 +18,42 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-describe('daemonOpenInTempWorkspace', () => {
+describe('daemonListItemsAcrossProjects', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('should resolve with response on success', async () => {
-    const mockResponse = { success: true, workspacePath: '/tmp/workspace' }
+    const mockResponse = {
+      success: true,
+      items: [],
+      totalCount: 0,
+      errors: [],
+      error: '',
+    }
     const mockClient = {
-      openInTempWorkspace: vi.fn((_req, _options, callback) => {
+      listItemsAcrossProjects: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
       }),
     }
 
     vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
-    const result = await daemonOpenInTempWorkspace({
-      projectPath: '/test',
-      issueId: '123',
-      ttlHours: 0,
-      editorId: 'vscode',
+    const result = await daemonListItemsAcrossProjects({
+      itemType: 'issues',
+      filter: '',
+      limit: 0,
+      offset: 0,
     })
 
     expect(result).toEqual(mockResponse)
-    expect(mockClient.openInTempWorkspace).toHaveBeenCalled()
+    expect(mockClient.listItemsAcrossProjects).toHaveBeenCalled()
   })
 
   it('should reject with error on failure', async () => {
     const mockError = new Error('gRPC error')
     const mockClient = {
-      openInTempWorkspace: vi.fn((_req, _options, callback) => {
+      listItemsAcrossProjects: vi.fn((_req, _options, callback) => {
         callback(mockError, null)
       }),
     }
@@ -55,11 +61,11 @@ describe('daemonOpenInTempWorkspace', () => {
     vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     await expect(
-      daemonOpenInTempWorkspace({
-        projectPath: '/test',
-        issueId: '123',
-        ttlHours: 0,
-        editorId: 'vscode',
+      daemonListItemsAcrossProjects({
+        itemType: 'issues',
+        filter: '',
+        limit: 0,
+        offset: 0,
       })
     ).rejects.toThrow('gRPC error')
   })

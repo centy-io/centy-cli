@@ -1,14 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const mockDaemonListProjects = vi.fn()
-const mockDaemonListItems = vi.fn()
+const mockDaemonListItemsAcrossProjects = vi.fn()
 
-vi.mock('./daemon-list-projects.js', () => ({
-  daemonListProjects: (...args: unknown[]) => mockDaemonListProjects(...args),
-}))
-
-vi.mock('./daemon-list-items.js', () => ({
-  daemonListItems: (...args: unknown[]) => mockDaemonListItems(...args),
+vi.mock('./daemon-list-items-across-projects.js', () => ({
+  daemonListItemsAcrossProjects: (...args: unknown[]) =>
+    mockDaemonListItemsAcrossProjects(...args),
 }))
 
 describe('listItemsGlobally', () => {
@@ -16,26 +12,9 @@ describe('listItemsGlobally', () => {
     vi.clearAllMocks()
   })
 
-  it('should return items from all initialized projects', async () => {
+  it('should return items from all projects', async () => {
     const { listItemsGlobally } =
       await import('./daemon-list-items-globally.js')
-
-    mockDaemonListProjects.mockResolvedValue({
-      projects: [
-        {
-          path: '/path/to/project-a',
-          name: 'project-a',
-          displayPath: '~/project-a',
-          initialized: true,
-        },
-        {
-          path: '/path/to/project-b',
-          name: 'project-b',
-          displayPath: '~/project-b',
-          initialized: true,
-        },
-      ],
-    })
 
     const itemA = {
       id: 'item-a',
@@ -58,9 +37,26 @@ describe('listItemsGlobally', () => {
       },
     }
 
-    mockDaemonListItems
-      .mockResolvedValueOnce({ success: true, items: [itemA] })
-      .mockResolvedValueOnce({ success: true, items: [itemB] })
+    mockDaemonListItemsAcrossProjects.mockResolvedValue({
+      success: true,
+      items: [
+        {
+          item: itemA,
+          projectPath: '/path/to/project-a',
+          projectName: 'project-a',
+          displayPath: '~/project-a',
+        },
+        {
+          item: itemB,
+          projectPath: '/path/to/project-b',
+          projectName: 'project-b',
+          displayPath: '~/project-b',
+        },
+      ],
+      totalCount: 2,
+      errors: [],
+      error: '',
+    })
 
     const result = await listItemsGlobally('issues', '', 0, 0)
 
@@ -72,65 +68,17 @@ describe('listItemsGlobally', () => {
     expect(result.errors).toHaveLength(0)
   })
 
-  it('should sort results by createdAt descending', async () => {
+  it('should forward errors from the RPC response', async () => {
     const { listItemsGlobally } =
       await import('./daemon-list-items-globally.js')
 
-    mockDaemonListProjects.mockResolvedValue({
-      projects: [
-        { path: '/a', name: 'a', displayPath: '~/a', initialized: true },
-        { path: '/b', name: 'b', displayPath: '~/b', initialized: true },
-      ],
+    mockDaemonListItemsAcrossProjects.mockResolvedValue({
+      success: true,
+      items: [],
+      totalCount: 0,
+      errors: ['/a: Connection refused'],
+      error: '',
     })
-
-    const older = {
-      id: 'older',
-      title: 'Older',
-      metadata: { createdAt: '2024-01-01T00:00:00Z' },
-    }
-    const newer = {
-      id: 'newer',
-      title: 'Newer',
-      metadata: { createdAt: '2024-06-01T00:00:00Z' },
-    }
-
-    mockDaemonListItems
-      .mockResolvedValueOnce({ success: true, items: [older] })
-      .mockResolvedValueOnce({ success: true, items: [newer] })
-
-    const result = await listItemsGlobally('issues', '', 0, 0)
-
-    expect(result.items[0].item.title).toBe('Newer')
-    expect(result.items[1].item.title).toBe('Older')
-  })
-
-  it('should skip uninitialized projects', async () => {
-    const { listItemsGlobally } =
-      await import('./daemon-list-items-globally.js')
-
-    mockDaemonListProjects.mockResolvedValue({
-      projects: [
-        { path: '/a', name: 'a', displayPath: '~/a', initialized: false },
-      ],
-    })
-
-    const result = await listItemsGlobally('issues', '', 0, 0)
-
-    expect(mockDaemonListItems).not.toHaveBeenCalled()
-    expect(result.items).toHaveLength(0)
-  })
-
-  it('should collect errors from failed projects', async () => {
-    const { listItemsGlobally } =
-      await import('./daemon-list-items-globally.js')
-
-    mockDaemonListProjects.mockResolvedValue({
-      projects: [
-        { path: '/a', name: 'a', displayPath: '~/a', initialized: true },
-      ],
-    })
-
-    mockDaemonListItems.mockRejectedValue(new Error('Connection refused'))
 
     const result = await listItemsGlobally('issues', '', 0, 0)
 
@@ -139,48 +87,26 @@ describe('listItemsGlobally', () => {
     expect(result.errors[0]).toContain('/a')
   })
 
-  it('should apply limit and offset to aggregated results', async () => {
+  it('should pass itemType, filter, limit, and offset to the RPC', async () => {
     const { listItemsGlobally } =
       await import('./daemon-list-items-globally.js')
 
-    mockDaemonListProjects.mockResolvedValue({
-      projects: [
-        { path: '/a', name: 'a', displayPath: '~/a', initialized: true },
-      ],
+    mockDaemonListItemsAcrossProjects.mockResolvedValue({
+      success: true,
+      items: [],
+      totalCount: 0,
+      errors: [],
+      error: '',
     })
-
-    const items = Array.from({ length: 5 }, (_, i) => ({
-      id: `item-${i}`,
-      title: `Item ${i}`,
-      metadata: { createdAt: `2024-01-0${5 - i}T00:00:00Z` },
-    }))
-
-    mockDaemonListItems.mockResolvedValue({ success: true, items })
-
-    const result = await listItemsGlobally('issues', '', 2, 1)
-
-    expect(result.items).toHaveLength(2)
-    expect(result.items[0].item.title).toBe('Item 1')
-    expect(result.items[1].item.title).toBe('Item 2')
-  })
-
-  it('should pass filter to each project call', async () => {
-    const { listItemsGlobally } =
-      await import('./daemon-list-items-globally.js')
-
-    mockDaemonListProjects.mockResolvedValue({
-      projects: [
-        { path: '/a', name: 'a', displayPath: '~/a', initialized: true },
-      ],
-    })
-
-    mockDaemonListItems.mockResolvedValue({ success: true, items: [] })
 
     const filter = JSON.stringify({ status: { $eq: 'open' } })
-    await listItemsGlobally('issues', filter, 0, 0)
+    await listItemsGlobally('issues', filter, 10, 5)
 
-    expect(mockDaemonListItems).toHaveBeenCalledWith(
-      expect.objectContaining({ filter })
-    )
+    expect(mockDaemonListItemsAcrossProjects).toHaveBeenCalledWith({
+      itemType: 'issues',
+      filter,
+      limit: 10,
+      offset: 5,
+    })
   })
 })

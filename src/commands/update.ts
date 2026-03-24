@@ -60,6 +60,8 @@ export default class Update extends Command {
       !flags.status &&
       !flags.priority &&
       (!flags['custom-field'] || flags['custom-field'].length === 0) &&
+      (!flags.tag || flags.tag.length === 0) &&
+      !flags['clear-tags'] &&
       (!flags.link || flags.link.length === 0)
     ) {
       this.error('At least one field must be specified to update.')
@@ -77,6 +79,8 @@ export default class Update extends Command {
       status: flags.status !== undefined ? flags.status : '',
       priority: flags.priority !== undefined ? flags.priority : 0,
       customFields: parseCustomFields(flags['custom-field']),
+      tags: flags.tag !== undefined ? flags.tag : [],
+      clearTags: flags['clear-tags'],
     })
 
     if (!response.success) this.error(response.error)

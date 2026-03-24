@@ -19,6 +19,15 @@ export const updateFlags = {
     multiple: true,
     description: 'Custom field in key=value format (repeatable)',
   }),
+  tag: Flags.string({
+    multiple: true,
+    description:
+      'Replace tags with this value (repeatable; omit to leave tags unchanged)',
+  }),
+  'clear-tags': Flags.boolean({
+    description: 'Clear all tags from the item',
+    default: false,
+  }),
   link: Flags.string({
     description:
       'Link to another entity as link-type:type:id (repeatable, e.g. blocks:issue:2)',

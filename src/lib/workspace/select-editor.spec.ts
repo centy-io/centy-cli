@@ -8,7 +8,6 @@ vi.mock('prompts', () => ({
 }))
 
 const vsCodeEditor: EditorInfo = {
-  editorType: 0,
   name: 'VS Code',
   description: 'Visual Studio Code',
   available: true,
@@ -17,7 +16,6 @@ const vsCodeEditor: EditorInfo = {
 }
 
 const terminalEditor: EditorInfo = {
-  editorType: 1,
   name: 'Terminal',
   description: 'Terminal editor',
   available: true,

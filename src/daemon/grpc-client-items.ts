@@ -27,6 +27,8 @@ import type {
   CreateItemTypeResponse,
   ListItemTypesRequest,
   ListItemTypesResponse,
+  ListItemsAcrossProjectsRequest,
+  ListItemsAcrossProjectsResponse,
 } from './types.js'
 import type { GrpcMethod } from './grpc-utils.js'
 
@@ -54,4 +56,8 @@ export interface CentyDaemonItemsClient {
   moveItem: GrpcMethod<MoveItemRequest, MoveItemResponse>
   createItemType: GrpcMethod<CreateItemTypeRequest, CreateItemTypeResponse>
   listItemTypes: GrpcMethod<ListItemTypesRequest, ListItemTypesResponse>
+  listItemsAcrossProjects: GrpcMethod<
+    ListItemsAcrossProjectsRequest,
+    ListItemsAcrossProjectsResponse
+  >
 }

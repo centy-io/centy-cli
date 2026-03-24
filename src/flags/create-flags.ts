@@ -26,6 +26,10 @@ export const createFlags = {
     description: 'Custom field as key=value (repeatable)',
     multiple: true,
   }),
+  tag: Flags.string({
+    description: 'Tag to apply (repeatable)',
+    multiple: true,
+  }),
   link: Flags.string({
     description:
       'Link to another entity as link-type:type:id (repeatable, e.g. blocks:issue:2)',
