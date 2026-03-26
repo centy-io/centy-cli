@@ -69,11 +69,11 @@ export default class Unlink extends Command {
     const response = await daemonDeleteLink({
       projectPath: cwd,
       sourceId: args.id,
-
-      sourceType: args.type as LinkTargetType,
+      sourceType: LinkTargetType.LINK_TARGET_TYPE_UNSPECIFIED,
+      sourceItemType: args.type,
       targetId: parsed[1],
-
-      targetType: parsed[0] as LinkTargetType,
+      targetType: LinkTargetType.LINK_TARGET_TYPE_UNSPECIFIED,
+      targetItemType: parsed[0],
       linkType: flags.type !== undefined ? flags.type : '',
     })
 

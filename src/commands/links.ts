@@ -56,8 +56,8 @@ export default class Links extends Command {
     const response = await daemonListLinks({
       projectPath: cwd,
       entityId: args.id,
-
-      entityType: args.type as LinkTargetType,
+      entityType: LinkTargetType.LINK_TARGET_TYPE_UNSPECIFIED,
+      entityItemType: args.type,
     })
 
     if (flags.json) {

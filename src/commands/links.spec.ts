@@ -70,7 +70,8 @@ describe('Links command', () => {
     expect(mockDaemonListLinks).toHaveBeenCalledWith({
       projectPath: '/test/project',
       entityId: '1',
-      entityType: 'issue',
+      entityType: 'LINK_TARGET_TYPE_UNSPECIFIED',
+      entityItemType: 'issue',
     })
     expect(cmd.logs.some(log => log.includes('Found 2 link(s)'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('blocks --> issue:2'))).toBe(true)
@@ -93,7 +94,8 @@ describe('Links command', () => {
     expect(mockDaemonListLinks).toHaveBeenCalledWith({
       projectPath: '/test/project',
       entityId: 'getting-started',
-      entityType: 'doc',
+      entityType: 'LINK_TARGET_TYPE_UNSPECIFIED',
+      entityItemType: 'doc',
     })
     expect(cmd.logs.some(log => log.includes('No links found for doc'))).toBe(
       true

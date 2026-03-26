@@ -44,9 +44,11 @@ export async function applyLinkFlags(
     const linkResp = await daemonCreateLink({
       projectPath,
       sourceId,
-      sourceType: toLinkTargetType(sourceType),
+      sourceType: LinkTargetType.LINK_TARGET_TYPE_UNSPECIFIED,
+      sourceItemType: sourceType,
       targetId: parsed[1],
-      targetType: toLinkTargetType(parsed[0]),
+      targetType: LinkTargetType.LINK_TARGET_TYPE_UNSPECIFIED,
+      targetItemType: parsed[0],
       linkType,
     })
     if (!linkResp.success) {

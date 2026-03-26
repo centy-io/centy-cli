@@ -840,27 +840,33 @@ export interface CleanupExpiredWorkspacesResponse {
 export interface Link {
   /** Target entity ID (UUID for issues, slug for docs) */
   targetId: string;
-  /** Type of the target entity */
+  /** Type of the target entity (legacy enum) */
   targetType: LinkTargetType;
   /** Relationship type (e.g., "blocks", "parent-of") */
   linkType: string;
   /** ISO timestamp when link was created */
   createdAt: string;
+  /** Singular item type as a string (e.g., "issue", "plan"); overrides target_type */
+  targetItemType: string;
 }
 
 /** Create a link between two entities (bidirectional - also creates inverse) */
 export interface CreateLinkRequest {
   projectPath: string;
-  /** Source entity ID */
+  /** Source entity ID (UUID or display number) */
   sourceId: string;
-  /** Source entity type */
+  /** Source entity type (legacy enum; prefer source_item_type) */
   sourceType: LinkTargetType;
-  /** Target entity ID */
+  /** Target entity ID (UUID or display number) */
   targetId: string;
-  /** Target entity type */
+  /** Target entity type (legacy enum; prefer target_item_type) */
   targetType: LinkTargetType;
   /** Link type (e.g., "blocks") */
   linkType: string;
+  /** Singular item type as a string (e.g., "issue", "plan"); overrides source_type */
+  sourceItemType: string;
+  /** Singular item type as a string (e.g., "issue", "plan"); overrides target_type */
+  targetItemType: string;
 }
 
 export interface CreateLinkResponse {
@@ -877,16 +883,20 @@ export interface CreateLinkResponse {
 /** Delete a link between two entities (also deletes inverse) */
 export interface DeleteLinkRequest {
   projectPath: string;
-  /** Source entity ID */
+  /** Source entity ID (UUID or display number) */
   sourceId: string;
-  /** Source entity type */
+  /** Source entity type (legacy enum; prefer source_item_type) */
   sourceType: LinkTargetType;
-  /** Target entity ID */
+  /** Target entity ID (UUID or display number) */
   targetId: string;
-  /** Target entity type */
+  /** Target entity type (legacy enum; prefer target_item_type) */
   targetType: LinkTargetType;
   /** Optional: specific link type to delete (empty = all links between entities) */
   linkType: string;
+  /** Singular item type as a string (e.g., "issue", "plan"); overrides source_type */
+  sourceItemType: string;
+  /** Singular item type as a string (e.g., "issue", "plan"); overrides target_type */
+  targetItemType: string;
 }
 
 export interface DeleteLinkResponse {
@@ -901,8 +911,10 @@ export interface ListLinksRequest {
   projectPath: string;
   /** Entity ID to list links for */
   entityId: string;
-  /** Entity type */
+  /** Entity type (legacy enum; prefer entity_item_type) */
   entityType: LinkTargetType;
+  /** Singular item type as a string (e.g., "issue", "plan"); overrides entity_type */
+  entityItemType: string;
 }
 
 export interface ListLinksResponse {

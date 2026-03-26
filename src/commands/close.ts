@@ -68,6 +68,8 @@ export default class Close extends Command {
       body: '',
       priority: 0,
       customFields: {},
+      tags: [],
+      clearTags: false,
     })
 
     if (!response.success) {

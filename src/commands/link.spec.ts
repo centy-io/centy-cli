@@ -60,9 +60,11 @@ describe('Link command', () => {
     expect(mockDaemonCreateLink).toHaveBeenCalledWith({
       projectPath: '/test/project',
       sourceId: '1',
-      sourceType: 'issue',
+      sourceType: 'LINK_TARGET_TYPE_UNSPECIFIED',
+      sourceItemType: 'issue',
       targetId: '2',
-      targetType: 'issue',
+      targetType: 'LINK_TARGET_TYPE_UNSPECIFIED',
+      targetItemType: 'issue',
       linkType: 'blocks',
     })
     expect(cmd.logs.some(log => log.includes('Created link'))).toBe(true)
@@ -86,9 +88,11 @@ describe('Link command', () => {
     expect(mockDaemonCreateLink).toHaveBeenCalledWith({
       projectPath: '/test/project',
       sourceId: 'getting-started',
-      sourceType: 'doc',
+      sourceType: 'LINK_TARGET_TYPE_UNSPECIFIED',
+      sourceItemType: 'doc',
       targetId: '5',
-      targetType: 'issue',
+      targetType: 'LINK_TARGET_TYPE_UNSPECIFIED',
+      targetItemType: 'issue',
       linkType: 'relates-to',
     })
   })

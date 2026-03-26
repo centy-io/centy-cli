@@ -57,9 +57,11 @@ describe('Unlink command', () => {
     expect(mockDaemonDeleteLink).toHaveBeenCalledWith({
       projectPath: '/test/project',
       sourceId: '1',
-      sourceType: 'issue',
+      sourceType: 'LINK_TARGET_TYPE_UNSPECIFIED',
+      sourceItemType: 'issue',
       targetId: '2',
-      targetType: 'issue',
+      targetType: 'LINK_TARGET_TYPE_UNSPECIFIED',
+      targetItemType: 'issue',
       linkType: '',
     })
     expect(cmd.logs.some(log => log.includes('Removed 2 link(s)'))).toBe(true)
@@ -82,9 +84,11 @@ describe('Unlink command', () => {
     expect(mockDaemonDeleteLink).toHaveBeenCalledWith({
       projectPath: '/test/project',
       sourceId: 'arch',
-      sourceType: 'doc',
+      sourceType: 'LINK_TARGET_TYPE_UNSPECIFIED',
+      sourceItemType: 'doc',
       targetId: '5',
-      targetType: 'issue',
+      targetType: 'LINK_TARGET_TYPE_UNSPECIFIED',
+      targetItemType: 'issue',
       linkType: 'blocks',
     })
   })
