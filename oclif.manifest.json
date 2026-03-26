@@ -1438,42 +1438,38 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "add", "asset.js"]
     },
-    "delete:asset": {
+    "comment:add": {
       "aliases": [],
       "args": {
-        "filename": {
-          "description": "Asset filename",
-          "name": "filename",
+        "itemId": {
+          "description": "Parent item UUID to comment on",
+          "name": "itemId",
+          "required": true
+        },
+        "body": {
+          "description": "Comment body text",
+          "name": "body",
           "required": true
         }
       },
-      "description": "Delete an asset",
+      "description": "Add a comment to an item",
       "examples": [
-        "<%= config.bin %> delete asset screenshot.png --issue 1",
-        "<%= config.bin %> delete asset logo.svg --shared",
-        "<%= config.bin %> delete asset old-image.png --issue 1 --force",
-        "<%= config.bin %> delete asset screenshot.png --issue 1 --project centy-daemon"
+        "<%= config.bin %> comment add abc123-uuid \"This looks good\"",
+        "<%= config.bin %> comment add abc123-uuid \"Nice work\" --author alice",
+        "<%= config.bin %> comment add abc123-uuid \"Fix needed\" --author bob --json"
       ],
       "flags": {
-        "issue": {
-          "char": "i",
-          "description": "Issue ID or display number",
-          "name": "issue",
+        "author": {
+          "char": "a",
+          "description": "Comment author",
+          "name": "author",
           "hasDynamicHelp": false,
           "multiple": false,
           "type": "option"
         },
-        "shared": {
-          "char": "s",
-          "description": "Delete a shared asset",
-          "name": "shared",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "force": {
-          "char": "f",
-          "description": "Skip confirmation prompt",
-          "name": "force",
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
           "allowNo": false,
           "type": "boolean"
         },
@@ -1487,14 +1483,149 @@
       },
       "hasDynamicHelp": false,
       "hiddenAliases": [],
-      "id": "delete:asset",
+      "id": "comment:add",
       "pluginAlias": "centy",
       "pluginName": "centy",
       "pluginType": "core",
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "delete", "asset.js"]
+      "relativePath": ["dist", "commands", "comment", "add.js"]
+    },
+    "comment:delete": {
+      "aliases": [],
+      "args": {
+        "commentId": {
+          "description": "Comment UUID to delete",
+          "name": "commentId",
+          "required": true
+        }
+      },
+      "description": "Delete a comment",
+      "examples": [
+        "<%= config.bin %> comment delete abc123-uuid",
+        "<%= config.bin %> comment delete abc123-uuid --force",
+        "<%= config.bin %> comment delete abc123-uuid --project centy-daemon"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Skip confirmation prompt",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output as JSON (also skips confirmation prompt)",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "comment:delete",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "comment", "delete.js"]
+    },
+    "comment:list": {
+      "aliases": [],
+      "args": {
+        "itemId": {
+          "description": "Parent item UUID to list comments for",
+          "name": "itemId",
+          "required": true
+        }
+      },
+      "description": "List all comments for an item",
+      "examples": [
+        "<%= config.bin %> comment list abc123-uuid",
+        "<%= config.bin %> comment list abc123-uuid --json",
+        "<%= config.bin %> comment list abc123-uuid --project centy-daemon"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "comment:list",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "comment", "list.js"]
+    },
+    "comment:update": {
+      "aliases": [],
+      "args": {
+        "commentId": {
+          "description": "Comment UUID to update",
+          "name": "commentId",
+          "required": true
+        },
+        "body": {
+          "description": "New comment body text",
+          "name": "body",
+          "required": true
+        }
+      },
+      "description": "Update a comment",
+      "examples": [
+        "<%= config.bin %> comment update abc123-uuid \"Updated text\"",
+        "<%= config.bin %> comment update abc123-uuid \"Updated text\" --json",
+        "<%= config.bin %> comment update abc123-uuid \"Updated text\" --project centy-daemon"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "comment:update",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "comment", "update.js"]
     },
     "daemon:autostart": {
       "aliases": [],
@@ -1558,6 +1689,64 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "daemon", "status.js"]
+    },
+    "delete:asset": {
+      "aliases": [],
+      "args": {
+        "filename": {
+          "description": "Asset filename",
+          "name": "filename",
+          "required": true
+        }
+      },
+      "description": "Delete an asset",
+      "examples": [
+        "<%= config.bin %> delete asset screenshot.png --issue 1",
+        "<%= config.bin %> delete asset logo.svg --shared",
+        "<%= config.bin %> delete asset old-image.png --issue 1 --force",
+        "<%= config.bin %> delete asset screenshot.png --issue 1 --project centy-daemon"
+      ],
+      "flags": {
+        "issue": {
+          "char": "i",
+          "description": "Issue ID or display number",
+          "name": "issue",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "shared": {
+          "char": "s",
+          "description": "Delete a shared asset",
+          "name": "shared",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "force": {
+          "char": "f",
+          "description": "Skip confirmation prompt",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "delete:asset",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "delete", "asset.js"]
     },
     "get:asset": {
       "aliases": ["show:asset"],
@@ -2219,6 +2408,41 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "org", "update.js"]
     },
+    "register:project": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Register a project for tracking",
+      "examples": [
+        "<%= config.bin %> register project",
+        "<%= config.bin %> register project /path/to/project",
+        "<%= config.bin %> register project --no-init"
+      ],
+      "flags": {
+        "init": {
+          "char": "i",
+          "description": "Initialize .centy folder if not already initialized",
+          "name": "init",
+          "allowNo": true,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "register:project",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "register", "project.js"]
+    },
     "project:archive": {
       "aliases": [],
       "args": {
@@ -2395,41 +2619,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "project", "title.js"]
     },
-    "register:project": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Register a project for tracking",
-      "examples": [
-        "<%= config.bin %> register project",
-        "<%= config.bin %> register project /path/to/project",
-        "<%= config.bin %> register project --no-init"
-      ],
-      "flags": {
-        "init": {
-          "char": "i",
-          "description": "Initialize .centy folder if not already initialized",
-          "name": "init",
-          "allowNo": true,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "register:project",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "register", "project.js"]
-    },
     "sync:users": {
       "aliases": [],
       "args": {},
@@ -2542,6 +2731,220 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "untrack", "project.js"]
+    },
+    "workspace:cleanup": {
+      "aliases": [],
+      "args": {},
+      "description": "Cleanup all expired temporary workspaces",
+      "examples": ["<%= config.bin %> workspace cleanup"],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:cleanup",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "cleanup.js"]
+    },
+    "workspace:close": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the workspace to close",
+          "name": "path",
+          "required": true
+        }
+      },
+      "description": "Close and remove a temporary workspace",
+      "examples": [
+        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123",
+        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123 --force"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Force removal even if VS Code may be open",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:close",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "close.js"]
+    },
+    "workspace:list": {
+      "aliases": [],
+      "args": {},
+      "description": "List all temporary workspaces",
+      "examples": [
+        "<%= config.bin %> workspace list",
+        "<%= config.bin %> workspace list --include-expired",
+        "<%= config.bin %> workspace list --project ./my-project"
+      ],
+      "flags": {
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "include-expired": {
+          "description": "Include expired workspaces",
+          "name": "include-expired",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "all": {
+          "description": "Show workspaces from all projects",
+          "name": "all",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:list",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "list.js"]
+    },
+    "workspace:new": {
+      "aliases": [],
+      "args": {},
+      "description": "Create a standalone workspace not tied to an issue",
+      "examples": [
+        "<%= config.bin %> workspace new",
+        "<%= config.bin %> workspace new --name my-workspace",
+        "<%= config.bin %> workspace new --name \"Feature spike\" --description \"Explore new auth approach\" --ttl 24",
+        "<%= config.bin %> workspace new --editor vscode"
+      ],
+      "flags": {
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "name": {
+          "description": "Optional workspace name",
+          "name": "name",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "description": {
+          "char": "d",
+          "description": "Optional description/goal for the AI agent",
+          "name": "description",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "ttl": {
+          "description": "Workspace TTL in hours (default: 12)",
+          "name": "ttl",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "agent": {
+          "description": "Agent name to use (default: project default)",
+          "name": "agent",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "editor": {
+          "description": "Editor to use (default: interactive selection or project default)",
+          "name": "editor",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:new",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "new.js"]
+    },
+    "workspace:open": {
+      "aliases": [],
+      "args": {
+        "issueId": {
+          "description": "Issue ID or display number",
+          "name": "issueId",
+          "required": true
+        }
+      },
+      "description": "Open an issue in a temporary workspace",
+      "examples": [
+        "<%= config.bin %> workspace open 1",
+        "<%= config.bin %> workspace open abc-123 --ttl 24",
+        "<%= config.bin %> workspace open 1 --editor vscode"
+      ],
+      "flags": {
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "ttl": {
+          "description": "Workspace TTL in hours (default: 12)",
+          "name": "ttl",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "agent": {
+          "description": "Agent name to use (default: project default)",
+          "name": "agent",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "editor": {
+          "description": "Editor to use (default: interactive selection or project default)",
+          "name": "editor",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:open",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "open.js"]
     },
     "user:create": {
       "aliases": [],
@@ -2764,220 +3167,6 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "user", "update.js"]
-    },
-    "workspace:cleanup": {
-      "aliases": [],
-      "args": {},
-      "description": "Cleanup all expired temporary workspaces",
-      "examples": ["<%= config.bin %> workspace cleanup"],
-      "flags": {},
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:cleanup",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "cleanup.js"]
-    },
-    "workspace:close": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the workspace to close",
-          "name": "path",
-          "required": true
-        }
-      },
-      "description": "Close and remove a temporary workspace",
-      "examples": [
-        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123",
-        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123 --force"
-      ],
-      "flags": {
-        "force": {
-          "char": "f",
-          "description": "Force removal even if VS Code may be open",
-          "name": "force",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:close",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "close.js"]
-    },
-    "workspace:list": {
-      "aliases": [],
-      "args": {},
-      "description": "List all temporary workspaces",
-      "examples": [
-        "<%= config.bin %> workspace list",
-        "<%= config.bin %> workspace list --include-expired",
-        "<%= config.bin %> workspace list --project ./my-project"
-      ],
-      "flags": {
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "include-expired": {
-          "description": "Include expired workspaces",
-          "name": "include-expired",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "all": {
-          "description": "Show workspaces from all projects",
-          "name": "all",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:list",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "list.js"]
-    },
-    "workspace:new": {
-      "aliases": [],
-      "args": {},
-      "description": "Create a standalone workspace not tied to an issue",
-      "examples": [
-        "<%= config.bin %> workspace new",
-        "<%= config.bin %> workspace new --name my-workspace",
-        "<%= config.bin %> workspace new --name \"Feature spike\" --description \"Explore new auth approach\" --ttl 24",
-        "<%= config.bin %> workspace new --editor vscode"
-      ],
-      "flags": {
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "name": {
-          "description": "Optional workspace name",
-          "name": "name",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "description": {
-          "char": "d",
-          "description": "Optional description/goal for the AI agent",
-          "name": "description",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "ttl": {
-          "description": "Workspace TTL in hours (default: 12)",
-          "name": "ttl",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "agent": {
-          "description": "Agent name to use (default: project default)",
-          "name": "agent",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "editor": {
-          "description": "Editor to use (default: interactive selection or project default)",
-          "name": "editor",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:new",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "new.js"]
-    },
-    "workspace:open": {
-      "aliases": [],
-      "args": {
-        "issueId": {
-          "description": "Issue ID or display number",
-          "name": "issueId",
-          "required": true
-        }
-      },
-      "description": "Open an issue in a temporary workspace",
-      "examples": [
-        "<%= config.bin %> workspace open 1",
-        "<%= config.bin %> workspace open abc-123 --ttl 24",
-        "<%= config.bin %> workspace open 1 --editor vscode"
-      ],
-      "flags": {
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "ttl": {
-          "description": "Workspace TTL in hours (default: 12)",
-          "name": "ttl",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "agent": {
-          "description": "Agent name to use (default: project default)",
-          "name": "agent",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "editor": {
-          "description": "Editor to use (default: interactive selection or project default)",
-          "name": "editor",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:open",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "open.js"]
     }
   },
   "version": "0.8.1"
