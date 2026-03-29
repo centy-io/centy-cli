@@ -85,6 +85,28 @@ describe('List command', () => {
       )
     })
 
+    it('should pass negated status filter with ! prefix', async () => {
+      const { default: Command } = await import('./list.js')
+
+      const cmd = createMockCommand(Command, {
+        flags: { status: '!closed' },
+        args: { type: 'issue' },
+      })
+
+      await cmd.run()
+
+      expect(mockHandleProjectList).toHaveBeenCalledWith(
+        '/test/project',
+        'issues',
+        JSON.stringify({ status: { $ne: 'closed' } }),
+        0,
+        0,
+        undefined,
+        expect.any(Function),
+        expect.any(Function)
+      )
+    })
+
     it('should pass priority filter', async () => {
       const { default: Command } = await import('./list.js')
 

@@ -138,6 +138,27 @@ describe('ListItems command', () => {
     )
   })
 
+  it('should use $ne operator when status starts with !', async () => {
+    const { default: Command } = await import('./items.js')
+    mockDaemonListItems.mockResolvedValue({
+      success: true,
+      items: [],
+      totalCount: 0,
+    })
+
+    const cmd = createMockCommand(Command, {
+      args: { type: 'issues' },
+      flags: { status: '!closed' },
+    })
+    await cmd.run()
+
+    expect(mockDaemonListItems).toHaveBeenCalledWith(
+      expect.objectContaining({
+        filter: JSON.stringify({ status: { $ne: 'closed' } }),
+      })
+    )
+  })
+
   it('should pass priority filter', async () => {
     const { default: Command } = await import('./items.js')
     mockDaemonListItems.mockResolvedValue({

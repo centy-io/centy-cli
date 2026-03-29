@@ -7,7 +7,13 @@ export function buildFilter(
   priority: number | undefined
 ): string {
   const filterObj: Record<string, unknown> = {}
-  if (status !== undefined) filterObj['status'] = status
+  if (status !== undefined) {
+    if (status.startsWith('!')) {
+      filterObj['status'] = { $ne: status.slice(1) }
+    } else {
+      filterObj['status'] = status
+    }
+  }
   if (priority !== undefined) filterObj['priority'] = priority
   return Object.keys(filterObj).length > 0 ? JSON.stringify(filterObj) : ''
 }

@@ -29,7 +29,8 @@ export default class List extends Command {
   static override flags = {
     status: Flags.string({
       char: 's',
-      description: 'Filter by status (e.g., open, in-progress, closed)',
+      description:
+        'Filter by status (e.g., open, in-progress, closed). Prefix with ! to exclude (e.g., !closed)',
     }),
     priority: Flags.integer({
       char: 'p',
@@ -67,8 +68,11 @@ export default class List extends Command {
     const offset = flags.offset !== undefined ? flags.offset : 0
 
     const filterParts: Record<string, unknown> = {}
-    if (flags.status !== undefined)
-      filterParts['status'] = { $eq: flags.status }
+    if (flags.status !== undefined) {
+      filterParts['status'] = flags.status.startsWith('!')
+        ? { $ne: flags.status.slice(1) }
+        : { $eq: flags.status }
+    }
     if (flags.priority !== undefined)
       filterParts['priority'] = { $eq: flags.priority }
     const filter =

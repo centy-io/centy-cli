@@ -31,7 +31,8 @@ export default class Next extends Command {
   static override flags = {
     status: Flags.string({
       char: 's',
-      description: 'Filter by status (e.g., open, in-progress, closed)',
+      description:
+        'Filter by status (e.g., open, in-progress, closed). Prefix with ! to exclude (e.g., !closed)',
       default: 'open',
     }),
     json: Flags.boolean({
@@ -50,7 +51,9 @@ export default class Next extends Command {
     const { args, flags } = await this.parse(Next)
     const itemType = pluralize(args.type)
     const status = flags.status !== undefined ? flags.status : 'open'
-    const filter = JSON.stringify({ status: { $eq: status } })
+    const filter = status.startsWith('!')
+      ? JSON.stringify({ status: { $ne: status.slice(1) } })
+      : JSON.stringify({ status: { $eq: status } })
 
     if (flags.global) {
       await handleGlobalNext(

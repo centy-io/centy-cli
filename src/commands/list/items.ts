@@ -37,7 +37,9 @@ export default class ListItems extends Command {
   ]
 
   static override flags = {
-    status: Flags.string({ description: 'Filter by status' }),
+    status: Flags.string({
+      description: 'Filter by status. Prefix with ! to exclude (e.g., !closed)',
+    }),
     priority: Flags.integer({ description: 'Filter by priority level' }),
     limit: Flags.integer({
       description: 'Limit number of results (0 = no limit)',

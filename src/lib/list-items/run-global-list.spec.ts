@@ -52,6 +52,20 @@ describe('buildFilter', () => {
       JSON.stringify({ status: 'open', priority: 2 })
     )
   })
+
+  it('should use $ne operator when status starts with !', async () => {
+    const { buildFilter } = await import('./run-global-list.js')
+    expect(buildFilter('!closed', undefined)).toBe(
+      JSON.stringify({ status: { $ne: 'closed' } })
+    )
+  })
+
+  it('should combine negated status with priority', async () => {
+    const { buildFilter } = await import('./run-global-list.js')
+    expect(buildFilter('!closed', 1)).toBe(
+      JSON.stringify({ status: { $ne: 'closed' }, priority: 1 })
+    )
+  })
 })
 
 describe('runGlobalList', () => {
