@@ -40,15 +40,12 @@ describe('Unlink command', () => {
     expect(typeof Command.description).toBe('string')
   })
 
-  it('should remove a link without type filter', async () => {
+  it('should remove a link by ID', async () => {
     const { default: Command } = await import('./unlink.js')
-    mockDaemonDeleteLink.mockResolvedValue({
-      success: true,
-      deletedCount: 2,
-    })
+    mockDaemonDeleteLink.mockResolvedValue({ success: true })
 
     const cmd = createMockCommand(Command, {
-      args: { type: 'issue', id: '1', target: 'issue:2' },
+      args: { linkId: 'abc-123-uuid' },
       flags: {},
     })
 
@@ -56,57 +53,9 @@ describe('Unlink command', () => {
 
     expect(mockDaemonDeleteLink).toHaveBeenCalledWith({
       projectPath: '/test/project',
-      sourceId: '1',
-      sourceType: 'LINK_TARGET_TYPE_UNSPECIFIED',
-      sourceItemType: 'issue',
-      targetId: '2',
-      targetType: 'LINK_TARGET_TYPE_UNSPECIFIED',
-      targetItemType: 'issue',
-      linkType: '',
+      linkId: 'abc-123-uuid',
     })
-    expect(cmd.logs.some(log => log.includes('Removed 2 link(s)'))).toBe(true)
-  })
-
-  it('should remove a link with type filter', async () => {
-    const { default: Command } = await import('./unlink.js')
-    mockDaemonDeleteLink.mockResolvedValue({
-      success: true,
-      deletedCount: 1,
-    })
-
-    const cmd = createMockCommand(Command, {
-      args: { type: 'doc', id: 'arch', target: 'issue:5' },
-      flags: { type: 'blocks' },
-    })
-
-    await cmd.run()
-
-    expect(mockDaemonDeleteLink).toHaveBeenCalledWith({
-      projectPath: '/test/project',
-      sourceId: 'arch',
-      sourceType: 'LINK_TARGET_TYPE_UNSPECIFIED',
-      sourceItemType: 'doc',
-      targetId: '5',
-      targetType: 'LINK_TARGET_TYPE_UNSPECIFIED',
-      targetItemType: 'issue',
-      linkType: 'blocks',
-    })
-  })
-
-  it('should error on invalid target format', async () => {
-    const { default: Command } = await import('./unlink.js')
-
-    const cmd = createMockCommand(Command, {
-      args: { type: 'issue', id: '1', target: 'invalid' },
-      flags: {},
-    })
-
-    const { error } = await runCommandSafely(cmd)
-
-    expect(error).toBeDefined()
-    expect(cmd.errors).toContain(
-      'Invalid target format. Use type:id (e.g., issue:2, doc:getting-started)'
-    )
+    expect(cmd.logs.some(log => log.includes('Removed link'))).toBe(true)
   })
 
   it('should handle daemon error response', async () => {
@@ -117,7 +66,7 @@ describe('Unlink command', () => {
     })
 
     const cmd = createMockCommand(Command, {
-      args: { type: 'issue', id: '1', target: 'issue:2' },
+      args: { linkId: 'abc-123-uuid' },
       flags: {},
     })
 

@@ -1,6 +1,5 @@
 import { Args, Command, Flags } from '@oclif/core'
 import { daemonListLinks } from '../daemon/daemon-list-links.js'
-import { LinkTargetType } from '../daemon/types.js'
 import { projectFlag } from '../flags/project-flag.js'
 import {
   ensureInitialized,
@@ -56,7 +55,6 @@ export default class Links extends Command {
     const response = await daemonListLinks({
       projectPath: cwd,
       entityId: args.id,
-      entityType: LinkTargetType.LINK_TARGET_TYPE_UNSPECIFIED,
       entityItemType: args.type,
     })
 
@@ -74,7 +72,7 @@ export default class Links extends Command {
       `Found ${response.totalCount} link(s) for ${args.type} ${args.id}:\n`
     )
     for (const link of response.links) {
-      this.log(`  ${link.linkType} --> ${link.targetType}:${link.targetId}`)
+      this.log(`  ${link.linkType} --> ${link.targetItemType}:${link.targetId}`)
     }
   }
 }
