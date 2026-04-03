@@ -7,6 +7,7 @@
 export * from './generated/centy/v1/centy.js'
 export * from './generated/centy/v1/generic_item.js'
 export * from './types/daemon-error-message.js'
+export * from './types/reconciliation.js'
 export * from './types/daemon-error-response.js'
 export * from './types/feature.js'
 export * from './types/global-search.js'

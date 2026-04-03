@@ -86,7 +86,7 @@ export async function init(options?: InitOptions): Promise<InitResult> {
     result.restored = response.restored
     result.reset = response.reset
     result.skipped = [...response.skipped, ...decisions.skip]
-    result.userFiles = plan.userFiles.map(f => f.path)
+    result.userFiles = plan.userFiles.map((f: { path: string }) => f.path)
 
     outputSummary(output, result)
     return result

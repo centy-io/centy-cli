@@ -60,7 +60,7 @@ export default class ListLinkTypes extends Command {
       const builtinTag = linkType.isBuiltin ? ' (builtin)' : ' (custom)'
       const desc =
         linkType.description !== '' ? ` - ${linkType.description}` : ''
-      this.log(`  ${linkType.name} <-> ${linkType.inverse}${builtinTag}${desc}`)
+      this.log(`  ${linkType.name}${builtinTag}${desc}`)
     }
   }
 }
