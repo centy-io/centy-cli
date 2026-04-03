@@ -13,20 +13,6 @@ export enum FileType {
   FILE_TYPE_DIRECTORY = "FILE_TYPE_DIRECTORY",
 }
 
-/** Target entity type for links */
-export enum LinkTargetType {
-  LINK_TARGET_TYPE_UNSPECIFIED = "LINK_TARGET_TYPE_UNSPECIFIED",
-  LINK_TARGET_TYPE_ISSUE = "LINK_TARGET_TYPE_ISSUE",
-  LINK_TARGET_TYPE_DOC = "LINK_TARGET_TYPE_DOC",
-}
-
-/** Entity type for actions */
-export enum EntityType {
-  ENTITY_TYPE_UNSPECIFIED = "ENTITY_TYPE_UNSPECIFIED",
-  ENTITY_TYPE_ISSUE = "ENTITY_TYPE_ISSUE",
-  ENTITY_TYPE_DOC = "ENTITY_TYPE_DOC",
-}
-
 /** Action category for grouping in UI */
 export enum ActionCategory {
   ACTION_CATEGORY_UNSPECIFIED = "ACTION_CATEGORY_UNSPECIFIED",
@@ -99,32 +85,6 @@ export interface InitResponse {
   orgInference?: OrgInferenceResult | undefined;
 }
 
-export interface GetReconciliationPlanRequest {
-  projectPath: string;
-}
-
-export interface ReconciliationPlan {
-  /** Files that need to be created (not on disk, not in manifest) */
-  toCreate: FileInfo[];
-  /** Files that were deleted but exist in manifest (can be restored) */
-  toRestore: FileInfo[];
-  /** Files that were modified from original (hash mismatch) */
-  toReset: FileInfo[];
-  /** Files that are up to date */
-  upToDate: FileInfo[];
-  /** User-created files (not managed by centy) */
-  userFiles: FileInfo[];
-  /** Whether user decisions are needed */
-  needsDecisions: boolean;
-  success: boolean;
-  error: string;
-}
-
-export interface ExecuteReconciliationRequest {
-  projectPath: string;
-  decisions?: ReconciliationDecisions | undefined;
-}
-
 export interface ReconciliationDecisions {
   /** Paths of files to restore (from to_restore list) */
   restore: string[];
@@ -177,8 +137,6 @@ export interface Config {
   customLinkTypes: LinkTypeDefinition[];
   /** Default editor ID for this project (e.g., "vscode", "terminal", "zed") */
   defaultEditor: string;
-  /** Lifecycle hooks */
-  hooks: HookDefinition[];
   /** Workspace settings */
   workspace?:
     | WorkspaceConfig
@@ -223,26 +181,10 @@ export interface CustomFieldDefinition {
   enumValues: string[];
 }
 
-/** Lifecycle hook definition (bash scripts to run before/after operations) */
-export interface HookDefinition {
-  /** Pattern like "pre:issue:create" or "*:*:delete" */
-  pattern: string;
-  /** Bash command to execute */
-  command: string;
-  /** If true, run in background (post-hooks only) */
-  runAsync: boolean;
-  /** Timeout in seconds (default: 30) */
-  timeout: string;
-  /** Whether hook is enabled (default: true) */
-  enabled: boolean;
-}
-
 /** Custom link type definition (for custom relationship types) */
 export interface LinkTypeDefinition {
   /** Link type name (e.g., "depends-on") */
   name: string;
-  /** Inverse link type (e.g., "dependency-of") */
-  inverse: string;
   /** Optional description */
   description: string;
 }
@@ -840,63 +782,49 @@ export interface CleanupExpiredWorkspacesResponse {
 export interface Link {
   /** Target entity ID (UUID for issues, slug for docs) */
   targetId: string;
-  /** Type of the target entity (legacy enum) */
-  targetType: LinkTargetType;
-  /** Relationship type (e.g., "blocks", "parent-of") */
+  /** Relationship type (e.g., "blocks", "parent-of"); always from source's perspective */
   linkType: string;
   /** ISO timestamp when link was created */
   createdAt: string;
-  /** Singular item type as a string (e.g., "issue", "plan"); overrides target_type */
+  /** Singular item type as a string (e.g., "issue", "plan") */
   targetItemType: string;
+  /** UUID of the link file (use for deletion) */
+  id: string;
+  /** "source" or "target" — which side the queried entity is on */
+  direction: string;
 }
 
-/** Create a link between two entities (bidirectional - also creates inverse) */
+/** Create a link between two entities (one file, two response views) */
 export interface CreateLinkRequest {
   projectPath: string;
   /** Source entity ID (UUID or display number) */
   sourceId: string;
-  /** Source entity type (legacy enum; prefer source_item_type) */
-  sourceType: LinkTargetType;
   /** Target entity ID (UUID or display number) */
   targetId: string;
-  /** Target entity type (legacy enum; prefer target_item_type) */
-  targetType: LinkTargetType;
   /** Link type (e.g., "blocks") */
   linkType: string;
-  /** Singular item type as a string (e.g., "issue", "plan"); overrides source_type */
+  /** Singular item type as a string (e.g., "issue", "plan") */
   sourceItemType: string;
-  /** Singular item type as a string (e.g., "issue", "plan"); overrides target_type */
+  /** Singular item type as a string (e.g., "issue", "plan") */
   targetItemType: string;
 }
 
 export interface CreateLinkResponse {
   success: boolean;
   error: string;
-  /** The forward link that was created */
+  /** Source's view (direction="source") */
   createdLink?:
     | Link
     | undefined;
-  /** The inverse link that was created */
+  /** Target's view (direction="target") */
   inverseLink?: Link | undefined;
 }
 
-/** Delete a link between two entities (also deletes inverse) */
+/** Delete a link by its UUID */
 export interface DeleteLinkRequest {
   projectPath: string;
-  /** Source entity ID (UUID or display number) */
-  sourceId: string;
-  /** Source entity type (legacy enum; prefer source_item_type) */
-  sourceType: LinkTargetType;
-  /** Target entity ID (UUID or display number) */
-  targetId: string;
-  /** Target entity type (legacy enum; prefer target_item_type) */
-  targetType: LinkTargetType;
-  /** Optional: specific link type to delete (empty = all links between entities) */
-  linkType: string;
-  /** Singular item type as a string (e.g., "issue", "plan"); overrides source_type */
-  sourceItemType: string;
-  /** Singular item type as a string (e.g., "issue", "plan"); overrides target_type */
-  targetItemType: string;
+  /** UUID of the link file to delete (from Link.id) */
+  linkId: string;
 }
 
 export interface DeleteLinkResponse {
@@ -911,9 +839,7 @@ export interface ListLinksRequest {
   projectPath: string;
   /** Entity ID to list links for */
   entityId: string;
-  /** Entity type (legacy enum; prefer entity_item_type) */
-  entityType: LinkTargetType;
-  /** Singular item type as a string (e.g., "issue", "plan"); overrides entity_type */
+  /** Singular item type as a string (e.g., "issue", "plan") */
   entityItemType: string;
 }
 
@@ -933,8 +859,6 @@ export interface GetAvailableLinkTypesRequest {
 export interface LinkTypeInfo {
   /** Link type name (e.g., "blocks") */
   name: string;
-  /** Inverse link type (e.g., "blocked-by") */
-  inverse: string;
   /** Optional description */
   description: string;
   /** Whether this is a built-in type */
@@ -1123,10 +1047,10 @@ export interface EntityAction {
 export interface GetEntityActionsRequest {
   /** Project path for config/state lookup */
   projectPath: string;
-  /** Type of entity (issue, doc) */
-  entityType: EntityType;
   /** Optional: entity ID for contextual actions (empty = general actions like "create") */
   entityId: string;
+  /** Type of item (e.g., "issues", "docs") */
+  itemType: string;
 }
 
 /** Response with available actions */
@@ -1315,6 +1239,8 @@ export interface ItemTypeConfigProto {
   icon: string;
   /** Optional template file path */
   template: string;
+  /** Whether this type appears in ListItemTypes responses */
+  listed: boolean;
 }
 
 export interface ListItemTypesRequest {
@@ -1378,130 +1304,4 @@ export interface UnarchiveItemResponse {
     | undefined;
   /** The folder the item was restored to */
   originalItemType: string;
-}
-
-export interface OrgIssueMetadata {
-  displayNumber: number;
-  status: string;
-  priority: number;
-  createdAt: string;
-  updatedAt: string;
-  customFields: { [key: string]: string };
-  priorityLabel: string;
-  referencedProjects: string[];
-}
-
-export interface OrgIssueMetadata_CustomFieldsEntry {
-  key: string;
-  value: string;
-}
-
-export interface OrgIssue {
-  id: string;
-  displayNumber: number;
-  title: string;
-  description: string;
-  metadata?: OrgIssueMetadata | undefined;
-}
-
-export interface CreateOrgIssueRequest {
-  organizationSlug: string;
-  title: string;
-  description: string;
-  priority: number;
-  status: string;
-  customFields: { [key: string]: string };
-  referencedProjects: string[];
-}
-
-export interface CreateOrgIssueRequest_CustomFieldsEntry {
-  key: string;
-  value: string;
-}
-
-export interface CreateOrgIssueResponse {
-  success: boolean;
-  error: string;
-  id: string;
-  displayNumber: number;
-  createdFiles: string[];
-}
-
-export interface GetOrgIssueRequest {
-  organizationSlug: string;
-  issueId: string;
-}
-
-export interface GetOrgIssueByDisplayNumberRequest {
-  organizationSlug: string;
-  displayNumber: number;
-}
-
-export interface ListOrgIssuesRequest {
-  organizationSlug: string;
-  /** Filter by status (empty = all) */
-  status: string;
-  /** Filter by priority (0 = all) */
-  priority: number;
-  /** Filter by referenced project path (empty = all) */
-  referencedProject: string;
-}
-
-export interface ListOrgIssuesResponse {
-  issues: OrgIssue[];
-  totalCount: number;
-}
-
-export interface UpdateOrgIssueRequest {
-  organizationSlug: string;
-  issueId: string;
-  title: string;
-  description: string;
-  status: string;
-  priority: number;
-  customFields: { [key: string]: string };
-  addReferencedProjects: string[];
-  removeReferencedProjects: string[];
-}
-
-export interface UpdateOrgIssueRequest_CustomFieldsEntry {
-  key: string;
-  value: string;
-}
-
-export interface UpdateOrgIssueResponse {
-  success: boolean;
-  error: string;
-  issue?: OrgIssue | undefined;
-}
-
-export interface DeleteOrgIssueRequest {
-  organizationSlug: string;
-  issueId: string;
-}
-
-export interface DeleteOrgIssueResponse {
-  success: boolean;
-  error: string;
-}
-
-export interface OrgConfig {
-  priorityLevels: number;
-  customFields: CustomFieldDefinition[];
-}
-
-export interface GetOrgConfigRequest {
-  organizationSlug: string;
-}
-
-export interface UpdateOrgConfigRequest {
-  organizationSlug: string;
-  priorityLevels: number;
-  customFields: CustomFieldDefinition[];
-}
-
-export interface UpdateOrgConfigResponse {
-  success: boolean;
-  error: string;
-  config?: OrgConfig | undefined;
 }
