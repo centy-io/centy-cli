@@ -5,6 +5,7 @@
     "src/commands/**/*.ts",
     "bin/*.js",
     "src/lib/install-daemon/index.ts",
+    "src/lib/launch-tui/**/*.ts",
     "src/help.ts",
     "src/hooks/**/*.ts"
   ],
