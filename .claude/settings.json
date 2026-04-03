@@ -137,7 +137,8 @@
       "Bash(npx prettier:*)",
       "Bash(pnpm centy:*)",
       "WebFetch(domain:claude.com)",
-      "Bash(git submodule:*)"
+      "Bash(git submodule:*)",
+      "Bash(pnpm manifest:*)"
     ],
     "deny": [
       "Bash(npm install)",
