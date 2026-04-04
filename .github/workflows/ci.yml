@@ -201,6 +201,16 @@ jobs:
         if: steps.version_check.outputs.should_publish == 'true'
         run: pnpm build
 
+      - name: Debug npm and auth setup
+        if: steps.version_check.outputs.should_publish == 'true'
+        run: |
+          echo "npm version: $(npm --version)"
+          echo "node version: $(node --version)"
+          echo "NODE_AUTH_TOKEN set: $([ -n "$NODE_AUTH_TOKEN" ] && echo "yes (${#NODE_AUTH_TOKEN} chars)" || echo "no")"
+          echo "NPM_CONFIG_USERCONFIG: $NPM_CONFIG_USERCONFIG"
+          echo "npmrc contents (redacted):"
+          cat "$NPM_CONFIG_USERCONFIG" | sed 's/=.*/=REDACTED/'
+
       - name: Get npm OIDC token
         if: steps.version_check.outputs.should_publish == 'true'
         run: |
