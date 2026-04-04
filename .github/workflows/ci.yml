@@ -211,13 +211,18 @@ jobs:
             | jq -r .value)
           echo "::add-mask::$OIDC_TOKEN"
           PACKAGE_NAME=$(node -p "require('./package.json').name")
-          NPM_TOKEN=$(curl -fsSL \
+          EXCHANGE_RESPONSE=$(curl -sS \
             -X POST \
             -H "Content-Type: application/json" \
             -H "Accept: application/json" \
             -d "{\"oidcToken\": \"$OIDC_TOKEN\"}" \
-            "https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/$PACKAGE_NAME" \
-            | jq -r .token)
+            "https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/$PACKAGE_NAME")
+          echo "Exchange response (token redacted): $(echo "$EXCHANGE_RESPONSE" | jq 'del(.token)')"
+          NPM_TOKEN=$(echo "$EXCHANGE_RESPONSE" | jq -r '.token // empty')
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "::error::OIDC token exchange failed - see response above"
+            exit 1
+          fi
           echo "::add-mask::$NPM_TOKEN"
           echo "NODE_AUTH_TOKEN=$NPM_TOKEN" >> $GITHUB_ENV
 
