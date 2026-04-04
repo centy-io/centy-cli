@@ -201,16 +201,6 @@ jobs:
         if: steps.version_check.outputs.should_publish == 'true'
         run: pnpm build
 
-      - name: Debug npm and auth setup
-        if: steps.version_check.outputs.should_publish == 'true'
-        run: |
-          echo "npm version: $(npm --version)"
-          echo "node version: $(node --version)"
-          echo "NODE_AUTH_TOKEN set: $([ -n "$NODE_AUTH_TOKEN" ] && echo "yes (${#NODE_AUTH_TOKEN} chars)" || echo "no")"
-          echo "NPM_CONFIG_USERCONFIG: $NPM_CONFIG_USERCONFIG"
-          echo "npmrc contents (redacted):"
-          cat "$NPM_CONFIG_USERCONFIG" | sed 's/=.*/=REDACTED/'
-
       - name: Get npm OIDC token
         if: steps.version_check.outputs.should_publish == 'true'
         run: |
@@ -219,17 +209,12 @@ jobs:
             -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm:registry.npmjs.org" \
             | jq -r .value)
-          # Print JWT claims for debugging (payload is public metadata, not sensitive)
-          echo "OIDC token claims:"
-          echo "$OIDC_TOKEN" | cut -d'.' -f2 | python3 -c "
-          import sys, base64, json
-          data = sys.stdin.read().strip()
-          padded = data + '=' * (4 - len(data) % 4)
-          decoded = base64.urlsafe_b64decode(padded)
-          print(json.dumps(json.loads(decoded), indent=2))
-          "
           echo "::add-mask::$OIDC_TOKEN"
-          echo "NODE_AUTH_TOKEN=$OIDC_TOKEN" >> $GITHUB_ENV
+          # NPM_ID_TOKEN: npm's oidc.js reads this directly and uses it for the
+          # OIDC token exchange (POST /-/npm/v1/oidc/token/exchange/package/<name>)
+          # NODE_AUTH_TOKEN cleared so npm has no dummy fallback token
+          echo "NPM_ID_TOKEN=$OIDC_TOKEN" >> $GITHUB_ENV
+          echo "NODE_AUTH_TOKEN=" >> $GITHUB_ENV
 
       - name: Publish to npm
         if: steps.version_check.outputs.should_publish == 'true'

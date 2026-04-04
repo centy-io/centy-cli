@@ -138,7 +138,8 @@
       "Bash(pnpm centy:*)",
       "WebFetch(domain:claude.com)",
       "Bash(git submodule:*)",
-      "Bash(pnpm manifest:*)"
+      "Bash(pnpm manifest:*)",
+      "WebFetch(domain:blog.npmjs.org)"
     ],
     "deny": [
       "Bash(npm install)",
