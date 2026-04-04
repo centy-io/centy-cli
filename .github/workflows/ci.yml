@@ -201,7 +201,7 @@ jobs:
         if: steps.version_check.outputs.should_publish == 'true'
         run: pnpm build
 
-      - name: Get npm OIDC token
+      - name: Exchange OIDC token for npm publish token
         if: steps.version_check.outputs.should_publish == 'true'
         run: |
           OIDC_TOKEN=$(curl -fsSL \
@@ -210,12 +210,17 @@ jobs:
             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm:registry.npmjs.org" \
             | jq -r .value)
           echo "::add-mask::$OIDC_TOKEN"
-          # NPM_ID_TOKEN: npm's oidc.js reads this directly and uses it for the
-          # OIDC token exchange (POST /-/npm/v1/oidc/token/exchange/package/<name>)
-          # NODE_AUTH_TOKEN cleared so npm has no dummy fallback token
-          echo "NPM_ID_TOKEN=$OIDC_TOKEN" >> $GITHUB_ENV
-          echo "NODE_AUTH_TOKEN=" >> $GITHUB_ENV
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          NPM_TOKEN=$(curl -fsSL \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            -d "{\"oidcToken\": \"$OIDC_TOKEN\"}" \
+            "https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/$PACKAGE_NAME" \
+            | jq -r .token)
+          echo "::add-mask::$NPM_TOKEN"
+          echo "NODE_AUTH_TOKEN=$NPM_TOKEN" >> $GITHUB_ENV
 
       - name: Publish to npm
         if: steps.version_check.outputs.should_publish == 'true'
-        run: npm publish --access public --provenance --loglevel=http
+        run: npm publish --access public --provenance
