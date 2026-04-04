@@ -62,6 +62,7 @@ export default class Create extends Command {
       priority: flags.priority,
       customFields,
       tags: flags.tag !== undefined ? flags.tag : [],
+      projects: [],
     })
 
     if (!response.success) {

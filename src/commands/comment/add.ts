@@ -72,6 +72,7 @@ export default class CommentAdd extends Command {
       priority: 0,
       customFields,
       tags: [],
+      projects: [],
     })
 
     if (!response.success) {
