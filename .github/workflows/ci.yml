@@ -215,6 +215,7 @@ jobs:
             -X POST \
             -H "Content-Type: application/json" \
             -H "Accept: application/json" \
+            -H "Authorization: Bearer $OIDC_TOKEN" \
             -d "{\"oidcToken\": \"$OIDC_TOKEN\"}" \
             "https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/$PACKAGE_NAME")
           echo "Exchange response (token redacted): $(echo "$EXCHANGE_RESPONSE" | jq 'del(.token)')"
