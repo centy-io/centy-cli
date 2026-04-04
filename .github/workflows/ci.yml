@@ -209,6 +209,15 @@ jobs:
             -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm:registry.npmjs.org" \
             | jq -r .value)
+          # Print JWT claims for debugging (payload is public metadata, not sensitive)
+          echo "OIDC token claims:"
+          echo "$OIDC_TOKEN" | cut -d'.' -f2 | python3 -c "
+          import sys, base64, json
+          data = sys.stdin.read().strip()
+          padded = data + '=' * (4 - len(data) % 4)
+          decoded = base64.urlsafe_b64decode(padded)
+          print(json.dumps(json.loads(decoded), indent=2))
+          "
           echo "::add-mask::$OIDC_TOKEN"
           echo "NODE_AUTH_TOKEN=$OIDC_TOKEN" >> $GITHUB_ENV
 
