@@ -87,6 +87,7 @@ describe('Create command', () => {
       priority: 0,
       customFields: {},
       tags: [],
+      projects: [],
     })
     expect(cmd.logs.some(log => log.includes('Created issue'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('#1'))).toBe(true)
@@ -132,6 +133,7 @@ describe('Create command', () => {
       priority: 0,
       customFields: {},
       tags: [],
+      projects: [],
     })
     expect(cmd.logs.some(log => log.includes('Created doc'))).toBe(true)
   })
