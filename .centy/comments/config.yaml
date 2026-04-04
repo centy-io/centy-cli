@@ -1,16 +1,23 @@
 # This file is managed by Centy. Use the Centy CLI to modify it.
-name: Archived
+name: Comment
+icon: chat-bubble
 identifier: uuid
 features:
   displayNumber: false
   priority: false
   softDelete: false
-  assets: true
-  orgSync: true
-  move: true
+  assets: false
+  orgSync: false
+  move: false
   duplicate: false
 customFields:
-- name: original_item_type
+- name: item_id
   type: string
   required: false
-listed: true
+- name: item_type
+  type: string
+  required: false
+- name: author
+  type: string
+  required: false
+listed: false

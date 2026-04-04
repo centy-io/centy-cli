@@ -4,7 +4,6 @@ icon: clipboard
 identifier: uuid
 features:
   displayNumber: true
-  status: true
   priority: true
   softDelete: true
   assets: true
@@ -16,6 +15,6 @@ statuses:
 - planning
 - in-progress
 - closed
-defaultStatus: open
 priorityLevels: 3
 template: template.md
+listed: true

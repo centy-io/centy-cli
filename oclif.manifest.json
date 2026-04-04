@@ -1667,69 +1667,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "delete", "asset.js"]
     },
-    "daemon:autostart": {
-      "aliases": [],
-      "args": {},
-      "description": "Configure daemon to start automatically on boot",
-      "examples": [
-        "<%= config.bin %> daemon autostart",
-        "<%= config.bin %> daemon autostart --enable",
-        "<%= config.bin %> daemon autostart --disable"
-      ],
-      "flags": {
-        "enable": {
-          "description": "Enable autostart on boot",
-          "exclusive": ["disable"],
-          "name": "enable",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "disable": {
-          "description": "Disable autostart on boot",
-          "exclusive": ["enable"],
-          "name": "disable",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "daemon:autostart",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "daemon", "autostart.js"]
-    },
-    "daemon:status": {
-      "aliases": [],
-      "args": {},
-      "description": "Check whether the centy daemon is running",
-      "examples": [
-        "<%= config.bin %> daemon status",
-        "<%= config.bin %> daemon status --json"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "daemon:status",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "daemon", "status.js"]
-    },
     "get:asset": {
       "aliases": ["show:asset"],
       "args": {
@@ -1942,6 +1879,69 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "item-type", "list.js"]
+    },
+    "daemon:autostart": {
+      "aliases": [],
+      "args": {},
+      "description": "Configure daemon to start automatically on boot",
+      "examples": [
+        "<%= config.bin %> daemon autostart",
+        "<%= config.bin %> daemon autostart --enable",
+        "<%= config.bin %> daemon autostart --disable"
+      ],
+      "flags": {
+        "enable": {
+          "description": "Enable autostart on boot",
+          "exclusive": ["disable"],
+          "name": "enable",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "disable": {
+          "description": "Disable autostart on boot",
+          "exclusive": ["enable"],
+          "name": "disable",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "daemon:autostart",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "daemon", "autostart.js"]
+    },
+    "daemon:status": {
+      "aliases": [],
+      "args": {},
+      "description": "Check whether the centy daemon is running",
+      "examples": [
+        "<%= config.bin %> daemon status",
+        "<%= config.bin %> daemon status --json"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "daemon:status",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "daemon", "status.js"]
     },
     "list:assets": {
       "aliases": ["asset:list"],
@@ -2178,41 +2178,6 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "list", "projects.js"]
-    },
-    "register:project": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the project (defaults to current directory)",
-          "name": "path",
-          "required": false
-        }
-      },
-      "description": "Register a project for tracking",
-      "examples": [
-        "<%= config.bin %> register project",
-        "<%= config.bin %> register project /path/to/project",
-        "<%= config.bin %> register project --no-init"
-      ],
-      "flags": {
-        "init": {
-          "char": "i",
-          "description": "Initialize .centy folder if not already initialized",
-          "name": "init",
-          "allowNo": true,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "register:project",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "register", "project.js"]
     },
     "org:create": {
       "aliases": [],
@@ -2601,6 +2566,84 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "project", "title.js"]
     },
+    "register:project": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the project (defaults to current directory)",
+          "name": "path",
+          "required": false
+        }
+      },
+      "description": "Register a project for tracking",
+      "examples": [
+        "<%= config.bin %> register project",
+        "<%= config.bin %> register project /path/to/project",
+        "<%= config.bin %> register project --no-init"
+      ],
+      "flags": {
+        "init": {
+          "char": "i",
+          "description": "Initialize .centy folder if not already initialized",
+          "name": "init",
+          "allowNo": true,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "register:project",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "register", "project.js"]
+    },
+    "sync:users": {
+      "aliases": [],
+      "args": {},
+      "description": "Sync users from git history",
+      "examples": [
+        "<%= config.bin %> sync users",
+        "<%= config.bin %> sync users --dry-run",
+        "<%= config.bin %> sync users --json",
+        "<%= config.bin %> sync users --project centy-daemon"
+      ],
+      "flags": {
+        "dry-run": {
+          "char": "d",
+          "description": "Show what would be done without making changes",
+          "name": "dry-run",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "sync:users",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "sync", "users.js"]
+    },
     "untrack:org": {
       "aliases": ["untrack:organization"],
       "args": {
@@ -2670,263 +2713,6 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "untrack", "project.js"]
-    },
-    "sync:users": {
-      "aliases": [],
-      "args": {},
-      "description": "Sync users from git history",
-      "examples": [
-        "<%= config.bin %> sync users",
-        "<%= config.bin %> sync users --dry-run",
-        "<%= config.bin %> sync users --json",
-        "<%= config.bin %> sync users --project centy-daemon"
-      ],
-      "flags": {
-        "dry-run": {
-          "char": "d",
-          "description": "Show what would be done without making changes",
-          "name": "dry-run",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output as JSON",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "sync:users",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "sync", "users.js"]
-    },
-    "workspace:cleanup": {
-      "aliases": [],
-      "args": {},
-      "description": "Cleanup all expired temporary workspaces",
-      "examples": ["<%= config.bin %> workspace cleanup"],
-      "flags": {},
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:cleanup",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "cleanup.js"]
-    },
-    "workspace:close": {
-      "aliases": [],
-      "args": {
-        "path": {
-          "description": "Path to the workspace to close",
-          "name": "path",
-          "required": true
-        }
-      },
-      "description": "Close and remove a temporary workspace",
-      "examples": [
-        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123",
-        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123 --force"
-      ],
-      "flags": {
-        "force": {
-          "char": "f",
-          "description": "Force removal even if VS Code may be open",
-          "name": "force",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:close",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "close.js"]
-    },
-    "workspace:list": {
-      "aliases": [],
-      "args": {},
-      "description": "List all temporary workspaces",
-      "examples": [
-        "<%= config.bin %> workspace list",
-        "<%= config.bin %> workspace list --include-expired",
-        "<%= config.bin %> workspace list --project ./my-project"
-      ],
-      "flags": {
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "include-expired": {
-          "description": "Include expired workspaces",
-          "name": "include-expired",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "all": {
-          "description": "Show workspaces from all projects",
-          "name": "all",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:list",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "list.js"]
-    },
-    "workspace:new": {
-      "aliases": [],
-      "args": {},
-      "description": "Create a standalone workspace not tied to an issue",
-      "examples": [
-        "<%= config.bin %> workspace new",
-        "<%= config.bin %> workspace new --name my-workspace",
-        "<%= config.bin %> workspace new --name \"Feature spike\" --description \"Explore new auth approach\" --ttl 24",
-        "<%= config.bin %> workspace new --editor vscode"
-      ],
-      "flags": {
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "name": {
-          "description": "Optional workspace name",
-          "name": "name",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "description": {
-          "char": "d",
-          "description": "Optional description/goal for the AI agent",
-          "name": "description",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "ttl": {
-          "description": "Workspace TTL in hours (default: 12)",
-          "name": "ttl",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "agent": {
-          "description": "Agent name to use (default: project default)",
-          "name": "agent",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "editor": {
-          "description": "Editor to use (default: interactive selection or project default)",
-          "name": "editor",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:new",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "new.js"]
-    },
-    "workspace:open": {
-      "aliases": [],
-      "args": {
-        "issueId": {
-          "description": "Issue ID or display number",
-          "name": "issueId",
-          "required": true
-        }
-      },
-      "description": "Open an issue in a temporary workspace",
-      "examples": [
-        "<%= config.bin %> workspace open 1",
-        "<%= config.bin %> workspace open abc-123 --ttl 24",
-        "<%= config.bin %> workspace open 1 --editor vscode"
-      ],
-      "flags": {
-        "project": {
-          "description": "Project name or path (defaults to current directory)",
-          "name": "project",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "ttl": {
-          "description": "Workspace TTL in hours (default: 12)",
-          "name": "ttl",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "agent": {
-          "description": "Agent name to use (default: project default)",
-          "name": "agent",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "editor": {
-          "description": "Editor to use (default: interactive selection or project default)",
-          "name": "editor",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "workspace:open",
-      "pluginAlias": "centy",
-      "pluginName": "centy",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "workspace", "open.js"]
     },
     "user:create": {
       "aliases": [],
@@ -3149,6 +2935,220 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "user", "update.js"]
+    },
+    "workspace:cleanup": {
+      "aliases": [],
+      "args": {},
+      "description": "Cleanup all expired temporary workspaces",
+      "examples": ["<%= config.bin %> workspace cleanup"],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:cleanup",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "cleanup.js"]
+    },
+    "workspace:close": {
+      "aliases": [],
+      "args": {
+        "path": {
+          "description": "Path to the workspace to close",
+          "name": "path",
+          "required": true
+        }
+      },
+      "description": "Close and remove a temporary workspace",
+      "examples": [
+        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123",
+        "<%= config.bin %> workspace close /tmp/centy-workspace-abc123 --force"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Force removal even if VS Code may be open",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:close",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "close.js"]
+    },
+    "workspace:list": {
+      "aliases": [],
+      "args": {},
+      "description": "List all temporary workspaces",
+      "examples": [
+        "<%= config.bin %> workspace list",
+        "<%= config.bin %> workspace list --include-expired",
+        "<%= config.bin %> workspace list --project ./my-project"
+      ],
+      "flags": {
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "include-expired": {
+          "description": "Include expired workspaces",
+          "name": "include-expired",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "all": {
+          "description": "Show workspaces from all projects",
+          "name": "all",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:list",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "list.js"]
+    },
+    "workspace:new": {
+      "aliases": [],
+      "args": {},
+      "description": "Create a standalone workspace not tied to an issue",
+      "examples": [
+        "<%= config.bin %> workspace new",
+        "<%= config.bin %> workspace new --name my-workspace",
+        "<%= config.bin %> workspace new --name \"Feature spike\" --description \"Explore new auth approach\" --ttl 24",
+        "<%= config.bin %> workspace new --editor vscode"
+      ],
+      "flags": {
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "name": {
+          "description": "Optional workspace name",
+          "name": "name",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "description": {
+          "char": "d",
+          "description": "Optional description/goal for the AI agent",
+          "name": "description",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "ttl": {
+          "description": "Workspace TTL in hours (default: 12)",
+          "name": "ttl",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "agent": {
+          "description": "Agent name to use (default: project default)",
+          "name": "agent",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "editor": {
+          "description": "Editor to use (default: interactive selection or project default)",
+          "name": "editor",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:new",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "new.js"]
+    },
+    "workspace:open": {
+      "aliases": [],
+      "args": {
+        "issueId": {
+          "description": "Issue ID or display number",
+          "name": "issueId",
+          "required": true
+        }
+      },
+      "description": "Open an issue in a temporary workspace",
+      "examples": [
+        "<%= config.bin %> workspace open 1",
+        "<%= config.bin %> workspace open abc-123 --ttl 24",
+        "<%= config.bin %> workspace open 1 --editor vscode"
+      ],
+      "flags": {
+        "project": {
+          "description": "Project name or path (defaults to current directory)",
+          "name": "project",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "ttl": {
+          "description": "Workspace TTL in hours (default: 12)",
+          "name": "ttl",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "agent": {
+          "description": "Agent name to use (default: project default)",
+          "name": "agent",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "editor": {
+          "description": "Editor to use (default: interactive selection or project default)",
+          "name": "editor",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "workspace:open",
+      "pluginAlias": "centy",
+      "pluginName": "centy",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "workspace", "open.js"]
     }
   },
   "version": "0.8.2"

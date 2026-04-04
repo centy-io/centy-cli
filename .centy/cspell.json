@@ -3,21 +3,21 @@
   "language": "en",
   "version": "0.2",
   "words": [
-    "CICD",
-    "EBADMACHO",
     "allowDirectEdits",
     "allowedStates",
     "autoCloseOnComplete",
     "centy",
     "centyVersion",
+    "CICD",
     "compacted",
     "createdAt",
     "displayNumber",
+    "EBADMACHO",
     "priorityColors",
     "priorityLevels",
     "schemaVersion",
     "stateColors",
-    "updateStatusOnStart",
-    "updatedAt"
+    "updatedAt",
+    "updateStatusOnStart"
   ]
 }
