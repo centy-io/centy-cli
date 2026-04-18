@@ -63,6 +63,7 @@ export default class CommentUpdate extends Command {
       customFields: {},
       tags: [],
       clearTags: false,
+      projects: [],
     })
 
     if (!response.success) {

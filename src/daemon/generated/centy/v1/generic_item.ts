@@ -134,6 +134,8 @@ export interface UpdateItemRequest {
   tags: string[];
   /** If true, clear all tags (takes precedence over tags field) */
   clearTags: boolean;
+  /** Non-empty = replace projects; empty = don't change */
+  projects: string[];
 }
 
 export interface UpdateItemRequest_CustomFieldsEntry {

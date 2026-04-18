@@ -81,6 +81,7 @@ export default class Update extends Command {
       customFields: parseCustomFields(flags['custom-field']),
       tags: flags.tag !== undefined ? flags.tag : [],
       clearTags: flags['clear-tags'],
+      projects: [],
     })
 
     if (!response.success) this.error(response.error)

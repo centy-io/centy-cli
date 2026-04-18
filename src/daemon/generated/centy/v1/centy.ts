@@ -869,6 +869,26 @@ export interface GetAvailableLinkTypesResponse {
   linkTypes: LinkTypeInfo[];
 }
 
+/** Update an existing link */
+export interface UpdateLinkRequest {
+  projectPath: string;
+  /** UUID of the link file to update (from Link.id) */
+  linkId: string;
+  /** New link type (e.g. "blocks") */
+  linkType: string;
+}
+
+export interface UpdateLinkResponse {
+  success: boolean;
+  error: string;
+  /** Source's view after update (direction="source") */
+  updatedLink?:
+    | Link
+    | undefined;
+  /** Target's view after update (direction="target") */
+  inverseLink?: Link | undefined;
+}
+
 /** A project user/team member */
 export interface User {
   /** Unique identifier (slug format, e.g., "john-doe") */

@@ -70,6 +70,7 @@ export default class Close extends Command {
       customFields: {},
       tags: [],
       clearTags: false,
+      projects: [],
     })
 
     if (!response.success) {
