@@ -43,6 +43,8 @@ export interface GenericItemMetadata {
   customFields: { [key: string]: string };
   /** Free-form tags (e.g. ["bug", "frontend"]) */
   tags: string[];
+  /** Project slugs this item is associated with (org-wide items only) */
+  projects: string[];
 }
 
 export interface GenericItemMetadata_CustomFieldsEntry {
@@ -64,6 +66,8 @@ export interface CreateItemRequest {
   customFields: { [key: string]: string };
   /** Tags to set on create (empty = no tags) */
   tags: string[];
+  /** Associated project slugs; len > 1 → written to the org repo */
+  projects: string[];
 }
 
 export interface CreateItemRequest_CustomFieldsEntry {
@@ -101,6 +105,8 @@ export interface ListItemsRequest {
   offset: number;
   /** JSON-encoded MQL query (e.g. {"status":{"$in":["open","in-progress"]}}) */
   filter: string;
+  /** Include organization-wide items for this project (default: true) */
+  includeOrganizationItems?: boolean | undefined;
 }
 
 export interface ListItemsResponse {
