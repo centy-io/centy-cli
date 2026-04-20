@@ -1,36 +1,20 @@
 import { join } from 'node:path'
 import { Writable } from 'node:stream'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import type { ReconciliationPlan, InitResponse } from './daemon/types.js'
-
-// Mock isGitRepo to return true for test paths
-vi.mock('./utils/is-git-repo.js', () => ({
-  isGitRepo: vi.fn().mockReturnValue(true),
-}))
-
-// Mock daemon client
-const mockGetReconciliationPlan = vi.fn()
-const mockExecuteReconciliation = vi.fn()
-
-vi.mock('./daemon/daemon-get-reconciliation-plan.js', () => ({
-  daemonGetReconciliationPlan: (...args: unknown[]) =>
-    mockGetReconciliationPlan(...args),
-}))
-
-vi.mock('./daemon/daemon-execute-reconciliation.js', () => ({
-  daemonExecuteReconciliation: (...args: unknown[]) =>
-    mockExecuteReconciliation(...args),
-}))
+import type { InitResponse } from './daemon/types.js'
 
 vi.mock('./utils/is-git-repo.js', () => ({
   isGitRepo: () => true,
 }))
 
+const mockDaemonInit = vi.fn()
+
+vi.mock('./daemon/daemon-init.js', () => ({
+  daemonInit: (...args: unknown[]) => mockDaemonInit(...args),
+}))
+
 const { init } = await import('./lib/init/index.js')
 
-/**
- * Create a writable stream that captures output to a string
- */
 function createOutputCapture(): { stream: Writable; getOutput: () => string } {
   let output = ''
   const stream = new Writable({
@@ -42,21 +26,6 @@ function createOutputCapture(): { stream: Writable; getOutput: () => string } {
   return { stream, getOutput: () => output }
 }
 
-// Helper to create mock reconciliation plan
-function createMockPlan(
-  overrides: Partial<ReconciliationPlan> = {}
-): ReconciliationPlan {
-  return {
-    toCreate: ['issues/', 'docs/', 'README.md'],
-    toRestore: [],
-    toReset: [],
-    upToDate: [],
-    userFiles: [],
-    ...overrides,
-  }
-}
-
-// Helper to create mock init response
 function createMockResponse(
   overrides: Partial<InitResponse> = {}
 ): InitResponse {
@@ -79,20 +48,17 @@ describe('init command', () => {
   })
 
   it('should create .centy folder with force flag', async () => {
-    mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-    mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+    mockDaemonInit.mockResolvedValue(createMockResponse())
 
     const { stream, getOutput } = createOutputCapture()
     const result = await init({ force: true, cwd: tempDir, output: stream })
 
     expect(result.success).toBe(true)
-    expect(getOutput()).toContain('Connected to centy daemon')
     expect(getOutput()).toContain('Successfully initialized')
   })
 
   it('should create README.md with correct content', async () => {
-    mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-    mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+    mockDaemonInit.mockResolvedValue(createMockResponse())
 
     const { stream, getOutput } = createOutputCapture()
     await init({ force: true, cwd: tempDir, output: stream })
@@ -101,26 +67,20 @@ describe('init command', () => {
   })
 
   it('should create manifest file', async () => {
-    mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-    mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+    mockDaemonInit.mockResolvedValue(createMockResponse())
 
     const { stream } = createOutputCapture()
     const result = await init({ force: true, cwd: tempDir, output: stream })
 
     expect(result.success).toBe(true)
-    expect(mockExecuteReconciliation).toHaveBeenCalled()
+    expect(mockDaemonInit).toHaveBeenCalled()
   })
 
   it('should detect existing folder and report', async () => {
-    mockGetReconciliationPlan.mockResolvedValue(
-      createMockPlan({
-        toCreate: [],
-        upToDate: ['issues/', 'docs/', 'README.md'],
-      })
-    )
-    mockExecuteReconciliation.mockResolvedValue(
+    mockDaemonInit.mockResolvedValue(
       createMockResponse({
         created: [],
+        skipped: ['issues/', 'docs/', 'README.md'],
       })
     )
 
@@ -128,12 +88,11 @@ describe('init command', () => {
     const result = await init({ force: true, cwd: tempDir, output: stream })
 
     expect(result.success).toBe(true)
-    expect(getOutput()).toContain('Connected to centy daemon')
+    expect(getOutput()).toContain('Initializing .centy folder')
   })
 
   it('should return created files in result', async () => {
-    mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-    mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+    mockDaemonInit.mockResolvedValue(createMockResponse())
 
     const { stream } = createOutputCapture()
     const result = await init({ force: true, cwd: tempDir, output: stream })
@@ -145,8 +104,7 @@ describe('init command', () => {
   })
 
   it('should set centyPath in result', async () => {
-    mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-    mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+    mockDaemonInit.mockResolvedValue(createMockResponse())
 
     const { stream } = createOutputCapture()
     const result = await init({ force: true, cwd: tempDir, output: stream })

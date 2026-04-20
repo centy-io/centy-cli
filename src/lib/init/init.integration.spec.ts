@@ -1,21 +1,13 @@
 import { join } from 'node:path'
 import { Writable } from 'node:stream'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { ReconciliationPlan, InitResponse } from '../../daemon/types.js'
+import type { InitResponse } from '../../daemon/types.js'
 
-// Mock daemon client
-const mockGetReconciliationPlan = vi.fn()
-const mockExecuteReconciliation = vi.fn()
+const mockDaemonInit = vi.fn()
 const mockIsGitRepo = vi.fn().mockReturnValue(true)
 
-vi.mock('../../daemon/daemon-get-reconciliation-plan.js', () => ({
-  daemonGetReconciliationPlan: (...args: unknown[]) =>
-    mockGetReconciliationPlan(...args),
-}))
-
-vi.mock('../../daemon/daemon-execute-reconciliation.js', () => ({
-  daemonExecuteReconciliation: (...args: unknown[]) =>
-    mockExecuteReconciliation(...args),
+vi.mock('../../daemon/daemon-init.js', () => ({
+  daemonInit: (...args: unknown[]) => mockDaemonInit(...args),
 }))
 
 vi.mock('../../utils/is-git-repo.js', () => ({
@@ -25,7 +17,6 @@ vi.mock('../../utils/is-git-repo.js', () => ({
 // Import after mocking
 const { init } = await import('./init.js')
 
-// Helper to create a writable stream that collects output
 function createOutputCollector(): {
   stream: Writable
   getOutput: () => string
@@ -43,21 +34,6 @@ function createOutputCollector(): {
   }
 }
 
-// Helper to create mock reconciliation plan
-function createMockPlan(
-  overrides: Partial<ReconciliationPlan> = {}
-): ReconciliationPlan {
-  return {
-    toCreate: ['issues/', 'docs/', 'README.md'],
-    toRestore: [],
-    toReset: [],
-    upToDate: [],
-    userFiles: [],
-    ...overrides,
-  }
-}
-
-// Helper to create mock init response
 function createMockResponse(
   overrides: Partial<InitResponse> = {}
 ): InitResponse {
@@ -79,8 +55,7 @@ describe('init integration tests', () => {
 
   describe('fresh initialization', () => {
     it('should create .centy folder structure via daemon', async () => {
-      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+      mockDaemonInit.mockResolvedValue(createMockResponse())
 
       const collector = createOutputCollector()
       const result = await init({
@@ -91,14 +66,13 @@ describe('init integration tests', () => {
 
       expect(result.success).toBe(true)
       expect(result.centyPath).toBe(join('/project', '.centy'))
-      expect(mockGetReconciliationPlan).toHaveBeenCalledWith({
-        projectPath: '/project',
-      })
+      expect(mockDaemonInit).toHaveBeenCalledWith(
+        expect.objectContaining({ projectPath: '/project', force: true })
+      )
     })
 
     it('should return created files in result', async () => {
-      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+      mockDaemonInit.mockResolvedValue(createMockResponse())
 
       const collector = createOutputCollector()
       const result = await init({
@@ -112,24 +86,8 @@ describe('init integration tests', () => {
       expect(result.created).toContain('README.md')
     })
 
-    it('should output connection message', async () => {
-      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
-
-      const collector = createOutputCollector()
-      await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      const output = collector.getOutput()
-      expect(output).toContain('Connected to centy daemon')
-    })
-
     it('should output initialization message', async () => {
-      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+      mockDaemonInit.mockResolvedValue(createMockResponse())
 
       const collector = createOutputCollector()
       await init({
@@ -144,42 +102,9 @@ describe('init integration tests', () => {
   })
 
   describe('existing folder reconciliation', () => {
-    it('should preserve user-created files', async () => {
-      mockGetReconciliationPlan.mockResolvedValue(
-        createMockPlan({
-          toCreate: [],
-          upToDate: ['issues/', 'docs/', 'README.md'],
-          userFiles: [{ path: 'issues/0001-my-issue.md', hash: 'abc123' }],
-        })
-      )
-      mockExecuteReconciliation.mockResolvedValue(
-        createMockResponse({
-          created: [],
-        })
-      )
-
-      const collector = createOutputCollector()
-      const result = await init({
-        cwd: '/project',
-        force: true,
-        output: collector.stream,
-      })
-
-      expect(result.userFiles).toContain('issues/0001-my-issue.md')
-    })
-
     it('should report restored files', async () => {
-      mockGetReconciliationPlan.mockResolvedValue(
-        createMockPlan({
-          toCreate: [],
-          toRestore: [{ path: 'README.md', hash: 'abc123' }],
-        })
-      )
-      mockExecuteReconciliation.mockResolvedValue(
-        createMockResponse({
-          created: [],
-          restored: ['README.md'],
-        })
+      mockDaemonInit.mockResolvedValue(
+        createMockResponse({ created: [], restored: ['README.md'] })
       )
 
       const collector = createOutputCollector()
@@ -192,19 +117,9 @@ describe('init integration tests', () => {
       expect(result.restored).toContain('README.md')
     })
 
-    it('should report reset files when force is true', async () => {
-      mockGetReconciliationPlan.mockResolvedValue(
-        createMockPlan({
-          toCreate: [],
-          toReset: [{ path: 'README.md', hash: 'modified123' }],
-        })
-      )
-      mockExecuteReconciliation.mockResolvedValue(
-        createMockResponse({
-          created: [],
-          reset: [],
-          skipped: [],
-        })
+    it('should report reset files', async () => {
+      mockDaemonInit.mockResolvedValue(
+        createMockResponse({ created: [], reset: ['README.md'] })
       )
 
       const collector = createOutputCollector()
@@ -214,14 +129,13 @@ describe('init integration tests', () => {
         output: collector.stream,
       })
 
-      // When forced with toReset files, they should be skipped (force skips reset)
-      expect(result.skipped).toContain('README.md')
+      expect(result.reset).toContain('README.md')
     })
   })
 
   describe('daemon unavailable', () => {
     it('should show error when daemon is not running (ECONNREFUSED)', async () => {
-      mockGetReconciliationPlan.mockRejectedValue(new Error('ECONNREFUSED'))
+      mockDaemonInit.mockRejectedValue(new Error('ECONNREFUSED'))
 
       const collector = createOutputCollector()
       const result = await init({
@@ -236,7 +150,7 @@ describe('init integration tests', () => {
     })
 
     it('should show error when daemon is unavailable', async () => {
-      mockGetReconciliationPlan.mockRejectedValue(new Error('UNAVAILABLE'))
+      mockDaemonInit.mockRejectedValue(new Error('UNAVAILABLE'))
 
       const collector = createOutputCollector()
       const result = await init({
@@ -251,7 +165,7 @@ describe('init integration tests', () => {
     })
 
     it('should report other errors normally', async () => {
-      mockGetReconciliationPlan.mockRejectedValue(new Error('Some other error'))
+      mockDaemonInit.mockRejectedValue(new Error('Some other error'))
 
       const collector = createOutputCollector()
       const result = await init({
@@ -268,12 +182,8 @@ describe('init integration tests', () => {
 
   describe('daemon execution errors', () => {
     it('should handle daemon execution failure', async () => {
-      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-      mockExecuteReconciliation.mockResolvedValue(
-        createMockResponse({
-          success: false,
-          error: 'Failed to write files',
-        })
+      mockDaemonInit.mockResolvedValue(
+        createMockResponse({ success: false, error: 'Failed to write files' })
       )
 
       const collector = createOutputCollector()
@@ -291,8 +201,7 @@ describe('init integration tests', () => {
 
   describe('output messages', () => {
     it('should output success message on completion', async () => {
-      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+      mockDaemonInit.mockResolvedValue(createMockResponse())
 
       const collector = createOutputCollector()
       await init({
@@ -306,8 +215,7 @@ describe('init integration tests', () => {
     })
 
     it('should list created files in output', async () => {
-      mockGetReconciliationPlan.mockResolvedValue(createMockPlan())
-      mockExecuteReconciliation.mockResolvedValue(createMockResponse())
+      mockDaemonInit.mockResolvedValue(createMockResponse())
 
       const collector = createOutputCollector()
       await init({
