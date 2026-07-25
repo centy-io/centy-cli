@@ -1,5 +1,5 @@
-import { homedir } from 'node:os'
-import { isAbsolute, join } from 'node:path'
+import { isAbsolute } from 'node:path'
+import untildify from 'untildify'
 import { daemonListProjects } from '../daemon/daemon-list-projects.js'
 
 /**
@@ -23,16 +23,6 @@ function isPath(input: string): boolean {
     return true
   }
   return false
-}
-
-/**
- * Expand tilde to home directory
- */
-function expandTilde(input: string): string {
-  if (input.startsWith('~')) {
-    return join(homedir(), input.slice(1))
-  }
-  return input
 }
 
 export class ProjectNotFoundError extends Error {
@@ -70,7 +60,7 @@ export async function resolveProjectPath(
 
   // 2. If it looks like a path, return it (with tilde expansion)
   if (isPath(input)) {
-    return expandTilde(input)
+    return untildify(input)
   }
 
   // 3. Otherwise treat as project name - look up in daemon
