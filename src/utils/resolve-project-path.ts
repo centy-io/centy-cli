@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 import { isAbsolute } from 'node:path'
 import untildify from 'untildify'
 import { daemonListProjects } from '../daemon/daemon-list-projects.js'
@@ -51,8 +50,13 @@ export async function resolveProjectPath(
   projectArg: string | undefined
 ): Promise<string> {
   // 1. If no arg provided, use env var or cwd
-  // eslint-disable-next-line no-restricted-syntax
-  const input = projectArg ?? process.env['CENTY_CWD'] ?? process.cwd()
+  const { CENTY_CWD } = process.env
+  const input =
+    projectArg !== undefined
+      ? projectArg
+      : CENTY_CWD !== undefined
+        ? CENTY_CWD
+        : process.cwd()
 
   // 2. If it looks like a path, return it (with tilde expansion)
   if (isPath(input)) {

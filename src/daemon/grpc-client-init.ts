@@ -6,30 +6,11 @@ import type {
   ExecuteReconciliationRequest,
   IsInitializedRequest,
   IsInitializedResponse,
-  GetIssueRequest,
-  GetIssueByDisplayNumberRequest,
-  GetIssuesByUuidRequest,
-  GetIssuesByUuidResponse,
-  GetIssueResponse,
-  ListIssuesRequest,
-  ListIssuesResponse,
-  UpdateIssueRequest,
-  UpdateIssueResponse,
-  DeleteIssueRequest,
-  DeleteIssueResponse,
-  SoftDeleteIssueRequest,
-  SoftDeleteIssueResponse,
-  RestoreIssueRequest,
-  RestoreIssueResponse,
-  MoveIssueRequest,
-  MoveIssueResponse,
-  DuplicateIssueRequest,
-  DuplicateIssueResponse,
 } from './types.js'
 import type { GrpcMethod } from './grpc-utils.js'
 
 /**
- * Daemon client methods for init and issue operations
+ * Daemon client methods for init operations
  */
 export interface CentyDaemonInitClient {
   init: GrpcMethod<InitRequest, InitResponse>
@@ -39,17 +20,4 @@ export interface CentyDaemonInitClient {
   >
   executeReconciliation: GrpcMethod<ExecuteReconciliationRequest, InitResponse>
   isInitialized: GrpcMethod<IsInitializedRequest, IsInitializedResponse>
-  getIssue: GrpcMethod<GetIssueRequest, GetIssueResponse>
-  getIssueByDisplayNumber: GrpcMethod<
-    GetIssueByDisplayNumberRequest,
-    GetIssueResponse
-  >
-  getIssuesByUuid: GrpcMethod<GetIssuesByUuidRequest, GetIssuesByUuidResponse>
-  listIssues: GrpcMethod<ListIssuesRequest, ListIssuesResponse>
-  updateIssue: GrpcMethod<UpdateIssueRequest, UpdateIssueResponse>
-  deleteIssue: GrpcMethod<DeleteIssueRequest, DeleteIssueResponse>
-  softDeleteIssue: GrpcMethod<SoftDeleteIssueRequest, SoftDeleteIssueResponse>
-  restoreIssue: GrpcMethod<RestoreIssueRequest, RestoreIssueResponse>
-  moveIssue: GrpcMethod<MoveIssueRequest, MoveIssueResponse>
-  duplicateIssue: GrpcMethod<DuplicateIssueRequest, DuplicateIssueResponse>
 }

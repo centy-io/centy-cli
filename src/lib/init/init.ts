@@ -1,33 +1,39 @@
 import { join } from 'node:path'
-import { daemonExecuteReconciliation } from '../../daemon/daemon-execute-reconciliation.js'
-import { daemonGetReconciliationPlan } from '../../daemon/daemon-get-reconciliation-plan.js'
-import type { ReconciliationDecisions as DaemonDecisions } from '../../daemon/types.js'
+import { daemonInit } from '../../daemon/daemon-init.js'
+import type { Config } from '../../daemon/types.js'
 import type { InitOptions } from '../../types/init-options.js'
 import type { InitResult } from '../../types/init-result.js'
 import { isGitRepo } from '../../utils/is-git-repo.js'
-import { gatherDecisions } from './gather-decisions.js'
 import { outputSummary } from './output-summary.js'
-import {
-  fileInfoToResetFormat,
-  fileInfoToRestoreFormat,
-} from './type-converters.js'
-
-export { buildConfigFromOptions } from './config-builder.js'
 
 const CENTY_FOLDER = '.centy'
+
+function buildInitConfig(opts: InitOptions): Config | undefined {
+  if (opts.priorityLevels === undefined && opts.version === undefined) {
+    return undefined
+  }
+  return {
+    customFields: [],
+    defaults: {},
+    priorityLevels: opts.priorityLevels !== undefined ? opts.priorityLevels : 0,
+    version: opts.version !== undefined ? opts.version : '',
+    stateColors: {},
+    priorityColors: {},
+    customLinkTypes: [],
+    defaultEditor: '',
+    userValues: {},
+  }
+}
 
 /**
  * Initialize a .centy folder
  * Requires daemon to be running
  */
 export async function init(options?: InitOptions): Promise<InitResult> {
-  // eslint-disable-next-line no-restricted-syntax
-  const opts = options ?? {}
-  // eslint-disable-next-line no-restricted-syntax
-  const cwd = opts.cwd ?? process.cwd()
+  const opts = options !== undefined ? options : {}
+  const cwd = opts.cwd !== undefined ? opts.cwd : process.cwd()
   const centyPath = join(cwd, CENTY_FOLDER)
-  // eslint-disable-next-line no-restricted-syntax
-  const output = opts.output ?? process.stdout
+  const output = opts.output !== undefined ? opts.output : process.stdout
 
   const result: InitResult = {
     success: false,
@@ -52,33 +58,13 @@ export async function init(options?: InitOptions): Promise<InitResult> {
   }
 
   try {
-    // Get reconciliation plan from daemon
-    const plan = await daemonGetReconciliationPlan({ projectPath: cwd })
-
-    output.write('Connected to centy daemon\n')
-
-    // Convert daemon FileInfo to local format for prompts
-    const filesToRestore = plan.toRestore.map(fileInfoToRestoreFormat)
-    const filesToReset = plan.toReset.map(fileInfoToResetFormat)
-
-    // Gather user decisions locally (prompts stay in CLI)
-    const decisions = await gatherDecisions(
-      { toRestore: filesToRestore, toReset: filesToReset },
-      opts,
-      output
-    )
-
-    // Convert decisions to daemon format
-    const daemonDecisions: DaemonDecisions = {
-      restore: decisions.restore,
-      reset: decisions.reset,
-    }
-
-    // Execute reconciliation via daemon
     output.write('Initializing .centy folder...\n')
-    const response = await daemonExecuteReconciliation({
+
+    const response = await daemonInit({
       projectPath: cwd,
-      decisions: daemonDecisions,
+      force: opts.force === true,
+      title: '',
+      initConfig: buildInitConfig(opts),
     })
 
     if (!response.success) {
@@ -90,15 +76,13 @@ export async function init(options?: InitOptions): Promise<InitResult> {
     result.created = response.created
     result.restored = response.restored
     result.reset = response.reset
-    result.skipped = [...response.skipped, ...decisions.skip]
-    result.userFiles = plan.userFiles.map(f => f.path)
+    result.skipped = response.skipped
 
     outputSummary(output, result)
     return result
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error)
 
-    // If daemon is unavailable, show error
     if (msg.includes('UNAVAILABLE') || msg.includes('ECONNREFUSED')) {
       output.write(
         'Error: Centy daemon is not running. Please start the daemon first.\n'
@@ -106,7 +90,6 @@ export async function init(options?: InitOptions): Promise<InitResult> {
       return result
     }
 
-    // Other errors should be reported
     output.write(`Error: ${msg}\n`)
     return result
   }

@@ -1,8 +1,8 @@
-/* eslint-disable security/detect-non-literal-fs-filename -- Test file uses controlled path constants */
 import fs from 'node:fs'
 import { spawn, spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { IS_WINDOWS, skipOnUnix } from '../../testing/platform.js'
 
 // =============================================================================
 // Constants
@@ -11,7 +11,6 @@ import { describe, expect, it } from 'vitest'
 const BIN_DIR = path.resolve(__dirname, '../../../bin')
 const RUN_JS = path.join(BIN_DIR, 'run.js')
 const RUN_CMD = path.join(BIN_DIR, 'run.cmd')
-const IS_WINDOWS = process.platform === 'win32'
 const DEFAULT_TIMEOUT = 30000
 
 // =============================================================================
@@ -192,8 +191,8 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
   // This is not related to the actual CLI functionality and passes on Node 22 and locally.
   // See: https://github.com/oclif/core/issues - ESM resolution issues
   const isNode20 = process.version.startsWith('v20.')
-  // eslint-disable-next-line no-restricted-syntax
-  const isCI = process.env['CI'] === 'true'
+  const { CI } = process.env
+  const isCI = CI === 'true'
   const skipOnNode20CI = isNode20 && isCI
 
   // ===========================================================================
@@ -231,7 +230,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
     })
 
     describe('when only Node.js is available', () => {
-      it('should show Bun installation tip on stderr', async () => {
+      it('should run successfully without Bun in PATH', async () => {
         const pathWithoutBun = createPathWithoutBun()
 
         const result = await runWrapper(RUN_JS, ['--version'], {
@@ -239,10 +238,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
           PATH: pathWithoutBun,
         })
 
-        expect(result.stderr).toContain(
-          'Tip: Install Bun for faster CLI performance'
-        )
-        expect(result.stderr).toContain('https://bun.sh')
+        expect(result.exitCode).toBe(0)
       })
 
       it('should complete successfully with exit code 0', async () => {
@@ -314,7 +310,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
     })
 
     describe('stderr/stdout separation', () => {
-      it('should output tip message only to stderr, not stdout', async () => {
+      it('should not output Bun tip to stdout', async () => {
         const pathWithoutBun = createPathWithoutBun()
 
         const result = await runWrapper(RUN_JS, ['--version'], {
@@ -323,7 +319,6 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
         })
 
         expect(result.stdout).not.toContain('Tip: Install Bun')
-        expect(result.stderr).toContain('Tip: Install Bun')
       })
 
       it('should output CLI output only to stdout', async () => {
@@ -388,9 +383,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
     })
 
     // Runtime tests only run on Windows
-    const itOnWindows = IS_WINDOWS ? it : it.skip
-
-    itOnWindows(
+    skipOnUnix(
       'should execute successfully when Bun is available',
       async () => {
         if (!bunAvailable) {
@@ -406,7 +399,7 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
       }
     )
 
-    itOnWindows(
+    skipOnUnix(
       'should show tip and run with Node.js when Bun is not available',
       async () => {
         const pathWithoutBun = createPathWithoutBun()
@@ -456,7 +449,6 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
         })
 
         expect(result.exitCode).toBe(0)
-        expect(result.stderr).toContain('Tip: Install Bun')
       })
 
       it('should handle PATH with mixed case bun directories', async () => {
@@ -473,7 +465,6 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
         })
 
         expect(result.exitCode).toBe(0)
-        expect(result.stderr).toContain('Tip: Install Bun')
       })
     })
 
@@ -481,12 +472,12 @@ describe('runtime detection wrapper', { timeout: DEFAULT_TIMEOUT }, () => {
       it('should handle invalid command gracefully', async () => {
         const pathWithoutBun = createPathWithoutBun()
 
-        const result = await runWrapper(RUN_JS, ['invalid-command-xyz'], {
+        const result = await runWrapper(RUN_JS, ['InvalidCommandXYZ'], {
           ...process.env,
           PATH: pathWithoutBun,
         })
 
-        // oclif returns exit code 2 for unknown commands
+        // command-not-found hook exits with code 2 for unrecognized commands
         expect(result.exitCode).toBe(2)
       })
 

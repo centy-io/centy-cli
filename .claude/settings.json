@@ -134,7 +134,13 @@
       "Bash(gh pr checks:*)",
       "Bash(gh run list:*)",
       "Bash(gh run view:*)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(pnpm centy:*)",
+      "WebFetch(domain:claude.com)",
+      "Bash(git submodule:*)",
+      "Bash(pnpm manifest:*)",
+      "WebFetch(domain:blog.npmjs.org)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ],
     "deny": [
       "Bash(npm install)",

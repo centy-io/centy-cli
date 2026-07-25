@@ -1,7 +1,6 @@
-/* eslint-disable no-restricted-syntax */
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-// eslint-disable-next-line import/order
 import { daemonGetCompact } from './daemon-get-compact.js'
+import { getDaemonClient } from './load-proto.js'
 
 vi.mock('./load-proto.js', () => {
   const mockCallWithDeadline = vi.fn(async (method, request, _timeout) => {
@@ -19,9 +18,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-// eslint-disable-next-line import/first
-import { getDaemonClient } from './load-proto.js'
-
 describe('daemonGetCompact', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -35,11 +31,9 @@ describe('daemonGetCompact', () => {
       }),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
-    const result = await daemonGetCompact({} as never)
+    const result = await daemonGetCompact({})
 
     expect(result).toEqual(mockResponse)
     expect(mockClient.getCompact).toHaveBeenCalledWith(
@@ -57,10 +51,8 @@ describe('daemonGetCompact', () => {
       }),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
-    await expect(daemonGetCompact({} as never)).rejects.toThrow('gRPC error')
+    await expect(daemonGetCompact({})).rejects.toThrow('gRPC error')
   })
 })

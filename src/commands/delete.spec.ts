@@ -108,6 +108,30 @@ describe('Delete command', () => {
     })
   })
 
+  describe('--json flag', () => {
+    it('should output JSON and skip confirmation when --json is set', async () => {
+      const { default: Command } = await import('./delete.js')
+      mockDaemonDeleteItem.mockResolvedValue({ success: true })
+
+      const cmd = createMockCommand(Command, {
+        flags: { force: false, json: true },
+        args: { type: 'issue', id: '1' },
+      })
+
+      await cmd.run()
+
+      expect(mockRlQuestion).not.toHaveBeenCalled()
+      expect(mockDaemonDeleteItem).toHaveBeenCalled()
+      expect(cmd.logs).toHaveLength(1)
+      const parsed = JSON.parse(cmd.logs[0])
+      expect(parsed).toMatchObject({
+        type: 'issue',
+        id: 'item-uuid',
+        deleted: true,
+      })
+    })
+  })
+
   describe('confirmation prompt (no --force)', () => {
     it('should cancel when user answers N', async () => {
       const { default: Command } = await import('./delete.js')

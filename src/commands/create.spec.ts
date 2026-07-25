@@ -86,6 +86,8 @@ describe('Create command', () => {
       status: '',
       priority: 0,
       customFields: {},
+      tags: [],
+      projects: [],
     })
     expect(cmd.logs.some(log => log.includes('Created issue'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('#1'))).toBe(true)
@@ -130,6 +132,8 @@ describe('Create command', () => {
       status: '',
       priority: 0,
       customFields: {},
+      tags: [],
+      projects: [],
     })
     expect(cmd.logs.some(log => log.includes('Created doc'))).toBe(true)
   })
@@ -228,6 +232,71 @@ describe('Create command', () => {
     expect(mockDaemonCreateItem).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'open', priority: 1 })
     )
+  })
+
+  it('should output JSON when --json flag is set', async () => {
+    const { default: Command } = await import('./create.js')
+    const item = createMockGenericItem()
+    mockDaemonCreateItem.mockResolvedValue({ success: true, item })
+
+    const cmd = createMockCommand(Command, {
+      args: { type: 'issue' },
+      flags: {
+        title: 'Test Issue',
+        body: '',
+        status: '',
+        priority: 0,
+        json: true,
+      },
+    })
+
+    await cmd.run()
+
+    expect(cmd.logs).toHaveLength(1)
+    const parsed = JSON.parse(cmd.logs[0])
+    expect(parsed).toMatchObject({
+      type: 'issue',
+      id: 'abc-123',
+      displayNumber: 1,
+      title: 'Test Issue',
+      status: 'open',
+    })
+  })
+
+  it('should omit displayNumber from JSON when item has no display number', async () => {
+    const { default: Command } = await import('./create.js')
+    const item = createMockGenericItem({
+      id: 'getting-started',
+      itemType: 'docs',
+      title: 'Getting Started',
+      metadata: {
+        displayNumber: 0,
+        status: '',
+        priority: 0,
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-02T00:00:00Z',
+        deletedAt: '',
+        customFields: {},
+      },
+    })
+    mockDaemonCreateItem.mockResolvedValue({ success: true, item })
+
+    const cmd = createMockCommand(Command, {
+      args: { type: 'doc' },
+      flags: {
+        title: 'Getting Started',
+        body: '',
+        status: '',
+        priority: 0,
+        json: true,
+      },
+    })
+
+    await cmd.run()
+
+    const parsed = JSON.parse(cmd.logs[0])
+    expect(parsed.displayNumber).toBeUndefined()
+    expect(parsed.type).toBe('doc')
   })
 
   it('should handle error response', async () => {

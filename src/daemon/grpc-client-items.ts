@@ -17,8 +17,8 @@ import type {
   DuplicateItemResponse,
   MoveItemRequest,
   MoveItemResponse,
-  AdvancedSearchRequest,
-  AdvancedSearchResponse,
+  SearchItemsRequest,
+  SearchItemsResponse,
   GetAvailableLinkTypesRequest,
   GetAvailableLinkTypesResponse,
   GetSupportedEditorsRequest,
@@ -27,6 +27,8 @@ import type {
   CreateItemTypeResponse,
   ListItemTypesRequest,
   ListItemTypesResponse,
+  ListItemsAcrossProjectsRequest,
+  ListItemsAcrossProjectsResponse,
 } from './types.js'
 import type { GrpcMethod } from './grpc-utils.js'
 
@@ -41,7 +43,7 @@ export interface CentyDaemonItemsClient {
   deleteItem: GrpcMethod<DeleteItemRequest, DeleteItemResponse>
   softDeleteItem: GrpcMethod<SoftDeleteItemRequest, SoftDeleteItemResponse>
   restoreItem: GrpcMethod<RestoreItemRequest, RestoreItemResponse>
-  advancedSearch: GrpcMethod<AdvancedSearchRequest, AdvancedSearchResponse>
+  searchItems: GrpcMethod<SearchItemsRequest, SearchItemsResponse>
   getAvailableLinkTypes: GrpcMethod<
     GetAvailableLinkTypesRequest,
     GetAvailableLinkTypesResponse
@@ -54,4 +56,8 @@ export interface CentyDaemonItemsClient {
   moveItem: GrpcMethod<MoveItemRequest, MoveItemResponse>
   createItemType: GrpcMethod<CreateItemTypeRequest, CreateItemTypeResponse>
   listItemTypes: GrpcMethod<ListItemTypesRequest, ListItemTypesResponse>
+  listItemsAcrossProjects: GrpcMethod<
+    ListItemsAcrossProjectsRequest,
+    ListItemsAcrossProjectsResponse
+  >
 }

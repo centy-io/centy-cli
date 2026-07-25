@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { daemonDeleteItem } from '../daemon/daemon-delete-item.js'
 import { projectFlag } from '../flags/project-flag.js'
@@ -14,9 +12,8 @@ import { resolveItemId } from '../lib/resolve-item-id/resolve-item-id.js'
 /**
  * Delete an item by type and identifier
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Delete extends Command {
-  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, epic, or custom type)',
@@ -28,10 +25,8 @@ export default class Delete extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Delete an item by type and identifier'
 
-  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> delete issue 1',
     '<%= config.bin %> delete epic 1 --force',
@@ -39,11 +34,14 @@ export default class Delete extends Command {
     '<%= config.bin %> delete epic 1 --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     force: Flags.boolean({
       char: 'f',
       description: 'Skip confirmation prompt',
+      default: false,
+    }),
+    json: Flags.boolean({
+      description: 'Output as JSON (also skips confirmation prompt)',
       default: false,
     }),
     project: projectFlag,
@@ -63,7 +61,7 @@ export default class Delete extends Command {
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    if (!flags.force) {
+    if (!flags.force && !flags.json) {
       const readline = await import('node:readline')
       const rl = readline.createInterface({
         input: process.stdin,
@@ -94,6 +92,21 @@ export default class Delete extends Command {
 
     if (!response.success) {
       this.error(response.error)
+    }
+
+    if (flags.json) {
+      this.log(
+        JSON.stringify(
+          {
+            type: args.type,
+            id: itemId,
+            deleted: true,
+          },
+          null,
+          2
+        )
+      )
+      return
     }
 
     this.log(`Deleted ${args.type} ${args.id}`)

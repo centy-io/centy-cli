@@ -1,12 +1,10 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import pluralize from 'pluralize'
 import { daemonGetItem } from '../daemon/daemon-get-item.js'
 import { projectFlag } from '../flags/project-flag.js'
-import { handleIssueNotInitialized } from '../lib/get-issue/handle-not-initialized.js'
 import { formatGenericItem } from '../lib/get-item/format-generic-item.js'
 import { handleGlobalGet } from '../lib/get-item/handle-global-get.js'
+import { parseDisplayNumber } from '../lib/resolve-item-id/parse-display-number.js'
 import {
   ensureInitialized,
   NotInitializedError,
@@ -16,9 +14,8 @@ import { resolveProjectPath } from '../utils/resolve-project-path.js'
 /**
  * Get any item by type and identifier
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Get extends Command {
-  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     type: Args.string({
       description: 'Item type (e.g., issue, doc, user, or custom type)',
@@ -30,10 +27,8 @@ export default class Get extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Get an item by type and identifier'
 
-  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> get issue 1',
     '<%= config.bin %> get issue abc123-uuid',
@@ -41,11 +36,11 @@ export default class Get extends Command {
     '<%= config.bin %> get user john-doe',
     '<%= config.bin %> get epic 1',
     '<%= config.bin %> get bug abc123-uuid --json',
+    '<%= config.bin %> get issue 42 --global',
     '<%= config.bin %> get issue abc123-uuid --global',
     '<%= config.bin %> get issue 1 --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     json: Flags.boolean({
       description: 'Output as JSON',
@@ -53,7 +48,7 @@ export default class Get extends Command {
     }),
     global: Flags.boolean({
       char: 'g',
-      description: 'Search across all tracked projects (UUID only)',
+      description: 'Search across all tracked projects',
       default: false,
     }),
     project: projectFlag,
@@ -81,26 +76,12 @@ export default class Get extends Command {
       await ensureInitialized(cwd)
     } catch (error) {
       if (error instanceof NotInitializedError) {
-        if (itemType === 'issues') {
-          const result = await handleIssueNotInitialized(
-            error,
-            args.id,
-            flags.json
-          )
-          if (result !== null) {
-            if (result.jsonOutput !== undefined) {
-              this.log(JSON.stringify(result.jsonOutput, null, 2))
-              return
-            }
-            this.error(result.message)
-          }
-        }
         this.error(error.message)
       }
       throw error instanceof Error ? error : new Error(String(error))
     }
 
-    const displayNumber = /^\d+$/.test(args.id) ? Number(args.id) : undefined
+    const displayNumber = parseDisplayNumber(args.id)
     const response = await daemonGetItem({
       projectPath: cwd,
       itemType,

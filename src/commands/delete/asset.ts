@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Args, Command, Flags } from '@oclif/core'
-
 import { daemonDeleteAsset } from '../../daemon/daemon-delete-asset.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import {
@@ -12,9 +10,8 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * Delete an asset
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class DeleteAsset extends Command {
-  // eslint-disable-next-line no-restricted-syntax
   static override args = {
     filename: Args.string({
       description: 'Asset filename',
@@ -22,10 +19,8 @@ export default class DeleteAsset extends Command {
     }),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Delete an asset'
 
-  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> delete asset screenshot.png --issue 1',
     '<%= config.bin %> delete asset logo.svg --shared',
@@ -33,7 +28,6 @@ export default class DeleteAsset extends Command {
     '<%= config.bin %> delete asset screenshot.png --issue 1 --project centy-daemon',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     issue: Flags.string({
       char: 'i',

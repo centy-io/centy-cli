@@ -1,4 +1,5 @@
 import { daemonGetItem } from '../../daemon/daemon-get-item.js'
+import { parseDisplayNumber } from './parse-display-number.js'
 
 /**
  * Resolve an item identifier to a UUID.
@@ -11,7 +12,7 @@ export async function resolveItemId(
   projectPath: string,
   throwError: (msg: string) => never
 ): Promise<string> {
-  const displayNumber = /^\d+$/.test(id) ? Number(id) : undefined
+  const displayNumber = parseDisplayNumber(id)
   if (displayNumber === undefined) {
     return id
   }

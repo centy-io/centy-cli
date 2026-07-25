@@ -1,7 +1,6 @@
-/* eslint-disable no-restricted-syntax */
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-// eslint-disable-next-line import/order
 import { daemonGetIssueByDisplayNumber } from './daemon-get-issue-by-display-number.js'
+import { getDaemonClient } from './load-proto.js'
 
 vi.mock('./load-proto.js', () => {
   const mockCallWithDeadline = vi.fn(async (method, request, _timeout) => {
@@ -19,9 +18,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-// eslint-disable-next-line import/first
-import { getDaemonClient } from './load-proto.js'
-
 describe('daemonGetIssueByDisplayNumber', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -29,22 +25,20 @@ describe('daemonGetIssueByDisplayNumber', () => {
 
   it('should resolve with response on success', async () => {
     const mockIssue = { id: 'issue-1', displayNumber: 1 }
-    const mockResponse = { success: true, issue: mockIssue }
+    const mockResponse = { success: true, item: mockIssue }
     const mockClient = {
-      getIssueByDisplayNumber: vi.fn((_req, _options, callback) => {
+      getItem: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
       }),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
-    const result = await daemonGetIssueByDisplayNumber({} as never)
+    const result = await daemonGetIssueByDisplayNumber({})
 
     expect(result).toEqual(mockIssue)
-    expect(mockClient.getIssueByDisplayNumber).toHaveBeenCalledWith(
-      {},
+    expect(mockClient.getItem).toHaveBeenCalledWith(
+      expect.objectContaining({ itemType: 'issues', itemId: '' }),
       {},
       expect.any(Function)
     )
@@ -53,16 +47,14 @@ describe('daemonGetIssueByDisplayNumber', () => {
   it('should reject with error on failure', async () => {
     const mockError = new Error('gRPC error')
     const mockClient = {
-      getIssueByDisplayNumber: vi.fn((_req, _options, callback) => {
+      getItem: vi.fn((_req, _options, callback) => {
         callback(mockError, null)
       }),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
-    await expect(daemonGetIssueByDisplayNumber({} as never)).rejects.toThrow(
+    await expect(daemonGetIssueByDisplayNumber({})).rejects.toThrow(
       'gRPC error'
     )
   })

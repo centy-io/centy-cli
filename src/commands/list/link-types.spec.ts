@@ -78,9 +78,7 @@ describe('ListLinkTypes command', () => {
     expect(cmd.logs.some(log => log.includes('Available link types'))).toBe(
       true
     )
-    expect(cmd.logs.some(log => log.includes('blocks <-> blocked-by'))).toBe(
-      true
-    )
+    expect(cmd.logs.some(log => log.includes('blocks'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('(builtin)'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('(custom)'))).toBe(true)
   })

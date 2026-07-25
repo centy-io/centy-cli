@@ -7,6 +7,6 @@ export function tuiBinaryExists(path: string): boolean {
   if (path === TUI_BINARY_NAME || path === `${TUI_BINARY_NAME}.exe`) {
     return true
   }
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   return existsSync(path)
 }

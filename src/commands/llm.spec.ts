@@ -5,14 +5,20 @@ import {
 } from '../testing/command-test-utils.js'
 
 const mockReadFile = vi.fn()
+const mockResolveProjectPath = vi.fn()
 
 vi.mock('node:fs/promises', () => ({
   readFile: (...args: unknown[]) => mockReadFile(...args),
 }))
 
+vi.mock('../utils/resolve-project-path.js', () => ({
+  resolveProjectPath: (...args: unknown[]) => mockResolveProjectPath(...args),
+}))
+
 describe('Llm command', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockResolveProjectPath.mockResolvedValue('/test/project')
   })
 
   it('should have correct static properties', async () => {
@@ -117,5 +123,20 @@ describe('Llm command', () => {
     if (error) {
       expect(error.message).toBe('Permission denied')
     }
+  })
+
+  it('should use project flag to resolve path', async () => {
+    const { default: Command } = await import('./llm.js')
+    mockResolveProjectPath.mockResolvedValue('/other/project')
+    mockReadFile.mockResolvedValue('# Instructions')
+
+    const cmd = createMockCommand(Command, {
+      flags: { json: false, project: 'other-project' },
+      args: {},
+    })
+
+    await cmd.run()
+
+    expect(mockResolveProjectPath).toHaveBeenCalledWith('other-project')
   })
 })

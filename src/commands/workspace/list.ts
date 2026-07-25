@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonListTempWorkspaces } from '../../daemon/daemon-list-temp-workspaces.js'
 import { projectFlag } from '../../flags/project-flag.js'
 import { resolveProjectPath } from '../../utils/resolve-project-path.js'
@@ -8,19 +6,16 @@ import { resolveProjectPath } from '../../utils/resolve-project-path.js'
 /**
  * List all temporary workspaces
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class WorkspaceList extends Command {
-  // eslint-disable-next-line no-restricted-syntax
   static override description = 'List all temporary workspaces'
 
-  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> workspace list',
     '<%= config.bin %> workspace list --include-expired',
     '<%= config.bin %> workspace list --project ./my-project',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     project: projectFlag,
     'include-expired': Flags.boolean({
@@ -63,7 +58,6 @@ export default class WorkspaceList extends Command {
     for (const ws of response.workspaces) {
       this.log(`\n  Path: ${ws.workspacePath}`)
       this.log(`  Issue: #${ws.issueDisplayNumber} - ${ws.issueTitle}`)
-      this.log(`  Action: ${ws.action.toLowerCase()}`)
       this.log(`  Created: ${ws.createdAt}`)
       this.log(`  Expires: ${ws.expiresAt}`)
     }

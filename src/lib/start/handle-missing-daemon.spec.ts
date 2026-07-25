@@ -7,17 +7,6 @@ vi.mock('node:child_process', () => ({
   execSync: vi.fn(),
 }))
 
-vi.mock('../../utils/create-prompt-interface.js', () => ({
-  createPromptInterface: vi.fn(() => ({
-    question: vi.fn(),
-    close: vi.fn(),
-  })),
-}))
-
-vi.mock('../../utils/close-prompt-interface.js', () => ({
-  closePromptInterface: vi.fn(),
-}))
-
 vi.mock('./prompt-for-install.js', () => ({
   promptForInstall: vi.fn(),
 }))

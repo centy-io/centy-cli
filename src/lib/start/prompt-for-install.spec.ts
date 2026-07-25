@@ -1,106 +1,72 @@
-import { createInterface, type Interface } from 'node:readline'
-import { PassThrough } from 'node:stream'
-import { describe, expect, it, afterEach } from 'vitest'
+import { Writable } from 'node:stream'
+import prompts from 'prompts'
+import { describe, expect, it } from 'vitest'
 import { promptForInstall } from './prompt-for-install.js'
 
-function createMockReadline(): {
-  rl: Interface
-  input: PassThrough
-  output: PassThrough
-  destroy: () => void
+function createOutputCollector(): {
+  stream: Writable
+  getOutput: () => string
 } {
-  const input = new PassThrough()
-  const output = new PassThrough()
-  const rl = createInterface({ input, output })
-  return {
-    rl,
-    input,
-    output,
-    destroy: () => {
-      rl.close()
-      input.destroy()
-      output.destroy()
+  let collected = ''
+  const stream = new Writable({
+    write(chunk, _encoding, callback) {
+      collected += chunk.toString()
+      callback()
     },
+  })
+  return {
+    stream,
+    getOutput: () => collected,
   }
 }
 
 describe('promptForInstall', () => {
-  let cleanup: (() => void) | undefined
+  it('should return true when user confirms install', async () => {
+    const { stream } = createOutputCollector()
+    prompts.inject([true])
 
-  afterEach(() => {
-    if (!cleanup) {
-      return
-    }
-
-    cleanup()
-    cleanup = undefined
-  })
-
-  it('should return true when user answers yes', async () => {
-    const { rl, input, output, destroy } = createMockReadline()
-    cleanup = destroy
-
-    const promise = promptForInstall({
-      rl,
-      output,
+    const result = await promptForInstall({
+      output: stream,
       daemonPath: '/path/to/daemon',
     })
-    input.write('y\n')
 
-    const result = await promise
     expect(result).toBe(true)
   })
 
-  it('should return false when user answers no', async () => {
-    const { rl, input, output, destroy } = createMockReadline()
-    cleanup = destroy
+  it('should return false when user declines install', async () => {
+    const { stream } = createOutputCollector()
+    prompts.inject([false])
 
-    const promise = promptForInstall({
-      rl,
-      output,
+    const result = await promptForInstall({
+      output: stream,
       daemonPath: '/path/to/daemon',
     })
-    input.write('n\n')
 
-    const result = await promise
     expect(result).toBe(false)
   })
 
-  it('should return false for empty input (default is no)', async () => {
-    const { rl, input, output, destroy } = createMockReadline()
-    cleanup = destroy
+  it('should return false when prompt is cancelled (default is no)', async () => {
+    const { stream } = createOutputCollector()
+    prompts.inject([undefined])
 
-    const promise = promptForInstall({
-      rl,
-      output,
+    const result = await promptForInstall({
+      output: stream,
       daemonPath: '/path/to/daemon',
     })
-    input.write('\n')
 
-    const result = await promise
     expect(result).toBe(false)
   })
 
   it('should display daemon path in output', async () => {
-    const { rl, input, output, destroy } = createMockReadline()
-    cleanup = destroy
+    const { stream, getOutput } = createOutputCollector()
+    prompts.inject([false])
 
-    const outputChunks: string[] = []
-    output.on('data', chunk => {
-      outputChunks.push(chunk.toString())
-    })
-
-    const promise = promptForInstall({
-      rl,
-      output,
+    await promptForInstall({
+      output: stream,
       daemonPath: '/custom/daemon/path',
     })
-    input.write('n\n')
 
-    await promise
-
-    const fullOutput = outputChunks.join('')
-    expect(fullOutput).toContain('/custom/daemon/path')
-    expect(fullOutput).toContain('Daemon not found')
+    expect(getOutput()).toContain('/custom/daemon/path')
+    expect(getOutput()).toContain('Daemon not found')
   })
 })

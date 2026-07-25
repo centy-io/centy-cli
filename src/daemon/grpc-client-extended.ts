@@ -1,8 +1,8 @@
 import type {
   GetDaemonInfoRequest,
   DaemonInfo,
-  GetNextIssueNumberRequest,
-  GetNextIssueNumberResponse,
+  GetSupportedEditorsRequest,
+  GetSupportedEditorsResponse,
   ShutdownRequest,
   ShutdownResponse,
   RestartRequest,
@@ -11,8 +11,6 @@ import type {
   OpenInTempWorkspaceWithEditorRequest,
   OpenStandaloneWorkspaceWithEditorRequest,
   OpenStandaloneWorkspaceResponse,
-  OpenAgentInTerminalRequest,
-  OpenAgentInTerminalResponse,
   ListTempWorkspacesRequest,
   ListTempWorkspacesResponse,
   CloseTempWorkspaceRequest,
@@ -41,9 +39,9 @@ import type { GrpcMethod } from './grpc-utils.js'
  */
 export interface CentyDaemonExtendedClient {
   getDaemonInfo: GrpcMethod<GetDaemonInfoRequest, DaemonInfo>
-  getNextIssueNumber: GrpcMethod<
-    GetNextIssueNumberRequest,
-    GetNextIssueNumberResponse
+  getSupportedEditors: GrpcMethod<
+    GetSupportedEditorsRequest,
+    GetSupportedEditorsResponse
   >
   shutdown: GrpcMethod<ShutdownRequest, ShutdownResponse>
   restart: GrpcMethod<RestartRequest, RestartResponse>
@@ -54,10 +52,6 @@ export interface CentyDaemonExtendedClient {
   openStandaloneWorkspace: GrpcMethod<
     OpenStandaloneWorkspaceWithEditorRequest,
     OpenStandaloneWorkspaceResponse
-  >
-  openAgentInTerminal: GrpcMethod<
-    OpenAgentInTerminalRequest,
-    OpenAgentInTerminalResponse
   >
   listTempWorkspaces: GrpcMethod<
     ListTempWorkspacesRequest,

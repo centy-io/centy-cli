@@ -1,9 +1,9 @@
 ---
 displayNumber: 7
-status: open
+status: in-progress
 priority: 2
 createdAt: 2025-12-05T14:32:39.043973+00:00
-updatedAt: 2025-12-05T14:32:39.043973+00:00
+updatedAt: 2026-02-24T00:56:01.397206+00:00
 ---
 
 # Improve error message when daemon binary is missing

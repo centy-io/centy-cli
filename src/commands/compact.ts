@@ -1,10 +1,7 @@
-// eslint-disable-next-line import/order
 import { writeFile } from 'node:fs/promises'
-
-// eslint-disable-next-line import/order
 import { Command, Flags } from '@oclif/core'
-
 import { daemonListUncompactedIssues } from '../daemon/daemon-list-uncompacted-issues.js'
+import { projectFlag } from '../flags/project-flag.js'
 import { applyLlmResponseFromFile } from '../lib/compact/apply-llm-response.js'
 import { formatDryRun } from '../lib/compact/format-dry-run.js'
 import { generateLlmContext } from '../lib/compact/generate-llm-context.js'
@@ -12,25 +9,18 @@ import {
   ensureInitialized,
   NotInitializedError,
 } from '../utils/ensure-initialized.js'
+import { resolveProjectPath } from '../utils/resolve-project-path.js'
 
 /**
  * Compact uncompacted issues into features
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class Compact extends Command {
-  // eslint-disable-next-line no-restricted-syntax
   static override description =
     'Compact uncompacted issues into feature summaries'
 
-  // eslint-disable-next-line no-restricted-syntax
-  static override examples = [
-    '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> --dry-run',
-    '<%= config.bin %> <%= command.id %> --output context.md',
-    '<%= config.bin %> <%= command.id %> --input response.md',
-  ]
+  static override examples = ['<%= config.bin %> <%= command.id %>']
 
-  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     'dry-run': Flags.boolean({
       char: 'd',
@@ -49,12 +39,12 @@ export default class Compact extends Command {
       description: 'Output as JSON (for --dry-run)',
       default: false,
     }),
+    project: projectFlag,
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Compact)
-    // eslint-disable-next-line no-restricted-syntax
-    const cwd = process.env['CENTY_CWD'] ?? process.cwd()
+    const cwd = await resolveProjectPath(flags.project)
 
     try {
       await ensureInitialized(cwd)
@@ -77,19 +67,23 @@ export default class Compact extends Command {
     }
 
     if (flags['dry-run']) {
-      for (const line of formatDryRun(response, flags.json)) {
-        this.log(line)
-      }
+      formatDryRun(response, flags.json).forEach(line => this.log(line))
       return
     }
 
-    const context = await generateLlmContext(cwd, response.issues)
+    const context = await generateLlmContext(
+      cwd,
+      response.issues.map(item => ({
+        id: item.id,
+        displayNumber: item.metadata ? item.metadata.displayNumber : 0,
+        title: item.title,
+        description: item.body,
+      }))
+    )
     if (flags.output !== undefined) {
-      // eslint-disable-next-line security/detect-non-literal-fs-filename
       await writeFile(flags.output, context, 'utf-8')
-      this.log(`LLM context written to: ${flags.output}`)
       this.log(
-        `\nNext steps:\n1. Process the file with your LLM\n2. Run: centy compact --input <response-file>`
+        `LLM context written to: ${flags.output}\n\nNext steps:\n1. Process the file with your LLM\n2. Run: centy compact --input <response-file>`
       )
       return
     }
@@ -107,9 +101,9 @@ export default class Compact extends Command {
         this.log('compact.md updated')
       }
       if (result.noIdsFound) {
-        this.warn(
+        const noIdsMsg =
           'No issue IDs found in migration content. Issues will not be marked as compacted.'
-        )
+        this.warn(noIdsMsg)
       } else {
         this.log(`Marked ${result.markedCount} issue(s) as compacted`)
       }

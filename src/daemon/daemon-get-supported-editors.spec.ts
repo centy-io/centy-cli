@@ -1,0 +1,71 @@
+import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { daemonGetSupportedEditors } from './daemon-get-supported-editors.js'
+import { getDaemonClient } from './load-proto.js'
+
+vi.mock('./load-proto.js', () => {
+  const mockCallWithDeadline = vi.fn(async (method, request, _timeout) => {
+    return new Promise((resolve, reject) => {
+      method(request, {}, (error: Error | null, response: unknown) => {
+        if (error) reject(error)
+        else resolve(response)
+      })
+    })
+  })
+  return {
+    getDaemonClient: vi.fn(),
+    callWithDeadline: mockCallWithDeadline,
+    LONG_GRPC_TIMEOUT_MS: 120000,
+  }
+})
+
+describe('daemonGetSupportedEditors', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('should resolve with editors on success', async () => {
+    const mockResponse = {
+      editors: [
+        {
+          name: 'VS Code',
+          description: 'Visual Studio Code',
+          available: true,
+          editorId: 'vscode',
+          terminalWrapper: false,
+        },
+        {
+          name: 'Terminal',
+          description: 'Terminal editor',
+          available: true,
+          editorId: 'terminal',
+          terminalWrapper: true,
+        },
+      ],
+    }
+    const mockClient = {
+      getSupportedEditors: vi.fn((_req, _options, callback) => {
+        callback(null, mockResponse)
+      }),
+    }
+
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
+
+    const result = await daemonGetSupportedEditors({})
+
+    expect(result).toEqual(mockResponse)
+    expect(mockClient.getSupportedEditors).toHaveBeenCalled()
+  })
+
+  it('should reject with error on failure', async () => {
+    const mockError = new Error('gRPC error')
+    const mockClient = {
+      getSupportedEditors: vi.fn((_req, _options, callback) => {
+        callback(mockError, null)
+      }),
+    }
+
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
+
+    await expect(daemonGetSupportedEditors({})).rejects.toThrow('gRPC error')
+  })
+})

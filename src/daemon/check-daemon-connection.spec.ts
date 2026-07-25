@@ -1,7 +1,6 @@
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-optional-chaining/no-optional-chaining */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it, vi, beforeEach } from 'vitest'
+import type { checkDaemonConnection as CheckDaemonConnectionFn } from './check-daemon-connection.js'
+import type { getDaemonClient as GetDaemonClientFn } from './load-proto.js'
 
 // Skip these tests in bun - they require vi.runAllTimersAsync and vi.advanceTimersByTimeAsync
 // and bun doesn't support vi.mock hoisting properly
@@ -23,15 +22,16 @@ vi.mock('./load-proto.js', () => {
     LONG_GRPC_TIMEOUT_MS: 120000,
     DEFAULT_GRPC_TIMEOUT_MS: 30000,
     isDeadlineExceededError: (error: { message?: string }) =>
-      error?.message?.includes('DEADLINE_EXCEEDED'),
+      error.message !== undefined &&
+      error.message.includes('DEADLINE_EXCEEDED'),
     isDaemonUnavailableError: (error: { message?: string }) =>
-      error?.message?.includes('UNAVAILABLE'),
+      error.message !== undefined && error.message.includes('UNAVAILABLE'),
   }
 })
 
 // Only set up imports when not running in bun
-let checkDaemonConnection: any
-let getDaemonClient: any
+let checkDaemonConnection: typeof CheckDaemonConnectionFn | undefined
+let getDaemonClient: typeof GetDaemonClientFn | undefined
 
 if (!isBun) {
   // Dynamic imports after mock setup
@@ -61,9 +61,7 @@ describe.skipIf(isBun)('checkDaemonConnection', () => {
       ),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const resultPromise = checkDaemonConnection()
     await vi.runAllTimersAsync()
@@ -79,16 +77,19 @@ describe.skipIf(isBun)('checkDaemonConnection', () => {
         (
           _req: unknown,
           _options: unknown,
-          callback: (err: { message: string }, res: null) => void
+          callback: (err: Error & { code?: number }, res: null) => void
         ) => {
-          callback({ message: 'UNAVAILABLE: connection refused' }, null)
+          callback(
+            Object.assign(new Error('UNAVAILABLE: connection refused'), {
+              code: 14,
+            }),
+            null
+          )
         }
       ),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const resultPromise = checkDaemonConnection()
     await vi.runAllTimersAsync()
@@ -104,17 +105,18 @@ describe.skipIf(isBun)('checkDaemonConnection', () => {
         (
           _req: unknown,
           _options: unknown,
-          callback: (err: { message: string }, res: null) => void
+          callback: (err: Error & { code?: number }, res: null) => void
         ) => {
           // Simulate DEADLINE_EXCEEDED error
-          callback({ message: 'DEADLINE_EXCEEDED: timeout' }, null)
+          callback(
+            Object.assign(new Error('DEADLINE_EXCEEDED: timeout'), { code: 4 }),
+            null
+          )
         }
       ),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const resultPromise = checkDaemonConnection()
     await vi.runAllTimersAsync()
@@ -130,16 +132,17 @@ describe.skipIf(isBun)('checkDaemonConnection', () => {
         (
           _req: unknown,
           _options: unknown,
-          callback: (err: { message: string }, res: null) => void
+          callback: (err: Error & { code?: number }, res: null) => void
         ) => {
-          callback({ message: 'Some other error' }, null)
+          callback(
+            Object.assign(new Error('Some other error'), { code: 2 }),
+            null
+          )
         }
       ),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
     const resultPromise = checkDaemonConnection()
     await vi.runAllTimersAsync()

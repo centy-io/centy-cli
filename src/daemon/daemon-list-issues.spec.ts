@@ -1,7 +1,6 @@
-/* eslint-disable no-restricted-syntax */
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-// eslint-disable-next-line import/order
 import { daemonListIssues } from './daemon-list-issues.js'
+import { getDaemonClient } from './load-proto.js'
 
 vi.mock('./load-proto.js', () => {
   const mockCallWithDeadline = vi.fn(async (method, request, _timeout) => {
@@ -19,9 +18,6 @@ vi.mock('./load-proto.js', () => {
   }
 })
 
-// eslint-disable-next-line import/first
-import { getDaemonClient } from './load-proto.js'
-
 describe('daemonListIssues', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -30,20 +26,18 @@ describe('daemonListIssues', () => {
   it('should resolve with response on success', async () => {
     const mockResponse = { success: true }
     const mockClient = {
-      listIssues: vi.fn((_req, _options, callback) => {
+      listItems: vi.fn((_req, _options, callback) => {
         callback(null, mockResponse)
       }),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
-    const result = await daemonListIssues({} as never)
+    const result = await daemonListIssues({})
 
     expect(result).toEqual(mockResponse)
-    expect(mockClient.listIssues).toHaveBeenCalledWith(
-      {},
+    expect(mockClient.listItems).toHaveBeenCalledWith(
+      { itemType: 'issues' },
       {},
       expect.any(Function)
     )
@@ -52,15 +46,13 @@ describe('daemonListIssues', () => {
   it('should reject with error on failure', async () => {
     const mockError = new Error('gRPC error')
     const mockClient = {
-      listIssues: vi.fn((_req, _options, callback) => {
+      listItems: vi.fn((_req, _options, callback) => {
         callback(mockError, null)
       }),
     }
 
-    ;(getDaemonClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockClient as never
-    )
+    vi.mocked(getDaemonClient).mockReturnValue(mockClient)
 
-    await expect(daemonListIssues({} as never)).rejects.toThrow('gRPC error')
+    await expect(daemonListIssues({})).rejects.toThrow('gRPC error')
   })
 })

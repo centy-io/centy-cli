@@ -17,8 +17,7 @@ describe('resolveProjectPath', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     process.env = { ...originalEnv }
-    // eslint-disable-next-line no-restricted-syntax
-    delete process.env['CENTY_CWD']
+    Reflect.deleteProperty(process.env, 'CENTY_CWD')
   })
 
   describe('path input', () => {
@@ -73,8 +72,7 @@ describe('resolveProjectPath', () => {
 
   describe('default behavior', () => {
     it('should use CENTY_CWD env var when no arg provided', async () => {
-      // eslint-disable-next-line no-restricted-syntax
-      process.env['CENTY_CWD'] = '/env/path'
+      Reflect.set(process.env, 'CENTY_CWD', '/env/path')
       const result = await resolveProjectPath(undefined)
       expect(result).toBe('/env/path')
     })

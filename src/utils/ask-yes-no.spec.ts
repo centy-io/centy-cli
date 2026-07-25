@@ -1,124 +1,35 @@
-import { createInterface, type Interface } from 'node:readline'
-import { PassThrough } from 'node:stream'
-import { describe, expect, it, afterEach } from 'vitest'
+import prompts from 'prompts'
+import { describe, expect, it } from 'vitest'
 import { askYesNo } from './ask-yes-no.js'
 
-function createMockReadline(): {
-  rl: Interface
-  input: PassThrough
-  destroy: () => void
-} {
-  const input = new PassThrough()
-  const output = new PassThrough()
-  const rl = createInterface({ input, output })
-  return {
-    rl,
-    input,
-    destroy: () => {
-      rl.close()
-      input.destroy()
-      output.destroy()
-    },
-  }
-}
-
 describe('askYesNo', () => {
-  let cleanup: (() => void) | undefined
-
-  afterEach(() => {
-    if (!cleanup) {
-      return
-    }
-
-    cleanup()
-    cleanup = undefined
-  })
-
-  it('should return true for "y" input', async () => {
-    const { rl, input, destroy } = createMockReadline()
-    cleanup = destroy
-
-    const promise = askYesNo(rl, 'Continue?', undefined)
-    input.write('y\n')
-
-    const result = await promise
+  it('should return true when user confirms', async () => {
+    prompts.inject([true])
+    const result = await askYesNo('Continue?', undefined)
     expect(result).toBe(true)
   })
 
-  it('should return true for "yes" input', async () => {
-    const { rl, input, destroy } = createMockReadline()
-    cleanup = destroy
-
-    const promise = askYesNo(rl, 'Continue?', undefined)
-    input.write('yes\n')
-
-    const result = await promise
-    expect(result).toBe(true)
-  })
-
-  it('should return true for "YES" input (case insensitive)', async () => {
-    const { rl, input, destroy } = createMockReadline()
-    cleanup = destroy
-
-    const promise = askYesNo(rl, 'Continue?', undefined)
-    input.write('YES\n')
-
-    const result = await promise
-    expect(result).toBe(true)
-  })
-
-  it('should return false for "n" input', async () => {
-    const { rl, input, destroy } = createMockReadline()
-    cleanup = destroy
-
-    const promise = askYesNo(rl, 'Continue?', undefined)
-    input.write('n\n')
-
-    const result = await promise
+  it('should return false when user denies', async () => {
+    prompts.inject([false])
+    const result = await askYesNo('Continue?', undefined)
     expect(result).toBe(false)
   })
 
-  it('should return false for any other input', async () => {
-    const { rl, input, destroy } = createMockReadline()
-    cleanup = destroy
-
-    const promise = askYesNo(rl, 'Continue?', undefined)
-    input.write('something else\n')
-
-    const result = await promise
+  it('should return false (default) when defaultYes is false and prompt is cancelled', async () => {
+    prompts.inject([undefined])
+    const result = await askYesNo('Continue?', false)
     expect(result).toBe(false)
   })
 
-  it('should return false (default) for empty input when defaultYes is false', async () => {
-    const { rl, input, destroy } = createMockReadline()
-    cleanup = destroy
+  it('should return true (default) when defaultYes is true and prompt is cancelled', async () => {
+    prompts.inject([undefined])
+    const result = await askYesNo('Continue?', true)
+    expect(result).toBe(true)
+  })
 
-    const promise = askYesNo(rl, 'Continue?', false)
-    input.write('\n')
-
-    const result = await promise
+  it('should use false as default when defaultYes is undefined and prompt is cancelled', async () => {
+    prompts.inject([undefined])
+    const result = await askYesNo('Continue?', undefined)
     expect(result).toBe(false)
-  })
-
-  it('should return true (default) for empty input when defaultYes is true', async () => {
-    const { rl, input, destroy } = createMockReadline()
-    cleanup = destroy
-
-    const promise = askYesNo(rl, 'Continue?', true)
-    input.write('\n')
-
-    const result = await promise
-    expect(result).toBe(true)
-  })
-
-  it('should trim whitespace from input', async () => {
-    const { rl, input, destroy } = createMockReadline()
-    cleanup = destroy
-
-    const promise = askYesNo(rl, 'Continue?', undefined)
-    input.write('  yes  \n')
-
-    const result = await promise
-    expect(result).toBe(true)
   })
 })

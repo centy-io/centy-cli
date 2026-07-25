@@ -1,9 +1,9 @@
-import { Help } from '@oclif/core'
+import { Command, Help } from '@oclif/core'
 
 /**
  * Custom help class that adds LLM callout to root help output
  */
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
+
 export default class CentyHelp extends Help {
   /**
    * Override showRootHelp to add LLM callout at the beginning
@@ -16,5 +16,27 @@ export default class CentyHelp extends Help {
     this.log('')
 
     await super.showRootHelp()
+  }
+
+  /**
+   * Override showCommandHelp to dynamically populate the --editor flag description
+   * with available editors fetched from the daemon.
+   */
+  override async showCommandHelp(command: Command.Loadable): Promise<void> {
+    if (command.flags !== undefined && 'editor' in command.flags) {
+      try {
+        const { daemonGetSupportedEditors } =
+          await import('./daemon/daemon-get-supported-editors.js')
+        const { editors } = await daemonGetSupportedEditors({})
+        const ids = editors.filter(e => e.available).map(e => e.editorId)
+        if (ids.length > 0) {
+          command.flags.editor.description = `Editor to use: ${ids.join(', ')} (default: interactive selection or project default)`
+        }
+      } catch {
+        // daemon unavailable or module resolution failed — keep static description
+      }
+    }
+
+    return super.showCommandHelp(command)
   }
 }

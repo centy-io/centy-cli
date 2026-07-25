@@ -1,0 +1,6 @@
+onlyBuiltDependencies:
+  - '@bufbuild/buf'
+  - core-js
+  - esbuild
+  - protobufjs
+  - unrs-resolver

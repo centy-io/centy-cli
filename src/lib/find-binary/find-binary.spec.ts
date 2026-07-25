@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { IS_WINDOWS } from '../../testing/platform.js'
 import { findBinary } from './find-binary.js'
 
 describe('findBinary', () => {
@@ -18,18 +19,13 @@ describe('findBinary', () => {
       devRepoName: 'nonexistent-repo',
     })
     expect(result).toBe(
-      process.platform === 'win32'
-        ? 'nonexistent-binary.exe'
-        : 'nonexistent-binary'
+      IS_WINDOWS ? 'nonexistent-binary.exe' : 'nonexistent-binary'
     )
   })
 
   it('should not use env path if file does not exist', () => {
-    // eslint-disable-next-line no-restricted-syntax
-    const originalEnv = process.env['TEST_FIND_BINARY_PATH']
-
-    // eslint-disable-next-line no-restricted-syntax
-    process.env['TEST_FIND_BINARY_PATH'] = '/nonexistent/path'
+    const originalEnv = Reflect.get(process.env, 'TEST_FIND_BINARY_PATH')
+    Reflect.set(process.env, 'TEST_FIND_BINARY_PATH', '/nonexistent/path')
     const result = findBinary({
       binaryName: 'test-binary',
       envVar: 'TEST_FIND_BINARY_PATH',
@@ -38,11 +34,9 @@ describe('findBinary', () => {
     expect(result).not.toBe('/nonexistent/path')
 
     if (originalEnv !== undefined) {
-      // eslint-disable-next-line no-restricted-syntax
-      process.env['TEST_FIND_BINARY_PATH'] = originalEnv
+      Reflect.set(process.env, 'TEST_FIND_BINARY_PATH', originalEnv)
     } else {
-      // eslint-disable-next-line no-restricted-syntax
-      delete process.env['TEST_FIND_BINARY_PATH']
+      Reflect.deleteProperty(process.env, 'TEST_FIND_BINARY_PATH')
     }
   })
 })

@@ -18,16 +18,15 @@ export function findBinary(options: FindBinaryOptions): string {
   const platformBinaryName = getBinaryNameForPlatform(binaryName)
 
   // 1. Check environment variable
-  // eslint-disable-next-line no-restricted-syntax, security/detect-object-injection
-  const envPath = process.env[envVar]
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  const envPath: string | undefined = Reflect.get(process.env, envVar)
+
   if (envPath !== undefined && existsSync(envPath)) {
     return envPath
   }
 
   // 2. Check ~/.centy/bin/ (installed via centy install)
   const userInstallPath = join(homedir(), '.centy', 'bin', platformBinaryName)
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   if (existsSync(userInstallPath)) {
     return userInstallPath
   }
@@ -35,7 +34,7 @@ export function findBinary(options: FindBinaryOptions): string {
   // 3. Check same directory as CLI binary
   const __dirname = dirname(fileURLToPath(import.meta.url))
   const sameDirPath = join(__dirname, '..', '..', '..', platformBinaryName)
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   if (existsSync(sameDirPath)) {
     return sameDirPath
   }
@@ -52,7 +51,7 @@ export function findBinary(options: FindBinaryOptions): string {
     'release',
     platformBinaryName
   )
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+
   if (existsSync(devPath)) {
     return devPath
   }

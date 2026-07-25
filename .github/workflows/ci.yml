@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -33,6 +35,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -54,6 +58,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -75,6 +81,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -100,6 +108,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -116,22 +126,14 @@ jobs:
       - name: Run tests with coverage
         run: pnpm test:coverage --run
 
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v4
-        if: matrix.os == 'ubuntu-latest' && matrix.node-version == 20
-        with:
-          file: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -159,6 +161,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Check if version exists on npm
         id: version_check
@@ -187,6 +191,7 @@ jobs:
         with:
           node-version: 22
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         if: steps.version_check.outputs.should_publish == 'true'
@@ -196,9 +201,31 @@ jobs:
         if: steps.version_check.outputs.should_publish == 'true'
         run: pnpm build
 
-      - name: Update npm
+      - name: Exchange OIDC token for npm publish token
         if: steps.version_check.outputs.should_publish == 'true'
-        run: npm install -g npm@latest
+        run: |
+          OIDC_TOKEN=$(curl -fsSL \
+            -H "Accept: application/json; api-version=2.0" \
+            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm:registry.npmjs.org" \
+            | jq -r .value)
+          echo "::add-mask::$OIDC_TOKEN"
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          EXCHANGE_RESPONSE=$(curl -sS \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer $OIDC_TOKEN" \
+            -d "{\"oidcToken\": \"$OIDC_TOKEN\"}" \
+            "https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/$PACKAGE_NAME")
+          echo "Exchange response (token redacted): $(echo "$EXCHANGE_RESPONSE" | jq 'del(.token)')"
+          NPM_TOKEN=$(echo "$EXCHANGE_RESPONSE" | jq -r '.token // empty')
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "::error::OIDC token exchange failed - see response above"
+            exit 1
+          fi
+          echo "::add-mask::$NPM_TOKEN"
+          echo "NODE_AUTH_TOKEN=$NPM_TOKEN" >> $GITHUB_ENV
 
       - name: Publish to npm
         if: steps.version_check.outputs.should_publish == 'true'

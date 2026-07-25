@@ -1,5 +1,3 @@
-/* eslint-disable single-export/single-export */
-
 import { daemonSaveMigration } from '../../daemon/daemon-save-migration.js'
 import { daemonUpdateCompact } from '../../daemon/daemon-update-compact.js'
 import { CompactSaveError } from './compact-save-error.js'

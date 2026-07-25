@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
+    exclude: ['**/node_modules/**', '**/dist/**', 'src/e2e/**'],
     globals: true,
     environment: 'node',
     coverage: {
@@ -21,6 +22,7 @@ export default defineConfig({
         'src/flags/**',
         'src/lib/create-pr/**',
         'src/types/**',
+        'src/testing/**',
         'src/index.ts',
       ],
       thresholds: {

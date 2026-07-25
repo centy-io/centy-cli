@@ -1,10 +1,12 @@
+<!-- This file is managed by Centy. Use the Centy CLI to modify it. -->
+
 # Centy Project
 
-This folder is managed by [Centy](https://github.com/tupe12334/centy-cli).
+This folder is managed by [Centy](https://github.com/centy-io/centy-cli).
 
-## Important: LLM Instructions
+## Important: AI Assistant Instructions
 
-**If you are an AI/LLM assistant working with this project:**
+**If you are an AI assistant working with this project:**
 
 - **DO NOT** directly edit or create files in the `.centy/` folder
 - **DO NOT** manually modify issue files, metadata, or documentation
@@ -18,6 +20,7 @@ Use the CLI commands below to interact with the centy system.
 - `issues/` - Project issues
 - `docs/` - Project documentation
 - `assets/` - Shared assets
+- `archived/` - Archived items from any type
 - `templates/` - Custom templates for issues and docs
 
 ## Getting Started

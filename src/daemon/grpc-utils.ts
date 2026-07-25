@@ -1,4 +1,3 @@
-/* eslint-disable single-export/single-export */
 /* eslint-disable default/no-default-params */
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { status } from '@grpc/grpc-js'

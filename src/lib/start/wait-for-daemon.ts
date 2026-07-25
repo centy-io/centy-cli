@@ -1,5 +1,6 @@
 import retry from 'async-retry'
 import { checkDaemonConnection } from '../../daemon/check-daemon-connection.js'
+import { DaemonNotConnectedError } from './daemon-not-connected-error.js'
 
 const DEFAULT_MAX_ATTEMPTS = 5
 const DEFAULT_DELAY_MS = 500
@@ -24,7 +25,7 @@ export async function waitForDaemon(options?: WaitOptions): Promise<boolean> {
       async () => {
         const status = await checkDaemonConnection()
         if (!status.connected) {
-          throw new Error('Daemon not connected')
+          throw new DaemonNotConnectedError()
         }
       },
       {
@@ -32,7 +33,7 @@ export async function waitForDaemon(options?: WaitOptions): Promise<boolean> {
         minTimeout,
         factor: 1,
         randomize: false,
-      },
+      }
     )
     return true
   } catch {

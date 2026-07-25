@@ -112,6 +112,7 @@ describe('RegisterProject command', () => {
     expect(mockDaemonInit).toHaveBeenCalledWith({
       projectPath: '/test/project',
       force: true,
+      title: '',
     })
   })
 

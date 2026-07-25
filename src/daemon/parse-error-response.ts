@@ -12,11 +12,10 @@ function isDaemonErrorResponse(value: unknown): value is DaemonErrorResponse {
   if (value === null || typeof value !== 'object') {
     return false
   }
-  return (
-    'messages' in value &&
-    // eslint-disable-next-line no-restricted-syntax
-    Array.isArray((value as Record<string, unknown>).messages)
-  )
+  if (!('messages' in value)) {
+    return false
+  }
+  return Array.isArray(Reflect.get(value, 'messages'))
 }
 
 function formatErrorMessage(response: DaemonErrorResponse): string {

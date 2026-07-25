@@ -46,13 +46,13 @@ describe('Links command', () => {
       links: [
         {
           linkType: 'blocks',
-          targetType: 'issue',
+          targetItemType: 'issue',
           targetId: '2',
           createdAt: '2025-01-01',
         },
         {
           linkType: 'relates-to',
-          targetType: 'doc',
+          targetItemType: 'doc',
           targetId: 'arch',
           createdAt: '2025-01-02',
         },
@@ -70,10 +70,13 @@ describe('Links command', () => {
     expect(mockDaemonListLinks).toHaveBeenCalledWith({
       projectPath: '/test/project',
       entityId: '1',
-      entityType: 'issue',
+      entityItemType: 'issue',
     })
     expect(cmd.logs.some(log => log.includes('Found 2 link(s)'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('blocks --> issue:2'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('relates-to --> doc:arch'))).toBe(
+      true
+    )
   })
 
   it('should work with doc entity type', async () => {
@@ -93,7 +96,7 @@ describe('Links command', () => {
     expect(mockDaemonListLinks).toHaveBeenCalledWith({
       projectPath: '/test/project',
       entityId: 'getting-started',
-      entityType: 'doc',
+      entityItemType: 'doc',
     })
     expect(cmd.logs.some(log => log.includes('No links found for doc'))).toBe(
       true
@@ -105,7 +108,7 @@ describe('Links command', () => {
     const links = [
       {
         linkType: 'blocks',
-        targetType: 'issue',
+        targetItemType: 'issue',
         targetId: '2',
         createdAt: '2025-01-01',
       },

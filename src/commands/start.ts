@@ -12,14 +12,11 @@ import { getPermissionDeniedMsg } from '../utils/get-permission-denied-msg.js'
 const INSTALL_CMD = `curl -fsSL ${getInstallScriptUrl()} | sh`
 
 const getMissingDaemonMsg = (p: string) =>
-  `Daemon not found at: ${p}\n\nFix:\n  1. Install using: ${INSTALL_CMD}\n  2. centy start\n  3. centy info\n\nOr set CENTY_DAEMON_PATH.`
+  `Daemon binary not found\n\nThe centy-daemon binary could not be found at: ${p}\n\nTo fix this:\n  1. Install the daemon: ${INSTALL_CMD}\n  2. Start the daemon: centy start\n  3. Verify installation: centy info\n\nOr set CENTY_DAEMON_PATH environment variable to the binary location.`
 
-// eslint-disable-next-line custom/no-default-class-export, class-export/class-export
 export default class Start extends Command {
-  // eslint-disable-next-line no-restricted-syntax
   static override description = 'Start the centy daemon'
 
-  // eslint-disable-next-line no-restricted-syntax
   static override examples = [
     '<%= config.bin %> start',
     '<%= config.bin %> start --foreground',
@@ -28,7 +25,6 @@ export default class Start extends Command {
     '<%= config.bin %> start -y',
   ]
 
-  // eslint-disable-next-line no-restricted-syntax
   static override flags = {
     foreground: Flags.boolean({
       char: 'f',
@@ -96,13 +92,10 @@ export default class Start extends Command {
 
   private debugSearchedPaths(): void {
     const paths = getDaemonSearchPaths()
-    this.debug(
-      `Searched paths:\n${paths.map(p => `  - ${p}`).join('\n')}`
-    )
+    this.debug(`Searched paths:\n${paths.map(p => `  - ${p}`).join('\n')}`)
   }
 
   private handleSpawnError(error: Error, daemonPath: string): void {
-    // eslint-disable-next-line no-restricted-syntax
     const errno = (error as NodeJS.ErrnoException).code
     if (errno === 'ENOENT') {
       this.debugSearchedPaths()

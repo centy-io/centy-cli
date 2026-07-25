@@ -1,12 +1,12 @@
-import type { GetIssuesByUuidResponse } from '../../daemon/types.js'
+import type { SearchItemsResponse } from '../../daemon/types.js'
 
 export function handleGlobalIssueSearch(
-  result: GetIssuesByUuidResponse,
+  result: SearchItemsResponse,
   uuid: string,
   log: (msg: string) => void,
   warn: (msg: string) => void
 ): void {
-  if (result.issues.length === 0) {
+  if (result.items.length === 0) {
     log(`No issues found with UUID: ${uuid}`)
     if (result.errors.length > 0) {
       warn('Some projects could not be searched:')
@@ -19,21 +19,19 @@ export function handleGlobalIssueSearch(
 
   log(`Found ${result.totalCount} issue(s) matching UUID: ${uuid}\n`)
 
-  for (const iwp of result.issues) {
-    const issue = iwp.issue!
+  for (const iwp of result.items) {
+    const issue = iwp.item!
     const meta = issue.metadata
     log(`--- Project: ${iwp.projectName} (${iwp.projectPath}) ---`)
-    log(`Issue #${issue.displayNumber}`)
+    log(`Issue #${meta !== undefined ? meta.displayNumber : 0}`)
     log(`ID: ${issue.id}`)
     log(`Title: ${issue.title}`)
     log(`Status: ${meta !== undefined ? meta.status : 'unknown'}`)
-    log(
-      `Priority: ${meta !== undefined ? (meta.priorityLabel !== '' ? meta.priorityLabel : `P${meta.priority}`) : 'P?'}`
-    )
+    log(`Priority: ${meta !== undefined ? `P${meta.priority}` : 'P?'}`)
     log(`Created: ${meta !== undefined ? meta.createdAt : 'unknown'}`)
     log(`Updated: ${meta !== undefined ? meta.updatedAt : 'unknown'}`)
-    if (issue.description) {
-      log(`\nDescription:\n${issue.description}`)
+    if (issue.body) {
+      log(`\nDescription:\n${issue.body}`)
     }
     log('')
   }

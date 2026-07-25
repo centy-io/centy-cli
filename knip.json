@@ -1,14 +1,27 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
-  "entry": ["src/index.ts", "src/commands/**/*.ts", "bin/*.js"],
-  "project": ["src/**/*.ts"],
+  "entry": [
+    "src/index.ts",
+    "src/commands/**/*.ts",
+    "bin/*.js",
+    "src/lib/install-daemon/index.ts",
+    "src/lib/launch-tui/**/*.ts",
+    "src/help.ts",
+    "src/hooks/**/*.ts"
+  ],
+  "project": ["src/**/*.ts", "!src/**/*.spec.ts", "!src/**/*.test.ts"],
   "ignore": [
     "**/*.spec.ts",
     "**/*.test.ts",
     "dist/**",
     "coverage/**",
-    "src/daemon/**"
+    "src/daemon/**",
+    "src/e2e/**",
+    "src/testing/**"
   ],
+  "vitest": {
+    "entry": ["src/vite-env.d.ts"]
+  },
   "ignoreDependencies": ["tsx", "@cspell/dict-he", "@types/uuid", "ts-proto"],
   "ignoreExportsUsedInFile": true,
   "ignoreWorkspaces": []

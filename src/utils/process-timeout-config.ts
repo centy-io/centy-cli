@@ -1,10 +1,3 @@
-/* eslint-disable single-export/single-export */
-
-/**
- * Timeout for quick commands like version checks (5 seconds)
- */
-export const BUN_CHECK_TIMEOUT_MS = 5_000
-
 /**
  * Timeout for installation commands like daemon install (2 minutes)
  */

@@ -1,5 +1,3 @@
-/* eslint-disable single-export/single-export */
-
 import { CompactParseError } from './compact-parse-error.js'
 
 export interface ParsedLlmResponse {
