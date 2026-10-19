@@ -24,7 +24,7 @@ function extractZip(archivePath: string, destDir: string): void {
   ensureDir(destDir)
   if (isWindows()) {
     execSync(
-      `powershell -Command "Expand-Archive -Path '${archivePath}' -DestinationPath '${destDir}' -Force"`,
+      `powershell -NoProfile -NonInteractive -Command "Expand-Archive -Path '${archivePath}' -DestinationPath '${destDir}' -Force"`,
       { stdio: 'pipe' }
     )
   } else {
