@@ -87,7 +87,7 @@ describe('resolveProjectPath', () => {
     it('should use CENTY_CWD env var when no arg provided', async () => {
       Reflect.set(process.env, 'CENTY_CWD', '/env/path')
       const result = await resolveProjectPath(undefined)
-      expect(result).toBe('/env/path')
+      expect(result).toBe(resolve('/env/path'))
     })
 
     it('should use cwd when no arg and no env var', async () => {
