@@ -1,4 +1,4 @@
-import { isAbsolute } from 'node:path'
+import { isAbsolute, resolve } from 'node:path'
 import untildify from 'untildify'
 import { daemonListProjects } from '../daemon/daemon-list-projects.js'
 
@@ -39,7 +39,7 @@ export class ProjectNotFoundError extends Error {
  *
  * The input can be:
  * - undefined: uses CENTY_CWD env var or process.cwd()
- * - A filesystem path: returned as-is (with tilde expansion)
+ * - A filesystem path: returned as an absolute path (tilde expanded)
  * - A project name: looked up via daemon to get the path
  *
  * @param projectArg - The project name or path from the --project flag
@@ -58,9 +58,9 @@ export async function resolveProjectPath(
         ? CENTY_CWD
         : process.cwd()
 
-  // 2. If it looks like a path, return it (with tilde expansion)
+  // 2. If it looks like a path, return it absolute (tilde expanded, relative resolved against cwd)
   if (isPath(input)) {
-    return untildify(input)
+    return resolve(untildify(input))
   }
 
   // 3. Otherwise treat as project name - look up in daemon
