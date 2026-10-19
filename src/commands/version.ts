@@ -32,8 +32,7 @@ export default class Version extends Command {
     try {
       const daemonInfo = await daemonGetDaemonInfo({})
       daemonVersion = daemonInfo.version
-      daemonStatus =
-        daemonVersion === cliVersion ? 'Up to date' : 'Version mismatch'
+      daemonStatus = 'Running'
     } catch {
       daemonStatus = 'Not running'
     }
