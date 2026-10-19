@@ -1,5 +1,5 @@
 import { homedir } from 'node:os'
-import { join, normalize } from 'node:path'
+import { isAbsolute, join, normalize, resolve } from 'node:path'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 const mockDaemonListProjects = vi.fn()
@@ -21,25 +21,37 @@ describe('resolveProjectPath', () => {
   })
 
   describe('path input', () => {
-    it('should return absolute paths as-is', async () => {
-      const result = await resolveProjectPath('/absolute/path')
-      expect(result).toBe('/absolute/path')
+    it('should keep absolute paths absolute', async () => {
+      const absolute = resolve('/absolute/path')
+      const result = await resolveProjectPath(absolute)
+      expect(result).toBe(absolute)
     })
 
-    it('should return relative paths starting with dot', async () => {
-      const result = await resolveProjectPath('./relative')
-      expect(result).toBe('./relative')
+    it('should resolve "." to the current working directory', async () => {
+      const result = await resolveProjectPath('.')
+      expect(result).toBe(process.cwd())
     })
 
-    it('should expand tilde to home directory', async () => {
-      const result = await resolveProjectPath('~/projects')
-      // untildify keeps the input slash; normalize for Windows
-      expect(normalize(result)).toBe(join(homedir(), 'projects'))
+    it('should resolve "../x" against the current working directory', async () => {
+      const result = await resolveProjectPath('../x')
+      expect(result).toBe(resolve(process.cwd(), '../x'))
     })
 
-    it('should return paths with slashes', async () => {
+    it('should resolve paths with slashes to absolute paths', async () => {
       const result = await resolveProjectPath('some/path')
-      expect(result).toBe('some/path')
+      expect(result).toBe(resolve(process.cwd(), 'some/path'))
+    })
+
+    it('should expand tilde to an absolute home directory path', async () => {
+      const result = await resolveProjectPath('~/x')
+      expect(normalize(result)).toBe(normalize(join(homedir(), 'x')))
+      expect(isAbsolute(result)).toBe(true)
+    })
+
+    it('should resolve a relative CENTY_CWD to an absolute path', async () => {
+      Reflect.set(process.env, 'CENTY_CWD', '.')
+      const result = await resolveProjectPath(undefined)
+      expect(result).toBe(process.cwd())
     })
   })
 
