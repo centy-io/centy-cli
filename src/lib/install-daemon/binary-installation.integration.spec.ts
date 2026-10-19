@@ -238,6 +238,7 @@ describe('binary installation - PowerShell Expand-Archive on Windows', () => {
     tempDirs.length = 0
   })
 
+  // PowerShell cold start on CI Windows runners takes several seconds per spawn (two here).
   skipOnUnix(
     'should extract .zip archives using PowerShell Expand-Archive on Windows',
     () => {
@@ -251,7 +252,7 @@ describe('binary installation - PowerShell Expand-Archive on Windows', () => {
       // Create zip using PowerShell
       const archivePath = join(tempDir, 'centy-daemon.zip')
       execSync(
-        `powershell -Command "Compress-Archive -Path '${join(srcDir, 'centy-daemon.exe')}' -DestinationPath '${archivePath}'"`,
+        `powershell -NoProfile -NonInteractive -Command "Compress-Archive -Path '${join(srcDir, 'centy-daemon.exe')}' -DestinationPath '${archivePath}'"`,
         { stdio: 'pipe' }
       )
 
@@ -259,7 +260,8 @@ describe('binary installation - PowerShell Expand-Archive on Windows', () => {
       extractArchive(archivePath, destDir)
 
       expect(existsSync(join(destDir, 'centy-daemon.exe'))).toBe(true)
-    }
+    },
+    30000
   )
 })
 
