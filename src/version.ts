@@ -1,4 +1,9 @@
+import { createRequire } from 'node:module'
 /**
- * Centy version constant
+ * Centy version constant, read from the package's own package.json.
+ * Works from both src/ (tests) and dist/ (built CLI): both sit one level below the package root.
  */
-export const VERSION = '0.0.0'
+const require = createRequire(import.meta.url)
+const pkg: { version: string } = require('../package.json')
+
+export const VERSION: string = pkg.version
