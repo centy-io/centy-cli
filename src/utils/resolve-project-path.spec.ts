@@ -1,5 +1,5 @@
 import { homedir } from 'node:os'
-import { join } from 'node:path'
+import { join, normalize } from 'node:path'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 const mockDaemonListProjects = vi.fn()
@@ -33,7 +33,8 @@ describe('resolveProjectPath', () => {
 
     it('should expand tilde to home directory', async () => {
       const result = await resolveProjectPath('~/projects')
-      expect(result).toBe(join(homedir(), 'projects'))
+      // untildify keeps the input slash; normalize for Windows
+      expect(normalize(result)).toBe(join(homedir(), 'projects'))
     })
 
     it('should return paths with slashes', async () => {
