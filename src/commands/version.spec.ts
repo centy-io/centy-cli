@@ -52,10 +52,10 @@ describe('Version command', () => {
     expect(mockDaemonGetDaemonInfo).toHaveBeenCalledWith({})
     expect(cmd.logs.some(log => log.includes('CLI: 0.4.0'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('Daemon: 0.4.0'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('Status: Up to date'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('Status: Running'))).toBe(true)
   })
 
-  it('should show version mismatch when versions differ', async () => {
+  it('should not report a mismatch when daemon version differs from CLI', async () => {
     const { default: Command } = await import('./version.js')
     mockDaemonGetDaemonInfo.mockResolvedValue({
       version: '0.3.0',
@@ -70,9 +70,8 @@ describe('Version command', () => {
 
     expect(cmd.logs.some(log => log.includes('CLI: 0.4.0'))).toBe(true)
     expect(cmd.logs.some(log => log.includes('Daemon: 0.3.0'))).toBe(true)
-    expect(cmd.logs.some(log => log.includes('Status: Version mismatch'))).toBe(
-      true
-    )
+    expect(cmd.logs.some(log => log.includes('Status: Running'))).toBe(true)
+    expect(cmd.logs.some(log => log.includes('mismatch'))).toBe(false)
   })
 
   it('should handle daemon not running', async () => {
@@ -109,7 +108,7 @@ describe('Version command', () => {
     expect(parsed).toEqual({
       cli: '0.4.0',
       daemon: '0.4.0',
-      status: 'Up to date',
+      status: 'Running',
     })
   })
 
