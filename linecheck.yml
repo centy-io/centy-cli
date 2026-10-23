@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/tupe12334/linecheck/main/schema/linecheck.schema.json
+
+rules:
+  - pattern: "**/*.spec.ts"
+    warn: 300
+    warn_message: "Test file getting long — consider splitting by scenario"
+    error: 600
+    error_message: "Test file too large to review easily; split it before merging"
+  - pattern: "**/*.{ts,js,mjs}"
+    warn: 200
+    warn_message: "Getting long — consider splitting into smaller modules"
+    error: 400
+    error_message: "Too large to review easily; split this file before merging"
+
+exclude:
+  - "node_modules/**"
+  - "dist/**"
+  - "coverage/**"
+  - "src/daemon/generated/**"
+  - "pnpm-lock.yaml"
+  - "oclif.manifest.json"
+  - "**/*.md"
+  - "**/*.json"
+  - "**/*.yaml"
+  - "**/*.yml"

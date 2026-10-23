@@ -99,6 +99,18 @@ jobs:
       - name: Check for unused code
         run: pnpm knip
 
+  linecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check file line counts
+        uses: tupe12334/linecheck@e71061c840a266bc64f7c3de1f5241989c055857 # v1.2.2
+        with:
+          version: 1.2.1
+          paths: .
+
   test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -151,7 +163,7 @@ jobs:
         run: pnpm build
 
   publish:
-    needs: [lint, format, spell, knip, test, build]
+    needs: [lint, format, spell, knip, linecheck, test, build]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
