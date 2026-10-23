@@ -2,6 +2,7 @@
  * Project version status utilities
  * Multiple exports allowed for related types and functions
  */
+import { lt, valid } from 'semver'
 import { daemonGetDaemonInfo } from './daemon-get-daemon-info.js'
 import { daemonGetManifest } from './daemon-get-manifest.js'
 
@@ -12,28 +13,12 @@ export interface ProjectVersionStatus {
 }
 
 /**
- * Parse a semver string into [major, minor, patch] numbers.
- * Returns null if the string is not a valid semver.
- */
-function parseSemver(version: string): [number, number, number] | null {
-  const match = version.match(/^(\d+)\.(\d+)\.(\d+)/)
-  if (!match) return null
-  return [Number(match[1]), Number(match[2]), Number(match[3])]
-}
-
-/**
  * Compare two semver strings.
- * Returns true if `a` is strictly less than `b`.
+ * Returns true if `a` is strictly less than `b`, false if either is invalid.
  */
 export function isSemverBehind(a: string, b: string): boolean {
-  const parsedA = parseSemver(a)
-  const parsedB = parseSemver(b)
-  if (parsedA === null || parsedB === null) return false
-  const [aMajor, aMinor, aPatch] = parsedA
-  const [bMajor, bMinor, bPatch] = parsedB
-  if (aMajor !== bMajor) return aMajor < bMajor
-  if (aMinor !== bMinor) return aMinor < bMinor
-  return aPatch < bPatch
+  if (valid(a) === null || valid(b) === null) return false
+  return lt(a, b)
 }
 
 // Module-level cache to avoid repeated daemon calls within a process
