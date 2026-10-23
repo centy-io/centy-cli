@@ -35,6 +35,15 @@ describe('isSemverBehind', () => {
     expect(isSemverBehind('2.0.0', '1.9.9')).toBe(false)
   })
 
+  it('treats a prerelease as behind its release', () => {
+    expect(isSemverBehind('1.0.0-beta.1', '1.0.0')).toBe(true)
+    expect(isSemverBehind('1.0.0', '1.0.0-beta.1')).toBe(false)
+  })
+
+  it('accepts a leading v prefix', () => {
+    expect(isSemverBehind('v0.15.2', '0.16.0')).toBe(true)
+  })
+
   it('returns false when either version is not valid semver', () => {
     expect(isSemverBehind('invalid', '1.0.0')).toBe(false)
     expect(isSemverBehind('1.0.0', 'invalid')).toBe(false)
